@@ -1,0 +1,6 @@
+cib new wow
+ configure primitive rsc_stonith_sunipmi_test1 stonith::external/ipmi params hostname=test1 ipaddr=10.2.129.1 userid=pmc passwd=pmc interface=lan
+configure location loc_rsc_stonith_sunipmi_test1 rsc_stonith_sunipmi_test1 -inf: test1
+ configure primitive rsc_stonith_sunipmi_test2 stonith::external/ipmi params hostname=test2 ipaddr=10.2.129.2 userid=pmc passwd=pmc interface=lan
+configure location loc_rsc_stonith_sunipmi_test2 rsc_stonith_sunipmi_test2 -inf: test2
+cib use wow

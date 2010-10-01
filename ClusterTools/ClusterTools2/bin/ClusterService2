@@ -1,0 +1,136 @@
+#!/usr/bin/perl
+
+#use strict;
+ use Term::ReadLine;
+
+ my $term = new Term::ReadLine 'ClusterService';
+ my $prompt = " command: ";
+ my $OUT = $term->OUT || \*STDOUT;
+ #        while ( defined ($_ = $term->readline($prompt)) ) {
+ #          my $res = eval($_);
+ #          warn $@ if $@;
+ #          print $OUT $res, "\n" unless $@;
+ #          $term->addhistory($_) if /\S/;
+ #        }
+
+# version 2010-09-30 16:45
+
+my $rscFile = "../lib/ClusterService2.rsc";
+my $test = 0;
+my $count = 0;
+my $countf = "";
+
+my %rsc2cmd = {};
+my %rsc2descr = {};
+my %rsc2menu = {};
+my %no2rsc = {};
+my $menu = "";
+my $key = "";
+my $cmd; 
+my $countF;
+my $descr;
+my $no = "";
+my $cmd;
+my @params = [];
+
+sub  menu($) {
+	my ($menuS) = shift(@_) ;
+	printf "+---------------------------------------------------------------+\n";
+	foreach $no ( sort( keys (%no2rsc))) {
+		$key = $no2rsc{$no};
+		$cmd = $rsc2cmd{$key};
+		$descr = $rsc2descr{$key};
+		$menu = $rsc2menu{$key};
+		if ( $menu eq $menuS ) {
+			#printf "DBG: MAIN:  no: %s key: %s cmd: %s\n", $no, $key, $cmd;
+			printf "| %-8s : %-50s |\n", $key, $descr;
+		}
+	}
+	printf "+---------------------------------------------------------------+\n";
+}
+
+sub fillcmd($) {
+	my ($cmd) = shift(@_);
+	my $replace;
+	my $placeholder;
+	while ( $cmd =~ /(%.)/ ) {
+		$placeholder = $1;	
+		#printf "DBG: found placeholder %s\n", $placeholder;
+		if (@params > 0) {
+			$replace = shift @params;
+		} else {
+			system($rsc2cmd{$placeholder});
+			$replace = $term->readline($rsc2descr{$placeholder});
+			chomp $replace;
+		}
+		printf "DBG: found placeholder %s replace with %s\n", $placeholder, $replace;
+		$cmd =~ s/$placeholder/$replace/g;
+	}
+	return $cmd;
+}
+
+open RSC,"<" . $rscFile or die "did not open $rscFile";
+while (<RSC>) {
+	if (  !( $_ =~ /^#/ )) {
+		chomp;
+		$count++;
+		$countF = sprintf("%03d", $count);
+		($key, $menu, $descr, $cmd) = split(/:/);
+		$rsc2cmd{$key} = $cmd;
+		$rsc2descr{$key} = $descr;
+		$rsc2menu{$key} = $menu;
+		$no2rsc{$countF} = $key;
+	}
+}
+
+foreach $no ( sort( keys (%no2rsc))) {
+	$key = $no2rsc{$no};
+	$cmd = $rsc2cmd{$key};
+	#/ printf "DBG: no: %s key: %s cmd: %s\n", $no, $key, $cmd;
+}
+
+
+my $call = ""; my $callUC;
+my $cont = 1;
+my $sendcmd = "";
+ #        while ( defined ($_ = $term->readline($prompt)) ) {
+ #          my $res = eval($_);
+ #          warn $@ if $@;
+ #          print $OUT $res, "\n" unless $@;
+ #          $term->addhistory($_) if /\S/;
+ #        }
+while ( $cont ) {
+	if ($call eq "") {
+		menu("MAIN"); #printf "select command > ";
+		#$call = <STDIN>; 
+		$call = $term->readline($prompt);
+		$term->addhistory($call);
+		chomp $call;
+	}
+        ($cmd, @params) = split (' ',$call);
+	$callUC = uc $cmd;
+	# $callUC = uc $call;
+	# printf "DBG: GOT: %s\n", $call;
+	if ( $callUC =~ /^EXIT$/i ) {
+		$cont = 0;
+	} else {
+		if ( defined ($rsc2cmd{$callUC}) ) {
+			$sendcmd = fillcmd($rsc2cmd{$callUC});
+	#		printf "DBG: I would like to send: \n%s\n", $sendcmd;
+			printf "+---------------------------------------------------------------+\n";
+			#printf "+%s+\n", '-' * 63;
+			system($sendcmd);
+			printf "+---------------------------------------------------------------+\n";
+			#printf "enter command > ";
+			# $call = <STDIN>;
+			$call = $term->readline($prompt);
+		        $term->addhistory($call);
+			chomp $call;
+		} else {
+			printf "DBG: Did not found: %s\n", $callUC;
+			$call = "";
+		}
+	}
+}
+
+exit;

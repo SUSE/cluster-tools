@@ -1,0 +1,7 @@
+configure primitive $UUID ocf:heartbeat:sfex \
+params	device=$SFEX_DEVICE \
+index=$SFEX_INDEX \
+monitor_interval=5s \
+collision_timeout=10s \
+lock_timeout=20s \
+op monitor interval=5s timeout=15s start_delay=10s

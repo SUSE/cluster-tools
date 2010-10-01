@@ -1,0 +1,12 @@
+DBTYPE=ORA
+source wowlib2
+ case "$DBTYPE" in
+	ORA ) cli=01-sapdb.ora.cli
+		;;
+	* )   cli=01-sapdb.cli
+		;;
+ esac
+ woweng2 UUID=rsc_SAPDatabase_$SAPSID \
+		SAPSID=$SAPSID  \
+		DBTYPE=$DBTYPE \
+		$wowcli/$cli

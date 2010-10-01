@@ -1,0 +1,6 @@
+cib new wow
+ configure primitive rsc_stonith_sunipmi_hpn03 stonith::external/ipmi params hostname=hpn03 ipaddr=172.16.12.107 userid=hpadmin passwd=hpinvent interface=lan
+configure location loc_rsc_stonith_sunipmi_hpn03 rsc_stonith_sunipmi_hpn03 -inf: hpn03
+ configure primitive rsc_stonith_sunipmi_hpn04 stonith::external/ipmi params hostname=hpn04 ipaddr=172.16.12.108 userid=hpadmin passwd=hpinvent interface=lan
+configure location loc_rsc_stonith_sunipmi_hpn04 rsc_stonith_sunipmi_hpn04 -inf: hpn04
+cib use wow

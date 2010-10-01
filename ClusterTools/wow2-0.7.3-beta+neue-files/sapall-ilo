@@ -1,0 +1,18 @@
+export PATH="$PWD/bin:$PWD/lib:$PWD/agents:$PATH"
+if [ $# -ne 1 ]; then
+   echo "usage: $0 wow-config-file"
+   exit 2
+else 
+   config=$1
+fi
+cli_batch=${config%.wow}.ilo.cli
+echo "creating crm batch file $cli_batch"
+> $cli_batch
+echo "cib new wow" >> $cli_batch
+for agent in agents/02-*ilo*
+do 
+	echo $agent >&2; 
+	bash ./$agent --config $config >> $cli_batch
+done 
+echo "cib use wow" >> $cli_batch
+

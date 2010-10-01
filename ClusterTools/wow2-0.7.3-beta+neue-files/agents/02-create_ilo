@@ -1,0 +1,6 @@
+source wowlib2
+myILO_ADDRESSES=$ILO_ADDRESSES
+for node in $ALLNODES; do
+	ILO_ADDRESS=$(firstof_var myILO_ADDRESSES); shift_var myILO_ADDRESSES
+	woweng2 UUID=rsc_stonith_riloe_${node} ILO_HOSTNAME="$node" ILO_IPADDR="$ILO_ADDRESS" $ILO_SETTINGS $wowcli/02-ilo-stonith.cli
+done

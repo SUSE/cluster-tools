@@ -1,0 +1,4 @@
+source wowlib2
+ woweng2 UUID=rsc_sfex_${SFEXID}_${SFEX_INDEX}_$SAPSID \
+	SFEX_INDEX=$SFEX_INDEX SFEX_DEVICE=$SFEX_DEVICE \
+	$wowcli/01-sfex.cli

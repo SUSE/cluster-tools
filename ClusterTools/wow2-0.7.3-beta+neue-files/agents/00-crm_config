@@ -1,0 +1,6 @@
+source wowlib2
+woweng2 UUID=cib-bootstrap-options \
+       DEFAULT_RESOURCE_STICKINESS=$DEFAULT_RESOURCE_STICKINESS \
+       DEFAULT_ACTION_TIMEOUT=$DEFAULT_ACTION_TIMEOUT \
+       STONITH_ENABLED=false STONITH_ACTION=reboot NO_QUORUM_POLICY=stop \
+       cli/00-crm_config.cli

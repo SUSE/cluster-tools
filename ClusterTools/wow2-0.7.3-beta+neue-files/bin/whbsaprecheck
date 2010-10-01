@@ -1,0 +1,580 @@
+#!/bin/bash
+#
+# whbsaprecheck 
+#
+# (c) 2009 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version 0.1.04 2009-12-15
+#
+
+COMD=$(basename $0)
+CFIL=${2:-wowconfig}
+ERR=/dev/null
+
+SW_REL="SLE-10-x86_64-SP3"
+# TODO: put this defs in external release definiton files
+# TODO: get kernel from SW_REL
+SW_KRNL="kernel-smp-2.6.16.60-0.54.5 x86_64"
+
+SW_PKG="sapinit sap-locale saplocales
+cups-client cups-drivers cups-libs cups-libs-32bit cups cups-SUSE-ppds-dat
+xorg-x11-libs xorg-x11
+nfs-utils
+java-1_4_2-ibm java-1_4_2-ibm-devel
+glibc glibc-32bit glibc-locale glibc-locale-32bit glibc-devel glibc-devel-32bit
+kernel-smp kernel-header
+binutils binutils-32bit gcc libgcc
+sysstat supportutils
+heartbeat heartbeat-cmpi heartbeat-ldirectord heartbeat-pils heartbeat-stonith
+yast2-heartbeat
+multipath-tools mdadm device-mapper device-mapper-32bit
+sfex ClusterTools"
+
+SW_NOT="apparmor orarun"
+
+RUNLVL=3
+SRV_RUN="boot.multipath multipathd ntp boot.sapconf"
+# TODO: put this defs in external release definiton files
+SRV_NOT="boot.evms evms boot.md boot.apparmor novell-zmd suseRegister slpd alsasound heartbeat SuSEfirewall2_init SuSEfirewall2_setup ocfs2 o2cb open-iscsi"
+
+PWDENC=des
+
+# TODO: external definiton file, and cmdline switch. Maybe SID
+# Oracle is default. See chk_wow_dbase for two other.
+DBUSER="oracle"
+DBGROUP="dba oinstall"
+
+# MaxDB
+#DBUSER="sdb sqd.*"
+#DBGROUP="sdba"
+# DB2
+DBUSER="db2.* dasusr"
+DBGROUP="db.*adm db.*ctl db.*mnt"
+
+SAPUSER="...adm"
+SAPGROUP="sapsys sapinst"
+
+
+function echo_msgsep ()
+{
+	echo "============================================================ ${1:0:14} ==="
+}
+
+
+function chk_gen_kernel ()
+{
+	echo_msgsep $FUNCNAME
+	# TODO: correct uname string 
+	echo "--- conf for cluster needs:"
+	echo "kernel uname         : Linux "$SW_KRNL
+	echo "kernel tainted       : 0"
+	echo "kernel rpm           : "$SW_KRNL
+	echo
+
+	echo "--- node $HOSTNAME gives:"
+	echo -n "kernel uname         : "; uname -srp
+	echo -n "kernel tainted       : "; cat /proc/sys/kernel/tainted
+	KRNL=$(echo $SW_KRNL | cut -f1 -d" " )
+
+	# TODO: kernel-smp or kernel-default, find out from rpm -qa	
+	echo -n "kernel rpm           : ";
+		 rpm -q --queryformat "%{name} %{version} %{release} %{arch} %{distribution}\n" kernel-smp  
+	echo -n "kernel num of modules: "; lsmod | wc -l
+	rpm -V kernel-smp
+	echo
+}
+
+
+function chk_gen_swpkg ()
+{
+	echo_msgsep $FUNCNAME
+	echo "--- conf for cluster needs:"
+	echo "SPident: "$SW_REL
+	echo
+	echo $SW_PKG | tr ' ' '\n' | sort -u
+	echo
+	
+	echo "--- node $HOSTNAME gives:"
+	echo -n "SPident: "; SPident | awk '$1=="found" {print $2,$3,$4,$5}; $1=="CONCLUSION:" {print}'
+	echo
+
+	# TODO: call rpm -qa only once
+	for p in $SW_PKG; do
+		rpm -q --queryformat "%{name} %{version} %{release} %{arch} %{distribution}\n" $p
+	done | sort -u
+	echo
+	
+	# TODO: tabbooed JAVA releases 12, 13r2, ...
+	echo "taboo packages:"
+	for p in $SW_NOT; do
+		rpm -q $p
+	done | sort -u
+	echo
+}
+
+
+function chk_gen_runlvl ()
+{
+	echo_msgsep $FUNCNAME
+	echo "--- conf for cluster needs:"
+	echo "runlevel "$RUNLVL
+	echo "id:${RUNLVL}:initdefault:"
+	echo
+	for s in $SRV_RUN; do
+		echo "chkconfig: "$s" on"
+	done
+	echo
+	for s in $SRV_RUN; do
+		echo "/etc/init.d/$s start"
+	done
+	echo
+	for s in $SRV_NOT; do
+		echo "chkconfig: "$s" off"
+	done
+	echo
+	for s in $SRV_NOT; do
+		echo "/etc/init.d/$s stop"
+	done
+	echo
+
+	echo "--- node $HOSTNAME gives:"
+	(echo -n "runlevel "; runlevel) |awk '{print $1,$3}'
+	grep ":initdefault:" /etc/inittab
+	echo
+	for s in $SRV_RUN; do
+		echo -n "chkconfig: "; chkconfig $s
+	done
+	echo
+	for s in $SRV_NOT; do
+		echo -n "chkconfig: "; chkconfig $s
+	done
+	echo
+	echo -n "chkconfig services: "; chkconfig | wc -l
+	echo
+}
+
+
+function chk_gen_memory ()
+{
+	echo_msgsep $FUNCNAME
+	echo "--- conf for cluster needs:"
+	ncpu=$(grep -c "cpu MHz" /proc/cpuinfo)
+	if [ $ncpu -le 2 ]; then
+		ncpu=2
+	fi
+	echo "CPUs: "$ncpu
+	nmem=$[ $ncpu * 4000000 ]
+	echo "Mem: "$nmem
+	if [ $nmem -le 8000000 ]; then	
+		echo "Swap: 16000000"	
+	else	free | awk '$1=="Mem:" \
+		{ swp=2*$2; if (swp > 20000000) print "Swap: 20000000"; else print "Swap: "swp }' 
+	fi
+	# TODO: tmpfs = 2.25*ram
+	echo
+
+	echo "--- node $HOSTNAME gives:"
+	echo -n "CPUs: "; grep -c "cpu MHz" /proc/cpuinfo
+	free | awk '$1=="Mem:"||$1=="Swap:" {print $1,$2}'
+	echo
+}
+
+
+function chk_gen_storag ()
+{
+	echo_msgsep $FUNCNAME
+	echo "--- conf for cluster needs:"
+	echo "/sys/block/*/queue/scheduler [deadline]"
+	echo "number of not [deadline]: 0"
+	echo
+
+	echo "--- node $HOSTNAME gives:"
+	grep "\[deadline\]" /sys/block/*/queue/scheduler 
+	echo -n "number of not [deadline]: "
+	grep -v "\[deadline\]" /sys/block/*/queue/scheduler | wc -l
+	
+ 	# TODO: grep only one time, give list of patterns 
+	# zgrep "multipathd.*down" /var/log/messages* 2>>$ERR | awk '{print $1,$2,$3,$6}'
+	SERR=$(zgrep "multipathd.*down" /var/log/messages* 2>>$ERR | wc -l)
+	echo "path down               : $SERR"
+	SERR=$(zgrep "reservation.conflict" /var/log/messages* 2>>$ERR | wc -l)
+	echo "scsi reserv. conflict   : $SERR"
+	SERR=$(zgrep "duplicate.PV" /var/log/messages* 2>>$ERR | wc -l)
+	echo "duplicate PV            : $SERR"
+	SERR=$(zgrep "heartbeat.*lost.packet" /var/log/messages* 2>>$ERR | wc -l)
+	echo "heartbeat lost packet   : $SERR"
+	echo
+}
+
+
+function chk_gen_fsys ()
+{
+	echo_msgsep $FUNCNAME
+	echo "--- conf for cluster needs:"
+	echo "/var : ext3, rw,noatime,data=writeback, 8G, 80%"
+	echo
+
+	echo "--- node $HOSTNAME gives:"
+	f="/var"
+	FSIZ=$(df -Ph $f | awk '$1~/\/dev\// {print $2", "$5}')
+	FDEV=$(cat /proc/mounts | awk '$2=="'$f'" {print $1}')
+	FOP1=$(cat /proc/mounts | awk '$2=="'$f'" {print $2" : "$3", "$4}')
+	echo "${FOP1}, ${FSIZ}"
+	echo
+}
+
+
+function chk_gen_netwrk ()
+{
+	echo_msgsep $FUNCNAME
+	echo "--- conf for cluster needs:"
+	echo "number of network if  : 3"
+	echo "number of plain eth if: 1"
+	echo "number of static ip   : 1"
+	echo
+
+	echo "--- node $HOSTNAME gives:"
+	echo -n "number of services entries:"
+	grep -c "^sap.*# SAP" /etc/services	
+
+	neth=$(ip addr list | grep -c " eth[0-9]: ")
+	echo "number of network if  : "$neth
+	echo -n "number of plain eth if: "
+	grep -sl static /etc/sysconfig/network/ifcfg-eth-id* | wc -l
+	echo -n "number of static ip   : "
+	grep -sl static /etc/sysconfig/network/ifcfg-* | wc -l
+	echo
+	n=$[ $neth - 1 ]
+	while [ $n -ge 0 ]; do
+		echo -n "eth${n} :"
+		ethtool eth${n} | awk -F ":" '$1~/Link detected/ || $1~/Speed/ || $1~/Duplex/ {print}'
+		ip  -s link show eth${n} | tail -4
+		(( n-- ))
+	done
+	echo
+}
+
+
+function chk_gen_auth ()
+{
+	echo_msgsep $FUNCNAME
+	echo "--- conf for cluster needs:"
+	echo "CRYPT="$PWDENC
+	echo
+
+	echo "--- node $HOSTNAME gives:"
+	grep "^CRYPT=" /etc/default/passwd
+	echo
+	# TODO:
+	#/etc/security/pam_unix2.conf
+	#/etc/security/pam_pwcheck.conf
+	# pam modul für sap ? 
+
+	for u in hacluster $SAPUSER $DBUSER; do
+		grep ^$u /etc/passwd
+		grep ^$u /etc/shadow
+	done
+	for g in $SAPGROUP $DBGROUP; do
+		grep ^$g /etc/group
+	done
+	echo
+}
+
+
+function chk_wow_hacf ()
+{
+	echo_msgsep $FUNCNAME
+	echo "--- conf for cluster needs:"
+	echo "/etc/ha.d/ha.cf"
+	# TODO: mcast
+	# TODO: evms not
+	echo "udpport 694"
+	echo "autojoin none"
+	echo "crm true"
+	echo "use_logd yes"
+	for h in $ALLNODES; do
+		echo "node $h"
+	done
+	echo "respawn root /usr/lib64/heartbeat/pingd -m 100 -d 5s -a pingd"
+	echo "ping <pingnode>" 
+	echo "warntime 10" 
+	echo "initdead 120" 
+	echo 
+	echo "/etc/ha.d/authkeys"
+	echo "auth 3"
+	echo "3 md5 <authstring>"
+	echo
+	echo "chmod 600 /etc/ha.d/authkeys"
+	echo
+
+	echo "--- node $HOSTNAME gives:"
+	echo "/etc/ha.d/ha.cf"
+	grep -v "#" /etc/ha.d/ha.cf
+	echo
+	echo "/etc/ha.d/authkeys"
+	grep -v "#" /etc/ha.d/authkeys
+	echo
+	ls -l /etc/ha.d/authkeys
+	echo
+}
+
+
+function chk_wow_node ()
+{
+	echo_msgsep $FUNCNAME
+	echo "--- conf $CFIL needs:"
+	echo "CIBREMOTE="$CIBREMOTE
+	echo "ALLNODES="$ALLNODES
+
+	echo "--- node $HOSTNAME gives:"
+	echo "local host:"; hostname
+	for f in $ALLNODES; do
+		grep $f /etc/hosts
+	done
+	for f in $ALLNODES; do
+		ping -c1 $f | grep -b1 "transmitted" | tr -d "-" 
+	done
+	echo
+}
+
+
+function chk_wow_dbase ()
+{
+	echo_msgsep $FUNCNAME
+	echo "--- conf $CFIL needs:"
+	echo "db type: "$DBTYPE
+	echo
+
+	echo "--- node $HOSTNAME gives:"
+	# TODO: files according to $DBTYPE
+	case "${DBTYPE}" in
+		ORA|ora)
+			# Oracle is default, see script header. 
+			ls -l /etc/oratab
+			ls -l /opt/oracle
+		;;
+		ADA|ada|SDB|sdb)
+			DBUSER="sdb sqd.*"
+			DBGROUP="sdba"
+			ls -l /etc/opt/sdb
+			ls -l /sapdb
+		;;
+		DB6|db6|DB2|db2)
+			DBUSER="db2.* dasusr"
+			DBGROUP="db.*adm db.*ctl db.*mnt"
+			ls -l /db2
+		;;
+		*)
+			echo "not found: $DBUSER"
+		;;
+	esac
+	echo
+	for u in $DBUSER $DBGROUP; do
+		grep $u /etc/passwd
+		grep $u /etc/shadow
+	done
+	echo
+}
+
+
+function chk_wow_sfex ()
+{
+	echo_msgsep $FUNCNAME
+	echo "--- conf $CFIL needs:"
+	echo "SFEX_DEVICE="$SFEX_DEVICE
+	echo "SFEX_INDEX="$SFEX_INDEX
+
+	echo "--- node $HOSTNAME gives:"
+	ls -l $SFEX_DEVICE
+	/usr/lib64/heartbeat/sfex_stat -i $SFEX_INDEX $SFEX_DEVICE
+	echo
+}
+
+
+function chk_wow_md ()
+{
+	echo_msgsep $FUNCNAME
+	echo "--- conf $CFIL needs:"
+	echo "RAID_CONFIG="$RAID_CONFIG
+	echo "RAID1_DEVICES="${RAID1_DEVICES}
+	echo "" 
+	echo "        Version : 01.02.03"
+	echo "     Raid Level : raid1"
+	echo "   Raid Devices : 2"
+	echo "          State : clean"
+	echo
+
+	echo "--- node $HOSTNAME gives:"
+	ls -l $RAID_CONFIG &&\
+	grep -v "#" $RAID_CONFIG | awk '$1=="ARRAY" {print $2,$3,$4}' 
+	echo ""
+	for f in ${RAID1_DEVICES}; do
+		ls -l $f
+		mdadm --misc --detail $f |\
+		awk '$0~/Version :/; $0~/Raid Level :/; $0~/Array Size:/; $0~/Raid Devices :/; $0~/State :/ {print}'
+	done
+	echo
+	ls -l /etc/mdadm.conf 2>&1
+	grep -v "#" /etc/mdadm.conf 2>&1
+	echo
+}
+
+
+function chk_wow_lvm ()
+{
+	echo_msgsep $FUNCNAME
+	echo "--- conf $CFIL needs:"
+	echo "LVM_VOLUMEGROUPS="$LVM_VOLUMEGROUPS
+	echo
+
+	echo "--- node $HOSTNAME gives:"
+	ls -l /etc/lvm/lvm.conf
+	grep -v "#" /etc/lvm/lvm.conf | grep filter 
+	grep -v "#" /etc/lvm/lvm.conf | grep md_component_detection 
+	for f in $LVM_VOLUMEGROUPS; do
+		vgdisplay $f 2>&1 | grep "not found"	
+		vgdisplay $f 2>/dev/null | grep VG	
+	done
+	echo
+}
+
+
+function chk_wow_fs ()
+{
+	echo_msgsep $FUNCNAME
+	echo "--- conf $CFIL needs:"
+	# TODO: look into FH wow agents for parsing 	
+	echo "FS_FILESYSTEMS=""${FS_FILESYSTEMS}"
+	FSYS=$(echo "${FS_FILESYSTEMS}" | grep -v "#"| awk '{print $2}')
+	echo
+	for f in $FSYS; do
+		echo "$f : ext3, rw,noatime, Maximum mount count: -1, Check interval: 0 (<none>), <x>G, 80%" 
+	done
+	echo
+
+	echo "--- node $HOSTNAME gives:"
+	for f in $FSYS; do
+		ls -ld $f
+	done
+	echo
+
+	for f in $FSYS; do
+		FSIZ=$(df -Ph $f | awk '$1~/\/dev\// {print $2", "$5}')
+		FDEV=$(cat /proc/mounts | awk '$2=="'$f'" {print $1}')
+		FOP1=$(cat /proc/mounts | awk '$2=="'$f'" {print $2" : "$3", "$4}')
+		FOP2=$(dumpe2fs -h $FDEV 2>>$ERR |\
+			awk -F":" '$1=="Check interval"||$1=="Maximum mount count"{print $1": "$2", "}' |\
+			tr -s " " | tr -d "\n")
+		echo "${FOP1}, ${FOP2}${FSIZ}"
+	done
+	echo
+}
+
+
+function chk_wow_sap ()
+{
+	echo_msgsep $FUNCNAME
+	echo "--- conf $CFIL needs:"
+	echo "SAP_INSTANCE_DEF=""${SAP_INSTANCE_DEF}"
+	echo	
+
+	echo "--- node $HOSTNAME gives:"
+	SAPSTART=$(echo "${SAP_INSTANCE_DEF}" | grep -v "#"| awk '{print $3}')
+	for f in $SAPSTART; do
+		echo $f
+	done
+
+# TODO:
+# SAPInstance:
+# SAPSTARTSRV="/usr/sap/$SID/$InstanceName/exe/sapstartsrv"
+# SAPCONTROL="/usr/sap/$SID/$InstanceName/exe/sapcontrol"
+# [ -x /usr/sap/$SID/SYS/exe/run/sapstartsrv -a -x /usr/sap/$SID/SYS/exe/run/sapcontrol ] ; echo $?
+# DIR_PROFILE="/usr/sap/$SID/SYS/profile"
+# [ -d /usr/sap/$SID/SYS/profile/ ] ; echo $?
+# SAPSTARTPROFILE="$DIR_PROFILE/START_${InstanceName}_${SAPVIRHOST}"
+# [ -r $SAPSTARTPROFILE ] ; echo $?
+
+	echo
+}
+
+
+function chk_for_wowfil ()
+{
+        if test -r $CFIL ; then
+               . $CFIL
+        else    echo "can not read $CFIL"
+		exit 1
+        fi
+}
+
+
+# main
+
+wowmode=0
+
+case $1 in
+  --wow ) 
+	wowmode=1
+	wowpropt="$2"
+	shift 2
+	;;
+esac
+
+case $1 in
+  --help|-h)
+	if [ "$wowmode" -eq 1 ]; then
+		echo "usage: $wowpropt [ --cluster | --all ] CONFIG_FILE"
+		echo "usage: $wowpropt [ --generic | --help | --version ]"
+		echo
+		test $UID -gt 0 && echo "please call as root." 
+		
+	else
+		echo "usage: $COMD [ --cluster | --all ] CONFIG_FILE"
+		echo "usage: $COMD [ --generic | --help | --version ]"
+		echo
+		test $UID -gt 0 && echo "please call as root." 
+	fi
+  ;;
+  --version|-v)
+        echo -n "$COMD "; head -15 $(type -p $COMD) | grep "# Version "
+  ;;
+  --test|-t)
+        if test -r $CFIL ; then
+               . $CFIL
+        else    echo "can not read $CFIL"
+        fi
+
+	chk_wow_dbase
+  ;;
+  --generic|-g)
+	chk_gen_kernel
+	chk_gen_swpkg
+	chk_gen_runlvl
+	chk_gen_auth
+	chk_gen_memory
+	chk_gen_netwrk
+	chk_gen_storag
+	chk_gen_fsys
+  ;;
+  --cluster|-c)	 
+	chk_for_wowfil
+
+	chk_wow_node
+	chk_wow_hacf
+	chk_wow_sfex
+	chk_wow_md
+	chk_wow_lvm
+	chk_wow_fs
+  ;;
+  --all|-a)
+	chk_for_wowfil
+	
+	$0 --generic $2 
+	$0 --cluster $2
+  ;;
+  *)
+	$0 --help
+  ;;
+esac
+#

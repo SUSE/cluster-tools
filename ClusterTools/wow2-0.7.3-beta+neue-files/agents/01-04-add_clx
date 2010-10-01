@@ -1,0 +1,6 @@
+source wowlib2
+for clx_application in $CLX_APPLICATION; do
+	woweng2 UUID=rsc_CLX_${SAPSID}_${clx_application} \
+		APPLICATION=$clx_application \
+		$wowcli/01-04-clx.cli
+done

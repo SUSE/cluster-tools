@@ -1,0 +1,4 @@
+configure property \
+	stonith-enabled=$STONITH_ENABLED \
+	stonith-action=$STONITH_ACTION \
+	no-quorum-policy=$NO_QUORUM_POLICY

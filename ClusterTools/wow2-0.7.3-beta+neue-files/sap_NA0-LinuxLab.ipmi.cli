@@ -1,0 +1,6 @@
+cib new wow
+ configure primitive rsc_stonith_sunipmi_ls3198 stonith::external/ipmi params hostname=ls3198 ipaddr=ls3198r userid=admin passwd=admin interface=lan
+configure location loc_rsc_stonith_sunipmi_ls3198 rsc_stonith_sunipmi_ls3198 -inf: ls3198
+ configure primitive rsc_stonith_sunipmi_ls3199 stonith::external/ipmi params hostname=ls3199 ipaddr=ls3199r userid=admin passwd=admin interface=lan
+configure location loc_rsc_stonith_sunipmi_ls3199 rsc_stonith_sunipmi_ls3199 -inf: ls3199
+cib use wow

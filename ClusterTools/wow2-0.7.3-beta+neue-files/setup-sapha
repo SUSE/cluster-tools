@@ -1,0 +1,200 @@
+#!/bin/bash
+# setup-sapha
+#
+
+# THRESHOLD=2	# How often a resource may fail before a failover happens
+
+/etc/init.d/openais status > /dev/null 2> /dev/null
+if [ $? -ne 0 ]; then
+	echo -n "Restarting openAIS "
+	/etc/init.d/openais restart
+else
+	echo -n "Waiting for openAIS "
+fi
+while crm_mon -1 | grep -q "Current DC: NONE"; do
+	echo -n .
+	sleep 1 
+done
+echo " done"
+
+set -x
+
+
+#
+#crm configure property dc-deadtime=10s
+
+# STONITH
+crm configure property							\
+	stonith-enabled=false						\
+	stonith-action=reboot						\
+	no-quorum-policy=ignore
+
+if false; then
+# iLO STONITH handler
+crm configure primitive stonith-l9981022 stonith:external/riloe		\
+	params	hostlist="l9981022" ilo_hostname=l9981022i01		\
+		ilo_user=TEC4 ilo_password=linux_admin			\
+	operations \$id="stonith-l9981022-operations"			\
+		op monitor interval=15 timeout=120 start-delay=75
+crm configure location	\
+	loc_stonith-l9981022_on_l9980022 stonith-l9981022 -inf: l9981022
+crm configure primitive stonith-l9980022 stonith:external/riloe		\
+	params	hostlist="l9980022" ilo_hostname=l9980022i01		\
+		ilo_user=TEC4 ilo_password=linux_admin			\
+	operations \$id="stonith-l9980022-operations"			\
+		op monitor interval=15 timeout=120 start-delay=75
+crm configure location	\
+	loc_stonith-l9980022_on_l9981022 stonith-l9980022 -inf: l9980022
+# HP iLO2 board takes some significant amount of time to respond, so:
+sleep 60
+
+fi
+
+if false; then
+
+# pingd logic
+crm configure primitive pingd0 ocf:heartbeat:pingd			\
+	meta	target-role="started"					\
+	params	host_list="130.197.220.12" multiplier="100"		\
+	operations \$id="pingd0-operations"				\
+		op monitor interval="10" timeout="20" start-delay="0"
+crm configure clone clone_pingd0 pingd0					\
+	meta	globally-unique="false" target-role="started"		\
+	params	pingd-dampen="5s" pingd-multiplier="100"		\
+		ping-hosts="130.197.220.12"
+crm configure location Webserver-on-connected-node Webserver		\
+	rule	-inf: not_defined pingd or pingd lte 0
+
+fi
+
+
+# virtual IP address for SAP
+crm configure primitive rsc_ip_as_na0 ocf:heartbeat:IPaddr2		\
+        params 	ip="10.20.91.20"					\
+        meta    target-role="stopped"                                   \
+        op 	monitor interval=5s timeout=20s
+
+# virtual IP address for SAP
+crm configure primitive rsc_ip_db_na0 ocf:heartbeat:IPaddr2		\
+        params	ip="10.20.91.21"                                        \
+        meta    target-role="stopped"                                   \
+        op 	monitor interval=5s timeout=20s
+
+# virtual IP address for SAP
+crm configure primitive rsc_ip_ci_na0 ocf:heartbeat:IPaddr2		\
+        params	ip="10.20.91.22"                                        \
+        meta	target-role="stopped"                                   \
+        op 	monitor interval=5s timeout=20s
+
+
+# built-in SFEX
+crm configure primitive rsc_sfex_na0 ocf:heartbeat:sfex			\
+	params	device=/dev/mapper/DGC_005_part1			\
+		index=1							\
+		monitor_interval=5					\
+		collision_timeout=600					\
+		lock_timeout=600					\
+        meta	target-role="stopped"          				\                         
+        op 	monitor interval=5s timeout=30s
+
+
+# MD 
+crm configure primitive rsc_md_md0_na0 ocf:heartbeat:Raid1		\
+	params	raidconf="/clusterconf/NA0/mdadm.conf"			\
+		raiddev="/dev/md0"					\
+        meta	target-role="stopped"                                   \
+        op 	monitor interval=60s timeout=120s
+
+# MD 
+crm configure primitive rsc_md_md1_na0 ocf:heartbeat:Raid1		\
+	params	raidconf="/clusterconf/NA0/mdadm.conf"			\
+		raiddev="/dev/md1"					\
+        meta	target-role="stopped"                                   \
+        op 	monitor interval=60s timeout=120s
+
+# MD 
+crm configure primitive rsc_md_md2_na0 ocf:heartbeat:Raid1		\
+	params	raidconf="/clusterconf/NA0/mdadm.conf"			\
+		raiddev="/dev/md2"					\
+        meta	target-role="stopped"                                   \
+        op 	monitor interval=60s timeout=120s
+
+# MD 
+crm configure primitive rsc_md_md3_na0 ocf:heartbeat:Raid1		\
+	params	raidconf="/clusterconf/NA0/mdadm.conf"			\
+		raiddev="/dev/md3"					\
+        meta	target-role="stopped"                                   \
+        op 	monitor interval=60s timeout=120s
+
+
+# VG
+crm configure primitive rsc_vg_na0 ocf:heartbeat:LVM			\
+	params volgrpname="sapvg"					\
+        meta	target-role="stopped"                                   \
+        op 	monitor interval=60s timeout=120s
+
+
+# file system for SAP
+crm configure primitive rsc_fs_usrsap_na0 ocf:heartbeat:Filesystem	\
+        params 	device="/dev/mapper/sapvg-usrsap"             		\
+               	directory="/usr/sap/"                                  	\
+               	fstype="ext3"                                           \
+               	options="noatime,acl,user_xattr"                        \
+        meta    target-role="stopped"                                   \
+        op 	monitor interval=30s timeout=60s
+
+# file system for SAP
+crm configure primitive rsc_fs_sapmnt_na0 ocf:heartbeat:Filesystem	\
+        params 	device="/dev/mapper/sapvg-sapmnt"                 	\
+               	directory="/sapmnt"                                  	\
+               	fstype="ext3"                                           \
+               	options="noatime,data=writeback,acl,user_xattr"		\
+        meta    target-role="stopped"                                   \
+        op 	monitor interval=30s timeout=60s
+
+# file system for SAP
+crm configure primitive rsc_fs_sapdb_na0 ocf:heartbeat:Filesystem	\
+        params	device="/dev/mapper/sapvg-sapdb"                 	\
+               	directory="/sapdb"                                  	\
+               	fstype="ext3"                                           \
+               	options="noatime,acl,user_xattr"                        \
+        meta    target-role="stopped"                                   \
+        op 	monitor interval=30s timeout=60s
+
+
+# group containing all resources
+crm configure group grp_na0 						\
+	rsc_sfex_na0							\
+	rsc_ip_as_na0 rsc_ip_ci_na0 rsc_ip_db_na0			\
+	rsc_md_md0_na0 rsc_md_md1_na0 rsc_md_md2_na0 rsc_md_md3_na0	\
+	rsc_vg_na0							\
+	rsc_fs_sapdb_na0 rsc_fs_usrsap_na0 rsc_fs_sapmnt_na0		\
+	meta target-role=stopped				
+#crm resource meta rsc_sfex_na0		delete target-role
+#crm resource meta rsc_ip_as_na0		delete target-role
+#crm resource meta rsc_ip_ci_na0		delete target-role
+#crm resource meta rsc_ip_db_na0		delete target-role
+#crm resource meta rsc_md_md0_na0	delete target-role
+#crm resource meta rsc_md_md1_na0	delete target-role
+#crm resource meta rsc_md_md2_na0	delete target-role
+#crm resource meta rsc_md_md3_na0	delete target-role
+#crm resource meta rsc_vg_na0		delete target-role
+#crm resource meta rsc_fs_sapdb_na0	delete target-role
+#crm resource meta rsc_fs_usrsap_na0	delete target-role
+#crm resource meta rsc_fs_sapmnt_na0	delete target-role
+##crm resource meta rsc_sapi_as_na0
+##crm resource meta rsc_sapdb_na0
+##crm resource meta rsc_sapi_ci_na0
+#crm resource meta grp_na0		set target-role started
+
+exit 0
+
+
+#crm resource cleanup md0 2> /dev/null
+#crm resource cleanup vg0 2> /dev/null
+#crm resource cleanup fs0 2> /dev/null
+#crm resource cleanup ip0 2> /dev/null
+#crm resource cleanup sapap0 2> /dev/null
+#crm resource cleanup sapdb0 2> /dev/null
+
+#

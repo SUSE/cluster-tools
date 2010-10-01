@@ -1,0 +1,15 @@
+cib new wow24
+ configure primitive rsc_IP_NA2_sapna2as ocf:heartbeat:IPaddr2  params  ip="172.16.12.172"  op monitor interval=5s timeout=20s
+ configure primitive rsc_IP_NA2_sapna2db ocf:heartbeat:IPaddr2  params  ip="172.16.12.171"  op monitor interval=5s timeout=20s
+ configure primitive rsc_IP_NA2_sapna2ci ocf:heartbeat:IPaddr2  params  ip="172.16.12.173"  op monitor interval=5s timeout=20s
+ configure primitive rsc_CLX_NA2_SAPVCLX ocf:heartbeat:CLXEVA params	app="SAPVCLX" op monitor interval=120s timeout=60s on_fail="fence"
+ configure primitive rsc_LVM_NA2_clxvg ocf:heartbeat:LVM  params volgrpname="clxvg"  op 	monitor interval=120s timeout=60s  op     stop timeout=30s on_fail="fence"	
+ configure primitive rsc_FS_NA2_usrsap ocf:heartbeat:Filesystem params device="/dev/clxvg/clxusr" directory="/usr/sap" fstype="ext3" options="noatime,defaults" op stop timeout=300s op monitor interval=30s timeout=60s
+ configure primitive rsc_FS_NA2_sapmnt ocf:heartbeat:Filesystem params device="/dev/clxvg/clxmnt" directory="/sapmnt" fstype="ext3" options="noatime,data=writeback,defaults" op stop timeout=300s op monitor interval=30s timeout=60s
+ configure primitive rsc_FS_NA2_sapdb ocf:heartbeat:Filesystem params device="/dev/clxvg/clxdb" directory="/sapdb" fstype="ext3" options="noatime,defaults" op stop timeout=300s op monitor interval=30s timeout=60s
+ configure primitive rsc_SAPDatabase_NA2 ocf:heartbeat:SAPDatabase params	SID="NA2" DBTYPE="ADA" op monitor interval=120s timeout=60s start_delay=180s op start timeout=120s op stop timeout=180s
+ configure primitive rsc_SAPInstance_NA2_ASCS01_sapna2as ocf:heartbeat:SAPInstance params	InstanceName="NA2_ASCS01_sapna2as" AUTOMATIC_RECOVER="true" START_PROFILE="/sapmnt/NA2/profile/START_ASCS01_sapna2as" op monitor interval=120s timeout=60s start_delay=120s op start timeout=120s op stop timeout=180s on_fail="block"
+ configure primitive rsc_SAPInstance_NA2_DVEBMGS00_sapna2ci ocf:heartbeat:SAPInstance params	InstanceName="NA2_DVEBMGS00_sapna2ci" AUTOMATIC_RECOVER="true" START_PROFILE="/sap/mnt/NA2/profile/START_DVEBMGS00_sapna2ci" op  monitor interval=120s timeout=60s start_delay=240s op start timeout=240s op stop timeout=240s on_fail="block"
+ configure group grp_sap_NA2   rsc_IP_NA2_sapna2as rsc_IP_NA2_sapna2db rsc_IP_NA2_sapna2ci rsc_CLX_NA2_SAPVCLX rsc_LVM_NA2_clxvg rsc_FS_NA2_usrsap rsc_FS_NA2_sapmnt rsc_FS_NA2_sapdb rsc_SAPDatabase_NA2 rsc_SAPInstance_NA2_ASCS01_sapna2as rsc_SAPInstance_NA2_DVEBMGS00_sapna2ci meta target-role=stopped	
+ configure location loc_grp_sap_NA2_on_hpn03 grp_sap_NA2 1000: hpn03
+ configure location loc_grp_sap_NA2_on_hpn04 grp_sap_NA2 0: hpn04

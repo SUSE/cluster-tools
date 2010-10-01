@@ -1,0 +1,17 @@
+cib new wow
+ configure primitive rsc_sfex_1_1_NA1 ocf:heartbeat:sfex params	device=/dev/mapper/sapvol1_part1 index=1 monitor_interval=5s collision_timeout=10s lock_timeout=20s op monitor interval=5s timeout=15s start_delay=10s
+ configure primitive rsc_IP_NA1_sapna1ci ocf:heartbeat:IPaddr2  params  ip="10.2.128.103"  op monitor interval=5s timeout=20s
+ configure primitive rsc_IP_NA1_sapna1db ocf:heartbeat:IPaddr2  params  ip="10.2.128.101"  op monitor interval=5s timeout=20s
+ configure primitive rsc_IP_NA1_sapna1as ocf:heartbeat:IPaddr2  params  ip="10.2.128.102"  op monitor interval=5s timeout=20s
+ configure primitive rsc_RAID1_NA1_md0 ocf:heartbeat:Raid1 params	raidconf="/clusterconf/NA1/mdadm.conf" raiddev="/dev/md0" op monitor interval=120s timeout=60s on_fail="fence"
+ configure primitive rsc_LVM_NA1_sapvg ocf:heartbeat:LVM  params volgrpname="sapvg"  op 	monitor interval=120s timeout=60s  op     stop timeout=30s on_fail="fence"	
+ configure primitive rsc_FS_NA1_usrsap ocf:heartbeat:Filesystem params device="/dev/sapvg/usrsap" directory="/usr/sap" fstype="ext3" options="noatime,defaults" op stop timeout=300s op monitor interval=30s timeout=60s
+ configure primitive rsc_FS_NA1_sapmnt ocf:heartbeat:Filesystem params device="/dev/sapvg/sapmnt" directory="/sapmnt" fstype="ext3" options="noatime,data=writeback,defaults" op stop timeout=300s op monitor interval=30s timeout=60s
+ configure primitive rsc_FS_NA1_sapdb ocf:heartbeat:Filesystem params device="/dev/sapvg/sapdb" directory="/sapdb" fstype="ext3" options="noatime,defaults" op stop timeout=300s op monitor interval=30s timeout=60s
+ configure primitive rsc_SAPDatabase_NA1 ocf:heartbeat:SAPDatabase params	SID="NA1" DBTYPE="ADA" op monitor interval=120s timeout=60s start_delay=180s op start timeout=120s op stop timeout=180s
+ configure primitive rsc_SAPInstance_NA1_ASCS00_sapna1as ocf:heartbeat:SAPInstance params	InstanceName="NA1_ASCS00_sapna1as" AUTOMATIC_RECOVER="true" START_PROFILE="/usr/sap/NA1/SYS/profile/START_ASCS00_sapna1as" op monitor interval=120s timeout=60s start_delay=120s op start timeout=120s op stop timeout=180s on_fail="block"
+ configure primitive rsc_SAPInstance_NA1_DVEBMGS01_sapna1ci ocf:heartbeat:SAPInstance params	InstanceName="NA1_DVEBMGS01_sapna1ci" AUTOMATIC_RECOVER="true" START_PROFILE="/usr/sap/NA1/SYS/profile/START_DVEBMGS01_sapna1ci" op  monitor interval=120s timeout=60s start_delay=240s op start timeout=240s op stop timeout=240s on_fail="block"
+ configure group grp_sap_NA1  rsc_sfex_1_1_NA1 rsc_IP_NA1_sapna1ci rsc_IP_NA1_sapna1db rsc_IP_NA1_sapna1as rsc_RAID1_NA1_md0 rsc_LVM_NA1_sapvg rsc_FS_NA1_usrsap rsc_FS_NA1_sapmnt rsc_FS_NA1_sapdb rsc_SAPDatabase_NA1 rsc_SAPInstance_NA1_ASCS00_sapna1as rsc_SAPInstance_NA1_DVEBMGS01_sapna1ci meta target-role=stopped	
+ configure location loc_grp_sap_NA1_on_test1 grp_sap_NA1 1000: test1
+ configure location loc_grp_sap_NA1_on_test2 grp_sap_NA1 0: test2
+cib use wow

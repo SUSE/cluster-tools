@@ -1,0 +1,13 @@
+exit 99
+# pingd logic
+crm configure primitive pingd0 ocf:heartbeat:pingd			\
+	meta	target-role="started"					\
+	params	host_list="130.197.220.12" multiplier="100"		\
+	op monitor interval="10" timeout="20" start-delay="0"
+crm configure clone clone_pingd0 pingd0					\
+	meta	globally-unique="false" target-role="started"		\
+	params	pingd-dampen="5s" pingd-multiplier="100"		\
+		ping-hosts="130.197.220.12"
+crm configure location Webserver-on-connected-node Webserver		\
+	rule	-inf: not_defined pingd or pingd lte 0
+

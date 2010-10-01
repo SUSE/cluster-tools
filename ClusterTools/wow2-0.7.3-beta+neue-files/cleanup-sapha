@@ -1,0 +1,48 @@
+#! /bin/bash
+# cleanup-cluster
+# derived from M.Hollsteins's cleanup-cluster.sh
+
+set -x
+
+CN="test2"
+RG="grp_sap_NA1"
+FS="/sapdb /sapmnt /usr/sap"
+VG="sapvg"
+MD="/dev/md0"
+
+ERR=/dev/null
+
+# Stop the other node
+ssh root@$CN "rcopenais stop || killall corosync" 2>$ERR
+
+# Stop the resources 
+for r in $RG; do
+	crm resource stop $r 2>$ERR 
+done
+sleep 2
+killall sapstartsrv saposcol 2>$ERR
+killall vserver niserver 2>$ERR 
+
+# Release any potentially used resources
+for f in $FS; do
+	umount $f 2>$ERR
+done
+for v in $VG; do
+	vgchange -an $v 2>$ERR
+done
+for m in $MD; do
+	mdadm -S $m 2>$ERR
+done
+
+# Wipe out internal cluster config
+crm configure erase 2>$ERR
+
+rcopenais stop || killall corosync 2>$ERR
+
+# Wipe out persistant cluster state
+rm -rf /var/lib/corosync/ringid_*
+rm -rf /var/lib/heartbeat/crm/*
+rm -rf /var/lib/pengine/*
+
+ssh root@$CN "rm -rf /var/lib/corosync/ringid_* /var/lib/heartbeat/crm/* /var/lib/pengine/*" 2>$ERR
+#

@@ -1,0 +1,8 @@
+source wowlib2
+for raiddev in $RAID1_DEVICES; do
+	raidname=${raiddev#/dev/}
+	woweng2 UUID=rsc_RAID1_${SAPSID}_${raidname} \
+		DEVICE=$raiddev \
+		MDADM_CONF=$RAID_CONFIG \
+		$wowcli/01-04-md.cli
+done

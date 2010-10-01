@@ -1,0 +1,80 @@
+#!/bin/bash
+#
+# (c) 2008 Fabian Herschel
+# GPL
+# Last changes: 
+# 2008-09-23: correction for *=*; now can handle unplaned right side with characters like '=', ';', ' ' and so on
+#
+set -u
+PATH="$PATH:/usr/sbin"
+
+UUID=$(uuidgen)
+CIBOBJTYPE=resources
+CIBACTION="-C"
+CIBREMOTE=""
+XML=""
+WOW_SIMULATE=yes
+
+
+while [ $# -gt 0 ]
+do
+	case "$1" in
+	-? | -h | --help )
+		echo "usage: $0 {var=val} xml-snipset"
+		echo "       var could be one of:"
+		echo "       - UUID (The unique id to be used for the resource naming)"
+		echo "       - CIBOBJTYPE (default: \"resources\", could be either resources, constraints or crm_config)"
+		echo "       - CIBACTION  (default: -C for create, could also be -D for delete, -U for update or -M for modify)"
+		echo "       - CIBREMOTE  (default: empty for localhost, could also be set to a remote hostname or hostip address)"
+		echo "       - WOW_SIMULATE (default: no, if set ro yes do not sent the change to the cluster)"
+		exit 0
+		;;
+	*=* )
+		var=${1%%=*}
+                val=${1#*=}
+		eval $var="\$val";
+		;;
+	* ) 
+		CLI=$1
+		;;
+	esac
+	shift
+
+done
+
+if [ -z "$CLI" ]; then
+	echo "You did not specify any CLI file on the command line" >&2
+	exit 2
+fi
+
+# echo CLI=$CLI >&2
+
+(
+	echo "cat <<$UUID"
+	cat $CLI
+	echo "$UUID"
+) > /tmp/$UUID.cli
+A=$(. /tmp/$UUID.cli)
+
+if [ -n "$CIBREMOTE" ]
+then
+	CliRemoreOrLocal="ssh $CIBREMOTE crm"
+	MESSAGE="Connecting to $CIBREMOTE"
+else
+	MESSAGE="Connecting locally"
+	CliRemoreOrLocal=""
+fi
+if [ "$WOW_SIMULATE" = "yes" ]
+then
+	#echo "$CliRemoreOrLocal cibadmin $CIBACTION -o $CIBOBJTYPE -X \'$A\'"
+	echo "$CliRemoreOrLocal $A"
+	rc=$?
+else
+	echo $MESSAGE
+	#$CliRemoreOrLocal "cibadmin $CIBACTION -o $CIBOBJTYPE -X '$A'"
+	$CliRemoreOrLocal "$A"
+	rc=$?
+	echo "return code is: $rc" 1>&2
+fi
+rm /tmp/$UUID.cli
+exit $rc

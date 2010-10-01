@@ -1,0 +1,3 @@
+configure primitive $UUID stonith::external/riloe params hostlist=$ILO_HOSTNAME ilo_hostname=$ILO_IPADDR ilo_user=$ILO_USER ilo_password=$ILO_PASSWD
+configure location loc_$UUID $UUID -inf: $ILO_HOSTNAME
+

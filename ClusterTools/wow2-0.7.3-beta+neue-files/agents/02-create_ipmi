@@ -1,0 +1,6 @@
+source wowlib2
+myIPMI_ADDRESSES=$IPMIADDRESSES
+for node in $ALLNODES; do
+	IPMI_ADDRESS=$(firstof_var myIPMI_ADDRESSES); shift_var myIPMI_ADDRESSES
+	woweng2 UUID=rsc_stonith_sunipmi_${node} IPMI_HOSTNAME="$node" IPMI_IPADDR="$IPMI_ADDRESS" $IPMISETTINGS $wowcli/02-ipmi-stonith.cli
+done

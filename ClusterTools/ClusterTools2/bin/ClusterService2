@@ -2,6 +2,12 @@
 
 #use strict;
  use Term::ReadLine;
+ use Cwd;
+ use File::Spec::Functions qw(rel2abs);
+ use File::Basename qw(dirname);
+
+my $path   = rel2abs( $0 );
+our $directory = dirname( $path );
 
  my $term = new Term::ReadLine 'ClusterService';
  my $prompt = " command: ";
@@ -15,7 +21,8 @@
 
 # version 2010-09-30 16:45
 
-my $rscFile = "../lib/ClusterService2.rsc";
+#my $cwd = cwd;
+my $rscFile = "$directory/../lib/ClusterService2.rsc";
 my $test = 0;
 my $count = 0;
 my $countf = "";

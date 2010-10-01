@@ -64,6 +64,9 @@ NFENCE:MAIN:FENCE node!!:crm node fence %n
 MP:MAIN:multipath status:multipath -ll
 LS:MAIN:show mapper devices:ls /dev/mapper/*
 LOG:MAIN:show CLX log entries:grep CLX /var/log/messages
+LF:MAIN:show failcounts:list_failcounts
+RF:MAIN:reset failcounts:reset_failcounts
+CRMMON:HIDE::crm_mon -r
 ### TODO
 # show scores
 # reset status/failcounts for all failed resources

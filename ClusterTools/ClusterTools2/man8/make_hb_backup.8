@@ -1,0 +1,96 @@
+.TH make_hb_backup 8 "10 Dec 2009" "" "ClusterTools"
+.\"
+.SH NAME
+make_hb_backup \- make backup of heartbeat2 cluster configuration
+.\"
+.SH SYNOPSIS
+.B make_hb_backup 
+\fIOPTION\fR \fIPARAMETER\fR
+.br
+.B make_hb_backup 
+\fIOPTION\fR
+.br
+.B wow bk
+\fIOPTION\fR [\fIPARAMETER\fR] 
+.\"
+.SH DESCRIPTION
+\fBmake_hb_backup\fP collects cluster configuration and log files from one or
+multiple nodes of an heartbeat2 cluster. Resource agents (OCF and LSB) are
+backed up as well.
+Cluster configuration from all nodes of a cluster could be backed up within one
+run. Collected files are stored in one tar archive.
+.\"
+.SH OPTIONS
+Global options are:
+.HP
+\fB --help\fR
+	Help information.
+.HP
+\fB --version\fR
+	Version information.
+.HP
+\fB --hosts\fR
+	Collect data on given nodes of an heartbeat2 cluster. ssh login to this nodes is needed.
+.HP
+\fB --autodetect\fR
+	Collect data on all active nodes of an heartbeat2 cluster. ssh login to this nodes is needed.
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH EXAMPLES
+.TP
+# make_hb_backup --help 
+show help.
+.TP
+# make_hb_backup --hosts "edir01 edir02 edir03"
+collect data on three given nodes of an heartbeat2 cluster.
+.TP
+# make_hb_backup --autodetect 
+collect data on all active nodes of an heartbeat2 cluster.
+.\"
+.SH FILES
+.TP
+/usr/sbin/make_hb_backup
+	the program itself.
+.TP
+/usr/lib/wow/
+	make_hb_backup components.
+.TP
+/root/suse/
+	working directory. Arbitrary files in this directory are backed up
+together with the collected data.
+.TP
+/etc/ha.d/
+	basic cluster configuration.
+.TP
+/var/lib/heartbeat/
+	cluster configuration, current cluster state, and transition logs.
+.TP
+/clusterconf/
+	configuration of cluster-controlled multipath devices.
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+http://ClusterTools.sourceforge.net
+.\"
+.SH SEE ALSO
+
+\fBwow\fP(8), \fBwhbsaprecheck\fP(8), \fBsupportconfig\fP(1)
+.\"
+.SH AUTHOR
+Fabian Herschel
+.\"
+.SH COPYRIGHT
+(c) 2007-2009 Fabian Herschel, Germany. 
+.br
+make_hb_backup comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

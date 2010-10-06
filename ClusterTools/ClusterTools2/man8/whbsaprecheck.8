@@ -1,4 +1,4 @@
-.TH whbsaprecheck 8 "10 Dec 2009" "" "ClusterTools"
+.TH whbsaprecheck 8 "10 Oct 2010" "" "ClusterTools2"
 .\"
 .SH NAME
 whbsaprecheck \- check system for SAP HA cluster pre-requisites
@@ -14,7 +14,7 @@ whbsaprecheck \- check system for SAP HA cluster pre-requisites
 \fIOPTION\fR [\fIPARAMETER\fR]
 .\"
 .SH DESCRIPTION
-\fBwhbsaprecheck\fP checks if a Linux system is prepared to become a heartbeat2
+\fBwhbsaprecheck\fP checks if a Linux system is prepared to become a pacemaker
 based high-availability cluster for SAP instances.
 The check is done according to the concepts described in the technical guide
 \fISAP Applications Made High Available on SUSE Linux Enterprise Server 10\fR . 
@@ -26,7 +26,7 @@ A check could be done on one of two levels:
 - Generic check of system basics. The script will look for
 generic pre-requisites that are needed to setup an HA cluster for SAP.
 This includes software packages, runlevel services, and other
-conditions that are common to all heartbeat2 clusters for any SAP instance or
+conditions that are common to all pacemaker clusters for any SAP instance or
 cluster installation.
 
 - Detailed check for conditions that have to be met to run a 
@@ -103,7 +103,7 @@ http://www.novell.com/partners/sap/sap_on_hasi.pdf
 F.Herschel, L.Pinne
 .\"
 .SH COPYRIGHT
-(c) 2009 SUSE Linux GmbH, Germany. 
+(c) 2009-2010 SUSE Linux GmbH, Germany. 
 .br
 whbsaprecheck comes with ABSOLUTELY NO WARRANTY.
 .br

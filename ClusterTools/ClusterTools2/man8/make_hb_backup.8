@@ -1,7 +1,7 @@
-.TH make_hb_backup 8 "10 Dec 2009" "" "ClusterTools"
+.TH make_hb_backup 8 "10 Oct 2010" "" "ClusterTools2"
 .\"
 .SH NAME
-make_hb_backup \- make backup of heartbeat2 cluster configuration
+make_hb_backup \- make backup of pacemaker cluster configuration
 .\"
 .SH SYNOPSIS
 .B make_hb_backup 
@@ -15,7 +15,7 @@ make_hb_backup \- make backup of heartbeat2 cluster configuration
 .\"
 .SH DESCRIPTION
 \fBmake_hb_backup\fP collects cluster configuration and log files from one or
-multiple nodes of an heartbeat2 cluster. Resource agents (OCF and LSB) are
+multiple nodes of an pacemaker cluster. Resource agents (OCF and LSB) are
 backed up as well.
 Cluster configuration from all nodes of a cluster could be backed up within one
 run. Collected files are stored in one tar archive.
@@ -30,10 +30,10 @@ Global options are:
 	Version information.
 .HP
 \fB --hosts\fR
-	Collect data on given nodes of an heartbeat2 cluster. ssh login to this nodes is needed.
+	Collect data on given nodes of an pacemaker cluster. ssh login to this nodes is needed.
 .HP
 \fB --autodetect\fR
-	Collect data on all active nodes of an heartbeat2 cluster. ssh login to this nodes is needed.
+	Collect data on all active nodes of an pacemaker cluster. ssh login to this nodes is needed.
 .\"
 .SH EXIT STATUS
 .B 0
@@ -48,10 +48,10 @@ Usage, syntax or execution errors.
 show help.
 .TP
 # make_hb_backup --hosts "edir01 edir02 edir03"
-collect data on three given nodes of an heartbeat2 cluster.
+collect data on three given nodes of an pacemaker cluster.
 .TP
 # make_hb_backup --autodetect 
-collect data on all active nodes of an heartbeat2 cluster.
+collect data on all active nodes of an pacemaker cluster.
 .\"
 .SH FILES
 .TP
@@ -68,7 +68,7 @@ together with the collected data.
 /etc/ha.d/
 	basic cluster configuration.
 .TP
-/var/lib/heartbeat/
+/var/lib/heartbeat/, /var/lib/corosync/, /var/lib/pengine/
 	cluster configuration, current cluster state, and transition logs.
 .TP
 /clusterconf/
@@ -81,13 +81,13 @@ http://ClusterTools.sourceforge.net
 .\"
 .SH SEE ALSO
 
-\fBwow\fP(8), \fBwhbsaprecheck\fP(8), \fBsupportconfig\fP(1)
+\fBwow\fP(8), \fBwhbsaprecheck\fP(8), \fBsupportconfig\fP(1), \fBsam\fP(1)
 .\"
 .SH AUTHOR
 Fabian Herschel
 .\"
 .SH COPYRIGHT
-(c) 2007-2009 Fabian Herschel, Germany. 
+(c) 2007-2010 Fabian Herschel, Germany. 
 .br
 make_hb_backup comes with ABSOLUTELY NO WARRANTY.
 .br

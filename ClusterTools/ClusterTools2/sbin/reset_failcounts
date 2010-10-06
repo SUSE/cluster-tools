@@ -1,8 +1,9 @@
 #!/bin/sh
 #
-# Simple script to reset failcounts
+# reset_failcounts
 #
-# GPL
+# (c) 2009-2010 SUSE Linux GmbH, Germany. Author: F.Herschel.
+# GNU Public License. No warranty.
 #
 
 NODES=`cl_status listnodes -n`
@@ -29,9 +30,6 @@ for node in $NODES
 			echo "done"
 			;;
 		esac
-
-
 	done
-
 done
-
+#

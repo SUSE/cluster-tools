@@ -1,8 +1,9 @@
 #!/bin/sh
 #
-# Simple script to reset failcounts
+# list_failcounts
 #
-# GPL
+# (c) 2009-2010 SUSE Linux GmbH, Germany. Author: F.Herschel.
+# GNU Public License. No warranty.
 #
 
 #NODES=`cl_status listnodes -n`
@@ -22,6 +23,6 @@ for node in $NODES
  #               failcount=`$CRM_FAILCOUNT -G -U $node -r $resource | awk '{ print $2 }' | cut -d= -f2`
 		failcount=$($CRM_FAILCOUNT -G -U $node -r $resource | sed -e "s/^.*value=\([0-9][0-9]*\)/\1/")
                 echo $failcount
-                done
         done
-
+done
+#

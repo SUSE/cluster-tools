@@ -10,7 +10,8 @@ CLXSTACK_ALL_WOW_AGENTS=\
 01-08-add_sapinstance \
 01-99-add_group-clx
 
-WOW_AGENTS_DIR=/usr/share/ClusterTools2/agents
+export PATH="$PATH:/usr/lib/ClusterTools2"
+WOW_AGENTS_DIR=/usr/lib/ClusterTools2/agents
 #
 # simple param check
 #

@@ -68,6 +68,9 @@ CDFN:MAIN:delete failcount of resource on node:crm resource failcount %{r} delet
 # FENCE node!!
 NFENCE:MAIN:FENCE node!!:crm node fence %{n}
 #
+MP:MAIN:multipath status:multipath -ll
+LS:MAIN:show mapper devices:ls /dev/mapper/*
+LOG:MAIN:show CLX log entries:grep CLX /var/log/messages
 CLF:MAIN:show all failcounts:list_failcounts
 CRF:MAIN:reset all failcounts:reset_failcounts
 CRMMON:HIDE::crm_mon -r

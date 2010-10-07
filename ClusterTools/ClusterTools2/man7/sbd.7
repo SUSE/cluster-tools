@@ -4,9 +4,8 @@
 sbd \- Split Brain Detector 
 .\"
 .SH DESCRIPTION
-
-
-= Storage protection =
+.br
+\fB* Data Protection\fR
 
 The SLE HA cluster stack's highest priority is protecting the integrity
 of data. This is achieved by preventing uncoordinated concurrent access
@@ -34,11 +33,11 @@ This chapter describes an IO fencing mechanism that leverages the
 storage itself, following by a description of an additional layer of
 protection to ensure exclusive storage access. These two mechanisms can
 even be combined for higher levels of protection.
+.\"
+.P
+\fB* Storage-based Fencing\fR
 
-
-== Storage-based fencing ==
-
-This section describes how scenarios where shared storage is used can
+In scenarios where shared storage is used one can
 leverage said shared storage for very reliable I/O fencing and avoidance
 of split-brain scenarios.
 
@@ -46,15 +45,12 @@ This mechanism has been used successfully with the Novell Cluster Suite
 and is also available in a similar fashion for the SLE HA 11 product
 using the "external/sbd" STONITH agent.
 
-
-=== Description ===
-
 In an environment where all nodes have access to shared storage, a small
-(1MB) partition is formated for use with sbd. The daemon, once
+partition is formated for use with SBD. The sbd daemon, once
 configured, is brought online on each node before the rest of the
 cluster stack is started, and terminated only after all other cluster
 components have been shut down - ensuring that cluster resources are
-never activated without sbd supervision.
+never activated without SBD supervision.
 
 The daemon automatically allocates one of the message slots on the
 partition to itself, and constantly monitors it for messages to itself.
@@ -67,19 +63,13 @@ guaranteeing that it is not disconnected from fencing message. (If the
 cluster data resides on the same logical unit in a different partition,
 this is not an additional point of failure; the work-load would
 terminate anyway if the storage connectivity was lost.)
-
-Increased protection is offered through "watchdog" support. Modern
-systems support a "hardware watchdog" that has to be updated by the
-software client, or else the hardware will enforce a system restart.
-This protects against failures of the sbd process itself, such as
-dieing, or becoming stuck on an IO error.
-
-
-==== Requirements ====
+.\"
+.P
+\fB* Requirements\fR
 
 The environment must have shared storage reachable by all nodes. It is
 recommended to create a 1MB partition at the start of the device; in the
-rest of this text, this is referred to as "/dev/SBD", please substitute
+rest of this text, this is referred to as "/dev/<SBD>", please substitute
 your actual pathname (ie, "/dev/sdc1") for this below.
 
 This shared storage segment must not make use of host-based RAID, cLVM2,
@@ -87,16 +77,16 @@ nor DRBD.
 
 However, using storage-based RAID and multipathing is recommended for
 increased reliability.
-
-
-==== SBD partition ====
+.\"
+.P
+\fB* SBD Partition\fR
 
 After having made very sure that this is indeed the device you want to
 use, and does not hold any data you need - as the sbd command will
 overwrite it without further requests for confirmation -, initialize the
-sbd device:
+sbd device.
 
-If your sbd device resides on a multipath group, you may need to adjust
+If your SBD device resides on a multipath group, you may need to adjust
 the timeouts sbd uses, as MPIO's path down detection can cause some
 latency: after the msgwait timeout, the message is assumed to have been
 delivered to the node. For multipath, this should be the time required
@@ -104,21 +94,10 @@ for MPIO to detect a path failure and switch to the next path. You may
 have to test this in your environment. The node will perform suicide if
 it has not updated the watchdog timer fast enough; the watchdog timeout
 must be shorter than the msgwait timeout - half the value is a good
-estimate. This can be specified when the SBD device is initialized:
-
-
-==== Setup the software watchdog ====
-
-Additionally, it is highly recommended that you set up your Linux system
-to use a watchdog. Please refer to the SLES manual for this step(?).
-
-This involves loading the proper watchdog driver on system boot. On HP
-hardware, this is the "hpwdt" module. For systems with a Intel TCO,
-"iTCO_wdt" can be used. "softdog" is the most generic driver, but it is
-recommended that you use one with actual hardware integration. (See
-"drivers/watchdog" in the kernel package for a list of choices.)
-
-==== Starting the sbd daemon ====
+estimate. This can be specified when the SBD device is initialized.
+.\"
+.P
+\fB* Testing and Starting the SBD Daemon\fR
 
 The sbd daemon is a critical piece of the cluster stack. It must always
 be running when the cluster stack is up, or even when the rest of it has
@@ -128,9 +107,14 @@ The openais init script starts and stops SBD if configured; add the
 following to /etc/sysconfig/sbd:
 
 ===
-SBD_DEVICE="/dev/SBD"
+#/etc/sysconfig/sbd
+.br
+SBD_DEVICE="/dev/<SBD>"
+.br
 # The next line enables the watchdog support:
+.br
 SBD_OPTS="-W"
+.br
 === 
 
 If the SBD device is not accessible, the daemon will fail to start and
@@ -138,60 +122,76 @@ inhibit openais startup.
 
 Note: If the SBD device becomes inaccessible from a node, this could
 cause the node to enter an infinite reboot cycle. That is technically
-correct, but depending on your administrative policies, might be a
+correct, but depending on your administrative policies, might be 
 considered a nuisance. You may wish to not automatically start up
 openais on boot in such cases.
 
 Before proceeding, ensure that SBD has indeed started on all nodes
 through "rcopenais restart".
-
-
-=== Testing SBD ===
-
-The command sbd
-can be used to read and write the sbd device.
-
-
-==== Configuring the fencing resource ====
-
-To complete the sbd setup, it is necessary to activate sbd as a
-STONITH/fencing mechanism in the CIB.
-
-Note that since node slots are allocated automatically, no manual
-hostlist needs to be defined.
-
-The SBD mechanism is used instead of other fencing/stonith mechanisms;
-please disable any others you might have configured before.
-
 Once the resource has started, your cluster is now successfully
 configured for shared-storage fencing, and will utilize this method in
 case a node needs to be fenced.
 
+The command sbd
+can be used to read and write the sbd device, see sbd(8) .
+
+To complete the sbd setup, it is necessary to activate SBD as a
+STONITH/fencing mechanism in the CIB.
+The SBD mechanism is used instead of other fencing/stonith mechanisms;
+please disable any others you might have configured before.
+.\"
+.P
+\fB* Software Watchdog\fR
+
+Increased protection is offered through "watchdog" support. Modern
+systems support a "hardware watchdog" that has to be updated by the
+software client, or else the hardware will enforce a system restart.
+This protects against failures of the sbd process itself, such as
+dieing, or becoming stuck on an IO error.
+
+It is highly recommended that you set up your Linux system
+to use a watchdog. Please refer to the SLES manual for this step.
+
+This involves loading the proper watchdog driver on system boot. On HP
+hardware, this is the "hpwdt" module. For systems with a Intel TCO,
+"iTCO_wdt" can be used. "softdog" is the most generic driver, but it is
+recommended that you use one with actual hardware integration. See
+/lib/modules/.../kernel/drivers/watchdog in the kernel package for a list
+of choices.
+
+SBD can beconfigured in /etc/sysconfig/sbd  to use the systems's watchdog.
 .\"
 .SH FILES
 .TP
 /usr/sbin/sbd
-	the command
+	the daemon (and control command).
 .TP
 /usr/lib64/stonith/plugins/external/sbd
-	the
-
+	the STONITH plugin.
 .TP
 /etc/sysconfig/sbd
-	the configuration file
+	the configuration file.
 .TP
-/dev/<device>
-	
-
+/dev/<SBD>
+	the SBD block device.
+.TP
+/lib/modules/<kernel-version>/kernel/drivers/watchdog/
+	the watchdog modules.
+.\"
+.SH BUGS
+To report bugs for a SUSE or Novell product component, please use
+ http://support.novell.com/additional/bugreport.html .
 .\"
 .SH SEE ALSO
 
 \fBsbd\fP(8),
-
 http://www.linux-ha.org/wiki/SBD_Fencing ,
 http://www.mail-archive.com/pacemaker@oss.clusterlabs.org/msg03849.html ,
 http://www.novell.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/book_sleha/data/part_config.html
-
+.\"
+.SH AUTHORS
+The content of this manual page was mostly derived from online documentation
+mentioned above.
 .\"
 .SH COPYRIGHT
 (c) 2009-2010 SUSE Linux GmbH, Germany.

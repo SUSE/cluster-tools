@@ -2,7 +2,8 @@
 # sapall-ilo - start all wow agents to configure ilo stonith fencing
 #
 ILO_ALL_WOW_AGENTS=02-create_ilo
-WOW_AGENTS_DIR=/usr/share/ClusterTools2/agents
+WOW_AGENTS_DIR=/usr/lib/ClusterTools2/agents
+export PATH="$PATH:/usr/lib/ClusterTools2"
 #
 # simple param check
 #

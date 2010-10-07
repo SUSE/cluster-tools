@@ -12,6 +12,7 @@
  use Cwd;
  use File::Spec::Functions qw(rel2abs);
  use File::Basename qw(dirname);
+ use Getopt::Long;
 
 my $path   = rel2abs( $0 );
 our $directory = dirname( $path );
@@ -34,11 +35,23 @@ my $rscFile = "/usr/share/ClusterTools2/ClusterService.rsc";
 my $test = 0;
 my $count = 0;
 my $countf = "";
+my $result = 0;
+my $help = 0;
+
+         $result = GetOptions ("rscFile=s"   => \$rscFile,  
+                               "help"  => \$help,
+                               "verbose"  => \$verbose);
+
+if ($help) {
+	printf "usage %s: --rscFile rscFile | --help\n", "ClusterService";
+	exit 0;
+}
 
 my %rsc2cmd = {};
 my %rsc2descr = {};
 my %rsc2menu = {};
 my %no2rsc = {};
+my %no2ctrl = {};
 my $menu = "";
 my $key = "";
 my $cmd; 
@@ -68,14 +81,16 @@ sub fillcmd($) {
 	my ($cmd) = shift(@_);
 	my $replace;
 	my $placeholder;
-	while ( $cmd =~ /(%.)/ ) {
-		$placeholder = $1;	
+	my $placeholdervar;
+	while ( $cmd =~ /(%\{([a-zA-Z0-9]*)\})/ ) {
+		$placeholder = "$1";	
+		$placeholdervar = "%$2";	
 		#printf "DBG: found placeholder %s\n", $placeholder;
 		if (@params > 0) {
 			$replace = shift @params;
 		} else {
-			system($rsc2cmd{$placeholder});
-			$replace = $term->readline($rsc2descr{$placeholder});
+			system($rsc2cmd{$placeholdervar});
+			$replace = $term->readline($rsc2descr{$placeholdervar});
 			chomp $replace;
 		}
 		printf "DBG: found placeholder %s replace with %s\n", $placeholder, $replace;
@@ -90,10 +105,11 @@ while (<RSC>) {
 		chomp;
 		$count++;
 		$countF = sprintf("%03d", $count);
-		($key, $menu, $descr, $cmd) = split(/:/);
+		($key, $menu, $descr, $cmd, $ctrl) = split(/:/);
 		$rsc2cmd{$key} = $cmd;
 		$rsc2descr{$key} = $descr;
 		$rsc2menu{$key} = $menu;
+		$rsc2ctrl{$key} = $ctrl;
 		$no2rsc{$countF} = $key;
 	}
 }
@@ -125,8 +141,9 @@ while ( $cont ) {
         ($cmd, @params) = split (' ',$call);
 	$callUC = uc $cmd;
 	# $callUC = uc $call;
-	# printf "DBG: GOT: %s\n", $call;
-	if ( $callUC =~ /^EXIT$/i ) {
+	# printf "DBG: GOT: %s\n", $callUC;
+	# printf "DBG: ctrl: %s\n", $rsc2ctrl{$callUC};
+	if ( $rsc2ctrl{$callUC} =~ /^EXIT$/i ) {
 		$cont = 0;
 	} else {
 		if ( defined ($rsc2cmd{$callUC}) ) {

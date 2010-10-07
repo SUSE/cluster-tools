@@ -1,0 +1,79 @@
+#
+# spec file for package ClusterTools
+#
+# Copyright (c) 2008 SUSE LINUX GmbH, Frankfurt, Germany.
+# This file and all modifications and additions to the pristine
+# package are under the same license as the package itself.
+#
+# GPL
+#
+# please send bugfixes or comments to feedback@suse.de.
+#
+Name:         ClusterTools2
+License:      GPL
+Group:        System/terminalserver
+Autoreqprov:  on
+Summary:      Cluster Tools to control some functions easy
+Version:      2.0.0
+Release:      3 
+Source:       %{name}-%{version}.tgz
+BuildRoot:    %{_tmppath}/%{name}-%{version}-build
+Vendor:	      SUSE Linux GmbH
+Requires:     pacemaker > 1.1.1
+Requires:     perl-TermReadLine-Gnu >= 1.16
+	
+%description
+TBD
+
+%prep
+%setup -c -T -a 0
+
+%build
+( cd man7; for mp in *7; do gzip $mp; done )
+( cd man8; for mp in *8; do gzip $mp; done )
+
+%clean
+test "$RPM_BUILD_ROOT" != "/" && rm -rf $RPM_BUILD_ROOT
+
+%install
+mkdir -p %{buildroot}/usr/sbin
+mkdir -p %{buildroot}/usr/share/ClusterTools2
+mkdir -p %{buildroot}/usr/share/man7
+mkdir -p %{buildroot}/usr/share/man8
+
+#
+# binaries
+#
+cp -va sbin/* %{buildroot}/usr/sbin
+#
+# share 
+#
+cp -a share/* %{buildroot}/usr/share/ClusterTools2
+#
+# config and start script
+#
+# man page(s) and license
+#
+cp -a man7/*.gz %{buildroot}/usr/share/man7
+cp -a man8/*.gz %{buildroot}/usr/share/man8
+
+%post
+
+%files
+%defattr(-,root,root)
+/usr/sbin/ClusterService
+#/usr/sbin/clusterstate
+#/usr/sbin/cluster_actions
+#/usr/sbin/linkstate
+/usr/sbin/list_failcounts
+#/usr/sbin/make_hb_backup
+/usr/sbin/reset_failcounts
+/usr/sbin/whbsaprecheck
+#/usr/sbin/showscores
+/usr/share/ClusterTools2/ClusterService.rsc
+%doc /usr/share/man7/*.gz
+%doc /usr/share/man8/*.gz
+
+%changelog -n ClusterTools
+* Wed Oct 06 2010 - fabian.herschel@novell.com
+  2.0.0-1 initial package

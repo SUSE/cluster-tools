@@ -1,4 +1,11 @@
 #!/usr/bin/perl
+#
+# ClusterService
+#
+# (c) 2009-2010 SUSE Linux GmbH, Germany. Author: F.Herschel.
+# GNU Public License. No warranty.
+#
+
 
 #use strict;
  use Term::ReadLine;
@@ -22,7 +29,8 @@ our $directory = dirname( $path );
 # version 2010-09-30 16:45
 
 #my $cwd = cwd;
-my $rscFile = "$directory/../lib/ClusterService2.rsc";
+#my $rscFile = "$directory/../lib/ClusterService2.rsc";
+my $rscFile = "/usr/share/ClusterTools2/ClusterService.rsc";
 my $test = 0;
 my $count = 0;
 my $countf = "";

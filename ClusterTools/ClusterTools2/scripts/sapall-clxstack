@@ -1,14 +1,16 @@
 #
 # sapall-clxstack - start all wow agents to configure a clxstack resource group
 #
-CLXSTACK_ALL_WOW_AGENTS=\
-01-03-add_ip \
-01-04-add_clx \
-01-05-add_lvm \
-01-06-add_fs \
-01-07-add_sapdatabase \
-01-08-add_sapinstance \
+CLXSTACK_ALL_WOW_AGENTS=$(cat <<EOC
+01-03-add_ip 
+01-04-add_clx 
+01-05-add_lvm 
+01-06-add_fs 
+01-07-add_sapdatabase 
+01-08-add_sapinstance 
 01-99-add_group-clx
+EOC
+)
 
 export PATH="$PATH:/usr/lib/ClusterTools2"
 WOW_AGENTS_DIR=/usr/lib/ClusterTools2/agents

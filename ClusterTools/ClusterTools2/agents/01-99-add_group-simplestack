@@ -68,7 +68,7 @@ while read sap_type sap_inst sap_prof sap_parm; do
 
 woweng2 UUID=grp_sap_${SAPSID} \
     GROUP_MEMBERS="$GROUP_MEMBERS" \
-    cli/01-grp-sap.cli
+    $wowcli/01-grp-sap.cli
 #
 # LOC
 #

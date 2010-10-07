@@ -14,7 +14,7 @@ License:      GPL
 Group:        System/terminalserver
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.1.0
+Version:      2.1.1
 Release:      3 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
@@ -53,8 +53,8 @@ mkdir -p %{buildroot}/usr/share/ClusterTools2/samples
 mkdir -p %{buildroot}/usr/lib/ClusterTools2
 mkdir -p %{buildroot}/usr/lib/ClusterTools2/agents
 mkdir -p %{buildroot}/usr/lib/ClusterTools2/scripts
-mkdir -p %{buildroot}/usr/share/man7
-mkdir -p %{buildroot}/usr/share/man8
+mkdir -p %{buildroot}/usr/share/man/man7
+mkdir -p %{buildroot}/usr/share/man/man8
 
 #
 # "binaries"
@@ -65,6 +65,7 @@ cp -va sbin/* %{buildroot}/usr/sbin
 #
 cp -a share/* %{buildroot}/usr/share/ClusterTools2
 cp -a cli/* %{buildroot}/usr/share/ClusterTools2/cli
+cp -a samples/* %{buildroot}/usr/share/ClusterTools2/samples
 #
 #
 cp -a lib/* %{buildroot}/usr/lib/ClusterTools2
@@ -72,8 +73,8 @@ cp -a agents/* %{buildroot}/usr/lib/ClusterTools2/agents
 cp -a scripts/* %{buildroot}/usr/lib/ClusterTools2/scripts
 # man page(s) and license
 #
-cp -a man7/*.gz %{buildroot}/usr/share/man7
-cp -a man8/*.gz %{buildroot}/usr/share/man8
+cp -a man7/*.gz %{buildroot}/usr/share/man/man7
+cp -a man8/*.gz %{buildroot}/usr/share/man/man8
 
 %post
 
@@ -91,8 +92,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man8
 #/usr/sbin/showscores
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
-%doc /usr/share/man7/*.gz
-%doc /usr/share/man8/*.gz
+%doc /usr/share/man/man7/*.gz
+%doc /usr/share/man/man8/*.gz
 
 %changelog -n ClusterTools
 * Thu Oct 07 2010 - fabian.herschel@novell.com

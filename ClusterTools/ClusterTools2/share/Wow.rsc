@@ -14,7 +14,8 @@
 %ww:HIDE:Select or enter full path to your wow file:ls -1 *.wow
 %wc:HIDE:Select or enter full path to your cli file:ls -1 *.cli
 #
-WOW:MAIN:call wow with scriptname:bash /usr/lib/ClusterTools2/scripts/%{s} %{ww}
+WOWED:MAIN:Edit Wow File:vi %{ww}
+WOWCALL:MAIN:call wow with scriptname:bash /usr/lib/ClusterTools2/scripts/%{s} %{ww}
 WOWCAT:MAIN:show created cli file:cat %{wc}
 WOWBURN:MAIN:apply created cli file:crm -f %{wc}
 CONTROL:HIDE:::exit

@@ -90,7 +90,7 @@ sub fillcmd($) {
 			$replace = shift @params;
 		} else {
 			system($rsc2cmd{$placeholdervar});
-			$replace = $term->readline($rsc2descr{$placeholdervar});
+			$replace = $term->readline(" $rsc2descr{$placeholdervar}: ");
 			chomp $replace;
 		}
 		printf "DBG: found placeholder %s replace with %s\n", $placeholder, $replace;

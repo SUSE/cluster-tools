@@ -1,0 +1,40 @@
+#
+# sapall-simplestack - start all wow agents to configure a simplestack resource group
+#
+SIMPLESTACK_ALL_WOW_AGENTS=\
+01-02-add_sfex1 \
+01-03-add_ip \
+01-04-add_raid1 \
+01-05-add_lvm \
+01-06-add_fs \
+01-07-add_sapdatabase \
+01-08-add_sapinstance \
+01-99-add_group-simplestack
+
+WOW_AGENTS_DIR=/usr/share/ClusterTools2/agents
+#
+# simple param check
+#
+if [ $# -ne 1 ]; then
+   echo "usage: $0 wow-config-file"
+   exit 2
+else 
+   config=$1
+fi
+#
+#
+#
+cli_batch=${config%.wow}.sap.cli
+echo "creating crm batch file $cli_batch"
+#
+# create the resulting cli file
+#
+> $cli_batch
+echo "cib new wow" >> $cli_batch
+for agent in $SIMPLESTACK_ALL_WOW_AGENTS
+do 
+	echo "calling agent $agent" >&2; 
+	bash $WOW_AGENTS_DIR/$agent --config $config >> $cli_batch
+done 
+echo "cib use wow" >> $cli_batch
+

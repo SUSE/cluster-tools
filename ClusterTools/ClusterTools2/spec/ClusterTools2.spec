@@ -14,7 +14,7 @@ License:      GPL
 Group:        System/terminalserver
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.0.0
+Version:      2.1.0
 Release:      3 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
@@ -23,7 +23,17 @@ Requires:     pacemaker > 1.1.1
 Requires:     perl-TermReadLine-Gnu >= 1.16
 	
 %description
-TBD
+ClusterTools provides tools for setting up and managing an openais/
+pacemaker cluster.
+
+- wow helps you to create linux-ha system resources.
+The main program to be called is whbcc (wow heartbeat config change).
+The wow package countains some agents (which are used to figure out
+config values) and xml-templates (which are used to create the xml-
+snipsets to be inserted into the cluster).
+
+- ClusterServcie is the main tool for managing a linux-ha cluster.
+There are some other commandline tools to make life easier.
 
 %prep
 %setup -c -T -a 0
@@ -38,11 +48,16 @@ test "$RPM_BUILD_ROOT" != "/" && rm -rf $RPM_BUILD_ROOT
 %install
 mkdir -p %{buildroot}/usr/sbin
 mkdir -p %{buildroot}/usr/share/ClusterTools2
+mkdir -p %{buildroot}/usr/share/ClusterTools2/cli
+mkdir -p %{buildroot}/usr/share/ClusterTools2/samples
+mkdir -p %{buildroot}/usr/lib/ClusterTools2
+mkdir -p %{buildroot}/usr/lib/ClusterTools2/agents
+mkdir -p %{buildroot}/usr/lib/ClusterTools2/scripts
 mkdir -p %{buildroot}/usr/share/man7
 mkdir -p %{buildroot}/usr/share/man8
 
 #
-# binaries
+# "binaries"
 #
 cp -va sbin/* %{buildroot}/usr/sbin
 #
@@ -70,10 +85,12 @@ cp -a man8/*.gz %{buildroot}/usr/share/man8
 /usr/sbin/reset_failcounts
 /usr/sbin/whbsaprecheck
 #/usr/sbin/showscores
-/usr/share/ClusterTools2/ClusterService.rsc
+/usr/share/ClusterTools2
 %doc /usr/share/man7/*.gz
 %doc /usr/share/man8/*.gz
 
 %changelog -n ClusterTools
+* Thu Oct 07 2010 - fabian.herschel@novell.com
+  2.1.0-1 reintegrated wow to ClusterTools2
 * Wed Oct 06 2010 - fabian.herschel@novell.com
   2.0.0-1 initial package

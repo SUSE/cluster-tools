@@ -1,0 +1,31 @@
+#
+# sapall-ilo - start all wow agents to configure ilo stonith fencing
+#
+ILO_ALL_WOW_AGENTS=02-create_ilo
+WOW_AGENTS_DIR=/usr/share/ClusterTools2/agents
+#
+# simple param check
+#
+if [ $# -ne 1 ]; then
+   echo "usage: $0 wow-config-file"
+   exit 2
+else 
+   config=$1
+fi
+#
+#
+#
+cli_batch=${config%.wow}.ilo.cli
+echo "creating crm batch file $cli_batch"
+#
+# create the resulting cli file
+#
+> $cli_batch
+echo "cib new wow" >> $cli_batch
+for agent in $ILO_ALL_WOW_AGENTS
+do 
+	echo "calling agent $agent" >&2; 
+	bash $WOW_AGENTS_DIR/$agent --config $config >> $cli_batch
+done 
+echo "cib use wow" >> $cli_batch
+

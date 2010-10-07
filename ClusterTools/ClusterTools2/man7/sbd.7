@@ -46,11 +46,11 @@ and is also available in a similar fashion for the SLE HA 11 product
 using the "external/sbd" STONITH agent.
 
 In an environment where all nodes have access to shared storage, a small
-(1MB) partition is formated for use with sbd. The daemon, once
+partition is formated for use with SBD. The sbd daemon, once
 configured, is brought online on each node before the rest of the
 cluster stack is started, and terminated only after all other cluster
 components have been shut down - ensuring that cluster resources are
-never activated without sbd supervision.
+never activated without SBD supervision.
 
 The daemon automatically allocates one of the message slots on the
 partition to itself, and constantly monitors it for messages to itself.

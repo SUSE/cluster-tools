@@ -64,9 +64,12 @@ cp -va sbin/* %{buildroot}/usr/sbin
 # share 
 #
 cp -a share/* %{buildroot}/usr/share/ClusterTools2
+cp -a cli/* %{buildroot}/usr/share/ClusterTools2/cli
 #
-# config and start script
 #
+cp -a lib/* %{buildroot}/usr/lib/ClusterTools2
+cp -a agents/* %{buildroot}/usr/lib/ClusterTools2/agents
+cp -a scripts/* %{buildroot}/usr/lib/ClusterTools2/scripts
 # man page(s) and license
 #
 cp -a man7/*.gz %{buildroot}/usr/share/man7
@@ -84,8 +87,10 @@ cp -a man8/*.gz %{buildroot}/usr/share/man8
 #/usr/sbin/make_hb_backup
 /usr/sbin/reset_failcounts
 /usr/sbin/whbsaprecheck
+/usr/sbin/wow*
 #/usr/sbin/showscores
 /usr/share/ClusterTools2
+/usr/lib/ClusterTools2
 %doc /usr/share/man7/*.gz
 %doc /usr/share/man8/*.gz
 

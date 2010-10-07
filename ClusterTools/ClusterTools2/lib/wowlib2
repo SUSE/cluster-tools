@@ -53,7 +53,7 @@ set -u
  #WOWCONSTCREATE="WOW_SIMULATE=$WOW_SIMULATE CIBREMOTE=$CIBREMOTE CIBOBJTYPE=constraints CIBACTION=-C"
  #WOWCONSTMODIFY="WOW_SIMULATE=$WOW_SIMULATE CIBREMOTE=$CIBREMOTE CIBOBJTYPE=constraints CIBACTION=-M"
 
- wowcli=/usr/share/ClusterTools/cli
+ wowcli=/usr/share/ClusterTools2/cli
 
 function set_var()
 {

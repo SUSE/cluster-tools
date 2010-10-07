@@ -5,7 +5,7 @@
 # (c) 2009-2010 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version 0.2.03 2010-09-22
+# Version 0.2.04 2010-10-06
 #
 
 COMD=$(basename $0)
@@ -379,6 +379,8 @@ function chk_wow_dbase ()
 	echo
 }
 
+
+# TODO: add chk_wow_sbd
 
 function chk_wow_sfex ()
 {

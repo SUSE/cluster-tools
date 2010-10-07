@@ -65,7 +65,7 @@ this is not an additional point of failure; the work-load would
 terminate anyway if the storage connectivity was lost.)
 .\"
 .P
-\fB* Requirements\fR
+\fB* Pre-Requisites\fR
 
 The environment must have shared storage reachable by all nodes. It is
 recommended to create a 1MB partition at the start of the device; in the
@@ -107,6 +107,7 @@ The openais init script starts and stops SBD if configured; add the
 following to /etc/sysconfig/sbd:
 
 ===
+.br
 #/etc/sysconfig/sbd
 .br
 SBD_DEVICE="/dev/<SBD>"

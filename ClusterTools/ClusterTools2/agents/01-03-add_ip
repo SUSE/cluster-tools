@@ -10,5 +10,5 @@ for ip_label in $IP_LABELS; do
 		UUID=rsc_IP_${SAPSID}_${ipname} \
 		IP=$ipaddr \
 		IPagent="$IPagent" \
-		$wowcli/01-add-ip.cli
+		$wowcli/01-ip.cli
 done

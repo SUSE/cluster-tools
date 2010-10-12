@@ -89,6 +89,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8
 /usr/sbin/reset_failcounts
 /usr/sbin/whbsaprecheck
 /usr/sbin/wow*
+/usr/sbin/menueng2
 #/usr/sbin/showscores
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2

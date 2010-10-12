@@ -1,6 +1,6 @@
 source wowlib2
 for volumegroup in $LVM_VOLUMEGROUPS; do
-	woweng2 UUID=rsc_LVM_${SAPSID}_${volumegroup} \
+	woweng2 UUID=rsc_lvm_${SAPSID}_${volumegroup} \
 		VOLUMEGROUP=$volumegroup \
 		$wowcli/01-lvm.cli
 done

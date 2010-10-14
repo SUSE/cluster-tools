@@ -1,0 +1,34 @@
+#!/bin/bash
+#
+###############################################################################
+#
+# wow_crm_call
+#
+###############################################################################
+#
+# take each param and call "crm -f $x"
+#
+
+crm_files=""
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+	-* ) # unknown, but ignore :)
+		;;
+	* ) if [ -n "$crm_files" ]; then
+			crm_files="$crm_files:$1"
+		    else
+			crm_files="$1"
+		fi
+		;;
+  esac
+  shift
+done
+
+IFS=:; 
+for crmf in $crm_files; do
+	echo "apply cli file $crmf"
+	crm -f $crmf
+done
+
+

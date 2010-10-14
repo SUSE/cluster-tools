@@ -42,6 +42,7 @@ my $help = 0;
 my $width_all = 80;
 my $width_cmd =  8;
 my $width_des = 50;
+my $width_status_descr = 20;
 my $width_rst = $width_all - $width_cmd - $width_des - 6;
 
          $result = GetOptions ("rscFile=s"   => \$rscFile,  
@@ -75,10 +76,11 @@ my @params = [];
 
 sub  menu($) {
 	my ($menuS) = shift(@_);
-	my $line1 = "-" x ($width_all-length($menuTitle)-4); 
+	my $menuItem = "$menuTitle / $menuS";
+	my $line1 = "-" x ($width_all-length($menuItem)-4); 
 	my $line2 = "-" x ($width_all-2); 
 	my $line3 = " " x ($width_all-2);
-	printf "+[%s]%s+\n", $menuTitle, $line1;
+	printf "+[%s]%s+\n", $menuItem, $line1;
 	foreach $no ( sort( keys (%no2rsc))) {
 		$key = $no2rsc{$no};
 		if ( $key ne "" ) {
@@ -98,7 +100,13 @@ sub  menu($) {
 				if ( $ctrl eq "blank" ) {
 					printf "+%s+\n", $line3;
 				} elsif ( $ctrl eq "bar" ) {
-					printf "+%s+\n", $line2;
+					$descr = $no2descr{$no};
+					if ( $descr eq "" )  {
+						printf "+%s+\n", $line2;
+					} else {
+						my $line1 = "-" x ($width_all-length($descr)-4); 
+						printf "+<%s>%s+\n", $descr, $line1;
+					}
 				} elsif ( $ctrl eq "descr" ) {
 					$descr = $no2descr{$no};
 					$width = ${width_all}-4;
@@ -106,8 +114,14 @@ sub  menu($) {
 				} elsif ( $ctrl eq "status" ) {
 					$descr = $no2descr{$no};
 					$cmd = $no2cmd{$no};
-					printf "| %-${width_cmd}s : ", $descr, $descr, "";
-					system($no2cmd{$no});
+			#		printf "| %-${width_cmd}s : ", $descr, $descr, "";
+				#	system($no2cmd{$no});
+					open PIPE, "$no2cmd{$no} |";
+					my $status = <PIPE>;
+					chomp $status;
+					close PIPE;
+					$width = ${width_all}-${width_status_descr}-8;
+					printf "| %-${width_status_descr}s : %-${width}s |\n", $descr, $status;
 				}
 			}
 		}
@@ -178,9 +192,10 @@ my $sendcmd = "";
  #          print $OUT $res, "\n" unless $@;
  #          $term->addhistory($_) if /\S/;
  #        }
+my $current_menu = "MAIN";
 while ( $cont ) {
 	if ($call eq "") {
-		menu("MAIN"); #printf "select command > ";
+		menu($current_menu); #printf "select command > ";
 		#$call = <STDIN>; 
                 $prompt = "[$menuTitle] command: ";
 		$call = $term->readline($prompt);
@@ -194,6 +209,10 @@ while ( $cont ) {
 	# printf "DBG: ctrl: %s\n", $rsc2ctrl{$callUC};
 	if ( $rsc2ctrl{$callUC} =~ /^EXIT$/i ) {
 		$cont = 0;
+	} elsif ( $rsc2ctrl{$callUC} =~ /^MENU$/i ) {
+		$current_menu = $rsc2cmd{$callUC};
+#			printf "DBG: switch to menu %s\n", $current_menu;
+			$call = "";
 	} else {
 		if ( defined ($rsc2cmd{$callUC}) ) {
 			$sendcmd = fillcmd($rsc2cmd{$callUC});

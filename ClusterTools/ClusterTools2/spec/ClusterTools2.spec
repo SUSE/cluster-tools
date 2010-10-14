@@ -14,7 +14,7 @@ License:      GPL
 Group:        System/terminalserver
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.1.2
+Version:      2.1.3
 Release:      1 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
@@ -97,6 +97,10 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8
 %doc /usr/share/man/man8/*.gz
 
 %changelog -n ClusterTools
+* Thu Oct 14 2010 - fabian.herschel@novell.com
+  2.1.3-1 menueng2 now supports multiple menues
+          and additional control commands
+	- use case specific sample CS_SAPNA0
 * Tue Oct 12 2010 - fabian.herschel@novell.com
   2.1.2-1 name sheme for wow and submenus
 * Thu Oct 07 2010 - fabian.herschel@novell.com

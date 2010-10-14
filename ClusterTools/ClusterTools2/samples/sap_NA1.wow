@@ -1,23 +1,14 @@
 #
 set -u
 #
-#
-##############################
-#
-# call specific setup
-# CIBREMOTE - set user@host to define where to run the changes, empty for localhost
-# WOW_SIMULATE - set to yes to get an simutate output; set to no to run real updates
-#
-CIBREMOTE=""
-WOW_SIMULATE=yes
-#
+# Setup NA1 with ILO fencing, sfex, md, lvm, fs, db and sap instances
 ##############################
 #
 # cluster specific setup
 # ALLNODES - set the cluster node names separated by a blank 
 # NRNODES - set to number of nodes (should be set automatically)
 #
-ALLNODES="test1 test2"
+ALLNODES="node3 node4"
 NRNODES="$(echo $ALLNODES | wc -w)"
 #
 ##############################
@@ -26,8 +17,17 @@ NRNODES="$(echo $ALLNODES | wc -w)"
 # IPMIADDRESSES - list of ipmi board adresses for all nodes; list items are seaparated by blanks and must match the oder of the cluster node definition (ALLNODES)
 # IPMISETTINGS -  definition of the cluster wide ipmi settings such as ipmi userid and ipmi password
 #
-IPMIADDRESSES='10.2.129.1 10.2.129.2'
-IPMISETTINGS="IPMI_USERID=pmc IPMI_PASSWD=pmc IPMI_STATUSMODE=ok"
+#IPMIADDRESSES='node3r node4r'
+#IPMISETTINGS="IPMI_USERID=admin IPMI_PASSWD=admin IPMI_STATUSMODE=ok"
+#
+##############################
+#
+# ilo specific setup
+# ILO_ADDRESSES - list of ipmi board adresses for all nodes; list items are seaparated by blanks and must match the oder of the cluster node definition (ALLNODES)
+# ILO_SETTINGS -  definition of the cluster wide ipmi settings such as ipmi userid and ipmi password
+#
+ILO_ADDRESSES='node3r node4r'
+ILO_SETTINGS='ILO_USER=admin ILO_PASSWD=admin ILO_CANRESET=1'
 #
 #############################
 #
@@ -54,7 +54,7 @@ GRPID=grp_sap_$SAPSID
 #
 SAP_SCORES="1000 0"
 #
-IP_LABELS="sapna1ci,10.2.128.103 sapna1db,10.2.128.101 sapna1as,10.2.128.102"
+IP_LABELS="sapna1ci,10.20.128.103 sapna1db,10.20.128.101 sapna1as,10.20.128.102"
 #
 SAPsid=$(echo $SAPSID|tr [:upper:] [:lower:])
 #

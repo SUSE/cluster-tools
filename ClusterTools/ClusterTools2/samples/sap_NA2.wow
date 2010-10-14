@@ -1,35 +1,33 @@
 #
 set -u
 #
-#
-##############################
-#
-# call specific setup
-# CIBREMOTE - set user@host to define where to run the changes, empty for localhost
-# WOW_SIMULATE - set to yes to get an simutate output; set to no to run real updates
-#
-CIBREMOTE=""
-WOW_SIMULATE=yes
-#
+# Setup NA2 with IPMI fencing, CLXEVA, lvm, fs, db and sap instances
 ##############################
 #
 # cluster specific setup
 # ALLNODES - set the cluster node names separated by a blank 
 # NRNODES - set to number of nodes (should be set automatically)
 #
-ALLNODES="hpn03 hpn04"
+ALLNODES="node5 node6"
 NRNODES="$(echo $ALLNODES | wc -w)"
 #
 ##############################
 #
 # ipmi specific setup
+# IPMIADDRESSES - list of ipmi board adresses for all nodes; list items are seaparated by blanks and must match the oder of the cluster node definition (ALLNODES)
+# IPMISETTINGS -  definition of the cluster wide ipmi settings such as ipmi userid and ipmi password
+#
+IPMIADDRESSES='node5r node6r'
+IPMISETTINGS="IPMI_USERID=admin IPMI_PASSWD=admin IPMI_STATUSMODE=ok"
+#
+##############################
+#
+# ilo specific setup
 # ILO_ADDRESSES - list of ipmi board adresses for all nodes; list items are seaparated by blanks and must match the oder of the cluster node definition (ALLNODES)
 # ILO_SETTINGS -  definition of the cluster wide ipmi settings such as ipmi userid and ipmi password
 #
-#ILO_ADDRESSES='172.16.12.107 172.16.12.108'
-#ILO_SETTINGS='ILO_USER=hpadmin ILO_PASSWD=hpinvent ILO_CANRESET=1'
-ILO_ADDRESSES='172.16.12.107 172.16.12.108'
-ILO_SETTINGS='ILO_USER=hpadmin ILO_PASSWD=hpinvent ILO_CANRESET=1'
+#ILO_ADDRESSES='node5r node6r'
+#ILO_SETTINGS='ILO_USER=admin ILO_PASSWD=admin ILO_CANRESET=1'
 #
 #############################
 #
@@ -56,7 +54,7 @@ GRPID=grp_sap_$SAPSID
 #
 SAP_SCORES="1000 0"
 #
-IP_LABELS="sapna2as,172.16.12.172 sapna2db,172.16.12.171 sapna2ci,172.16.12.173"
+IP_LABELS="sapna2as,172.16.20.172 sapna2db,172.16.20.171 sapna2ci,172.16.20.173"
 #
 SAPsid=$(echo $SAPSID|tr [:upper:] [:lower:])
 #
@@ -64,8 +62,8 @@ SAPsid=$(echo $SAPSID|tr [:upper:] [:lower:])
 #
 SAP_INSTANCE_DEF=$(cat <<HERE-SAP
 # instance-typ instance-name                  profile-path                                                  optional-parameters
-ASCS           ${SAPSID}_ASCS01_sapna2ci    /sapmnt/${SAPSID}/profile/START_ASCS01_sapna2ci
-CI             ${SAPSID}_DVEBMGS00_sapna2as /sapmnt/${SAPSID}/profile/START_DVEBMGS00_sapna2as
+ASCS           ${SAPSID}_ASCS01_sapna2as    /sapmnt/${SAPSID}/profile/START_ASCS01_sapna2as
+CI             ${SAPSID}_DVEBMGS00_sapna2ci /sapmnt/${SAPSID}/profile/START_DVEBMGS00_sapna2ci
 HERE-SAP
 )
 #

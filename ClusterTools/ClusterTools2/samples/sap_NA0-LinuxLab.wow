@@ -1,16 +1,7 @@
 #
 set -u
 #
-#
-##############################
-#
-# call specific setup
-# CIBREMOTE - set user@host to define where to run the changes, empty for localhost
-# WOW_SIMULATE - set to yes to get an simutate output; set to no to run real updates
-#
-CIBREMOTE=""
-WOW_SIMULATE=yes
-#
+# Setup NA0 with IPMI fencing, sfex, multiple md, lvm, fs, db and sap instances
 ##############################
 #
 # cluster specific setup
@@ -28,6 +19,15 @@ NRNODES="$(echo $ALLNODES | wc -w)"
 #
 IPMIADDRESSES='ls3198r ls3199r'
 IPMISETTINGS="IPMI_USERID=admin IPMI_PASSWD=admin IPMI_STATUSMODE=ok"
+#
+##############################
+#
+# ilo specific setup
+# ILO_ADDRESSES - list of ipmi board adresses for all nodes; list items are seaparated by blanks and must match the oder of the cluster node definition (ALLNODES)
+# ILO_SETTINGS -  definition of the cluster wide ipmi settings such as ipmi userid and ipmi password
+#
+#ILO_ADDRESSES='node1r node2r'
+#ILO_SETTINGS='ILO_USER=admin ILO_PASSWD=admin ILO_CANRESET=1'
 #
 #############################
 #
@@ -83,3 +83,5 @@ FS_FILESYSTEMS=$(cat <<HERE-FS
 /dev/sapvg/sapdb /sapdb sapdb ext3 noatime,defaults
 HERE-FS
 )
+#
+#

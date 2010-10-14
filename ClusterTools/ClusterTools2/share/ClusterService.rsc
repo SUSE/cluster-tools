@@ -15,25 +15,41 @@
 %wc:HIDE:Select or enter full path to your cli file:ls -1 *.cli
 #
 # set node online
-NSO:MAIN:set node online:crm node online %{n}
+NSA:MAIN:set node online/active:crm node online %{n}
 #
 # set node standby
 NSS:MAIN:set node standby:crm node standby %{n}
 #
-# show status all nodes
-CSAN:MAIN:show status all nodes:crm node show
+# FENCE node!!
+NFENCE:MAIN:FENCE node!!:crm node fence %{n}
 #
-# show status specific node
-NSSTAT:MAIN:show status specific node:crm node show %{n}
+:MAIN:::bar
+#
+# show status all nodes
+CSN:MAIN:show status all nodes:crm node show
+#
+# show status of all resources
+CSS:MAIN:show status of all resources:crm_mon -r -1
+#
+# show (open) cluster actions, if changes where commited
+CSA:MAIN:show (open) cluster actions using ptest:ptest -L -D /tmp/CT.$$; cat /tmp/CT.$$; rm /tmp/CT.$$
+CSAG:MAIN:show (open) cluster actions using ptest (graph):crm configure ptest
+#
+# show failcount of resource on node
+CSFN:MAIN:show failcount of resource on node:crm resource failcount %{r} show %{n}
+#
+# delete failcount of resource on node
+CDFN:MAIN:delete failcount of resource on node:crm resource failcount %{r} delete  %{n}
+CLF:MAIN:show all failcounts:list_failcounts
+CRF:MAIN:reset all failcounts:reset_failcounts
+#
+:MAIN:::bar
 #
 # set target-role stopped for resource
 RDN:MAIN:set target-role stopped for resource:crm resource stop %{r}
 #
 # set target-role started for resource
 RUP:MAIN:set target-role started for resource:crm resource start %{r}
-#
-# show status of all resources
-CSS:MAIN:show status of all resources:crm_mon -r -1
 #
 # set unmanaged for resource
 RSU:MAIN:set unmanaged for resource:crm resource unmanaged %{r}
@@ -45,13 +61,10 @@ RSM:MAIN:set managed for resource:crm resource managed %{r}
 RMI:MAIN:migrate resource:crm resource migrate %{r}
 #
 # migrate resource to specific node
-RUMH:MAIN:migrate resource to specific node:crm resource migrate %{r} %{n}
+RIMN:MAIN:migrate resource to specific node:crm resource migrate %{r} %{n}
 #
 # unmigrate resource
 RUM:MAIN:unmigrate resource:crm unmigrate %{r}
-#
-# show (open) cluster actions, if changes where commited
-CSA:MAIN:show (open) cluster actions using ptest
 #
 # cleanup resource
 RCL:MAIN:cleanup resource:crm resource cleanup %{r}
@@ -59,17 +72,10 @@ RCL:MAIN:cleanup resource:crm resource cleanup %{r}
 # cleanup resource node
 RCLN:MAIN:cleanup resource node:crm resource cleanup %{r} %{n}
 #
-# show failcount of resource on node
-CSFN:MAIN:show failcount of resource on node:crm resource failcount %{r} show %{n}
+RSS:MAIN:Show scores of all resources:ptest -L -s
 #
-# delete failcount of resource on node
-CDFN:MAIN:delete failcount of resource on node:crm resource failcount %{r} delete  %{n}
-#
-# FENCE node!!
-NFENCE:MAIN:FENCE node!!:crm node fence %{n}
-#
-CLF:MAIN:show all failcounts:list_failcounts
-CRF:MAIN:reset all failcounts:reset_failcounts
+:MAIN:::bar
+HELP:MAIN:Man pages:/usr/sbin/menueng2 --rscFile /usr/share/ClusterTools2/Help.rsc
 CRMMON:HIDE::crm_mon -r
 CONTROL:HIDE:::exit
 EXIT:HIDE:::exit

@@ -12,12 +12,13 @@
 #
 #
 %ww:HIDE:Select or enter full path to your wow file:ls -1 *.wow
-%wc:HIDE:Select or enter full path to your cli file:ls -1 *.cli
+%wcs:HIDE:Select or enter cli file(s) (one or multiple):ls -1 *.cli
 #
-WOWED:MAIN:Edit Wow File:vi %{ww}
-WOWCALL:MAIN:call wow with scriptname:bash /usr/lib/ClusterTools2/scripts/%{s} %{ww}
-WOWCAT:MAIN:show created cli file:cat %{wc}
-WOWBURN:MAIN:apply created cli file:crm -f %{wc}
+WEDIT:MAIN:Edit Wow File:vi %{ww}
+WCALL:MAIN:Call wow script:bash /usr/lib/ClusterTools2/scripts/%{s} %{ww}
+WSHOW:MAIN:Show created cli file:cat %{wc}
+WBURN:MAIN:Apply created cli file:/usr/sbin/wow_crm_call %{wcs}
+WCOMM:MAIN:Commit wow shadow cib:crm cib commit wow
 CONTROL:HIDE:::exit
 EXIT:HIDE:::exit
 QUIT:HIDE:::exit

@@ -1,3 +1,4 @@
 configure primitive $UUID ocf:heartbeat:CLXEVA \
 params	app="$APPLICATION" \
+params	devices="$DEVICES" \
 op monitor interval=120s timeout=60s on_fail="fence"

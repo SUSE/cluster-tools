@@ -17,7 +17,7 @@ fi
 for ip_label in $IP_LABELS; do
 	ipaddr=${ip_label#*,}
 	ipname=${ip_label%,*}
-	NGM=rsc_IP_${SAPSID}_${ipname} 
+	NGM=rsc_ip_${SAPSID}_${ipname} 
 	GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
 done
 #
@@ -25,14 +25,14 @@ done
 #
 for raiddev in $RAID1_DEVICES; do
 	raidname=${raiddev#/dev/}
-	NGM=rsc_RAID1_${SAPSID}_${raidname} 
+	NGM=rsc_md_${SAPSID}_${raidname} 
 	GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
 done
 #
 # LVM
 #
 for volumegroup in $LVM_VOLUMEGROUPS; do
-	NGM=rsc_LVM_${SAPSID}_${volumegroup} 
+	NGM=rsc_lvm_${SAPSID}_${volumegroup} 
 	GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
 done
 #
@@ -41,7 +41,7 @@ done
 while read dev dir fsid fstype moptions
 do 
 	if [ -n "${dev%%\#*}" ]; then # neither an empty line nor a comemnt line (# is first char)
-		NGM=rsc_FS_${SAPSID}_${fsid} 
+		NGM=rsc_fs_${SAPSID}_${fsid} 
 		GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
 	fi
 done <<< "$FS_FILESYSTEMS"
@@ -54,14 +54,14 @@ done <<< "$FS_FILESYSTEMS"
 	* )   cli=01-sapdb.cli
 		;;
  esac
- NGM=rsc_SAPDatabase_$SAPSID 
+ NGM=rsc_sapdb_$SAPSID 
 GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
 #
 # SAPINST
 #
 while read sap_type sap_inst sap_prof sap_parm; do
 	if [ "$sap_type" == "${sap_type#\#}" ]; then
-		NGM=rsc_SAPInstance_${sap_inst}  
+		NGM=rsc_sapinst_${sap_inst}  
 		GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
 	fi
 	done <<< "$SAP_INSTANCE_DEF"

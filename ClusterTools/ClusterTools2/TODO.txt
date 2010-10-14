@@ -1,0 +1,8 @@
+
+- configure / update mode:
+  till now we only cann add a prmitive or a group but could not update it
+  see UPDATE.txt
+
+- help for top level menueng2
+
+- batch mode for menueng2

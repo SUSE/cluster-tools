@@ -14,8 +14,8 @@ License:      GPL
 Group:        System/terminalserver
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.1.1
-Release:      3 
+Version:      2.1.2
+Release:      1 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 Vendor:	      SUSE Linux GmbH
@@ -97,6 +97,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8
 %doc /usr/share/man/man8/*.gz
 
 %changelog -n ClusterTools
+* Tue Oct 12 2010 - fabian.herschel@novell.com
+  2.1.2-1 name sheme for wow and submenus
 * Thu Oct 07 2010 - fabian.herschel@novell.com
   2.1.0-1 reintegrated wow to ClusterTools2
 * Wed Oct 06 2010 - fabian.herschel@novell.com

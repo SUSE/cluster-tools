@@ -1,4 +1,9 @@
 configure property \
+	\$id=$UUID \
 	stonith-enabled=$STONITH_ENABLED \
 	stonith-action=$STONITH_ACTION \
+	default-action-timeout="$DEFAULT_ACTION_TIMEOUT" \
 	no-quorum-policy=$NO_QUORUM_POLICY
+configure rsc_defaults \
+	\$id=$UUID2 \
+	migration-threshold="$DEFAULT_MIGRATION_THRESHOLD"

@@ -39,6 +39,11 @@ my $countf = "";
 my $result = 0;
 my $help = 0;
 
+my $width_all = 80;
+my $width_cmd =  8;
+my $width_des = 50;
+my $width_rst = $width_all - $width_cmd - $width_des - 6;
+
          $result = GetOptions ("rscFile=s"   => \$rscFile,  
                                "help"  => \$help,
                                "verbose"  => \$verbose);
@@ -57,6 +62,8 @@ my %rsc2descr = {};
 my %rsc2menu = {};
 my %no2rsc = {};
 my %no2ctrl = {};
+my %no2menu = {};
+my %no2cmd = {};
 my $menu = "";
 my $key = "";
 my $cmd; 
@@ -68,17 +75,41 @@ my @params = [];
 
 sub  menu($) {
 	my ($menuS) = shift(@_);
-	my $line1 = "-" x (63-length($menuTitle)-2); 
-	my $line2 = "-" x (63); 
+	my $line1 = "-" x ($width_all-length($menuTitle)-4); 
+	my $line2 = "-" x ($width_all-2); 
+	my $line3 = " " x ($width_all-2);
 	printf "+[%s]%s+\n", $menuTitle, $line1;
 	foreach $no ( sort( keys (%no2rsc))) {
 		$key = $no2rsc{$no};
-		$cmd = $rsc2cmd{$key};
-		$descr = $rsc2descr{$key};
-		$menu = $rsc2menu{$key};
-		if ( $menu eq $menuS ) {
-			#printf "DBG: MAIN:  no: %s key: %s cmd: %s\n", $no, $key, $cmd;
-			printf "| %-8s : %-50s |\n", $key, $descr;
+		if ( $key ne "" ) {
+			$cmd = $rsc2cmd{$key};
+			$descr = $rsc2descr{$key};
+			$menu = $rsc2menu{$key};
+			if ( $menu eq $menuS ) {
+				#printf "DBG: MAIN:  no: %s key: %s cmd: %s\n", $no, $key, $cmd;
+				printf "| %-${width_cmd}s : %-${width_des}s%-${width_rst}s|\n", $key, $descr, "";
+			}
+		} else {
+			$menu = $no2menu{$no};
+			if ( $menu eq $menuS ) {
+				my $crtl = "";
+				$ctrl = $no2ctrl{$no};
+				# printf "DBG: key empty at no $no\n";
+				if ( $ctrl eq "blank" ) {
+					printf "+%s+\n", $line3;
+				} elsif ( $ctrl eq "bar" ) {
+					printf "+%s+\n", $line2;
+				} elsif ( $ctrl eq "descr" ) {
+					$descr = $no2descr{$no};
+					$width = ${width_all}-4;
+					printf "| %-${width}s |\n", $descr;
+				} elsif ( $ctrl eq "status" ) {
+					$descr = $no2descr{$no};
+					$cmd = $no2cmd{$no};
+					printf "| %-${width_cmd}s : ", $descr, $descr, "";
+					system($no2cmd{$no});
+				}
+			}
 		}
 	}
 	printf "+%s+\n", $line2;
@@ -117,7 +148,17 @@ while (<RSC>) {
 		$rsc2descr{$key} = $descr;
 		$rsc2menu{$key} = $menu;
 		$rsc2ctrl{$key} = $ctrl;
+		$no2ctrl{$countF} = $ctrl;
 		$no2rsc{$countF} = $key;
+		$no2menu{$countF} = $menu;
+		$no2descr{$countF} = $descr;
+		$no2cmd{$countF} = $cmd;
+		if ( $ctrl eq "val" )  {
+			if ( $descr eq "width_cmd" ) {
+				$width_cmd = $cmd;	
+                                $width_rst = $width_all - $width_cmd - $width_des - 6;
+			}
+		}
 	}
 }
 
@@ -157,10 +198,10 @@ while ( $cont ) {
 		if ( defined ($rsc2cmd{$callUC}) ) {
 			$sendcmd = fillcmd($rsc2cmd{$callUC});
 	#		printf "DBG: I would like to send: \n%s\n", $sendcmd;
-			printf "+---------------------------------------------------------------+\n";
 			#printf "+%s+\n", '-' * 63;
+			printf "+<cmd output>%s+\n", "-" x ($width_all-2-12);
 			system($sendcmd);
-			printf "+---------------------------------------------------------------+\n";
+			printf "+</cmd output>%s+\n", "-" x ($width_all-2-13);
 			#printf "enter command > ";
 			# $call = <STDIN>;
 			$call = $term->readline($prompt);

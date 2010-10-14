@@ -7,7 +7,7 @@ for ip_label in $IP_LABELS; do
 	ipaddr=${ip_label#*,}
 	ipname=${ip_label%,*}
 	woweng2 GROUPID=${GRPID} \
-		UUID=rsc_IP_${SAPSID}_${ipname} \
+		UUID=rsc_ip_${SAPSID}_${ipname} \
 		IP=$ipaddr \
 		IPagent="$IPagent" \
 		$wowcli/01-ip.cli

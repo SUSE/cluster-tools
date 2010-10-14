@@ -3,11 +3,11 @@
 #
 CLXSTACK_ALL_WOW_AGENTS=$(cat <<EOC
 01-03-add_ip 
-01-04-add_clx 
+01-04-add_clxeva 
 01-05-add_lvm 
 01-06-add_fs 
-01-07-add_sapdatabase 
-01-08-add_sapinstance 
+01-07-add_sapdb
+01-08-add_sapinst
 01-99-add_group-clx
 EOC
 )
@@ -33,10 +33,10 @@ echo "creating crm batch file $cli_batch"
 #
 > $cli_batch
 echo "cib new wow" >> $cli_batch
-for agent in $SIMPLESTACK_ALL_WOW_AGENTS
+echo "cib use wow" >> $cli_batch
+for agent in $CLXSTACK_ALL_WOW_AGENTS
 do 
 	echo "calling agent $agent" >&2; 
 	bash $WOW_AGENTS_DIR/$agent --config $config >> $cli_batch
 done 
-echo "cib use wow" >> $cli_batch
 

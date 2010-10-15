@@ -1,0 +1,25 @@
++[Wow / MAIN]------------------------------------------------------------------+
+| WEDIT    : Edit Wow File                                                     |
+| WCALL    : Call wow script                                                   |
+| WSHOW    : Show created cli file                                             |
+| WBURN    : Apply created cli file                                            |
+| WCOMM    : Commit wow shadow cib                                             |
++------------------------------------------------------------------------------+
+[Wow] command: WCALL
+sapall-clxstack
+sapall-crm_config
+sapall-ilo
+sapall-ipmi
+sapall-simplestack
+switch_cib
+switch_off_stonith
+ Select wow script: sapall-crm_config
+DBG: found placeholder %{s} replace with sapall-crm_config
+sap_NA2.wow
+ Select or enter full path to your wow file: sap_NA2.wow
+DBG: found placeholder %{ww} replace with sap_NA2.wow
++<cmd output>------------------------------------------------------------------+
+creating crm batch file sap_NA2.crm.cli
+calling agent 00-crm_config
++</cmd output>-----------------------------------------------------------------+
+

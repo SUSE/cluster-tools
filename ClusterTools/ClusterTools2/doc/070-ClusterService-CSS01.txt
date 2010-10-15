@@ -1,0 +1,33 @@
+[ClusterService] command: CSS
++<cmd output>------------------------------------------------------------------+
+============
+Last updated: Thu Oct 14 19:13:32 2010
+Stack: openais
+Current DC: hpn04 - partition with quorum
+Version: 1.1.2-ecb1e2ea172ba2551f0bd763e557fccde68c849b
+2 Nodes configured, 2 expected votes
+3 Resources configured.
+============
+
+Online: [ hpn03 hpn04 ]
+
+Full list of resources:
+
+ rsc_stonith_riloe_hpn03        (stonith:external/riloe):       Started hpn04
+ rsc_stonith_riloe_hpn04        (stonith:external/riloe):       Started hpn03
+ Resource Group: grp_sap_NA2
+     rsc_sfex_1_1_NA2   (ocf::heartbeat:sfex):  Started hpn03
+     rsc_ip_NA2_sapna2as        (ocf::heartbeat:IPaddr2):       Started hpn03
+     rsc_ip_NA2_sapna2db        (ocf::heartbeat:IPaddr2):       Started hpn03
+     rsc_ip_NA2_sapna2ci        (ocf::heartbeat:IPaddr2):       Started hpn03
+     rsc_md_NA2_md0     (ocf::heartbeat:Raid1): Started hpn03
+     rsc_lvm_NA2_sapvg  (ocf::heartbeat:LVM):   Started hpn03
+     rsc_fs_NA2_usrsap  (ocf::heartbeat:Filesystem):    Started hpn03
+     rsc_fs_NA2_sapmnt  (ocf::heartbeat:Filesystem):    Started hpn03
+     rsc_fs_NA2_sapdb   (ocf::heartbeat:Filesystem):    Started hpn03
+     rsc_sapdb_NA2      (ocf::heartbeat:SAPDatabase):   Started hpn03
+     rsc_sapinst_NA2_ASCS01_sapna2as    (ocf::heartbeat:SAPInstance):   Started hpn03
+     rsc_sapinst_NA2_DVEBMGS00_sapna2ci (ocf::heartbeat:SAPInstance):   Started hpn03
++</cmd output>-----------------------------------------------------------------+
+[ClusterService] command:
+

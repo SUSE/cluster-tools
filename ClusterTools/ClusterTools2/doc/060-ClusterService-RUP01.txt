@@ -1,0 +1,29 @@
++[ClusterService / MAIN]-------------------------------------------------------+
+| NSA      : set node online/active                                            |
+| NSS      : set node standby                                                  |
+| NFENCE   : FENCE node!!                                                      |
++------------------------------------------------------------------------------+
+| CSN      : show status all nodes                                             |
+| CSS      : show status of all resources                                      |
+| CSA      : show (open) cluster actions using ptest                           |
+| CSAG     : show (open) cluster actions using ptest (graph)                   |
+| CSFN     : show failcount of resource on node                                |
+| CDFN     : delete failcount of resource on node                              |
+| CLF      : show all failcounts                                               |
+| CRF      : reset all failcounts                                              |
++------------------------------------------------------------------------------+
+| RDN      : set target-role stopped for resource                              |
+| RUP      : set target-role started for resource                              |
+| RSU      : set unmanaged for resource                                        |
+| RSM      : set managed for resource                                          |
+| RMI      : migrate resource                                                  |
+| RIMN     : migrate resource to specific node                                 |
+| RUM      : unmigrate resource                                                |
+| RCL      : cleanup resource                                                  |
+| RCLN     : cleanup resource node                                             |
+| RSS      : Show scores of all resources                                      |
++------------------------------------------------------------------------------+
+| HELP     : Man pages                                                         |
++------------------------------------------------------------------------------+
+[ClusterService] command: RUP grp_sap_NA2
+

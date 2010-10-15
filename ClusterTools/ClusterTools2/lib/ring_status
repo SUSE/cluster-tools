@@ -1,0 +1,87 @@
+#!/usr/bin/perl
+#
+#######################################################
+#
+# ring_status - print a short summary of corosync rings
+#
+#######################################################
+#
+#Local node ID 82225344
+#RING ID 0
+#        id      = 192.168.230.132
+#        status  = ring 0 active with no faults
+#
+#######################################################
+#
+use strict;
+
+my $global_status = 0; # -1 not-set 0 ok, 1 warning, 2 error
+
+my %ring2status ;
+my %ring2id     ;
+my $ringcount   = 0;
+
+open PIPE, "corosync-cfgtool -s |";
+my $ring_id;
+while (<PIPE>) {
+	chomp;
+	my $line = $_;
+	if ( $line =~ /RING ID ([0-9]+)/ ) {
+		$ring_id = $1;	
+		$ringcount++;
+		#
+		# mark ring as errorness as long as we do not later find a valid status line
+		#
+		$ring2status{$ring_id} = 2;
+		printf STDOUT "DBG: found ring %s\n", $ring_id;
+	} elsif ( $line =~ /id\s*=\s*(\S*)/ ) {
+		my $id = $1;
+		printf STDOUT "DBG: found ring/id %s\n", $id;
+	} elsif ( $line =~ /status\s*=\s*(\S.*$)/ ) {
+		my $Cstatus = $1;
+		printf STDOUT "DBG: found ring/status %s\n", $Cstatus;
+		if ( $Cstatus =~ /active with no faults/ ) {
+			#
+			# ring found with active / no fault -> ok
+			#
+			printf STDOUT "DBG: ok, ok , lars %s\n", $Cstatus;
+			$ring2status{$ring_id} = 0;
+		} else {
+			#
+			# ring found with NOT active / no-fault -> warn
+			#
+			$ring2status{$ring_id} = 1;
+		}
+	}
+}
+
+if ( $ringcount == 0 ) {
+	#
+	# did not found any rings -> error
+	#
+		printf STDOUT "DBG: gar kein ring net \n";
+	$global_status = 2;
+} else {
+	#
+	# set the global error by the ring status
+	#
+	my $ring_id;
+	$global_status = 0;
+	foreach $ring_id ( sort( keys (%ring2status))) {
+		my $curr_ring_status = $ring2status{$ring_id};
+		printf STDOUT "DBG: ring %s with status %s \n", $ring_id, $curr_ring_status;
+		if ( $curr_ring_status > $global_status ) {
+		printf STDOUT "DBG: new global status %s \n", $curr_ring_status;
+			$global_status = $curr_ring_status;
+		}
+	}
+}
+
+
+if ( $global_status == 2 ) {
+	printf "ERROR\n"; exit 2;
+} elsif ( $global_status == 1 ) {
+	printf "WARNING\n"; exit 1;
+} elsif ( $global_status == 0 ) {
+	printf "OK\n"; exit 1;
+}

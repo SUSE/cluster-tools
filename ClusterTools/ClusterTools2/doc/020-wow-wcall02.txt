@@ -1,0 +1,8 @@
+[Wow] command: wcall sapall-ilo sap_NA2.wow
+DBG: found placeholder %{s} replace with sapall-ilo
+DBG: found placeholder %{ww} replace with sap_NA2.wow
++<cmd output>------------------------------------------------------------------+
+creating crm batch file sap_NA2.ilo.cli
+calling agent 02-create_ilo
++</cmd output>-----------------------------------------------------------------+
+

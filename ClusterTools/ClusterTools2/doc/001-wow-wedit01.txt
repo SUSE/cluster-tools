@@ -1,0 +1,10 @@
++[Wow / MAIN]------------------------------------------------------------------+
+| WEDIT    : Edit Wow File                                                     |
+| WCALL    : Call wow script                                                   |
+| WSHOW    : Show created cli file                                             |
+| WBURN    : Apply created cli file                                            |
+| WCOMM    : Commit wow shadow cib                                             |
++------------------------------------------------------------------------------+
+[Wow] command: wedit
+sap_NA2.wow
+ Select or enter full path to your wow file: sap_NA2.wow

@@ -1,0 +1,33 @@
++[Wow / MAIN]------------------------------------------------------------------+
+| WEDIT    : Edit Wow File                                                     |
+| WCALL    : Call wow script                                                   |
+| WSHOW    : Show created cli file                                             |
+| WBURN    : Apply created cli file                                            |
+| WCOMM    : Commit wow shadow cib                                             |
++------------------------------------------------------------------------------+
+[Wow] command: wburn
+sap_NA2.crm.cli
+sap_NA2.ilo.cli
+sap_NA2.sap.cli
+ Select or enter cli file(s) (one or multiple): sap_NA2.crm.cli sap_NA2.ilo.cli sap_NA2.sap.cli
+DBG: found placeholder %{wcs} replace with sap_NA2.crm.cli sap_NA2.ilo.cli sap_NA2.sap.cli
++<cmd output>------------------------------------------------------------------+
+apply cli file sap_NA2.crm.cli
+INFO: 1: wow shadow CIB created
+apply cli file sap_NA2.ilo.cli
+A shadow instance 'wow' already exists.
+  To prevent accidental destruction of the cluster, the --force flag is required in order to proceed.
+apply cli file sap_NA2.sap.cli
+A shadow instance 'wow' already exists.
+  To prevent accidental destruction of the cluster, the --force flag is required in order to proceed.
+WARNING: 3: rsc_sfex_1_1_NA2: default timeout 120s for start is smaller than the advised 600
+WARNING: 3: rsc_sfex_1_1_NA2: default timeout 120s for start is smaller than the advised 600
+WARNING: 12: rsc_sapdb_NA2: specified timeout 120s for start is smaller than the advised 1800
+WARNING: 12: rsc_sapdb_NA2: specified timeout 180s for stop is smaller than the advised 1800
+WARNING: 12: rsc_sapdb_NA2: specified timeout 120s for start is smaller than the advised 1800
+WARNING: 12: rsc_sapdb_NA2: specified timeout 180s for stop is smaller than the advised 1800
+WARNING: 13: rsc_sapinst_NA2_ASCS01_sapna2as: specified timeout 120s for start is smaller than the advised 180
+WARNING: 13: rsc_sapinst_NA2_ASCS01_sapna2as: specified timeout 180s for stop is smaller than the advised 240
+WARNING: 13: rsc_sapinst_NA2_ASCS01_sapna2as: specified timeout 120s for start is smaller than the advised 180
+WARNING: 13: rsc_sapinst_NA2_ASCS01_sapna2as: specified timeout 180s for stop is smaller than the advised 240
++</cmd output>-----------------------------------------------------------------+

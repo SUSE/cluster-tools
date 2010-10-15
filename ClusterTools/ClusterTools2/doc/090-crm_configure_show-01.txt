@@ -1,0 +1,69 @@
+node hpn03
+node hpn04
+primitive rsc_fs_NA2_sapdb ocf:heartbeat:Filesystem \
+	params device="/dev/sapvg/sapdb" directory="/sapdb" fstype="ext3" options="noatime,defaults" \
+	op stop interval="0" timeout="300s" \
+	op monitor interval="30s" timeout="60s"
+primitive rsc_fs_NA2_sapmnt ocf:heartbeat:Filesystem \
+	params device="/dev/sapvg/sapmnt" directory="/sapmnt" fstype="ext3" options="noatime,data=writeback,defaults" \
+	op stop interval="0" timeout="300s" \
+	op monitor interval="30s" timeout="60s"
+primitive rsc_fs_NA2_usrsap ocf:heartbeat:Filesystem \
+	params device="/dev/sapvg/usrsap" directory="/usr/sap" fstype="ext3" options="noatime,defaults" \
+	op stop interval="0" timeout="300s" \
+	op monitor interval="30s" timeout="60s"
+primitive rsc_ip_NA2_sapna2as ocf:heartbeat:IPaddr2 \
+	params ip="172.16.12.172" \
+	op monitor interval="5s" timeout="20s"
+primitive rsc_ip_NA2_sapna2ci ocf:heartbeat:IPaddr2 \
+	params ip="172.16.12.173" \
+	op monitor interval="5s" timeout="20s"
+primitive rsc_ip_NA2_sapna2db ocf:heartbeat:IPaddr2 \
+	params ip="172.16.12.171" \
+	op monitor interval="5s" timeout="20s"
+primitive rsc_lvm_NA2_sapvg ocf:heartbeat:LVM \
+	params volgrpname="sapvg" \
+	op monitor interval="120s" timeout="60s" \
+	op stop interval="0" timeout="30s" on_fail="fence"
+primitive rsc_md_NA2_md0 ocf:heartbeat:Raid1 \
+	params raidconf="/clusterconf/NA2/mdadm.conf" raiddev="/dev/md0" \
+	op monitor interval="120s" timeout="60s" on_fail="fence"
+primitive rsc_sapdb_NA2 ocf:heartbeat:SAPDatabase \
+	params SID="NA2" DBTYPE="ADA" \
+	op monitor interval="120s" timeout="60s" start_delay="180s" \
+	op start interval="0" timeout="120s" \
+	op stop interval="0" timeout="180s"
+primitive rsc_sapinst_NA2_ASCS01_sapna2as ocf:heartbeat:SAPInstance \
+	params InstanceName="NA2_ASCS01_sapna2as" AUTOMATIC_RECOVER="true" START_PROFILE="/sapmnt/NA2/profile/START_ASCS01_sapna2as" \
+	op monitor interval="120s" timeout="60s" start_delay="120s" \
+	op start interval="0" timeout="120s" \
+	op stop interval="0" timeout="180s" on_fail="block"
+primitive rsc_sapinst_NA2_DVEBMGS00_sapna2ci ocf:heartbeat:SAPInstance \
+	params InstanceName="NA2_DVEBMGS00_sapna2ci" AUTOMATIC_RECOVER="true" START_PROFILE="/sapmnt/NA2/profile/START_DVEBMGS00_sapna2ci" \
+	op monitor interval="120s" timeout="60s" start_delay="240s" \
+	op start interval="0" timeout="240s" \
+	op stop interval="0" timeout="240s" on_fail="block"
+primitive rsc_sfex_1_1_NA2 ocf:heartbeat:sfex \
+	params device="/dev/mapper/sapvol1_part1" index="1" monitor_interval="5s" collision_timeout="10s" lock_timeout="20s" \
+	op monitor interval="5s" timeout="15s" start_delay="10s"
+primitive rsc_stonith_riloe_hpn03 stonith:external/riloe \
+	params hostlist="hpn03" ilo_hostname="172.16.12.107" ilo_user="hpadmin" ilo_password="hpinvent"
+primitive rsc_stonith_riloe_hpn04 stonith:external/riloe \
+	params hostlist="hpn04" ilo_hostname="172.16.12.108" ilo_user="hpadmin" ilo_password="hpinvent"
+group grp_sap_NA2 rsc_sfex_1_1_NA2 rsc_ip_NA2_sapna2as rsc_ip_NA2_sapna2db rsc_ip_NA2_sapna2ci rsc_md_NA2_md0 rsc_lvm_NA2_sapvg rsc_fs_NA2_usrsap rsc_fs_NA2_sapmnt rsc_fs_NA2_sapdb rsc_sapdb_NA2 rsc_sapinst_NA2_ASCS01_sapna2as rsc_sapinst_NA2_DVEBMGS00_sapna2ci \
+	meta target-role="Started"
+location loc_grp_sap_NA2_on_hpn03 grp_sap_NA2 1000: hpn03
+location loc_grp_sap_NA2_on_hpn04 grp_sap_NA2 0: hpn04
+location loc_rsc_stonith_riloe_hpn03 rsc_stonith_riloe_hpn03 -inf: hpn03
+location loc_rsc_stonith_riloe_hpn04 rsc_stonith_riloe_hpn04 -inf: hpn04
+property $id="cib-bootstrap-options" \
+	dc-version="1.1.2-ecb1e2ea172ba2551f0bd763e557fccde68c849b" \
+	cluster-infrastructure="openais" \
+	expected-quorum-votes="2" \
+	stonith-enabled="true" \
+	stonith-action="reboot" \
+	default-action-timeout="120s" \
+	no-quorum-policy="ignore" \
+	last-lrm-refresh="1287076293"
+rsc_defaults $id="rsc_defaults-options" \
+	migration-threshold="5"

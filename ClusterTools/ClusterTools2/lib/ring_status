@@ -6,6 +6,7 @@
 #
 #######################################################
 #
+#Typical output of "corosync-cfgtool -s"
 #Local node ID 82225344
 #RING ID 0
 #        id      = 192.168.230.132

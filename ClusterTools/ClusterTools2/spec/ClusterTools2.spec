@@ -14,8 +14,8 @@ License:      GPL
 Group:        System/terminalserver
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.1.3
-Release:      2 
+Version:      2.1.4
+Release:      1 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 Vendor:	      SUSE Linux GmbH
@@ -97,6 +97,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8
 %doc /usr/share/man/man8/*.gz
 
 %changelog -n ClusterTools
+* Mon Oct 25 2010 - fabian.herschel@novell.com
+  2.1.4-1 added new use case for fs only stack
 * Thu Oct 14 2010 - fabian.herschel@novell.com
   2.1.3-1 menueng2 now supports multiple menues
           and additional control commands

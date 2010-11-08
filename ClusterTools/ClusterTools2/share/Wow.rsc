@@ -16,7 +16,7 @@
 #
 WEDIT:MAIN:Edit Wow File:vi %{ww}
 WCALL:MAIN:Call wow script:bash /usr/lib/ClusterTools2/scripts/%{s} %{ww}
-WSHOW:MAIN:Show created cli file:cat %{wc}
+WSHOW:MAIN:Show created cli file:cat %{wcs}
 WBURN:MAIN:Apply created cli file:/usr/lib/ClusterTools2/wow_crm_call %{wcs}
 WCOMM:MAIN:Commit wow shadow cib:crm cib commit wow
 CONTROL:HIDE:::exit

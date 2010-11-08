@@ -15,7 +15,7 @@ Group:        System/terminalserver
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.1.4
-Release:      1 
+Release:      3 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 Vendor:	      SUSE Linux GmbH

@@ -15,7 +15,7 @@ Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.1.4
-Release:      3 
+Release:      4 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 Vendor:	      SUSE Linux GmbH
@@ -26,12 +26,12 @@ Requires:     perl-TermReadLine-Gnu >= 1.16
 ClusterTools2 provides tools for setting up and managing an openais/
 pacemaker cluster.
 
-- wow2 helps you to create linux-ha system resources.
+- wow helps you to create linux-ha system resources.
 The wow package countains some agents (which are used to figure out
 config values) and templates (which are used to create the crm-
 snipsets to be inserted into the cluster).
 
-- ClusterService2 is the main tool for managing a linux-ha cluster.
+- ClusterService is the main tool for managing a linux-ha cluster.
 There are some other commandline tools to make life easier.
 
 %prep

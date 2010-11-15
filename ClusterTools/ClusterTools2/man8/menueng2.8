@@ -1,0 +1,65 @@
+.TH menueng2 8 "10 Nov 2010" "" "ClusterTools2"
+.\"
+.SH NAME
+menueng2 \- generate menues to support specific admin tasks 
+.\"
+.SH SYNOPSIS
+.B menueng2
+\fIOPTIONS\fR \fIPARAMETER\fR
+.\"
+.SH DESCRIPTION
+\fBmenueng2\fP generates menues for ASCI terminals. 
+
+The program is a frontend to a set of tools.
+Currently the tools are mainly used to setup and manage high-availability
+clusters.
+
+.\"
+.SH OPTIONS
+Global options are:
+.HP
+\fB --rscFile\fR
+	use the next parameter as name of the resource to generate a menu from.	
+.HP
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH EXAMPLES
+.TP
+# menueng2 --rscFile /usr/share/ClusterTools2/Help.rsc
+show help.
+ 
+.\"
+.SH FILES
+.TP
+/usr/sbin/menueng2
+	the program itself.
+.TP
+/usr/share/ClusterTools2/*.rsc
+	predefined menue resource files.
+.TP
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+http://ClusterTools.sourceforge.net
+.\"
+.SH SEE ALSO
+\fBwow2\fP(8), \fBmenueng2\fP(7)
+.\"
+.SH AUTHORS
+Fabian Herschel
+.\"
+.SH COPYRIGHT
+(c) 2010 Fabian Herschel, Germany.
+.br
+menueng2 comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

@@ -1,0 +1,73 @@
+.TH menueng2 5 "10 Nov 2010" "" "ClusterTools2"
+.\"
+.SH NAME
+menueng2 \- generate menues to support specific admin tasks 
+.\"
+.SH DESCRIPTION
+\fBmenueng2\fP generates menues for ASCII terminals. 
+
+The program is a frontend to a set of tools.
+Currently the tools are mainly used to setup and manage high-availability
+clusters.
+
+Different tasks need differnet menues. Therefore resource files are used to
+define the appropriate menu. 
+
+.\"
+.SH SYNTAX
+The file contains one line per menu entry. Usually one line represents one action
+to perform, one sub-menu to select, or just a line to be displayed.
+Each line consists of 4 or more fileds. Field separator is a single colon ":". 
+Trailing empty fields could be left off.
+So, the format of a resource file is similar to the /etc/passwd file.
+
+A hash "#" as the first character of a line marks it as comment.
+
+.TP
+1st field
+
+.TP
+2nd field
+
+.TP
+3rd field
+
+.TP
+4th field
+
+.TP
+5th field
+
+.\"
+.SH EXAMPLES
+.TP
+ 
+.\"
+.SH FILES
+.TP
+/usr/sbin/menueng2
+	the program itself.
+.TP
+/usr/share/ClusterTools2/*.rsc
+	predefined menue resource files.
+.TP
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+http://ClusterTools.sourceforge.net
+.\"
+.SH SEE ALSO
+\fBwow2\fP(8), \fBmenueng2\fP(8)
+.\"
+.SH AUTHORS
+Fabian Herschel
+.\"
+.SH COPYRIGHT
+(c) 2010 Fabian Herschel, Germany.
+.br
+menueng2 comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

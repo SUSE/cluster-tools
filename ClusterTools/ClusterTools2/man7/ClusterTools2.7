@@ -40,27 +40,15 @@ add configuration for a resource of type Novell eDirectory to the cluster.
 Use configuration agent 01-A-07-group_add_ndsd.
 Read information about the resource from file edir01.wow .
 .TP
-# whbcc --config edir01.wow 01-A-07-group_add_ndsd
-direct call of whbcc
-.TP
-# wow sc --all sap_C11.wow >precheck-sap_C11-$HOST
+# whbsaprecheck --all sap_C11.wow >precheck-sap_C11-$HOST
 check for allmost all pre-requistes that are needed to set up an HA cluster for SAP instance C11. 
 Read information about the needed resources from file sap_C11.wow . Write output into file precheck-sap_C11-<hostname>. 
-.TP
-# whbsaprecheck --all sap_C11.wow >precheck-sap_C11-$HOST
-direct call of whbsaprecheck
-.TP
-# wow cs
-start ASCII-terminal based menu to perform administrative tasks on a running cluster.
 .TP
 # ClusterService
 start ASCII-terminal based menu to perform administrative tasks on a running cluster.
 .TP
-# wow bk
-start cluster configuration backup tool make_hb_backup
-.TP
 # make_hb_backup
-direct call of the tool
+start cluster configuration backup tool
 .\"
 .SH FILES
 .TP

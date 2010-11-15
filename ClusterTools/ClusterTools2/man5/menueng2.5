@@ -1,0 +1,98 @@
+.TH menueng2 5 "10 Nov 2010" "" "ClusterTools2"
+.\"
+.SH NAME
+menueng2 \- generate menues to support specific admin tasks 
+.\"
+.SH DESCRIPTION
+\fBmenueng2\fP generates menues for ASCII terminals. 
+
+The program is a frontend to a set of tools and system utilities.
+
+Different tasks need differnet menues. Therefore resource files are used to define an appropriate
+menue. Either predefined files could be used, or custom files could be written. Predefined resource
+files are f.e. Main.rsc, Help.rsc, and Wow.rsc .  
+
+.\"
+.SH SYNTAX
+The resource file contains one line per menue entry. Usually one line represents one action to
+perform, one sub-menue to select, or just a line to be displayed. Each line consists of four or more
+fileds. Field separator is a single colon ":".  Trailing empty fields could be left off. So, the
+format of a resource file is similar to the file /etc/passwd .
+
+A hash "#" as the first character of a line marks it as comment and makes it to be ignored.
+
+.TP
+.B 1st field - Definition.
+Definiton of a mnemonic.
+A mnemonic is defined by naming it in the first field. 
+Mnemonics have to be unique in a resource file.
+
+Definition of a variable.
+A variables is defined by naming the variable identifier in the first field, preceeded by the
+percent sign "%", like "%variable". Allowed characters are [:alnum:]. 
+Variables have to be unique in a resource file.
+.\"
+.TP
+.B 2nd field - Menue.
+Name of a menu.
+
+Standard menue is "MAIN".
+Special menue is "HIDE".
+
+.\"
+.TP
+.B 3rd field - Description.
+Description to be displayed by the menue engine.
+If the line defines a mnemonic, the description is displayed as second filed on the upper section of
+the menue screen.
+If the line defines a variable, the description is displayed at the prompt on the lower section.
+.\"
+.TP
+.B 4th field - Command.
+Command executed by the shell.
+Variables are referenced to by calling the variable identifier embraced by curly brackets "{}" and
+preceeded by a percent sign "%", like "%{variable}". Variables have to be defined in the same
+resource file. Undefined variables will be prompted for.
+.\"
+.TP
+.B 5th field - Optional.
+Optional field. Statement executed by menue engine. 
+bar
+blank
+descr
+exit
+menu
+
+.\"
+.SH EXAMPLES
+.TP
+ 
+.\"
+.SH FILES
+.TP
+/usr/sbin/menueng2
+	the program itself.
+.TP
+/usr/share/ClusterTools2/*.rsc
+	predefined menue resource files.
+.TP
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+http://ClusterTools.sourceforge.net
+.\"
+.SH SEE ALSO
+\fBwow2\fP(8), \fBmenueng2\fP(8), \fBMAIN\fP(7)
+.\"
+.SH AUTHORS
+Fabian Herschel
+.\"
+.SH COPYRIGHT
+(c) 2010 Fabian Herschel, Germany.
+.br
+menueng2 comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

@@ -1,4 +1,8 @@
 
+- fix --help output
+ menueng2 --help
+usage ClusterService: --rscFile rscFile | --help
+
 - configure / update mode:
   till now we only cann add a prmitive or a group but could not update it
   see UPDATE.txt
@@ -6,3 +10,13 @@
 - help for top level menueng2
 
 - batch mode for menueng2
+
+- rpm -qi replace xml by crm
+
+- wow output crm instead of cli ?
+
+- man page menueng2
+
+- man page wow2
+
+- make_hb_backup update

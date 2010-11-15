@@ -5,22 +5,33 @@ menueng2 \- generate menues to support specific admin tasks
 .\"
 .SH SYNOPSIS
 .B menueng2
-\fIOPTIONS\fR \fIPARAMETER\fR
+\fIOPTION\fR \fIPARAMETER\fR
 .\"
 .SH DESCRIPTION
-\fBmenueng2\fP generates menues for ASCI terminals. 
+\fBmenueng2\fP generates menues for ASCII terminals. 
 
-The program is a frontend to a set of tools.
-Currently the tools are mainly used to setup and manage high-availability
+The program is a frontend to a set of tools and system utilities.
+Currently the program is mainly used to setup and manage high-availability
 clusters.
 
+A menue screen is split into two sections. The upper section displays the menue
+itself, containing mnemonics for the defined tasks and a short decription.
+This part is defined by the chosen resource file.
+The lower section contains a command prompt and an output area.
+This section is used to enter the desired mnemonic and to view possible
+parameters. Output is appended to the end of the screen.
+
+Menues could be defined by writing a resource file. Predefined resource files are
+f.e. Main.rsc, Help.rsc, and Wow.rsc .  
 .\"
 .SH OPTIONS
 Global options are:
 .HP
+\fB --help\fR
+	show usage.
+.HP
 \fB --rscFile\fR
 	use the next parameter as name of the resource to generate a menu from.	
-.HP
 .\"
 .SH EXIT STATUS
 .B 0
@@ -42,7 +53,6 @@ show help.
 .TP
 /usr/share/ClusterTools2/*.rsc
 	predefined menue resource files.
-.TP
 .\"
 .SH BUGS
 Feedback is welcome, please use the project page at
@@ -50,7 +60,7 @@ Feedback is welcome, please use the project page at
 http://ClusterTools.sourceforge.net
 .\"
 .SH SEE ALSO
-\fBwow2\fP(8), \fBmenueng2\fP(7)
+\fBwow2\fP(8), \fBmenueng2\fP(5)
 .\"
 .SH AUTHORS
 Fabian Herschel

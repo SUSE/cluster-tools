@@ -1,7 +1,7 @@
 #
-# spec file for package ClusterTools
+# spec file for package ClusterTools2
 #
-# Copyright (c) 2008 SUSE LINUX GmbH, Frankfurt, Germany.
+# Copyright (c) 2008-2010 SUSE LINUX GmbH, Germany.
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
@@ -11,7 +11,7 @@
 #
 Name:         ClusterTools2
 License:      GPL
-Group:        System/terminalserver
+Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.1.4
@@ -23,22 +23,22 @@ Requires:     pacemaker > 1.1.1
 Requires:     perl-TermReadLine-Gnu >= 1.16
 	
 %description
-ClusterTools provides tools for setting up and managing an openais/
+ClusterTools2 provides tools for setting up and managing an openais/
 pacemaker cluster.
 
-- wow helps you to create linux-ha system resources.
-The main program to be called is whbcc (wow heartbeat config change).
+- wow2 helps you to create linux-ha system resources.
 The wow package countains some agents (which are used to figure out
-config values) and xml-templates (which are used to create the xml-
+config values) and templates (which are used to create the crm-
 snipsets to be inserted into the cluster).
 
-- ClusterServcie is the main tool for managing a linux-ha cluster.
+- ClusterService2 is the main tool for managing a linux-ha cluster.
 There are some other commandline tools to make life easier.
 
 %prep
 %setup -c -T -a 0
 
 %build
+( cd man5; for mp in *5; do gzip $mp; done )
 ( cd man7; for mp in *7; do gzip $mp; done )
 ( cd man8; for mp in *8; do gzip $mp; done )
 
@@ -53,6 +53,7 @@ mkdir -p %{buildroot}/usr/share/ClusterTools2/samples
 mkdir -p %{buildroot}/usr/lib/ClusterTools2
 mkdir -p %{buildroot}/usr/lib/ClusterTools2/agents
 mkdir -p %{buildroot}/usr/lib/ClusterTools2/scripts
+mkdir -p %{buildroot}/usr/share/man/man5
 mkdir -p %{buildroot}/usr/share/man/man7
 mkdir -p %{buildroot}/usr/share/man/man8
 
@@ -73,6 +74,7 @@ cp -a agents/* %{buildroot}/usr/lib/ClusterTools2/agents
 cp -a scripts/* %{buildroot}/usr/lib/ClusterTools2/scripts
 # man page(s) and license
 #
+cp -a man5/*.gz %{buildroot}/usr/share/man/man5
 cp -a man7/*.gz %{buildroot}/usr/share/man/man7
 cp -a man8/*.gz %{buildroot}/usr/share/man/man8
 
@@ -93,6 +95,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8
 #/usr/sbin/showscores
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
+%doc /usr/share/man/man5/*.gz
 %doc /usr/share/man/man7/*.gz
 %doc /usr/share/man/man8/*.gz
 

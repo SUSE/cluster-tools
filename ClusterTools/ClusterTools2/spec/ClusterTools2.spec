@@ -14,8 +14,8 @@ License:      GPL
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.1.4
-Release:      4 
+Version:      2.1.5
+Release:      5 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 Vendor:	      SUSE Linux GmbH
@@ -92,6 +92,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8
 /usr/sbin/whbsaprecheck
 /usr/sbin/wow*
 /usr/sbin/menueng2
+/usr/sbin/sleha_cleanup
+/usr/sbin/grep-error-patterns
 #/usr/sbin/showscores
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2

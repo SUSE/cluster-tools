@@ -2,11 +2,12 @@
 #
 # whbsaprecheck 
 #
-# (c) 2009-2010 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2009-2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version 0.2.04 2010-10-06
+# Version 0.2.06 2011-01-12
 #
+# For SLES11.
 
 COMD=$(basename $0)
 CFIL=${2:-wowconfig}
@@ -37,7 +38,7 @@ SW_NOT="apparmor orarun ulimit"
 RUNLVL=3
 SRV_RUN="boot.multipath multipathd ntp boot.sapconf boot.sysstat boot.clock"
 # TODO: put this defs in external release definiton files
-SRV_NOT="boot.md boot.apparmor boot.dmraid slpd alsasound openais SuSEfirewall2_init SuSEfirewall2_setup ocfs2 o2cb open-iscsi sapinit"
+SRV_NOT="boot.md boot.apparmor boot.dmraid slpd alsasound openais SuSEfirewall2_init SuSEfirewall2_setup ocfs2 o2cb open-iscsi sapinit uuidd"
 
 PWDENC=des
 
@@ -185,6 +186,7 @@ function chk_gen_memory ()
 
 function chk_gen_storag ()
 {
+	# TODO: check for storage's barrier support and write-back cache
 	echo_msgsep $FUNCNAME
 	echo "--- conf for cluster needs:"
 	echo "/sys/block/*/queue/scheduler [deadline]"
@@ -212,6 +214,7 @@ function chk_gen_storag ()
 
 function chk_gen_fsys ()
 {
+	# TODO: check for mount opt barrier=0
 	echo_msgsep $FUNCNAME
 	echo "--- conf for cluster needs:"
 	echo "/var : ext3, rw,noatime,data=writeback, 8G, 80%"

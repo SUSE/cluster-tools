@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version 0.1 2011-01-27
+#
+# For SLES11.
+
+F="
+/var/lib/corosync/*
+/var/lib/heartbeat/cores/*/*
+/var/lib/heartbeat/crm/*
+/var/lib/pengine/*
+"
+
+rcopenais stop || exit
+
+for f in $F; do
+	rm -f $f
+done
+#

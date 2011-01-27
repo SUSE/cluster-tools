@@ -1,0 +1,51 @@
+#!/bin/bash
+# grep-error-patterns
+#
+# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version 0.1 2011-01-27
+#
+# For SLES11.
+
+# TODO: source pattern from external file, f.e. /etc/sysconfig/ClusterTools
+# TODO: grep "disabling barriers"
+F="
+"taint.flag"
+"no.device.*found"
+"lpfc.*err"
+"qla.*err"
+"target.failure"
+"reservation.conflict"
+"SCSI.*reset"
+"LUN.larger"
+"I/O.error"
+"multi.*path.*down"
+"duplicate.VG"
+"duplicate.PV"
+"not.found"
+"ocfs2.*ERR"
+"ocfs2.*not.unmounted.cleanly"
+"fsck.*recommended"
+"EXT.-fs.error"
+"bond.*link.*down"
+"bond.*duplicate.address"
+"link.*not.ready"
+"link.failure"
+"ntpd.*failed"
+"ntpd.*time.reset"
+"crm_resource.*Error"
+"logrotate.*error"
+"Failed.to.read"
+"TOTEM.*FAILED.*RECEIVE"
+"TOTEM.*processor.failed"
+"
+for f in $F; do
+        echo -n "$f = "
+        # TODO: more efficient loop
+#        ( zgrep -i $f /var/log/messages*bz2 ; grep -i $f /var/log/messages ; grep -i $f /var/log/boot.*; dmesg | grep -i $f)|\
+        ( grep -i $f /var/log/messages ; grep -i $f /var/log/boot.*; dmesg | grep -i $f )|\
+        wc -l
+done
+#
+

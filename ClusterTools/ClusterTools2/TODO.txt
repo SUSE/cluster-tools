@@ -20,3 +20,11 @@ usage ClusterService: --rscFile rscFile | --help
 - man page wow2
 
 - make_hb_backup update
+
+- add check to sleha_cleanup
+
+- man sleha_cleanup
+
+- external pattern file for grep-error-patterns
+
+- man grep-error-patterns

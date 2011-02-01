@@ -10,7 +10,7 @@
 
 # TODO: source pattern from external file, f.e. /etc/sysconfig/ClusterTools
 # TODO: grep "disabling barriers"
-F="
+ERROR_PATTERNS="
 "taint.flag"
 "no.device.*found"
 "lpfc.*err"
@@ -40,7 +40,7 @@ F="
 "TOTEM.*FAILED.*RECEIVE"
 "TOTEM.*processor.failed"
 "
-for f in $F; do
+for f in $ERROR_PATTERNS; do
         echo -n "$f = "
         # TODO: more efficient loop
 #        ( zgrep -i $f /var/log/messages*bz2 ; grep -i $f /var/log/messages ; grep -i $f /var/log/boot.*; dmesg | grep -i $f)|\

@@ -14,10 +14,11 @@ License:      GPL
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.1.5
-Release:      5 
+Version:      2.1.6
+Release:      1 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
+BuildArch:    noarch
 Vendor:	      SUSE Linux GmbH
 Requires:     pacemaker > 1.1.1
 Requires:     perl-TermReadLine-Gnu >= 1.16
@@ -102,6 +103,10 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8
 %doc /usr/share/man/man8/*.gz
 
 %changelog -n ClusterTools
+* Tue Feb 01 2011 - fabian.herschel@novell.com
+  2.1.6-1 added sleha_cleanup and grep-error-patterns from Lars Pinne
+* Mon Nov 15 2010 - fabian.herschel@novell.com
+  2.1.5-1 added new man pages from Lars
 * Mon Oct 25 2010 - fabian.herschel@novell.com
   2.1.4-1 added new use case for fs only stack
 * Thu Oct 14 2010 - fabian.herschel@novell.com

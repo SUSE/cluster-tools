@@ -4,13 +4,13 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version 0.1 2011-01-27
+# Version 0.1 2011-02-12
 #
 # For SLES11.
 
 # TODO: source pattern from external file, f.e. /etc/sysconfig/ClusterTools
-# TODO: grep "disabling barriers"
-ERROR_PATTERNS="
+
+ERROR_PATTERN="
 "taint.flag"
 "no.device.*found"
 "lpfc.*err"
@@ -20,6 +20,7 @@ ERROR_PATTERNS="
 "SCSI.*reset"
 "LUN.larger"
 "I/O.error"
+"disabling.*barrier"
 "multi.*path.*down"
 "duplicate.VG"
 "duplicate.PV"
@@ -28,6 +29,7 @@ ERROR_PATTERNS="
 "ocfs2.*not.unmounted.cleanly"
 "fsck.*recommended"
 "EXT.-fs.error"
+"iSCSI.connection.*error"
 "bond.*link.*down"
 "bond.*duplicate.address"
 "link.*not.ready"
@@ -40,7 +42,11 @@ ERROR_PATTERNS="
 "TOTEM.*FAILED.*RECEIVE"
 "TOTEM.*processor.failed"
 "
-for f in $ERROR_PATTERNS; do
+CLUSTER_LOG=$(grep "logfile:.*/" /etc/corosync/corosync.conf |\
+		 tr -d "    " | cut -d":" -f2)
+# TODO: awk that and use it below
+
+for f in $ERROR_PATTERN; do
         echo -n "$f = "
         # TODO: more efficient loop
 #        ( zgrep -i $f /var/log/messages*bz2 ; grep -i $f /var/log/messages ; grep -i $f /var/log/boot.*; dmesg | grep -i $f)|\

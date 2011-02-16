@@ -4,7 +4,7 @@
 sleha_cleanup \- remove cluster information base from cluster node
 .\"
 .SH SYNOPSIS
-.B sleha_cleanup
+.B sleha_cleanup \fIOPTION\fR
 .\"
 .SH DESCRIPTION
 \fBsleha_cleanup\fP cleans up a pacemaker HA cluster node. 
@@ -15,6 +15,14 @@ Only the basic cluster configuration in /etc will be left.
 Calling this command will shut down the cluster service and all resources on
 the node. It also will remove the complete cluster resource configuration and
 cluster history. 
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+        show help.
+.HP
+\fB --force\fR
+        remove CIB and logs.
 .\"
 .SH EXIT STATUS
 .B 0
@@ -30,6 +38,9 @@ Usage, syntax or execution errors.
 .TP
 /var/lib/corosync/, /var/lib/heartbeat/cores/, /var/lib/heartbeat/crm/, /var/lib/pengine/
 	the directories to be cleaned up.
+.TP
+/var/adm/backup/
+	the directory to backup the cib.xml.
 .\"
 .SH BUGS
 Feedback is welcome, please use the project page at

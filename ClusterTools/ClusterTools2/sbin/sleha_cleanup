@@ -3,20 +3,33 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version 0.1 2011-01-27
+# Version 0.1 2011-02-15
 #
 # For SLES11.
 
-F="
+FIL="
 /var/lib/corosync/*
 /var/lib/heartbeat/cores/*/*
 /var/lib/heartbeat/crm/*
 /var/lib/pengine/*
 "
+BAK="/var/adm/backup/cib.xml-$(date +%Y%m%d-%H%M%S)"
 
-rcopenais stop || exit
+case $1 in
+	--force)
+		rcopenais stop || exit
 
-for f in $F; do
-	rm -f $f
-done
+		mv /var/lib/heartbeat/crm/cib.xml $BAK 
+		for f in $FIL; do
+			rm -f $f
+		done
+	;;
+	*)
+		echo "usage: $(basename $0) [OPTION]"
+		echo
+		echo " --force	remove CIB and logs"
+		echo " --help		show help"
+		exit
+	;;
+esac
 #

@@ -1,0 +1,2 @@
+source wowlib2
+woweng2 UUID=rsc_stonith_sbd SDB_DEVICE=$SDB_DEVICE $wowcli/02-sbd-stonith.cli

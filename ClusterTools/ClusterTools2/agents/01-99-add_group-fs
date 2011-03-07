@@ -6,8 +6,10 @@ source wowlib2
 #
 # sfex
 #
-NGM=rsc_sfex_${SFEXID}_${SFEX_INDEX}_$SAPSID
-GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
+if [ -n "$SFEX_DEVICE" ]; then
+	NGM=rsc_sfex_${SFEXID}_${SFEX_INDEX}_$SAPSID
+	GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
+fi
 #
 # ip
 #

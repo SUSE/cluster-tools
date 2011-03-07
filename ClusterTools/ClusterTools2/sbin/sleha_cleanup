@@ -3,7 +3,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version 0.1 2011-02-15
+# Version: 0.1 2011-02-15
 #
 # For SLES11.
 
@@ -14,8 +14,17 @@ FIL="
 /var/lib/pengine/*
 "
 BAK="/var/adm/backup/cib.xml-$(date +%Y%m%d-%H%M%S)"
+EXE=$0
+
+function version() {
+        head -11 $EXE | grep "^# Version: "
+}
 
 case $1 in
+	-v|--version)
+		version
+		exit
+	;;
 	--force)
 		rcopenais stop || exit
 
@@ -27,8 +36,8 @@ case $1 in
 	*)
 		echo "usage: $(basename $0) [OPTION]"
 		echo
-		echo " --force	remove CIB and logs"
-		echo " --help		show help"
+		echo " --force	stop cluster servcie and resources, remove CIB and PE logs."
+		echo " --help		show help."
 		exit
 	;;
 esac

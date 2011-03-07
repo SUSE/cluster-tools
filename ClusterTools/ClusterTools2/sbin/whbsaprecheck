@@ -5,7 +5,7 @@
 # (c) 2009-2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version 0.2.06 2011-02-15
+# Version 0.2.06 2011-02-21
 #
 # For SLES11.
 
@@ -24,10 +24,10 @@ cups-client cups-drivers cups-libs cups-libs-32bit cups cups-autoconfig
 xorg-x11-libs xorg-x11
 nfs-client
 java-1_4_2-ibm-sap java-1_4_2-ibm-sap-devel
-glibc glibc-32bit glibc-locale glibc-locale-32bit glibc-devel glibc-devel-32bit
+glibc glibc-32bit glibc-locale glibc-locale-32bit glibc-devel
 kernel-default linux-kernel-headers
-binutils gcc gcc-32bit gcc43 gcc43-32bit gcc-locale gcc-locale libgcc43 libgcc43-32bit
-sysstat supportutils sam
+binutils gcc gcc-32bit gcc43 gcc-locale gcc-locale libgcc43 libgcc43-32bit
+sysstat supportutils suse-sam
 openais libopenais3 corosync libcorosync4 csync2 pacemaker pacemaker-mgmt libpacemaker3 cluster-glue cluster-network-kmp-default libglue2 
 yast2-cluster
 multipath-tools mdadm device-mapper device-mapper-32bit libext2fs2 libuuid1 libuuid1-32bit uuid-runtime

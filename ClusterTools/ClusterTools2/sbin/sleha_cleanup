@@ -8,19 +8,24 @@
 # Version: 0.2 2011-03-07
 #
 
-. /etc/ClusterTools2/sleha_cleanup
+EXE="$0"
 
-test -z ${FIL} &&\ 
+CFG="/etc/ClusterTools2/sleha_cleanup"
+test -s $CFG && source $CFG
+
+test -z "${FIL}" &&\
 	FIL="
 /var/lib/corosync/*
 /var/lib/heartbeat/cores/*/*
 /var/lib/heartbeat/crm/*
 /var/lib/pengine/*
 "
-test -z ${BAK} &&\ 
-	BAK="/var/adm/backup/cib.xml-$(date +%Y%m%d-%H%M%S)"
-EXE=$0
 
+test -z "${BAK}" &&\
+	BAK="/var/adm/backup/cib.xml-$(date +%Y%m%d-%H%M%S)"
+
+
+# main()
 
 case $1 in
 	-v|--version)

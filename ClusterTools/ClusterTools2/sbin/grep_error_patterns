@@ -8,9 +8,10 @@
 # Version: 0.2 2011-03-06
 #
 
-. /etc/ClusterTools2/grep_error_patterns
-
 EXE="$0"
+
+CFG="/etc/ClusterTools2/grep_error_patterns"
+test -s $CFG && source $CFG
 
 DMSG="/tmp/dmesg.$RANDOM"
 

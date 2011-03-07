@@ -22,7 +22,7 @@ test:
 	
 
 tar:	
-	tar -cvzf ${PKT}-${VERS}.tgz man? share sbin spec agents lib scripts samples cli
+	tar -cvzf ${PKT}-${VERS}.tgz man? share sbin spec agents lib scripts samples cli etc
 
 rpm:	tar
 	mv ${PKT}-${VERS}.tgz /usr/src/packages/SOURCES

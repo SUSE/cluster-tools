@@ -15,7 +15,7 @@ License:      GPL
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.1.8
+Version:      2.1.9
 Release:      1 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
@@ -35,7 +35,7 @@ snipsets to be inserted into the cluster).
 
 - ClusterService is the main tool for managing a linux-ha cluster.
 There are some other commandline tools to make life easier.
- 
+
 %prep
 %setup -c -T -a 0
 

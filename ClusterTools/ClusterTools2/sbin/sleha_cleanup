@@ -1,19 +1,24 @@
 #!/bin/bash
 #
+# sleha_cleanup
+#
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-03-07
+# Version: 0.2 2011-03-07
 #
-# For SLES11.
 
-FIL="
+. /etc/ClusterTools2/sleha_cleanup
+
+test -z ${FIL} &&\ 
+	FIL="
 /var/lib/corosync/*
 /var/lib/heartbeat/cores/*/*
 /var/lib/heartbeat/crm/*
 /var/lib/pengine/*
 "
-BAK="/var/adm/backup/cib.xml-$(date +%Y%m%d-%H%M%S)"
+test -z ${BAK} &&\ 
+	BAK="/var/adm/backup/cib.xml-$(date +%Y%m%d-%H%M%S)"
 EXE=$0
 
 
@@ -22,7 +27,7 @@ case $1 in
         	head -11 $EXE | grep "^# Version: "
 		exit
 	;;
-	--force)
+	-f|--force)
 		rcopenais stop || exit
 
 		mv /var/lib/heartbeat/crm/cib.xml $BAK 

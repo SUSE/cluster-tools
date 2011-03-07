@@ -11,9 +11,9 @@
 
 . /etc/ClusterTools2/grep-error-patterns
 
-EXE=$0
+EXE="$0"
 
-test -z $ERROR_PATTERN && ERROR_PATTERN="
+test -z "${ERROR_PATTERN}" && ERROR_PATTERN="
 "taint.flag"
 "no.device.*found"
 "lpfc.*err"
@@ -47,7 +47,7 @@ test -z $ERROR_PATTERN && ERROR_PATTERN="
 "
 
 #
-test -z $CLUSTER_LOG && CLUSTER_LOG=$(grep "logfile:.*/" /etc/corosync/corosync.conf |\
+test -z "${CLUSTER_LOG}" && CLUSTER_LOG=$(grep "logfile:.*/" /etc/corosync/corosync.conf |\
 		 tr -d "    " | cut -d":" -f2)
 # TODO: awk that and use it below
 

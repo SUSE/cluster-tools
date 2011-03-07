@@ -34,6 +34,6 @@ ERROR_PATTERN="
 "TOTEM.*processor.failed"
 "
 #
-CLUSTER_LOG="/var/log/corosybc.log"
+CLUSTER_LOG="/var/log/corosync.log"
 #
 

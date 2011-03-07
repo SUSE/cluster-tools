@@ -20,7 +20,7 @@ Release:      1
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
-Vendor:	      SUSE Linux Priducts GmbH
+Vendor:	      SUSE Linux Products GmbH
 Requires:     pacemaker > 1.1.1
 Requires:     perl-TermReadLine-Gnu >= 1.16
 	

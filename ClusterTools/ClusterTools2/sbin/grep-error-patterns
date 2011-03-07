@@ -1,16 +1,19 @@
 #!/bin/bash
+#
 # grep-error-patterns
 #
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version 0.1 2011-02-12
+# Version: 0.1 2011-02-12
 #
 # For SLES11.
 
 # TODO: source pattern from external file, f.e. /etc/sysconfig/ClusterTools
 
-ERROR_PATTERN="
+. /etc/ClusterTools2/grep-error-patterns
+
+test -z $ERROR_PATTERN && ERROR_PATTERN="
 "taint.flag"
 "no.device.*found"
 "lpfc.*err"
@@ -42,16 +45,42 @@ ERROR_PATTERN="
 "TOTEM.*FAILED.*RECEIVE"
 "TOTEM.*processor.failed"
 "
-CLUSTER_LOG=$(grep "logfile:.*/" /etc/corosync/corosync.conf |\
+#
+test -z $CLUSTER_LOG && CLUSTER_LOG=$(grep "logfile:.*/" /etc/corosync/corosync.conf |\
 		 tr -d "    " | cut -d":" -f2)
 # TODO: awk that and use it below
 
-for f in $ERROR_PATTERN; do
-        echo -n "$f = "
-        # TODO: more efficient loop
-#        ( zgrep -i $f /var/log/messages*bz2 ; grep -i $f /var/log/messages ; grep -i $f /var/log/boot.*; dmesg | grep -i $f)|\
-        ( grep -i $f /var/log/messages ; grep -i $f /var/log/boot.*; dmesg | grep -i $f )|\
-        wc -l
-done
+
+function version() {
+        head -11 $EXE | grep "^# Version: "
+}
+
+
+function help() {
+                echo "usage: $(basename $0) [OPTION]"
+                echo
+                echo " --help           show help."
+                echo " --version        show version."
+}
+
+case $1 in
+	-v|--version)
+		version
+		exit
+	;;
+	-h|--help)
+		help
+		exit
+	;;
+	*)
+	for f in $ERROR_PATTERN; do
+        	echo -n "$f = "
+        	# TODO: more efficient loop
+		#        ( zgrep -i $f /var/log/messages*bz2 ; grep -i $f /var/log/messages ; grep -i $f /var/log/boot.*; dmesg | grep -i $f)|\
+        	( grep -i $f /var/log/messages ; grep -i $f /var/log/boot.*; dmesg | grep -i $f )|\
+        	wc -l
+	done
+	;;
+esac
 #
 

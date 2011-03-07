@@ -16,9 +16,11 @@ FIL="
 BAK="/var/adm/backup/cib.xml-$(date +%Y%m%d-%H%M%S)"
 EXE=$0
 
+	
 function version() {
         head -11 $EXE | grep "^# Version: "
 }
+
 
 case $1 in
 	-v|--version)
@@ -36,7 +38,7 @@ case $1 in
 	*)
 		echo "usage: $(basename $0) [OPTION]"
 		echo
-		echo " --force	stop cluster servcie and resources, remove CIB and PE logs."
+		echo " --force	stop cluster service and resources, remove CIB and PE logs."
 		echo " --help		show help."
 		exit
 	;;

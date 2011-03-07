@@ -1,4 +1,4 @@
-.TH ClusterTools2 7 "10 Oct 2010" "" "ClusterTools2"
+.TH ClusterTools2 7 "06 Mar 2011" "" "ClusterTools2"
 .\"
 .SH NAME
 ClusterTools2 \- Tools for setting up and managing pacemaker HA clusters
@@ -46,11 +46,13 @@ Read information about the needed resources from file sap_C11.wow . Write output
 .TP
 # ClusterService
 start ASCII-terminal based menu to perform administrative tasks on a running cluster.
-.TP
 # make_hb_backup
 start cluster configuration backup tool
 .\"
 .SH FILES
+.TP
+/etc/ClusterTools2/
+	configuration files.
 .TP
 /usr/lib/ClusterTools2/
 	ClusterTools2 components in general.
@@ -77,8 +79,9 @@ http://ClusterTools.sourceforge.net
 .\"
 .SH SEE ALSO
 \fBwow\fP(8), \fBmake_hb_backup\fP(8), \fBwhbsaprecheck\fP(8), \fBClusterService\fP(8),
-\fBlist_failcounts\fP(8), \fBcluster_actions\fP(8), \fBcheck-split-brain\fP(8),
+\fBlist_failcounts\fP(8), \fBcluster_actions\fP(8), \fBcheck_split_brain\fP(8),
 \fBclusterstate\fP(8), \fBlinkstate\fP(8), \fBreset_failcounts\fP(8), \fBshowscores\fP(8),
+\fBsleha_cleanup\fP(8), \fBgrep_error_patterns\fP(8),
 \fBmenueng2\fP(8), \fBmenueng2\fP(5).
 .\"
 .SH AUTHORS

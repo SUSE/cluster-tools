@@ -1,4 +1,4 @@
-# grep-error-patterns-11
+# /etc/ClusterTools2/grep_error_patterns
 # For SLES11.
 #
 ERROR_PATTERN="
@@ -36,4 +36,7 @@ ERROR_PATTERN="
 #
 CLUSTER_LOG="/var/log/corosync.log"
 #
-
+SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg"
+#
+ZIPPED_LOG="/var/log/messages.*bz2"
+#

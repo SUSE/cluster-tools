@@ -160,7 +160,12 @@ recommended that you use one with actual hardware integration. See
 /lib/modules/.../kernel/drivers/watchdog in the kernel package for a list
 of choices.
 
-SBD can beconfigured in /etc/sysconfig/sbd  to use the systems's watchdog.
+No other software must access the watchdog timer. Some hardware vendors
+ship systems management software that use the watchdog for system resets
+(f.e. HP ASR daemon). Such software has to be disbaled if the watchdog is
+used by SBD.  
+
+SBD can be configured in /etc/sysconfig/sbd to use the systems's watchdog.
 .\"
 .SH FILES
 .TP
@@ -172,6 +177,9 @@ SBD can beconfigured in /etc/sysconfig/sbd  to use the systems's watchdog.
 .TP
 /etc/sysconfig/sbd
 	the configuration file.
+.TP
+/etc/sysconfig/kernel
+	the kernel and initrd configuration file.
 .TP
 /dev/<SBD>
 	the SBD block device.

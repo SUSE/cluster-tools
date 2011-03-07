@@ -1,0 +1,118 @@
+#!/bin/bash
+#
+# grep_error_patterns
+#
+# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version: 0.2 2011-03-06
+#
+
+. /etc/ClusterTools2/grep_error_patterns
+
+EXE="$0"
+
+DMSG="/tmp/dmesg.$RANDOM"
+
+test -z "${SYSTEM_LOG}" &&\
+	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg"
+	 SYSTEM_LOG="${SYSTEM_LOG} ${DMSG}"
+
+test -z "${CLUSTER_LOG}" &&\
+	 CLUSTER_LOG=$(grep "logfile:.*/" /etc/corosync/corosync.conf |\
+		 tr -d "    " | cut -d":" -f2)
+
+test -z "${ZIPPED_LOG}" &&\
+	ZIPPED_LOG="/var/log/messages.*bz2"
+	ZIPPED_LOG="${ZIPPED_LOG} ${CLUSTER_LOG}.*bz2"
+
+test -z "${ERROR_PATTERN}" &&\
+	 ERROR_PATTERN="
+"taint.flag"
+"no.device.*found"
+"lpfc.*err"
+"qla.*err"
+"target.failure"
+"reservation.conflict"
+"SCSI.*reset"
+"LUN.larger"
+"I/O.error"
+"disabling.*barrier"
+"multi.*path.*down"
+"duplicate.VG"
+"duplicate.PV"
+"not.found"
+"ocfs2.*ERR"
+"ocfs2.*not.unmounted.cleanly"
+"fsck.*recommended"
+"EXT.-fs.error"
+"iSCSI.connection.*error"
+"bond.*link.*down"
+"bond.*duplicate.address"
+"link.*not.ready"
+"link.failure"
+"ntpd.*failed"
+"ntpd.*time.reset"
+"crm_resource.*Error"
+"logrotate.*error"
+"Failed.to.read"
+"TOTEM.*FAILED.*RECEIVE"
+"TOTEM.*processor.failed"
+"
+
+
+function help() {
+                echo "usage:	$(basename $0)"
+                echo "	$(basename $0) [OPTION]"
+                echo
+                echo " --help		show help."
+                echo " --version	show version."
+                echo " --zip		search compressed logs, too."
+}
+
+
+function run_grep() {
+	echo "logs: $LOG" >/dev/stderr
+
+	dmesg >$DMSG
+
+        # TODO: more efficient loop
+	for e in ${ERROR_PATTERN}; do
+        	echo -n "$e = "
+		for f in ${LOG}; do
+			cat $f
+		done | zgrep -ic $e
+	done
+
+	rm $DMSG
+}
+
+
+# main()
+
+case $1 in
+	-v|--version)
+        	head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-h|--help)
+		help
+		exit
+	;;
+	-z|--zip)
+		LOG="${SYSTEM_LOG}"
+		test -s ${CLUSTER_LOG} && LOG="${LOG} ${CLUSTER_LOG}"
+		for z in ${ZIPPED_LOG}; do
+			test -s $z && LOG="${LOG} ${z}"
+		done
+		run_grep
+		exit
+	;;
+	*)
+		LOG="${SYSTEM_LOG}"
+		test -s ${CLUSTER_LOG} && LOG="${LOG} ${CLUSTER_LOG}"
+		run_grep
+		exit		
+	;;
+esac
+#

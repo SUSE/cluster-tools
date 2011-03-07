@@ -44,7 +44,7 @@ There are some other commandline tools to make life easier.
 ( cd man7; for mp in *7; do gzip $mp; done )
 ( cd man8; for mp in *8; do gzip $mp; done )
 mkdir -p etc/ClusterTools2
-touch etc/ClusterTools2/add_file_here
+#touch etc/ClusterTools2/add_file_here
 
 %clean
 test "$RPM_BUILD_ROOT" != "/" && rm -rf $RPM_BUILD_ROOT
@@ -94,7 +94,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/ClusterService
 #/usr/sbin/clusterstate
 #/usr/sbin/cluster_actions
-/usr/sbin/grep-error-patterns
+/usr/sbin/grep_error_patterns
 #/usr/sbin/linkstate
 /usr/sbin/list_failcounts
 #/usr/sbin/make_hb_backup
@@ -113,6 +113,9 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config /etc/ClusterTools2/*
 
 %changelog -n ClusterTools
+* Mon Mar 07 2011 - lars.pinne@novell.com
+  2.1.9-1 update and cleanup 
+  - grep_error_patterns
 * Mon Mar 07 2011 - fabian.herschel@novell.com
   2.1.8-1 prepare_wowfile (lp)
   - RAID1 devices resources could be named more flexible (fh)

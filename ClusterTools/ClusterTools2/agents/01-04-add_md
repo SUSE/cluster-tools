@@ -1,11 +1,30 @@
 source wowlib2
-echo "$RAID1_DEVICES" | while read raiddev raidname
-do
-	if [ -n "$raidname" ]; then
-		raidname=${raiddev#/dev/}
-	fi
-	woweng2 UUID=rsc_md_${SAPSID}_${raidname} \
-		DEVICE=$raiddev \
-		MDADM_CONF=$RAID_CONFIG \
-		$wowcli/01-md.cli
-done
+mode=new_style
+echo "$RAID1_DEVICES" | grep -q '/dev.*/dev' && mode=old_style
+
+case "$mode" in
+	new_style ) 
+		echo "$RAID1_DEVICES" | while read raiddev raidname
+		do
+		echo "#rd $raiddev rn $raidname"
+			if [ -z "$raidname" ]; then
+				raidname=${raiddev#/dev/}
+			fi
+			woweng2 UUID=rsc_md_${SAPSID}_${raidname} \
+				DEVICE=$raiddev \
+				MDADM_CONF=$RAID_CONFIG \
+				$wowcli/01-md.cli
+		done
+		;;
+	old_style )
+		for raiddev in $RAID1_DEVICES
+		do
+			raidname=${raiddev#/dev/}
+			woweng2 UUID=rsc_md_${SAPSID}_${raidname} \
+				DEVICE=$raiddev \
+				MDADM_CONF=$RAID_CONFIG \
+				$wowcli/01-md.cli
+		done
+		;;
+esac
+

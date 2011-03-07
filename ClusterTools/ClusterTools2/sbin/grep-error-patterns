@@ -5,11 +5,13 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-02-12
+# Version: 0.1 2011-03-06
 #
 # For SLES11.
 
 . /etc/ClusterTools2/grep-error-patterns
+
+EXE=$0
 
 test -z $ERROR_PATTERN && ERROR_PATTERN="
 "taint.flag"
@@ -43,15 +45,11 @@ test -z $ERROR_PATTERN && ERROR_PATTERN="
 "TOTEM.*FAILED.*RECEIVE"
 "TOTEM.*processor.failed"
 "
+
 #
 test -z $CLUSTER_LOG && CLUSTER_LOG=$(grep "logfile:.*/" /etc/corosync/corosync.conf |\
 		 tr -d "    " | cut -d":" -f2)
 # TODO: awk that and use it below
-
-
-function version() {
-        head -11 $EXE | grep "^# Version: "
-}
 
 
 function help() {
@@ -61,9 +59,12 @@ function help() {
                 echo " --version        show version."
 }
 
+
+# main()
+
 case $1 in
 	-v|--version)
-		version
+        	head -11 $EXE | grep "^# Version: "
 		exit
 	;;
 	-h|--help)

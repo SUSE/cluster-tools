@@ -3,7 +3,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-02-15
+# Version: 0.1 2011-03-07
 #
 # For SLES11.
 
@@ -16,15 +16,10 @@ FIL="
 BAK="/var/adm/backup/cib.xml-$(date +%Y%m%d-%H%M%S)"
 EXE=$0
 
-	
-function version() {
-        head -11 $EXE | grep "^# Version: "
-}
-
 
 case $1 in
 	-v|--version)
-		version
+        	head -11 $EXE | grep "^# Version: "
 		exit
 	;;
 	--force)
@@ -34,12 +29,14 @@ case $1 in
 		for f in $FIL; do
 			rm -f $f
 		done
+		exit
 	;;
 	*)
 		echo "usage: $(basename $0) [OPTION]"
 		echo
 		echo " --force	stop cluster service and resources, remove CIB and PE logs."
 		echo " --help		show help."
+		echo " --version	show version."
 		exit
 	;;
 esac

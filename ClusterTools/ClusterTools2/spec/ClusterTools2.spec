@@ -2,6 +2,7 @@
 # spec file for package ClusterTools2
 #
 # Copyright (c) 2008-2010 SUSE LINUX GmbH, Germany.
+# Copyright (c) 2011      SUSE LINUX Products GmbH, Germany.
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
@@ -14,12 +15,12 @@ License:      GPL
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.1.6
+Version:      2.1.8
 Release:      1 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
-Vendor:	      SUSE Linux GmbH
+Vendor:	      SUSE Linux Priducts GmbH
 Requires:     pacemaker > 1.1.1
 Requires:     perl-TermReadLine-Gnu >= 1.16
 	
@@ -95,6 +96,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8
 /usr/sbin/menueng2
 /usr/sbin/sleha_cleanup
 /usr/sbin/grep-error-patterns
+/usr/sbin/prepare_wowfile
 #/usr/sbin/showscores
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
@@ -103,6 +105,15 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8
 %doc /usr/share/man/man8/*.gz
 
 %changelog -n ClusterTools
+* Mon Mar 07 2011 - fabian.herschel@novell.com
+  2.1.8-1 prepare_wowfile (lp)
+  - RAID1 devices resources could be named more flexible (fh)
+* Tue Feb 22 2011 - lars.pinne@novell.com
+  2.1.7-1 Updated files
+  - Manpages: sbd.8, sleha_cleanup.8
+  - grep-error-patterns
+  - sleha_cleanup
+  - whbsaprecheck
 * Tue Feb 01 2011 - fabian.herschel@novell.com
   2.1.6-1 added sleha_cleanup and grep-error-patterns from Lars Pinne
 * Mon Nov 15 2010 - fabian.herschel@novell.com

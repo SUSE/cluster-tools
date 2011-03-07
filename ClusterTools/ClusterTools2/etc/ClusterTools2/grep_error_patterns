@@ -38,5 +38,5 @@ CLUSTER_LOG="/var/log/corosync.log"
 #
 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg"
 #
-ZIPPED_LOG="/var/log/messages.bz2"
+ZIPPED_LOG="/var/log/messages.*bz2"
 #

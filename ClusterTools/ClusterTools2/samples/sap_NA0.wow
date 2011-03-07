@@ -73,6 +73,10 @@ SFEX_DEVICE="/dev/mapper/sapvol1_part1"
 SFEX_INDEX=1
 #
 RAID1_DEVICES="/dev/md0"
+RAID1_DEVICES=$(cat <<HERE-MD
+/dev/md0 ${SAPSID}
+HERE-MD
+)
 RAID_CONFIG="/clusterconf/$SAPSID/mdadm.conf"
 #
 LVM_VOLUMEGROUPS="sapvg"

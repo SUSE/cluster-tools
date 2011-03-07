@@ -1,6 +1,9 @@
 source wowlib2
-for raiddev in $RAID1_DEVICES; do
-	raidname=${raiddev#/dev/}
+echo "$RAID1_DEVICES" | while read raiddev raidname
+do
+	if [ -n "$raidname" ]; then
+		raidname=${raiddev#/dev/}
+	fi
 	woweng2 UUID=rsc_md_${SAPSID}_${raidname} \
 		DEVICE=$raiddev \
 		MDADM_CONF=$RAID_CONFIG \

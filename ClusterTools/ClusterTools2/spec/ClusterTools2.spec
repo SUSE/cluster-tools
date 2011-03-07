@@ -48,6 +48,7 @@ There are some other commandline tools to make life easier.
 test "$RPM_BUILD_ROOT" != "/" && rm -rf $RPM_BUILD_ROOT
 
 %install
+mkdir -p %{buildroot}/etc/ClusterTools2
 mkdir -p %{buildroot}/usr/sbin
 mkdir -p %{buildroot}/usr/share/ClusterTools2
 mkdir -p %{buildroot}/usr/share/ClusterTools2/cli
@@ -62,23 +63,27 @@ mkdir -p %{buildroot}/usr/share/man/man8
 #
 # "binaries"
 #
-cp -va sbin/* %{buildroot}/usr/sbin
+cp -va sbin/* %{buildroot}/usr/sbin/
+#
+# etc
+cp -va etc/ClusterTools2/*  %{buildroot}/etc/ClusterTools2/
+#
 #
 # share 
 #
-cp -a share/* %{buildroot}/usr/share/ClusterTools2
-cp -a cli/* %{buildroot}/usr/share/ClusterTools2/cli
-cp -a samples/* %{buildroot}/usr/share/ClusterTools2/samples
+cp -a share/* %{buildroot}/usr/share/ClusterTools2/
+cp -a cli/* %{buildroot}/usr/share/ClusterTools2/cli/
+cp -a samples/* %{buildroot}/usr/share/ClusterTools2/samples/
 #
 #
-cp -a lib/* %{buildroot}/usr/lib/ClusterTools2
-cp -a agents/* %{buildroot}/usr/lib/ClusterTools2/agents
+cp -a lib/* %{buildroot}/usr/lib/ClusterTools2/
+cp -a agents/* %{buildroot}/usr/lib/ClusterTools2/agents/
 cp -a scripts/* %{buildroot}/usr/lib/ClusterTools2/scripts
 # man page(s) and license
 #
-cp -a man5/*.gz %{buildroot}/usr/share/man/man5
-cp -a man7/*.gz %{buildroot}/usr/share/man/man7
-cp -a man8/*.gz %{buildroot}/usr/share/man/man8
+cp -a man5/*.gz %{buildroot}/usr/share/man/man5/
+cp -a man7/*.gz %{buildroot}/usr/share/man/man7/
+cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 
 %post
 
@@ -87,6 +92,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8
 /usr/sbin/ClusterService
 #/usr/sbin/clusterstate
 #/usr/sbin/cluster_actions
+/usr/sbin/grep-error-patterns
 #/usr/sbin/linkstate
 /usr/sbin/list_failcounts
 #/usr/sbin/make_hb_backup
@@ -94,15 +100,15 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8
 /usr/sbin/whbsaprecheck
 /usr/sbin/wow*
 /usr/sbin/menueng2
-/usr/sbin/sleha_cleanup
-/usr/sbin/grep-error-patterns
 /usr/sbin/prepare_wowfile
+/usr/sbin/sleha_cleanup
 #/usr/sbin/showscores
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
 %doc /usr/share/man/man5/*.gz
 %doc /usr/share/man/man7/*.gz
 %doc /usr/share/man/man8/*.gz
+%config /etc/ClusterTools2/*
 
 %changelog -n ClusterTools
 * Mon Mar 07 2011 - fabian.herschel@novell.com
@@ -125,7 +131,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8
           and additional control commands
 	- use case specific sample CS_SAPNA0
 * Tue Oct 12 2010 - fabian.herschel@novell.com
-  2.1.2-1 name sheme for wow and submenus
+  2.1.2-1 name scheme for wow and submenus
 * Thu Oct 07 2010 - fabian.herschel@novell.com
   2.1.0-1 reintegrated wow to ClusterTools2
 * Wed Oct 06 2010 - fabian.herschel@novell.com

@@ -9,8 +9,6 @@
 #
 # For SLES11.
 
-# TODO: source pattern from external file, f.e. /etc/sysconfig/ClusterTools
-
 . /etc/ClusterTools2/grep-error-patterns
 
 test -z $ERROR_PATTERN && ERROR_PATTERN="

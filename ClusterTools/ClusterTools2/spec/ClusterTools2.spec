@@ -35,7 +35,7 @@ snipsets to be inserted into the cluster).
 
 - ClusterService is the main tool for managing a linux-ha cluster.
 There are some other commandline tools to make life easier.
-
+ 
 %prep
 %setup -c -T -a 0
 
@@ -43,6 +43,8 @@ There are some other commandline tools to make life easier.
 ( cd man5; for mp in *5; do gzip $mp; done )
 ( cd man7; for mp in *7; do gzip $mp; done )
 ( cd man8; for mp in *8; do gzip $mp; done )
+mkdir -p etc/ClusterTools2
+touch etc/ClusterTools2/add_file_here
 
 %clean
 test "$RPM_BUILD_ROOT" != "/" && rm -rf $RPM_BUILD_ROOT

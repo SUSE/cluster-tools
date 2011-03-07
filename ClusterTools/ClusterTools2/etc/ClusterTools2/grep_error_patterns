@@ -1,0 +1,42 @@
+# /etc/ClusterTools2/grep_error_patterns
+# For SLES11.
+#
+ERROR_PATTERN="
+"taint.flag"
+"no.device.*found"
+"lpfc.*err"
+"qla.*err"
+"target.failure"
+"reservation.conflict"
+"SCSI.*reset"
+"LUN.larger"
+"I/O.error"
+"disabling.*barrier"
+"multi.*path.*down"
+"duplicate.VG"
+"duplicate.PV"
+"not.found"
+"ocfs2.*ERR"
+"ocfs2.*not.unmounted.cleanly"
+"fsck.*recommended"
+"EXT.-fs.error"
+"iSCSI.connection.*error"
+"bond.*link.*down"
+"bond.*duplicate.address"
+"link.*not.ready"
+"link.failure"
+"ntpd.*failed"
+"ntpd.*time.reset"
+"crm_resource.*Error"
+"logrotate.*error"
+"Failed.to.read"
+"TOTEM.*FAILED.*RECEIVE"
+"TOTEM.*processor.failed"
+"
+#
+CLUSTER_LOG="/var/log/corosync.log"
+#
+SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg"
+#
+ZIPPED_LOG="/var/log/messages.bz2"
+#

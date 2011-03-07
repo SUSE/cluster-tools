@@ -6,7 +6,6 @@ case "$mode" in
 	new_style ) 
 		echo "$RAID1_DEVICES" | while read raiddev raidname
 		do
-		echo "#rd $raiddev rn $raidname"
 			if [ -z "$raidname" ]; then
 				raidname=${raiddev#/dev/}
 			fi

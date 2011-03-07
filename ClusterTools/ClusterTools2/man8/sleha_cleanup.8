@@ -18,11 +18,14 @@ cluster history.
 .\"
 .SH OPTIONS
 .HP
+\fB --force\fR
+        stop cluster servcie and resources, remove CIB and PE logs.
+.HP
 \fB --help\fR
         show help.
 .HP
-\fB --force\fR
-        stop cluster servcie and resources, remove CIB and PE logs.
+\fB --version\fR
+        show version.
 .\"
 .SH EXIT STATUS
 .B 0
@@ -35,6 +38,9 @@ Usage, syntax or execution errors.
 .TP
 /usr/sbin/sleha_cleanup
 	the program itself.
+.TP
+/etc/ClusterTools2/sleha_cleanup
+	the configuration.
 .TP
 /var/lib/corosync/, /var/lib/heartbeat/cores/, /var/lib/heartbeat/crm/, /var/lib/pengine/
 	the directories to be cleaned up.

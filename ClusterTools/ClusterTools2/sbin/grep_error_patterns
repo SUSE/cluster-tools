@@ -24,7 +24,7 @@ test -z "${CLUSTER_LOG}" &&\
 
 test -z "${ZIPPED_LOG}" &&\
 	ZIPPED_LOG="/var/log/messages.*bz2"
-	ZIPPED_LOG="${ZIPPED_LOG} ${CLUSTER_LOG}.bz2"
+	ZIPPED_LOG="${ZIPPED_LOG} ${CLUSTER_LOG}.*bz2"
 
 test -z "${ERROR_PATTERN}" &&\
 	 ERROR_PATTERN="
@@ -77,9 +77,9 @@ function run_grep() {
 	dmesg >$DMSG
 
         # TODO: more efficient loop
-	for e in $ERROR_PATTERN; do
+	for e in ${ERROR_PATTERN}; do
         	echo -n "$e = "
-		for f in $LOG; do
+		for f in ${LOG}; do
 			cat $f
 		done | zgrep -ic $e
 	done
@@ -100,15 +100,17 @@ case $1 in
 		exit
 	;;
 	-z|--zip)
-		test -s $CLUSTER_LOG && LOG="${LOG} ${CLUSTER_LOG}"
-		for z in $ZIPPED_LOG; do
+		LOG="${SYSTEM_LOG}"
+		test -s ${CLUSTER_LOG} && LOG="${LOG} ${CLUSTER_LOG}"
+		for z in ${ZIPPED_LOG}; do
 			test -s $z && LOG="${LOG} ${z}"
 		done
 		run_grep
 		exit
 	;;
 	*)
-		test -s $CLUSTER_LOG && LOG="${LOG} ${CLUSTER_LOG}"
+		LOG="${SYSTEM_LOG}"
+		test -s ${CLUSTER_LOG} && LOG="${LOG} ${CLUSTER_LOG}"
 		run_grep
 		exit		
 	;;

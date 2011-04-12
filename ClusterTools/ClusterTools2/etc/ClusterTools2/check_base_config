@@ -30,7 +30,7 @@ CONF_FILES="
 /etc/modprobe.conf.local
 /etc/logrotate.d/corosync
 /etc/corosync/corosync.conf
-/etc/corosync/halogd.cf
+/etc/corosync/logd.cf
 /etc/corosync/authkey
 "
 # TODO: /boot/initrd, boot/vmlinuz

@@ -15,14 +15,25 @@ test -s $CFG && source $CFG
 
 test -z "${CONF_FILES}" &&\
 	 CONF_FILES="
+/etc/SuSE-release
+/etc/zypp/zypp.conf
+/etc/products.d/*.prod
+/proc/cmdline
+/proc/sys/kernel/tainted
+/etc/inittab
 /etc/hosts
 /etc/ntp.conf
 /etc/passwd
+/etc/group
+/etc/drbd.conf
+/etc/drbd.d/*
 /etc/lvm/lvm.conf
 /etc/multipath.conf
 /etc/multipath.bind
 /etc/mdadm.conf
 /clusterconf/mdadm.*.conf
+/etc/iscsi/iscsid.conf
+/etc/iscsi/initiatorname.iscsi
 /etc/sysconfig/kernel
 /etc/sysconfig/sbd
 /etc/sysconfig/oracle
@@ -35,7 +46,6 @@ test -z "${CONF_FILES}" &&\
 /etc/corosync/halogd.cf
 /etc/corosync/authkey
 "
-
 # TODO: exact grep pattern "^.."
 #test -z "${CONF_CALLS}" &&\
 #	 CONF_CALLS="
@@ -48,6 +58,8 @@ test -z "${CONF_FILES}" &&\
 #"cat /proc/mounts"
 #"chkconfig -A | grep on$"
 #"chkconfig -A | grep off$"
+#"route -n"
+#"iptables -L"
 #"
 
 function help() {

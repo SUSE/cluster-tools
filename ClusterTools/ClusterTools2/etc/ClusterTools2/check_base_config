@@ -2,14 +2,25 @@
 # For SLES11.
 #
 CONF_FILES="
+/etc/SuSE-release
+/etc/zypp/zypp.conf
+/etc/products.d/*.prod
+/proc/cmdline
+/proc/sys/kernel/tainted
+/etc/inittab
 /etc/hosts
 /etc/ntp.conf
 /etc/passwd
+/etc/group
+/etc/drbd.conf
+/etc/drbd.d/*
 /etc/lvm/lvm.conf
 /etc/multipath.conf
 /etc/multipath.bind
 /etc/mdadm.conf
 /clusterconf/mdadm.*.conf
+/etc/iscsi/iscsid.conf
+/etc/iscsi/initiatorname.iscsi
 /etc/sysconfig/kernel
 /etc/sysconfig/sbd
 /etc/sysconfig/oracle
@@ -30,9 +41,12 @@ CONF_CALLS="
 "uname -a"
 "lsmod"
 "rpm -qa"
+"ls /etc/zypp/repos.d/"
 "multipath -ll"
 "cat /proc/mounts"
 "chkconfig -A | grep on$"
 "chkconfig -A | grep off$"
+"iptables -L"
+"route -n"
 "
 #

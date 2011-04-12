@@ -1,0 +1,37 @@
+# /etc/ClusterTools2/check_base_config
+# For SLES11.
+#
+CONF_FILES="
+/etc/hosts
+/etc/ntp.conf
+/etc/passwd
+/etc/lvm/lvm.conf
+/etc/multipath.conf
+/etc/multipath.bind
+/etc/mdadm.conf
+/clusterconf/mdadm.*.conf
+/etc/sysconfig/kernel
+/etc/sysconfig/sbd
+/etc/sysconfig/oracle
+/etc/oratab
+/etc/sysctl.conf
+/etc/modprobe.conf.local
+/etc/logrotate.d/corosync
+/etc/corosync/corosync.conf
+/etc/corosync/halogd.cf
+/etc/corosync/authkey
+"
+# TODO: /boot/initrd, boot/vmlinuz
+#
+CONF_CALLS="
+"grep ^model.name /proc/cpuinfo"
+"grep ^MemTotal: /proc/meminfo"
+"uname -a"
+"lsmod"
+"rpm -qa"
+"multipath -ll"
+"cat /proc/mounts"
+"chkconfig -A | grep on$"
+"chkconfig -A | grep off$"
+"
+#

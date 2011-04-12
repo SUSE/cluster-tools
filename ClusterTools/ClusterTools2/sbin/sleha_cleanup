@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.2 2011-03-07
+# Version: 0.2 2011-04-12
 #
 
 EXE="$0"
@@ -29,6 +29,7 @@ test -z "${BAK}" &&\
 
 case $1 in
 	-v|--version)
+		echo -n "$(basename $EXE) "
         	head -11 $EXE | grep "^# Version: "
 		exit
 	;;

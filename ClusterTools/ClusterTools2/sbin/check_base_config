@@ -36,19 +36,19 @@ test -z "${CONF_FILES}" &&\
 /etc/corosync/authkey
 "
 
-test -z "${CONF_CALLS}" &&\
-	 CONF_CALLS="
-"grep ^model.name /proc/cpuinfo"
-"grep ^MemTotal: /proc/meminfo"
-"uname -a"
-"lsmod"
-"rpm -qa"
-"multipath -ll"
-"cat /proc/mounts"
-"chkconfig -A | grep on$"
-"chkconfig -A | grep off$"
-"
-"
+# TODO: exact grep pattern "^.."
+#test -z "${CONF_CALLS}" &&\
+#	 CONF_CALLS="
+#"grep model.name /proc/cpuinfo"
+#"grep MemTotal: /proc/meminfo"
+#"uname -a"
+#"lsmod"
+#"rpm -qa"
+#"multipath -ll"
+#"cat /proc/mounts"
+#"chkconfig -A | grep on$"
+#"chkconfig -A | grep off$"
+#"
 
 function help() {
                 echo "usage:	$(basename $0)"
@@ -60,15 +60,17 @@ function help() {
 
 
 function run_check() {
-
+	# TODO: better loop
 	for f in ${CONF_FILES}; do
-        	echo -n "$f = "
-		md5sum $f
+		S="NA"
+		test -r $f && S=$(md5sum $f | awk '{print $1}')
+        	echo "$f $S"
 	done
-	for f in ${CONF_CALLS}; do
-        	echo -n "$f = "
-		$f | sort | md5sum
-	done
+# TODO
+#	for f in ${CONF_CALLS}; do
+#        	echo -n "$f = "
+#		exec $f | sort | md5sum -
+#	done
 }
 
 
@@ -76,6 +78,7 @@ function run_check() {
 
 case $1 in
 	-v|--version)
+		echo -n "$(basename $EXE) "
         	head -11 $EXE | grep "^# Version: "
 		exit
 	;;

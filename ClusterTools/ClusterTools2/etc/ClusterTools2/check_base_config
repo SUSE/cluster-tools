@@ -13,6 +13,7 @@ CONF_FILES="
 /etc/sysconfig/kernel
 /etc/sysconfig/sbd
 /etc/sysconfig/oracle
+/etc/sysconfig/SAPinit
 /etc/oratab
 /etc/sysctl.conf
 /etc/modprobe.conf.local

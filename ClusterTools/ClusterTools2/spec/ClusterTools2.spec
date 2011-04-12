@@ -95,6 +95,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 #/usr/sbin/clusterstate
 #/usr/sbin/cluster_actions
 /usr/sbin/grep_error_patterns
+/usr/sbin/check_base_config
 #/usr/sbin/linkstate
 /usr/sbin/list_failcounts
 #/usr/sbin/make_hb_backup
@@ -113,6 +114,9 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config /etc/ClusterTools2/*
 
 %changelog -n ClusterTools
+* Thu Apr 12 2011 - lars.pinne@novell.com
+  2.1.10-1 update and cleanup 
+  - check_base_connfig
 * Mon Mar 07 2011 - lars.pinne@novell.com
   2.1.9-1 update and cleanup 
   - grep_error_patterns

@@ -37,14 +37,19 @@ test -z "${CONF_FILES}" &&\
 /etc/sysconfig/kernel
 /etc/sysconfig/sbd
 /etc/sysconfig/oracle
-/etc/sysconfig/SAPinit
+/etc/sysconfig/sapconf
+/etc/sysconfig/ulimit
+/etc/sysconfig/uuidd
 /etc/oratab
+/etc/security/limits.conf
+/etc/pam.d/login
 /etc/sysctl.conf
 /etc/modprobe.conf.local
 /etc/logrotate.d/corosync
 /etc/corosync/corosync.conf
 /etc/corosync/logd.cf
 /etc/corosync/authkey
+/etc/xen/xend-config.sxp
 "
 # TODO: exact grep pattern "^.."
 #test -z "${CONF_CALLS}" &&\
@@ -54,6 +59,7 @@ test -z "${CONF_FILES}" &&\
 #"uname -a"
 #"lsmod"
 #"rpm -qa"
+#"rpm -Va"
 #"multipath -ll"
 #"cat /proc/mounts"
 #"chkconfig -A | grep on$"

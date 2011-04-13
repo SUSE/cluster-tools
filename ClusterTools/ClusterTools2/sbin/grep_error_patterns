@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.2 2011-03-06
+# Version: 0.2 2011-04-12
 #
 
 EXE="$0"
@@ -19,6 +19,7 @@ test -z "${SYSTEM_LOG}" &&\
 	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg"
 	 SYSTEM_LOG="${SYSTEM_LOG} ${DMSG}"
 
+test -z "/etc/corosync/corosync.conf" &&\
 test -z "${CLUSTER_LOG}" &&\
 	 CLUSTER_LOG=$(grep "logfile:.*/" /etc/corosync/corosync.conf |\
 		 tr -d "    " | cut -d":" -f2)
@@ -93,6 +94,7 @@ function run_grep() {
 
 case $1 in
 	-v|--version)
+		echo -n "$(basename $EXE) "
         	head -11 $EXE | grep "^# Version: "
 		exit
 	;;

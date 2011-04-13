@@ -1,0 +1,112 @@
+#!/bin/bash
+#
+# check_base_config
+#
+# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version: 0.1 2011-04-12
+#
+
+EXE="$0"
+
+CFG="/etc/ClusterTools2/check_base_config"
+test -s $CFG && source $CFG
+
+test -z "${CONF_FILES}" &&\
+	 CONF_FILES="
+/etc/SuSE-release
+/etc/zypp/zypp.conf
+/etc/products.d/*.prod
+/proc/cmdline
+/proc/sys/kernel/tainted
+/etc/inittab
+/etc/hosts
+/etc/ntp.conf
+/etc/passwd
+/etc/group
+/etc/drbd.conf
+/etc/drbd.d/*
+/etc/lvm/lvm.conf
+/etc/multipath.conf
+/etc/multipath.bind
+/etc/mdadm.conf
+/clusterconf/mdadm.*.conf
+/etc/iscsi/iscsid.conf
+/etc/iscsi/initiatorname.iscsi
+/etc/sysconfig/kernel
+/etc/sysconfig/sbd
+/etc/sysconfig/oracle
+/etc/sysconfig/sapconf
+/etc/sysconfig/ulimit
+/etc/sysconfig/uuidd
+/etc/oratab
+/etc/security/limits.conf
+/etc/pam.d/login
+/etc/sysctl.conf
+/etc/modprobe.conf.local
+/etc/logrotate.d/corosync
+/etc/corosync/corosync.conf
+/etc/corosync/logd.cf
+/etc/corosync/authkey
+/etc/xen/xend-config.sxp
+"
+# TODO: exact grep pattern "^.."
+#test -z "${CONF_CALLS}" &&\
+#	 CONF_CALLS="
+#"grep model.name /proc/cpuinfo"
+#"grep MemTotal: /proc/meminfo"
+#"uname -a"
+#"lsmod"
+#"rpm -qa"
+#"rpm -Va"
+#"multipath -ll"
+#"cat /proc/mounts"
+#"chkconfig -A | grep on$"
+#"chkconfig -A | grep off$"
+#"route -n"
+#"iptables -L"
+#"
+
+function help() {
+                echo "usage:	$(basename $0)"
+                echo "	$(basename $0) [OPTION]"
+                echo
+                echo " --help		show help."
+                echo " --version	show version."
+}
+
+
+function run_check() {
+	# TODO: better loop
+	for f in ${CONF_FILES}; do
+		S="NA"
+		test -r $f && S=$(md5sum $f | awk '{print $1}')
+        	echo "$f $S"
+	done
+# TODO
+#	for f in ${CONF_CALLS}; do
+#        	echo -n "$f = "
+#		exec $f | sort | md5sum -
+#	done
+}
+
+
+# main()
+
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+        	head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-h|--help)
+		help
+		exit
+	;;
+	*)
+		run_check
+		exit		
+	;;
+esac
+#

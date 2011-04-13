@@ -1,0 +1,54 @@
+.TH check_base_config 8 "12 Apr 2011" "" "ClusterTools2"
+.\"
+.SH NAME
+check_base_config \- calculate checksums for common configuration and system parameters 
+.\"
+.SH SYNOPSIS
+.B check_base_config \fIOPTION\fR
+.\"
+.SH DESCRIPTION
+\fBcheck_base_config\fP calculate checksums for common configuration and system parameters.
+By default only files are checked, that are expected to be identical on all nodes of one cluster.  
+The output can be used to find differences between two or more cluster nodes.
+.br
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+        show help.
+.HP
+\fB --version\fR
+        show version.
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/check_base_config
+	the program itself.
+.TP
+/etc/ClusterTools2/check_base_config
+	the configuration.
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+http://ClusterTools.sourceforge.net
+.\"
+.SH SEE ALSO
+\fBmd5sum\fP(1), \fBClusterTools2\fP(7)
+.\"
+.\"
+.SH COPYRIGHT
+(c) 2011 L.Pinne, Germany.
+.br
+check_base_config comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

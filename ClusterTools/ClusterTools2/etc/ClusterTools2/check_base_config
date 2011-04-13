@@ -1,0 +1,58 @@
+# /etc/ClusterTools2/check_base_config
+# For SLES11.
+#
+CONF_FILES="
+/etc/SuSE-release
+/etc/zypp/zypp.conf
+/etc/products.d/*.prod
+/proc/cmdline
+/proc/sys/kernel/tainted
+/etc/inittab
+/etc/hosts
+/etc/ntp.conf
+/etc/passwd
+/etc/group
+/etc/drbd.conf
+/etc/drbd.d/*
+/etc/lvm/lvm.conf
+/etc/multipath.conf
+/etc/multipath.bind
+/etc/mdadm.conf
+/clusterconf/mdadm.*.conf
+/etc/iscsi/iscsid.conf
+/etc/iscsi/initiatorname.iscsi
+/etc/sysconfig/kernel
+/etc/sysconfig/sbd
+/etc/sysconfig/oracle
+/etc/sysconfig/sapconf
+/etc/sysconfig/ulimit
+/etc/sysconfig/uuidd
+/etc/security/limits.conf
+/etc/pam.d/login
+/etc/oratab
+/etc/sysctl.conf
+/etc/modprobe.conf.local
+/etc/logrotate.d/corosync
+/etc/corosync/corosync.conf
+/etc/corosync/logd.cf
+/etc/corosync/authkey
+/etc/xen/xend-config.sxp
+"
+# TODO: /boot/initrd, boot/vmlinuz
+#
+CONF_CALLS="
+"grep ^model.name /proc/cpuinfo"
+"grep ^MemTotal: /proc/meminfo"
+"uname -a"
+"lsmod"
+"rpm -qa"
+"rpm -Va"
+"ls /etc/zypp/repos.d/"
+"multipath -ll"
+"cat /proc/mounts"
+"chkconfig -A | grep on$"
+"chkconfig -A | grep off$"
+"iptables -L"
+"route -n"
+"
+#

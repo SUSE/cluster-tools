@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2011-03-04
+# Version: 0.01 2011-04-12
 #
 
 SID=${1:-"ZSAdb"}
@@ -17,12 +17,13 @@ EXE=$(basename $0)
 function help() {
 	echo "usage:	$EXE <SID>"
 	echo "	$EXE <SID> <SVC_LABEL>"
-	echo "	$EXE -h|-v"
+	echo "	$EXE --help|--version"
 	exit
 }
 
 
 function version() {
+	echo -n "$EXE "
 	head -11 $EXE | grep "^# Version: "
 }
 

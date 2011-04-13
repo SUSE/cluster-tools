@@ -78,8 +78,8 @@ function help() {
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
-	echo " --files		checksum files only."
-	echo " --calls		checksum calls only."
+	echo " --files	checksum files only."
+	echo " --calls	checksum calls only."
 	echo
 	test $UID -gt 0 && echo "please call as root."
 }

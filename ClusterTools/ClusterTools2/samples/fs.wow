@@ -1,0 +1,87 @@
+#
+set -u
+#
+# Setup NA0 with IPMI fencing, sfex, md, lvm, fs, db and sap instances
+##############################
+#
+# cluster specific setup
+# ALLNODES - set the cluster node names separated by a blank 
+# NRNODES - set to number of nodes (should be set automatically)
+#
+ALLNODES="node1 node2"
+NRNODES="$(echo $ALLNODES | wc -w)"
+#
+##############################
+#
+# ipmi specific setup
+# IPMIADDRESSES - list of ipmi board adresses for all nodes; list items are seaparated by blanks and must match the oder of the cluster node definition (ALLNODES)
+# IPMISETTINGS -  definition of the cluster wide ipmi settings such as ipmi userid and ipmi password
+#
+IPMIADDRESSES='node1r node2r'
+IPMISETTINGS="IPMI_USERID=admin IPMI_PASSWD=admin IPMI_STATUSMODE=ok"
+#
+##############################
+#
+# ilo specific setup
+# ILO_ADDRESSES - list of ipmi board adresses for all nodes; list items are seaparated by blanks and must match the oder of the cluster node definition (ALLNODES)
+# ILO_SETTINGS -  definition of the cluster wide ipmi settings such as ipmi userid and ipmi password
+#
+#ILO_ADDRESSES='node1r node2r'
+#ILO_SETTINGS='ILO_USER=admin ILO_PASSWD=admin ILO_CANRESET=1'
+#
+#############################
+#
+# sap resource definition
+# GRPID - Define your SAP resource group name here; default is grp_sap_$SAPSID
+# SAP_SCORES - Scores to run the entrire sap group on the first, second, ... node; the list items are separated by blanks; the order must match the cluster node definition (ALLNODES)
+# IP_LABELS - list of ipnames and ipadresses to be configured as resouces for the group; each list item has the format name,address; list items are separated by blanks
+# SAPSID - SAP system id like C11, WAS or WOW (upper case); Is there anybody out there, which could remeber the good old C11 SAP1.1 systems?
+# SAPsid - automatically set SAP system id in lower case
+# SAP_INSTANCE_DEF - Table with definition of the SAP instances; each row defines the instance type; instance name; profile path and optional parameters which might be needed by more complex resource definitions; 
+# SFEX_DEVICE -	defines the path of the sfex devices to be used to add more security to the cluster
+# SFEXID - defaults to 1; needs to be set, when you need to have more than one sfex device in different groups
+# SFEX_INDEX - defines the sfex index (default to be used 1)
+# RAID1_DEVICES - defines the paths of the md devices to be used in the resource group
+# RAID_CONFIG - defines the path of the raid configuration file for cluster controlled md devices
+# LVM_VOLUMEGROUPS - defines the list of volume groups to be used
+# FS_FILESYSTEMS - here document to make the defintion more easy for standard cases
+#
+SAPSID=NA0
+#
+DBTYPE=ADA
+#
+GRPID=grp_sap_$SAPSID
+#
+SAP_SCORES="1000 0"
+#
+IP_LABELS="sapna0ci,192.168.91.22 sapna0db,192.168.91.21 sapna0as,192.168.91.20"
+#
+SAPsid=$(echo $SAPSID|tr [:upper:] [:lower:])
+#
+### SAP Instances
+#
+SAP_INSTANCE_DEF=$(cat <<HERE-SAP
+# instance-typ instance-name                  profile-path                                                  optional-parameters
+ASCS           ${SAPSID}_ASCS00_sapna0as    /usr/sap/${SAPSID}/SYS/profile/START_ASCS00_sapna0as
+CI             ${SAPSID}_DVEBMGS01_sapna0ci /usr/sap/${SAPSID}/SYS/profile/START_DVEBMGS01_sapna0ci
+HERE-SAP
+)
+#
+### IO stack
+#
+SFEX_DEVICE="/dev/mapper/sapvol1_part1"
+SFEX_INDEX=1
+#
+RAID1_DEVICES="/dev/md0"
+RAID_CONFIG="/clusterconf/$SAPSID/mdadm.conf"
+#
+LVM_VOLUMEGROUPS="sapvg"
+#
+FS_FILESYSTEMS=$(cat <<HERE-FS
+/dev/sapvg/usrsap /usr/sap usrsap ext3 noatime,defaults
+/dev/sapvg/sapmnt /sapmnt sapmnt ext3 noatime,defaults
+/dev/sapvg/sapdb /sapdb sapdb ext3 noatime,defaults
+HERE-FS
+)
+#
+#

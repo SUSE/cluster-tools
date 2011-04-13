@@ -1,17 +1,19 @@
 #!/bin/bash
 #
-# check_base_config
+# sum_base_config
 #
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-04-12
+# Version: 0.1 2011-04-13
 #
 
 EXE="$0"
 
-CFG="/etc/ClusterTools2/check_base_config"
+CFG="/etc/ClusterTools2/sum_base_config"
 test -s $CFG && source $CFG
+
+TMP="/tmp/cltl.$RANDOM"
 
 test -z "${CONF_FILES}" &&\
 	 CONF_FILES="
@@ -31,7 +33,7 @@ test -z "${CONF_FILES}" &&\
 /etc/multipath.conf
 /etc/multipath.bind
 /etc/mdadm.conf
-/clusterconf/mdadm.*.conf
+/clusterconf/*/mdadm.*.conf
 /etc/iscsi/iscsid.conf
 /etc/iscsi/initiatorname.iscsi
 /etc/sysconfig/kernel
@@ -51,44 +53,68 @@ test -z "${CONF_FILES}" &&\
 /etc/corosync/authkey
 /etc/xen/xend-config.sxp
 "
-# TODO: exact grep pattern "^.."
-#test -z "${CONF_CALLS}" &&\
-#	 CONF_CALLS="
-#"grep model.name /proc/cpuinfo"
-#"grep MemTotal: /proc/meminfo"
-#"uname -a"
-#"lsmod"
-#"rpm -qa"
-#"rpm -Va"
-#"multipath -ll"
-#"cat /proc/mounts"
-#"chkconfig -A | grep on$"
-#"chkconfig -A | grep off$"
-#"route -n"
-#"iptables -L"
-#"
+# TODO: /boot/initrd, boot/vmlinuz
+# TODO: exact grep patterns
+test -z "${CONF_CALLS}" &&\
+	 CONF_CALLS="
+'/usr/bin/grep "model.name" /proc/cpuinfo'
+'/usr/bin/grep "MemTotal:" /proc/meminfo'
+'/bin/uname -a'
+'/bin/lsmod'
+'/bin/rpm -qa'
+'/bin/rpm -Va'
+'/bin/multipath -ll'
+'/bin/cat /proc/mounts'
+'/sbin/chkconfig -A'
+'/sbin/route -n'
+'/usr/sbin/iptables -L'
+"
+# TODO: network hardware, disk hardware
+
 
 function help() {
-                echo "usage:	$(basename $0)"
-                echo "	$(basename $0) [OPTION]"
-                echo
-                echo " --help		show help."
-                echo " --version	show version."
+	echo "usage:	$(basename $0)"
+	echo "	$(basename $0) [OPTION]"
+	echo
+	echo " --help		show help."
+	echo " --version	show version."
+	echo " --files		checksum files only."
+	echo " --calls		checksum calls only."
+	echo
+	test $UID -gt 0 && echo "please call as root."
 }
 
 
-function run_check() {
+function sum_files() {
+	nf=1
+	f=$CFG
+	S="NA"
+	test -r $f && S=$(md5sum $f | awk '{print $1}')
+	echo "$f $S"
 	# TODO: better loop
 	for f in ${CONF_FILES}; do
+		(( nf++ ))
 		S="NA"
 		test -r $f && S=$(md5sum $f | awk '{print $1}')
-        	echo "$f $S"
+        	echo "$f = $S"
 	done
-# TODO
-#	for f in ${CONF_CALLS}; do
-#        	echo -n "$f = "
-#		exec $f | sort | md5sum -
-#	done
+	echo "INFO: $nf files" >>/dev/stderr
+}
+
+
+function sum_calls() {
+	# TODO: replace errors by "$REPLY = NA" as above
+	nc=0
+	echo ${CONF_CALLS} | tr "'" "\n" | tr -s "\n" |\
+	while read; do
+		echo -n "'${REPLY}' = "
+		${REPLY} | sort | md5sum - | awk '{print $1}'
+		(( nc++ ))
+		echo $nc >$TMP
+	done | grep -v "'.*d41d8cd98f00b204e9800998ecf8427e"
+	nc=$(cat $TMP)
+	echo "INF0: $nc calls" >>/dev/stderr
+	rm $TMP
 }
 
 
@@ -104,8 +130,20 @@ case $1 in
 		help
 		exit
 	;;
+	-f|--files)
+		test $UID -gt 0 && echo "please call as root." && exit
+		sum_files
+		exit
+	;;
+	-c|--calls)
+		test $UID -gt 0 && echo "please call as root." && exit
+		sum_calls
+		exit
+	;;
 	*)
-		run_check
+		test $UID -gt 0 && echo "please call as root." && exit
+		sum_files
+		sum_calls
 		exit		
 	;;
 esac

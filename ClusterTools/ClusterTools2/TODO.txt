@@ -4,12 +4,12 @@
 usage ClusterService: --rscFile rscFile | --help
 
 - configure / update mode:
-  till now we only cann add a prmitive or a group but could not update it
+  till now we only can add a prmitive or a group but could not update it
   see UPDATE.txt
 
 - help for top level menueng2
 
-- batch mode for menueng2
+DONE: - batch mode for menueng2
 
 - rpm -qi replace xml by crm
 
@@ -19,21 +19,21 @@ usage ClusterService: --rscFile rscFile | --help
 
 - man page wow2
 
-- man page sleha_cleanup: Hinweis auf Wow ist falsch
+DONE: - man page sleha_cleanup: Hinweis auf Wow ist falsch
 
 - make_hb_backup update
 
-- add check to sleha_cleanup
+DONE: - add check to sleha_cleanup
 
 - naming sleha_cleanup : naming geschickt? Kann mit cleanup verwechselt werden.
 
-- sleha_cleanup : Mindestens Sicherheitsabfrage, Optimal: Backup vor Löschung
+DONE: - sleha_cleanup : Mindestens Sicherheitsabfrage, Optimal: Backup vor Löschung
 
 - whbsaprecheck : tests seam to be to static we need to test at least equal and newer...
 
-- external pattern file for grep-error-patterns
+DONE: - external pattern file for grep-error-patterns
 
-- man grep-error-patterns.8
+DONE: - man grep-error-patterns.8
 
 - man watchdog.7
 

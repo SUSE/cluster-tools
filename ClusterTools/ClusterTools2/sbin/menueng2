@@ -47,12 +47,17 @@ my $width_rst = $width_all - $width_cmd - $width_des - 6;
 
          $result = GetOptions ("rscFile=s"   => \$rscFile,  
                                "help"  => \$help,
-                               "verbose"  => \$verbose);
+                               "verbose"  => \$verbose,
+			       "cmd=s" => \$command,
+		       	);
 
 if ($help) {
 	printf "usage %s: --rscFile rscFile | --help\n", "ClusterService";
+	printf "usage %s: --rscFile rscFile --cmd command command-options\n", "ClusterService";
 	exit 0;
 }
+
+# printf("DBG: cmd: %s\n", $command);
 
                # On Unix returns ("baz", "/foo/bar", ".txt")
                 fileparse("/foo/bar/baz.txt", qr/\.[^.]*/);
@@ -150,7 +155,9 @@ sub fillcmd($) {
 	}
 	return $cmd;
 }
-
+#
+# read (menu) resource file and prepare menue hashes
+#
 open RSC,"<" . $rscFile or die "did not open $rscFile";
 while (<RSC>) {
 	if (  !( $_ =~ /^#/ )) {
@@ -193,6 +200,14 @@ my $sendcmd = "";
  #          $term->addhistory($_) if /\S/;
  #        }
 my $current_menu = "MAIN";
+#
+# we got a command from the command line
+# 
+if ($command ne "" )
+{
+	# printf "DBG: command: %s\n", $command;
+	$call = $command;
+}
 while ( $cont ) {
 	if ($call eq "") {
 		menu($current_menu); #printf "select command > ";
@@ -207,25 +222,32 @@ while ( $cont ) {
 	# $callUC = uc $call;
 	# printf "DBG: GOT: %s\n", $callUC;
 	# printf "DBG: ctrl: %s\n", $rsc2ctrl{$callUC};
-	if ( $rsc2ctrl{$callUC} =~ /^EXIT$/i ) {
+	if ( $rsc2ctrl{$callUC} =~ /^EXIT$/i )  {
 		$cont = 0;
 	} elsif ( $rsc2ctrl{$callUC} =~ /^MENU$/i ) {
 		$current_menu = $rsc2cmd{$callUC};
-#			printf "DBG: switch to menu %s\n", $current_menu;
+			#printf "DBG: switch to menu %s\n", $current_menu;
 			$call = "";
 	} else {
 		if ( defined ($rsc2cmd{$callUC}) ) {
 			$sendcmd = fillcmd($rsc2cmd{$callUC});
-	#		printf "DBG: I would like to send: \n%s\n", $sendcmd;
+			#printf "DBG: I would like to send: \n%s\n", $sendcmd;
 			#printf "+%s+\n", '-' * 63;
-			printf "+<cmd output>%s+\n", "-" x ($width_all-2-12);
-			system($sendcmd);
-			printf "+</cmd output>%s+\n", "-" x ($width_all-2-13);
 			#printf "enter command > ";
 			# $call = <STDIN>;
-			$call = $term->readline($prompt);
-		        $term->addhistory($call);
-			chomp $call;
+			if ($command ne "" ) {
+				printf "+<cmd output>%s+\n", "-" x ($width_all-2-12);
+				system($sendcmd);
+				printf "+</cmd output>%s+\n", "-" x ($width_all-2-13);
+				$cont = 0;
+			} else {
+				printf "+<cmd output>%s+\n", "-" x ($width_all-2-12);
+				system($sendcmd);
+				printf "+</cmd output>%s+\n", "-" x ($width_all-2-13);
+				$call = $term->readline($prompt);
+				$term->addhistory($call);
+				chomp $call;
+			}
 		} else {
 			printf "Command not found: %s\n", $callUC;
 			$call = "";

@@ -15,7 +15,7 @@ License:      GPL
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.1.9
+Version:      2.2.0
 Release:      1 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
@@ -111,9 +111,11 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %doc /usr/share/man/man5/*.gz
 %doc /usr/share/man/man7/*.gz
 %doc /usr/share/man/man8/*.gz
-%config /etc/ClusterTools2/*
+%config /etc/ClusterTools2
 
 %changelog -n ClusterTools
+* Tue Apr 12 2011 - fabian.herschel@novell.com
+  2.2.0-1 now supports command mode (--cmd CMD options)
 * Thu Apr 12 2011 - lars.pinne@novell.com
   2.1.10-1 update and cleanup 
   - check_base_connfig

@@ -27,9 +27,7 @@ DONE: - add check to sleha_cleanup
 
 - naming sleha_cleanup : naming geschickt? Kann mit cleanup verwechselt werden.
 
-DONE: - sleha_cleanup : Mindestens Sicherheitsabfrage, Optimal: Backup vor Löschung
-
-- whbsaprecheck : tests seam to be to static we need to test at least equal and newer...
+- whbsaprecheck : tests seem to be to static we need to test at least equal and newer...
 
 DONE: - external pattern file for grep-error-patterns
 
@@ -40,7 +38,6 @@ DONE: - man grep-error-patterns.8
 - linkstate
 
 -  /usr/share/man/man8/attrd_updater.8.gz
-DONE:  /usr/share/man/man8/crm_attribute.8.gz
 -  /usr/share/man/man8/crm_simulate.8.gz
 -  /usr/share/man/man8/ptest.8.gz
 

@@ -1,0 +1,98 @@
+'\" t
+.\"     Title: CRM Daemon
+.\"    Author: Andrew Beekhof <andrew@beekhof.net>
+.\" Generator: DocBook XSL Stylesheets v1.75.2 <http://docbook.sf.net/>
+.\"      Date: 02/22/2011
+.\"    Manual: Pacemaker Configuration
+.\"    Source: Pacemaker Configuration
+.\"  Language: English
+.\"
+.TH "CRM DAEMON" "8" "02/22/2011" "Pacemaker Configuration" "Pacemaker Configuration"
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+crmd \- CRM Daemon Options
+.SH "SYNOPSIS"
+.PP
+[\fBdc\-version\fR=string] [\fBcluster\-infrastructure\fR=string] [\fBdc\-deadtime\fR=time] [\fBcluster\-recheck\-interval\fR=time] [\fBelection\-timeout\fR=time] [\fBshutdown\-escalation\fR=time] [\fBcrmd\-integration\-timeout\fR=time] [\fBcrmd\-finalization\-timeout\fR=time] [\fBexpected\-quorum\-votes\fR=integer]
+.SH "DESCRIPTION"
+.PP
+This is a fake resource that details the options that can be configured for the CRM Daemon\&.
+.SH "SUPPORTED PARAMETERS"
+.PP
+\fBdc\-version\fR = string [none]
+.RS 4
+Version of Pacemaker on the cluster\'s DC\&.
+.sp
+Includes the hash which identifies the exact Mercurial changeset it was built from\&. Used for diagnostic purposes\&.
+.RE
+.PP
+\fBcluster\-infrastructure\fR = string [heartbeat]
+.RS 4
+The messaging stack on which Pacemaker is currently running\&.
+.sp
+Used for informational and diagnostic purposes\&.
+.RE
+.PP
+\fBdc\-deadtime\fR = time [60s]
+.RS 4
+How long to wait for a response from other nodes during startup\&.
+.sp
+The "correct" value will depend on the speed/load of your network and the type of switches used\&.
+.RE
+.PP
+\fBcluster\-recheck\-interval\fR = time [15min]
+.RS 4
+Polling interval for time based changes to options, resource parameters and constraints\&.
+.sp
+The Cluster is primarily event driven, however the configuration can have elements that change based on time\&. To ensure these changes take effect, we can optionally poll the cluster\'s status for changes\&. Allowed values: Zero disables polling\&. Positive values are an interval in seconds (unless other SI units are specified\&. eg\&. 5min)
+.RE
+.PP
+\fBelection\-timeout\fR = time [2min]
+.RS 4
+*** Advanced Use Only ***\&.
+.sp
+If need to adjust this value, it probably indicates the presence of a bug\&.
+.RE
+.PP
+\fBshutdown\-escalation\fR = time [20min]
+.RS 4
+*** Advanced Use Only ***\&.
+.sp
+If need to adjust this value, it probably indicates the presence of a bug\&.
+.RE
+.PP
+\fBcrmd\-integration\-timeout\fR = time [3min]
+.RS 4
+*** Advanced Use Only ***\&.
+.sp
+If need to adjust this value, it probably indicates the presence of a bug\&.
+.RE
+.PP
+\fBcrmd\-finalization\-timeout\fR = time [30min]
+.RS 4
+*** Advanced Use Only ***\&.
+.sp
+If you need to adjust this value, it probably indicates the presence of a bug\&.
+.RE
+.PP
+\fBexpected\-quorum\-votes\fR = integer [2]
+.RS 4
+The number of nodes expected to be in the cluster
+.sp
+Used to calculate quorum in openais based clusters\&.
+.RE
+.SH "AUTHOR"
+.PP
+\fBAndrew Beekhof\fR <\&andrew@beekhof\&.net\&>
+.RS 4
+Author.
+.RE

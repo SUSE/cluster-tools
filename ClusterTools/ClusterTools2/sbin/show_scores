@@ -21,7 +21,7 @@ function help() {
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
-	echo " --raw	show raw scores from ptest."
+	echo " --raw		show raw scores from ptest."
 }
 
 

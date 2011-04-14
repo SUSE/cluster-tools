@@ -105,7 +105,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/menueng2
 /usr/sbin/prepare_wowfile
 /usr/sbin/sleha_cleanup
-#/usr/sbin/showscores
+/usr/sbin/show_scores
+#/usr/sbin/test_udpmcast
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
 %doc /usr/share/man/man5/*.gz
@@ -118,7 +119,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
   2.2.0-1 now supports command mode (--cmd CMD options)
 * Thu Apr 12 2011 - lars.pinne@novell.com
   2.1.10-1 update and cleanup 
-  - sum_base_connfig
+  - sum_base_config
 * Mon Mar 07 2011 - lars.pinne@novell.com
   2.1.9-1 update and cleanup 
   - grep_error_patterns

@@ -1,36 +1,72 @@
-#!/bin/sh
+#!/bin/bash
 #
 # reset_failcounts
 #
-# (c) 2009-2010 SUSE Linux GmbH, Germany. Author: F.Herschel.
+# Version: 1.1 2011-04-14
+#
+# (c) 2009-2011 SUSE Linux GmbH, Germany. Author: F.Herschel.
 # GNU Public License. No warranty.
 #
 
-#NODES=`cl_status listnodes -n`
-NODES=$(crm_node -A -l | awk '/member/ { print $2 }')
 
-CRM_RESOURCE=/usr/sbin/crm_resource
-CRM_FAILCOUNT=/usr/sbin/crm_failcount
-RESOURCE=$($CRM_RESOURCE -l )
+EXE=$0
 
-for node in $NODES
-        do
+
+function help() {
+        echo "usage:    $(basename $0)"
+        echo "  	$(basename $0) [OPTION]"
         echo
-        echo "Node: $node"
-        echo
-        for resource in $RESOURCE
-                do
-                echo -n "Resource $resource: "
-		failcount=$($CRM_FAILCOUNT -G -U $node -r $resource | awk -F= '{ for(i=1; i<NF; i++) { if ( $i ~ /value/ ) { i++; print $i; }}}')
-                echo "==" $failcount
+        echo " --help           show help."
+        echo " --version        show version."
+}
 
-		case "$failcount" in
-			INFINITY | [1-9]* )
-			echo -n " -> Failcount greater 0, resetting failcount: "
-			$CRM_FAILCOUNT -D -U $node -r $resource
-			echo "done"
+
+function do_reset() {
+	CRM_RESOURCE=/usr/sbin/crm_resource
+	CRM_FAILCOUNT=/usr/sbin/crm_failcount
+	CRM_NODE=/usr/sbin/crm_node
+	#NODES=`cl_status listnodes -n`
+	NODES=$( $CRM_NODE -A -l | awk '/member/ { print $2 }')
+	RESOURCE=$( $CRM_RESOURCE -l )
+
+	for node in $NODES
+        	do
+        	echo
+        	echo "Node: $node"
+        	echo
+        	for resource in $RESOURCE
+                	do
+                	echo -n "Resource $resource: "
+			failcount=$($CRM_FAILCOUNT -G -U $node -r $resource | awk -F= '{ for(i=1; i<NF; i++) { if ( $i ~ /value/ ) { i++; print $i; }}}')
+                	echo "==" $failcount
+
+			case "$failcount" in
+				INFINITY | [1-9]* )
+				echo -n " -> Failcount greater 0, resetting failcount: "
+				$CRM_FAILCOUNT -D -U $node -r $resource
+				echo "done"
 			;;
-		esac
+			esac
+		done
 	done
-done
+}
+
+
+# main
+
+case $1 in
+        -v|--version)
+                echo -n "$(basename $EXE) "
+                head -11 $EXE | grep "^# Version: "
+                exit
+        ;;
+        -h|--help)
+                help                
+                exit
+        ;;
+        *)
+                do_reset
+                exit
+        ;;
+esac
 #

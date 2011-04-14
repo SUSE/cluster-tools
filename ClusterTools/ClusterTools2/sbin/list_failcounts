@@ -12,11 +12,11 @@ EXE=$0
 
 
 function help() {
-        echo "usage:    $(basename $0)"
-        echo "  $(basename $0) [OPTION]"
-        echo
-        echo " --help           show help."
-        echo " --version        show version."
+	echo "usage:    $(basename $0)"
+	echo "  	$(basename $0) [OPTION]"
+	echo
+	echo " --help           show help."
+	echo " --version        show version."
 }
 
 
@@ -51,18 +51,18 @@ function do_list() {
 # main
 
 case $1 in
-        -v|--version)
-                echo -n "$(basename $EXE) "
-                head -11 $EXE | grep "^# Version: "
-                exit
-        ;;
-        -h|--help)
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-h|--help)
 		help                
 		exit
-        ;;
-        *)
+	;;
+	*)
 		do_list
 		exit
-        ;;
+	;;
 esac
 #

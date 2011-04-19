@@ -238,7 +238,8 @@ function chk_gen_auth ()
 	# TODO:
 	#/etc/security/pam_unix2.conf
 	#/etc/security/pam_pwcheck.conf
-	# pam modul für sap ? 
+	# /etc/pam.d/sapstartsrv 
+	# /etc/pam.d/login
 
 	for u in hacluster $SAPUSER $DBUSER; do
 		grep ^$u /etc/passwd
@@ -254,6 +255,7 @@ function chk_gen_auth ()
 function chk_wow_hacf ()
 {	
 	# TODO: corosync
+	# TODO: ha_logd
 	echo_msgsep $FUNCNAME
 	echo "--- conf for cluster needs:"
 	echo "/etc/corosync/corosync.conf"

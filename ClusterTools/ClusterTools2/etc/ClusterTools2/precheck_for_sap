@@ -1,0 +1,47 @@
+# /etc/ClusterTools2/precheck_for_sap 
+# For SLES11.
+#
+SW_REL="SLE-11-x86_64-SP1"
+#
+SW_KRNL="kernel-default-2.6.32.19-0.3 x86_64"
+#
+SW_PKG="sapconf sap-locale sap-locale-32bit saplocales
+cups-client cups-drivers cups-libs cups-libs-32bit cups cups-autoconfig
+xorg-x11-libs xorg-x11
+nfs-client
+java-1_4_2-ibm-sap java-1_4_2-ibm-sap-devel
+glibc glibc-32bit glibc-locale glibc-locale-32bit glibc-devel
+kernel-default linux-kernel-headers
+binutils gcc gcc-32bit gcc43 gcc-locale gcc-locale libgcc43 libgcc43-32bit
+sysstat supportutils suse-sam
+openais libopenais3 corosync libcorosync4 pacemaker pacemaker-mgmt libpacemaker3 cluster-glue cluster-network-kmp-default libglue2 resource-agents 
+yast2-cluster
+multipath-tools mdadm device-mapper device-mapper-32bit libext2fs2 libuuid1 libuuid1-32bit uuid-runtime
+ClusterTools2"
+#
+SW_NOT="apparmor orarun ulimit"
+#
+RUNLVL=3
+SRV_RUN="boot.multipath multipathd ntp boot.sapconf boot.sysstat boot.clock"
+SRV_NOT="boot.md boot.apparmor boot.dmraid slpd alsasound openais SuSEfirewall2_init SuSEfirewall2_setup ocfs2 o2cb open-iscsi sapinit uuidd"
+
+PWDENC="des"
+
+# Oracle
+#DBUSER="oracle"
+#DBGROUP="dba oinstall"
+# MaxDB
+DBUSER="sdb sqd.*"
+DBGROUP="sdba"
+# DB2
+#DBUSER="db2.* dasusr"
+#DBGROUP="db.*adm db.*ctl db.*mnt"
+#
+# SAP
+SAPUSER="...adm"
+SAPGROUP="sapsys sapinst"
+# SAP_DIR_PROFILE="/usr/sap/$SID/SYS/profile"
+# SAPSTARTSRV="/usr/sap/$SID/$InstanceName/exe/sapstartsrv"
+# SAPCONTROL="/usr/sap/$SID/$InstanceName/exe/sapcontrol"
+# SAPSTARTPROFILE="$SAP_DIR_PROFILE/START_${InstanceName}_${SAPVIRHOST}"
+#

@@ -5,6 +5,7 @@ SW_REL="SLE-11-x86_64-SP1"
 #
 SW_KRNL="kernel-default-2.6.32.19-0.3 x86_64"
 #
+# TODO: check gcc, correct Java (see sles4sap)
 SW_PKG="sapconf sap-locale sap-locale-32bit saplocales
 cups-client cups-drivers cups-libs cups-libs-32bit cups cups-autoconfig
 xorg-x11-libs xorg-x11

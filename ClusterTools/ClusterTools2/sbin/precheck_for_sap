@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# whbsaprecheck 
+# precheck_for_sap 
 #
-# (c) 2009-2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
 # Version 0.2.10 2011-04-19
@@ -13,44 +13,13 @@ COMD=$(basename $0)
 CFIL=${2:-wowconfig}
 ERR=/dev/null
 
-SW_REL="SLE-11-x86_64-SP1"
-SW_KRNL="kernel-default-2.6.32.19-0.3 x86_64"
-
-# TODO: check gcc
-SW_PKG="sapconf sap-locale sap-locale-32bit saplocales
-cups-client cups-drivers cups-libs cups-libs-32bit cups cups-autoconfig
-xorg-x11-libs xorg-x11
-nfs-client
-java-1_4_2-ibm-sap java-1_4_2-ibm-sap-devel
-glibc glibc-32bit glibc-locale glibc-locale-32bit glibc-devel
-kernel-default linux-kernel-headers
-binutils gcc gcc-32bit gcc43 gcc-locale gcc-locale libgcc43 libgcc43-32bit
-sysstat supportutils suse-sam
-openais libopenais3 corosync libcorosync4 pacemaker pacemaker-mgmt libpacemaker3 cluster-glue cluster-network-kmp-default libglue2 resource-agents 
-yast2-cluster
-multipath-tools mdadm device-mapper device-mapper-32bit libext2fs2 libuuid1 libuuid1-32bit uuid-runtime
-ClusterTools2"
-
-SW_NOT="apparmor orarun ulimit"
-
-RUNLVL=3
-SRV_RUN="boot.multipath multipathd ntp boot.sapconf boot.sysstat boot.clock"
-SRV_NOT="boot.md boot.apparmor boot.dmraid slpd alsasound openais SuSEfirewall2_init SuSEfirewall2_setup ocfs2 o2cb open-iscsi sapinit uuidd"
-
-PWDENC=des
-
-# Oracle is default. See chk_wow_dbase for two other.
-#DBUSER="oracle"
-#DBGROUP="dba oinstall"
-# MaxDB
-DBUSER="sdb sqd.*"
-DBGROUP="sdba"
-# DB2
-#DBUSER="db2.* dasusr"
-#DBGROUP="db.*adm db.*ctl db.*mnt"
-
-SAPUSER="...adm"
-SAPGROUP="sapsys sapinst"
+CFG="/etc/ClusterTools2/precheck_for_sap"
+if [ -s $CFG ]; then
+	source $CFG
+else
+	echo "ERR: config not found: $CFG" >/dev/stderr
+	exit 1
+fi
 
 
 function echo_msgsep ()
@@ -512,13 +481,13 @@ esac
 case $1 in
   --help|-h)
 	if [ "$wowmode" -eq 1 ]; then
-		echo "usage: $wowpropt [ --cluster | --all ] CONFIG_FILE"
+		echo "usage: $wowpropt [ --cluster | --all ] WOW_CONFIG_FILE"
 		echo "usage: $wowpropt [ --generic | --help | --version ]"
 		echo
 		test $UID -gt 0 && echo "please call as root." 
 		
 	else
-		echo "usage: $COMD [ --cluster | --all ] CONFIG_FILE"
+		echo "usage: $COMD [ --cluster | --all ] WOW_CONFIG_FILE"
 		echo "usage: $COMD [ --generic | --help | --version ]"
 		echo
 		test $UID -gt 0 && echo "please call as root." 

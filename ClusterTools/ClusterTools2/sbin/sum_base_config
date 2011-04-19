@@ -45,8 +45,10 @@ test -z "${CONF_FILES}" &&\
 /etc/oratab
 /etc/security/limits.conf
 /etc/pam.d/login
+/etc/pam.d/sapstartsrv
 /etc/sysctl.conf
 /etc/modprobe.conf.local
+/etc/modprobe.d/blacklist
 /etc/logrotate.d/corosync
 /etc/corosync/corosync.conf
 /etc/corosync/logd.cf
@@ -63,8 +65,8 @@ test -z "${CONF_CALLS}" &&\
 '/bin/lsmod'
 '/bin/rpm -qa'
 '/bin/rpm -Va'
-'/bin/multipath -ll'
 '/bin/cat /proc/mounts'
+'/sbin/multipath -ll'
 '/sbin/chkconfig -A'
 '/sbin/route -n'
 '/usr/sbin/iptables -L'

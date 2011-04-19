@@ -41,3 +41,8 @@ DONE: - man grep-error-patterns.8
 -  /usr/share/man/man8/crm_simulate.8.gz
 -  /usr/share/man/man8/ptest.8.gz
 
+
+TODO whbsaprcheck: /etc/corosync/authkey (ohne s)
+TODO whbsaprcheck: mount option barrier== wird nicht gezeigt
+TODO whbsaprcheck: soll laufen, auch wenn paramter in wowo file nicht gesetzt sind
+

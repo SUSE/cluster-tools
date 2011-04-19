@@ -11,11 +11,11 @@ usage ClusterService: --rscFile rscFile | --help
 
 DONE: - batch mode for menueng2
 
-- rpm -qi replace xml by crm
+DONE: - rpm -qi replace xml by crm
 
 - wow output crm instead of cli ?
 
-- man page menueng2
+DONE: - man page menueng2
 
 - man page wow2
 
@@ -40,7 +40,6 @@ DONE: - man grep-error-patterns.8
 -  /usr/share/man/man8/attrd_updater.8.gz
 -  /usr/share/man/man8/crm_simulate.8.gz
 -  /usr/share/man/man8/ptest.8.gz
-
 
 TODO whbsaprcheck: /etc/corosync/authkey (ohne s)
 TODO whbsaprcheck: mount option barrier== wird nicht gezeigt

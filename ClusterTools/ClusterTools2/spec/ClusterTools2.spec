@@ -44,7 +44,6 @@ There are some other commandline tools to make life easier.
 ( cd man7; for mp in *7; do gzip $mp; done )
 ( cd man8; for mp in *8; do gzip $mp; done )
 mkdir -p etc/ClusterTools2
-#touch etc/ClusterTools2/add_file_here
 
 %clean
 test "$RPM_BUILD_ROOT" != "/" && rm -rf $RPM_BUILD_ROOT

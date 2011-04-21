@@ -16,7 +16,7 @@ test -s $CFG && source $CFG
 DMSG="/tmp/dmesg.$RANDOM"
 
 test -z "${SYSTEM_LOG}" &&\
-	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg"
+	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root"
 	 SYSTEM_LOG="${SYSTEM_LOG} ${DMSG}"
 
 test -z "/etc/corosync/corosync.conf" &&\
@@ -41,6 +41,7 @@ test -z "${ERROR_PATTERN}" &&\
 "I/O.error"
 "disabling.*barrier"
 "multi.*path.*down"
+"Fail.*/dev/md"
 "duplicate.VG"
 "duplicate.PV"
 "not.found"

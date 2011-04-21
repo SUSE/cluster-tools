@@ -13,7 +13,7 @@ nfs-client
 java-1_4_2-ibm-sap java-1_4_2-ibm-sap-devel
 glibc glibc-32bit glibc-locale glibc-locale-32bit glibc-devel
 kernel-default linux-kernel-headers
-binutils gcc gcc-32bit gcc43 gcc-locale gcc-locale libgcc43 libgcc43-32bit
+binutils gcc gcc-32bit gcc43 gcc-locale gcc-locale libgcc43 libgcc43-32bit libaio_devel
 sysstat supportutils suse-sam
 openais libopenais3 corosync libcorosync4 pacemaker pacemaker-mgmt libpacemaker3 cluster-glue cluster-network-kmp-default libglue2 resource-agents 
 yast2-cluster

@@ -12,8 +12,10 @@ ERROR_PATTERN="
 "LUN.larger"
 "I/O.error"
 "disabling.*barrier"
+"doesn.*support.*DPO.*FUA"
 "multi.*path.*down"
 "Fail.*/dev/md"
+"\[U_\]|\[_U\]"
 "duplicate.VG"
 "duplicate.PV"
 "not.found"
@@ -37,7 +39,7 @@ ERROR_PATTERN="
 #
 CLUSTER_LOG="/var/log/corosync.log"
 #
-SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root"
+SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root /proc/mdstat"
 #
 ZIPPED_LOG="/var/log/messages.*bz2"
 #

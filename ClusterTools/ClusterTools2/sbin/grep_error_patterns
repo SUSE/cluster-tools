@@ -16,7 +16,7 @@ test -s $CFG && source $CFG
 DMSG="/tmp/dmesg.$RANDOM"
 
 test -z "${SYSTEM_LOG}" &&\
-	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root"
+	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root /proc/mdstat"
 	 SYSTEM_LOG="${SYSTEM_LOG} ${DMSG}"
 
 test -z "/etc/corosync/corosync.conf" &&\
@@ -43,7 +43,7 @@ test -z "${ERROR_PATTERN}" &&\
 "doesn.*support.*DPO.*FUA"
 "multi.*path.*down"
 "Fail.*/dev/md"
-"\[U_\]|\[_U\]"
+"U_\|_U"
 "duplicate.VG"
 "duplicate.PV"
 "not.found"

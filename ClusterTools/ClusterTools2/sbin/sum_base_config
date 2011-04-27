@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-04-13
+# Version: 0.1 2011-04-27
 #
 
 EXE="$0"
@@ -61,7 +61,7 @@ test -z "${CONF_CALLS}" &&\
 	 CONF_CALLS="
 '/usr/bin/grep "model.name" /proc/cpuinfo'
 '/usr/bin/grep "MemTotal:" /proc/meminfo'
-'/bin/uname -a'
+'/bin/uname -s -r -v -m -p -i -o'
 '/bin/lsmod'
 '/bin/rpm -qa'
 '/bin/rpm -Va'
@@ -87,6 +87,9 @@ function help() {
 }
 
 
+# TODO: function to collect relevant files and output
+
+
 function sum_files() {
 	nf=1
 	f=$CFG
@@ -106,17 +109,18 @@ function sum_files() {
 
 function sum_calls() {
 	# TODO: replace errors by "$REPLY = NA" as above
+	mkdir $TMP
 	nc=0
 	echo ${CONF_CALLS} | tr "'" "\n" | tr -s "\n" |\
 	while read; do
 		echo -n "'${REPLY}' = "
 		${REPLY} | sort | md5sum - | awk '{print $1}'
 		(( nc++ ))
-		echo $nc >$TMP
+		echo $nc >${TMP}/nc
 	done | grep -v "'.*d41d8cd98f00b204e9800998ecf8427e"
-	nc=$(cat $TMP)
+	nc=$(cat ${TMP}/nc)
 	echo "INF0: $nc calls" >>/dev/stderr
-	rm $TMP
+	rm -rf $TMP
 }
 
 

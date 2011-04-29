@@ -103,6 +103,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/wow*
 /usr/sbin/menueng2
 /usr/sbin/prepare_wowfile
+/usr/sbin/psauxlog
 /usr/sbin/sleha_cleanup
 /usr/sbin/show_scores
 #/usr/sbin/test_udpmcast
@@ -114,6 +115,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config /etc/ClusterTools2
 
 %changelog -n ClusterTools
+* Tue Apr 29 2011 - lars.pinne@novell.com
+  2.2.0-1 added psauxlog
 * Tue Apr 12 2011 - fabian.herschel@novell.com
   2.2.0-1 now supports command mode (--cmd CMD options)
 * Thu Apr 12 2011 - lars.pinne@novell.com

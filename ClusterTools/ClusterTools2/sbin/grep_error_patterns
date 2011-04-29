@@ -65,7 +65,7 @@ test -z "${ERROR_PATTERN}" &&\
 "TOTEM.*FAILED.*RECEIVE"
 "TOTEM.*processor.failed"
 "
-
+# TODO: pattern for failed module (could not load) and runlevel service "failed service: ..."
 
 function help() {
                 echo "usage:	$(basename $0)"

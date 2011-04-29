@@ -15,7 +15,7 @@ License:      GPL
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.2.0
+Version:      2.2.1
 Release:      1 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
@@ -106,6 +106,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/psauxlog
 /usr/sbin/sleha_cleanup
 /usr/sbin/show_scores
+/usr/sbin/precheck_for_sap
 #/usr/sbin/test_udpmcast
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
@@ -115,6 +116,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config /etc/ClusterTools2
 
 %changelog -n ClusterTools
+* Tue Apr 29 2011 - fabian.herschel@novell.com
+  2.2.1-1 fixed package spec to get it build (added precheck_for_sap)
 * Tue Apr 29 2011 - lars.pinne@novell.com
   2.2.0-1 added psauxlog
 * Tue Apr 12 2011 - fabian.herschel@novell.com

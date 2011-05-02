@@ -52,10 +52,10 @@ RDN:MAIN:set target-role stopped for resource:crm resource stop %{r}
 RUP:MAIN:set target-role started for resource:crm resource start %{r}
 #
 # set unmanaged for resource
-RSU:MAIN:set unmanaged for resource:crm resource unmanaged %{r}
+RSU:MAIN:set unmanaged for resource:crm resource unmanage %{r}
 #
 # set managed for resource
-RSM:MAIN:set managed for resource:crm resource managed %{r}
+RSM:MAIN:set managed for resource:crm resource manage %{r}
 #
 # migrate resource
 RMI:MAIN:migrate resource:crm resource migrate %{r}

@@ -37,9 +37,9 @@ DONE: - man grep-error-patterns.8
 
 - linkstate
 
--  /usr/share/man/man8/attrd_updater.8.gz
--  /usr/share/man/man8/crm_simulate.8.gz
--  /usr/share/man/man8/ptest.8.gz
+DONE: -  /usr/share/man/man8/attrd_updater.8.gz
+DONE: -  /usr/share/man/man8/crm_simulate.8.gz
+DONE: -  /usr/share/man/man8/ptest.8.gz
 
 TODO whbsaprcheck: /etc/corosync/authkey (ohne s)
 TODO whbsaprcheck: mount option barrier== wird nicht gezeigt

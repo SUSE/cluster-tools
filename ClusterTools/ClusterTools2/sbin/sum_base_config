@@ -42,6 +42,7 @@ test -z "${CONF_FILES}" &&\
 /etc/sysconfig/sapconf
 /etc/sysconfig/ulimit
 /etc/sysconfig/uuidd
+/etc/sysconfig/language
 /etc/oratab
 /etc/security/limits.conf
 /etc/pam.d/login

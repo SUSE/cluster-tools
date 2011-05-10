@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-04-27
+# Version: 0.1 2011-05-10
 #
 
 EXE="$0"
@@ -19,14 +19,21 @@ test -z "${CONF_FILES}" &&\
 	 CONF_FILES="
 /etc/SuSE-release
 /etc/zypp/zypp.conf
+/etc/zypp/repos.d/*.repo
 /etc/products.d/*.prod
 /proc/cmdline
 /proc/sys/kernel/tainted
+/etc/ld.so.conf
+/etc/ld.so.conf.d/*
 /etc/inittab
 /etc/hosts
+/etc/resolv.conf
 /etc/ntp.conf
 /etc/passwd
 /etc/group
+/etc/ldap.conf
+/etc/openldap/ldap.conf
+/etc/krb5.conf
 /etc/drbd.conf
 /etc/drbd.d/*
 /etc/lvm/lvm.conf
@@ -42,9 +49,12 @@ test -z "${CONF_FILES}" &&\
 /etc/sysconfig/sapconf
 /etc/sysconfig/ulimit
 /etc/sysconfig/uuidd
+/etc/sysconfig/security
 /etc/sysconfig/language
 /etc/sysconfig/clock
 /etc/sysconfig/lvm
+/etc/sysconfig/o2cb
+/etc/ocfs2/cluster.conf
 /etc/oratab
 /etc/security/limits.conf
 /etc/pam.d/login
@@ -57,13 +67,17 @@ test -z "${CONF_FILES}" &&\
 /etc/corosync/logd.cf
 /etc/corosync/authkey
 /etc/xen/xend-config.sxp
+/etc/xen/vm/*.xml
 "
 # TODO: /boot/initrd, boot/vmlinuz
 # TODO: exact grep patterns
 test -z "${CONF_CALLS}" &&\
 	 CONF_CALLS="
+'/usr/sbin/dmidecode -t system | /usr/bin/grep -v "UUID:" | /usr/bin/grep -v "Serial.Number:"'
+'/sbin/lspci'
 '/usr/bin/grep "model.name" /proc/cpuinfo'
 '/usr/bin/grep "MemTotal:" /proc/meminfo'
+'/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
 '/bin/lsmod'
 '/bin/rpm -qa'
@@ -73,8 +87,10 @@ test -z "${CONF_CALLS}" &&\
 '/sbin/chkconfig -A'
 '/sbin/route -n'
 '/usr/sbin/iptables -L'
+'/bin/ip a s | /usr/bin/grep "^[123456789]\:"'
 "
-# TODO: network hardware, disk hardware
+# TODO: better network listing 
+# TODO: dmsetup table 
 
 
 function help() {

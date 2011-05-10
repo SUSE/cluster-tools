@@ -4,14 +4,21 @@
 CONF_FILES="
 /etc/SuSE-release
 /etc/zypp/zypp.conf
+/etc/zypp/repos.d/*.repo
 /etc/products.d/*.prod
 /proc/cmdline
 /proc/sys/kernel/tainted
+/etc/ld.so.conf
+/etc/ld.so.conf.d/*
 /etc/inittab
 /etc/hosts
+/etc/resolv.conf
 /etc/ntp.conf
 /etc/passwd
 /etc/group
+/etc/ldap.conf
+/etc/openldap/ldap.conf
+/etc/krb5.conf
 /etc/drbd.conf
 /etc/drbd.d/*
 /etc/lvm/lvm.conf
@@ -27,12 +34,16 @@ CONF_FILES="
 /etc/sysconfig/sapconf
 /etc/sysconfig/ulimit
 /etc/sysconfig/uuidd
+/etc/sysconfig/security
 /etc/sysconfig/language
 /etc/sysconfig/clock
 /etc/sysconfig/lvm
+/etc/sysconfig/o2cb
+/etc/ocfs2/cluster.conf
+/etc/oratab
 /etc/security/limits.conf
 /etc/pam.d/login
-/etc/oratab
+/etc/pam.d/sapstartsrv
 /etc/sysctl.conf
 /etc/modprobe.conf.local
 /etc/logrotate.d/corosync
@@ -40,19 +51,24 @@ CONF_FILES="
 /etc/corosync/logd.cf
 /etc/corosync/authkey
 /etc/xen/xend-config.sxp
+/etc/xen/vm/*.xml
 "
 #
 CONF_CALLS="
+'/usr/sbin/dmidecode -t system | /usr/bin/grep -v "UUID:" | /usr/bin/grep -v "Serial.Number:"'
+'/sbin/lspci'
 '/usr/bin/grep "model.name" /proc/cpuinfo'
 '/usr/bin/grep "MemTotal:" /proc/meminfo'
-'/bin/uname -a'
+'/usr/bin/lsscsi --kname'
+'/bin/uname -s -r -v -m -p -i -o'
 '/bin/lsmod'
 '/bin/rpm -qa'
 '/bin/rpm -Va'
-'/bin/multipath -ll'
 '/bin/cat /proc/mounts'
+'/bin/multipath -ll'
 '/sbin/chkconfig -A'
 '/sbin/route -n'
 '/usr/sbin/iptables -L'
+'/bin/ip a s | /usr/bin/grep "^[123456789]\:"'
 "
 #

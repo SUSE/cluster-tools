@@ -69,8 +69,10 @@ test -z "${ERROR_PATTERN}" &&\
 "Failed.to.read"
 "TOTEM.*FAILED.*RECEIVE"
 "TOTEM.*processor.failed"
+"Failed.services.*runlevel"
 "
-# TODO: pattern for failed module (could not load) and runlevel service "failed service: ..."
+# TODO: pattern for failed module (could not load)
+# TODO: async IO from grep kio /proc/slabinof ?
 
 function help() {
                 echo "usage:	$(basename $0)"

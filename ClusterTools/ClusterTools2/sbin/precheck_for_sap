@@ -262,16 +262,16 @@ function chk_wow_hacf ()
 	for h in $ALLNODES; do
 		echo "node $h"
 	done
-	echo "/etc/corosync/authkeys"
+	echo "/etc/corosync/authkey"
 
 	echo "--- node $HOSTNAME gives:"
 	echo "/etc/corosync/corosync.conf"
 	grep -v "#" /etc/corosync/corosync.conf
 	echo
-	echo "/etc/corosync/authkeys"
-	grep -v "#" /etc/corosync/authkeys
+	echo "/etc/corosync/authkey"
+	grep -v "#" /etc/corosync/authkey
 	echo
-	ls -l /etc/ha.d/authkeys
+	ls -l /etc/ha.d/authkey
 	echo
 }
 

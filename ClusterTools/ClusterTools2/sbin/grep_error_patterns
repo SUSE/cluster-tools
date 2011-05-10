@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.2 2011-04-27
+# Version: 0.2 2011-05-10
 #
 
 EXE="$0"
@@ -44,10 +44,13 @@ test -z "${ERROR_PATTERN}" &&\
 "doesn.*support.*DPO.*FUA"
 "multi.*path.*down"
 "multipathd.*reinstated"
-"Fail.*/dev/md"
+"[Ff]ail.*/dev/md"
 "U_\|_U"
+"/dev/md.*failed"
 "duplicate.VG"
 "duplicate.PV"
+"LVM.*not.*correctly"
+"Volume.group.*error"
 "not.found"
 "ocfs2.*ERR"
 "ocfs2.*not.unmounted.cleanly"

@@ -29,6 +29,7 @@ CONF_FILES="
 /etc/sysconfig/uuidd
 /etc/sysconfig/language
 /etc/sysconfig/clock
+/etc/sysconfig/lvm
 /etc/security/limits.conf
 /etc/pam.d/login
 /etc/oratab

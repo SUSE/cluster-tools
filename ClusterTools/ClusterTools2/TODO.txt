@@ -40,6 +40,7 @@ DONE: - man grep-error-patterns.8
 DONE: - /usr/share/man/man8/attrd_updater.8.gz
 DONE: - /usr/share/man/man8/crm_simulate.8.gz
 DONE: - /usr/share/man/man8/ptest.8.gz
+- update man sbd.7, sbd.8 for triple sbd
 
 DONE: - whbsaprcheck: /etc/corosync/authkey (ohne s)
 TODO whbsaprcheck: mount option barrier= wird nicht gezeigt

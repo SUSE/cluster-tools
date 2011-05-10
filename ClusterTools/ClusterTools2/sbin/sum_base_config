@@ -43,6 +43,8 @@ test -z "${CONF_FILES}" &&\
 /etc/sysconfig/ulimit
 /etc/sysconfig/uuidd
 /etc/sysconfig/language
+/etc/sysconfig/clock
+/etc/sysconfig/lvm
 /etc/oratab
 /etc/security/limits.conf
 /etc/pam.d/login

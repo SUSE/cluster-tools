@@ -59,6 +59,7 @@ test -z "${ERROR_PATTERN}" &&\
 "iSCSI.connection.*error"
 "bond.*link.*down"
 "bond.*duplicate.address"
+"bond.*not.detect.*failures"
 "link.*not.ready"
 "link.failure"
 "ntpd.*failed"

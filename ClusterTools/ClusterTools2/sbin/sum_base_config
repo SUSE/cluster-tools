@@ -88,6 +88,7 @@ test -z "${CONF_CALLS}" &&\
 '/sbin/route -n'
 '/usr/sbin/iptables -L'
 '/bin/ip a s | /usr/bin/grep "^[123456789]\:"'
+'/usr/bin/grep -v "IPADDR=" /etc/sysconfig/network/ifcfg-* | /usr/bin/grep -v "UNIQUE="'
 "
 # TODO: better network listing 
 # TODO: dmsetup table 

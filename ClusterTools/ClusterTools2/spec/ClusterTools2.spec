@@ -117,7 +117,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 
 %changelog -n ClusterTools
 * Tue May 10 2011 - lars.pinne@novell.com
-  2.2.2-1 added sum and error patterns, fixed minor bugs, added some man pages
+  2.2.2-1 added sum and error patterns, fixed minor bugs, added some man pages, updated ClusterService
 * Tue Apr 29 2011 - fabian.herschel@novell.com
   2.2.1-1 fixed package spec to get it build (added precheck_for_sap)
 * Tue Apr 29 2011 - lars.pinne@novell.com

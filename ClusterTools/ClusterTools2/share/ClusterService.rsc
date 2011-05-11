@@ -25,8 +25,11 @@ NFENCE:MAIN:FENCE node!!:crm node fence %{n}
 #
 :MAIN:::bar
 #
-# show status all nodes
-CSN:MAIN:show status all nodes:crm node show
+# show status of all nodes
+CSN:MAIN:show status of all nodes:crm node show
+#
+# show locgical status of rings
+CSR:MAIN:show logical status of all rings:corosync-cfgtool -s
 #
 # show status of all resources
 CSS:MAIN:show status of all resources:crm_mon -r -1

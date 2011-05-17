@@ -1,4 +1,4 @@
-.TH sbd 7 "10 Oct 2010" "" "cluster-glue"
+.TH sbd 7 "16 May 2011" "" "cluster-glue"
 .\"
 .SH NAME
 sbd \- Split Brain Detector 
@@ -63,23 +63,67 @@ guaranteeing that it is not disconnected from fencing message. (If the
 cluster data resides on the same logical unit in a different partition,
 this is not an additional point of failure; the work-load would
 terminate anyway if the storage connectivity was lost.)
+
+SBD supports one, two, or three devices. This affects the operation
+of SBD as follows:
+
+.B One device
+
+In its most simple implementation, you use one device only. (Older
+versions of SBD did not support more.) This is appropriate for clusters
+where all your data is on the same shared storage (with internal redundancy)
+anyway; the SBD device does not introduce an additional single point of
+failure then.
+
+.B Three devices
+
+In this most reliable configuration, SBD will only commit suicide if more
+than one device is lost; hence, this configuration is resilient against
+one device outages (be it due to failures or maintenance). Fencing
+messages can be successfully relayed if at least two devices remain up.
+
+This configuration is appropriate for more complex scenarios where storage
+is not confined to a single array.
+
+Host-based mirroring solutions could have one SBD per mirror leg (not
+mirrored itself), and an additional tie-breaker on iSCSI. 
+
+.B Two devices
+
+This configuration is a trade-off, primarily aimed at environments where
+host-based mirroring is used, but no third storage device is available.
+
+SBD will not commit suicide if it loses access to one mirror leg; this
+allows the cluster to continue to function even in the face of one outage.
+
+However, SBD will not fence the other side while only one mirror leg is
+available, since it does not have enough knowledge to detect an asymmetric
+split of the storage. So it will not be able to automatically tolerate a
+second failure while one of the storage arrays is down. (Though you
+can use the appropriate crm command to acknowledge the fence manually.)
 .\"
 .P
 \fB* Pre-Requisites\fR
 
-The environment must have shared storage reachable by all nodes. It is
-recommended to create a 1MB partition at the start of the device; in the
-rest of this text, this is referred to as "/dev/<SBD>", please substitute
-your actual pathname (ie, "/dev/sdc1") for this below.
-
+The environment must have shared storage reachable by all nodes.
+You must dedicate a small partition of each as the SBD device. 
 This shared storage segment must not make use of host-based RAID, cLVM2,
 nor DRBD.
+
+The SBD device can be connected via Fibre Channel, Fibre Channel over
+Eterhnet, or even iSCSI. Thus, an iSCSI target can become a sort-of
+network-based quorum server; the advantage is that it does not require
+a smart host at your third location, just block storage.
 
 However, using storage-based RAID and multipathing is recommended for
 increased reliability.
 .\"
 .P
 \fB* SBD Partition\fR
+
+It is recommended to create a 1MB partition at the start of the device;
+in the rest of this text, this is referred to as "/dev/<SBD>" or "/dev/<SBD_n>",
+please substitute your actual pathnames (ie, "/dev/sdc1") for this below.
 
 After having made very sure that this is indeed the device you want to
 use, and does not hold any data you need - as the sbd command will
@@ -110,7 +154,7 @@ following to /etc/sysconfig/sbd:
 .br
 #/etc/sysconfig/sbd
 .br
-SBD_DEVICE="/dev/<SBD>"
+SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
 # The next line enables the watchdog support:
 .br
@@ -182,7 +226,7 @@ SBD can be configured in /etc/sysconfig/sbd to use the systems's watchdog.
 	the kernel and initrd configuration file.
 .TP
 /dev/<SBD>
-	the SBD block device.
+	the SBD block device(s).
 .TP
 /lib/modules/<kernel-version>/kernel/drivers/watchdog/
 	the watchdog modules.
@@ -203,7 +247,7 @@ The content of this manual page was mostly derived from online documentation
 mentioned above.
 .\"
 .SH COPYRIGHT
-(c) 2009-2010 SUSE Linux GmbH, Germany.
+(c) 2009-2011 SUSE Linux GmbH, Germany.
 .br
 sbd comes with ABSOLUTELY NO WARRANTY.
 .br

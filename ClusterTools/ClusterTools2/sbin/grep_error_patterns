@@ -16,7 +16,7 @@ test -s $CFG && source $CFG
 DMSG="/tmp/dmesg.$RANDOM"
 
 test -z "${SYSTEM_LOG}" &&\
-	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root /proc/mdstat"
+	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0"
 	 SYSTEM_LOG="${SYSTEM_LOG} ${DMSG}"
 
 test -z "/etc/corosync/corosync.conf" &&\
@@ -35,6 +35,7 @@ test -z "${ERROR_PATTERN}" &&\
 "lpfc.*err"
 "qla.*err"
 "qlge.*error"
+"NMI.received"
 "target.failure"
 "reservation.conflict"
 "SCSI.*reset"
@@ -60,6 +61,7 @@ test -z "${ERROR_PATTERN}" &&\
 "bond.*link.*down"
 "bond.*duplicate.address"
 "bond.*not.detect.*failures"
+"Link.Failure.Count"
 "link.*not.ready"
 "link.failure"
 "ntpd.*failed"

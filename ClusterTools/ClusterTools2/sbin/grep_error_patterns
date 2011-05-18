@@ -43,6 +43,7 @@ test -z "${ERROR_PATTERN}" &&\
 "I/O.error"
 "disabling.*barrier"
 "doesn.*support.*DPO.*FUA"
+"Unable.*SMART.enabled"
 "multi.*path.*down"
 "multipathd.*reinstated"
 "[Ff]ail.*/dev/md"

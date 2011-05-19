@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-05-10
+# Version: 0.1 2011-05-18
 #
 
 EXE="$0"
@@ -29,6 +29,7 @@ test -z "${CONF_FILES}" &&\
 /etc/hosts
 /etc/resolv.conf
 /etc/ntp.conf
+/etc/adjtime
 /etc/passwd
 /etc/group
 /etc/ldap.conf
@@ -52,6 +53,7 @@ test -z "${CONF_FILES}" &&\
 /etc/sysconfig/security
 /etc/sysconfig/language
 /etc/sysconfig/clock
+/etc/sysconfig/ntp
 /etc/sysconfig/lvm
 /etc/sysconfig/o2cb
 /etc/ocfs2/cluster.conf
@@ -80,6 +82,7 @@ test -z "${CONF_CALLS}" &&\
 '/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
 '/bin/lsmod'
+'hwclock -r --utc | cut -d" " -f1-5'
 '/bin/rpm -qa'
 '/bin/rpm -Va'
 '/bin/cat /proc/mounts'

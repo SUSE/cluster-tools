@@ -21,6 +21,8 @@ test -z "${CONF_FILES}" &&\
 /etc/zypp/zypp.conf
 /etc/zypp/repos.d/*.repo
 /etc/products.d/*.prod
+/boot/initrd-2.6*default
+/boot/vmlinuz-2.6*default
 /proc/cmdline
 /proc/sys/kernel/tainted
 /etc/ld.so.conf

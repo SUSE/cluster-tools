@@ -82,7 +82,7 @@ test -z "${CONF_CALLS}" &&\
 '/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
 '/bin/lsmod'
-'/sbin/hwclock -r --utc | /usr/bin/cut -b1-24'
+'/sbin/hwclock -r --utc | /usr/bin/cut -b1-18'
 '/bin/rpm -qa'
 '/bin/rpm -Va'
 '/bin/cat /proc/mounts'
@@ -95,7 +95,7 @@ test -z "${CONF_CALLS}" &&\
 "
 # TODO: better network listing 
 # TODO: dmsetup table 
-
+# TODO: calc diff between hwclock and Linux time, fe. based on hwclock --debug --test
 
 function help() {
 	echo "usage:	$(basename $0)"

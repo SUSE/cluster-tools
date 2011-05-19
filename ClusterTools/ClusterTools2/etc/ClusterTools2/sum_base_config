@@ -14,6 +14,7 @@ CONF_FILES="
 /etc/hosts
 /etc/resolv.conf
 /etc/ntp.conf
+/etc/adjtime
 /etc/passwd
 /etc/group
 /etc/ldap.conf
@@ -37,6 +38,7 @@ CONF_FILES="
 /etc/sysconfig/security
 /etc/sysconfig/language
 /etc/sysconfig/clock
+/etc/sysconfig/ntp
 /etc/sysconfig/lvm
 /etc/sysconfig/o2cb
 /etc/ocfs2/cluster.conf
@@ -62,6 +64,7 @@ CONF_CALLS="
 '/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
 '/bin/lsmod'
+'/sbin/hwclock -r --utc | /usr/bin/cut -b1-24'
 '/bin/rpm -qa'
 '/bin/rpm -Va'
 '/bin/cat /proc/mounts'

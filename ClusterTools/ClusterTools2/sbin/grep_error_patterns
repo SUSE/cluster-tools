@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.2 2011-05-10
+# Version: 0.2 2011-05-18
 #
 
 EXE="$0"
@@ -51,8 +51,6 @@ test -z "${ERROR_PATTERN}" &&\
 "/dev/md.*failed"
 "duplicate.VG"
 "duplicate.PV"
-"LVM.*not.*correctly"
-"Volume.group.*error"
 "not.found"
 "ocfs2.*ERR"
 "ocfs2.*not.unmounted.cleanly"
@@ -68,15 +66,48 @@ test -z "${ERROR_PATTERN}" &&\
 "ntpd.*failed"
 "ntpd.*time.reset"
 "refused.mount.request"
-"crm_resource.*Error"
 "logrotate.*error"
 "Failed.to.read"
-"TOTEM.*FAILED.*RECEIVE"
-"TOTEM.*processor.failed"
 "Failed.services.*runlevel"
 "
 # TODO: pattern for failed module (could not load)
 # TODO: async IO from grep kio /proc/slabinof ?
+# TODO: verify cluster log msgs. maybe more generic possible ?
+
+test -z "${CLUERR_PATTERN}" &&\
+	 CLUERR_PATTERN="
+"TOTEM.*FAILED.*RECEIVE"
+"TOTEM.*processor.failed"
+"TOTEM.*Incrementing.problem"
+"quorum.lost"
+"un-expectedly.down"
+"Node.*unclean"
+"pengine.*fenced.*resource.failure"
+"crm_resource.*Error"
+"crmd.*ERROR:"
+"crmd.*Updating.failcount.*stop"
+"crmd.*Updating.failcount.*start"
+"
+
+#"lrmd.*RA.output.*failed"
+#"lrmd.*RA.output.*error"
+#"Volume.group.*error"
+#"LVM.*not.*correctly"
+#"CTDB.*not.start"
+#"Timeout.*CTDB"
+#"not.in.Secondary.mode"
+#"demote.*still.primary"
+#"Clone.options.misconfigured"
+#"eDirectory.*failed.*stop"
+#"eDirectory.*not.*configured"
+#"eDir.configuration.error"
+#"ndsd.*no.*socket"
+#"eDirectory.isn.*running"
+#"eDirectory.configuration.not"
+#"Couldn.*find.device"
+#"Couldn.*fsck"
+#"Couldn.*mount"
+#"DANGER.*NOT.cluster-aware"
 
 function help() {
                 echo "usage:	$(basename $0)"
@@ -94,10 +125,10 @@ function run_grep() {
 	dmesg >$DMSG
 
         # TODO: more efficient loop
-	for e in ${ERROR_PATTERN}; do
+	for e in ${ERROR_PATTERN} ${CLUERR_PATTERN}; do
         	echo -n "$e = "
 		for f in ${LOG}; do
-			cat $f
+			test -r $f && cat $f
 		done | zgrep -ic $e
 	done
 

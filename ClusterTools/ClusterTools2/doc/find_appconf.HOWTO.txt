@@ -1,0 +1,23 @@
+
+es5001:~ # vi /etc/ClusterTools2/find_appconf
+DIRS="/sapmnt /usr/sap /home /sapdb"
+SID1=NA0
+SID2=NA9
+SADM1=na0adm
+SADM2=na9adm
+DADM1=sqdna0
+DADM2=sqdna9
+:wq
+
+es5001:~ # find_appconf
+
+es5001:~ # ls -l *.ff
+-rw-r--r-- 1 root root 26657 2009-10-29 19:08 NA0.anders.ff
+-rw-r--r-- 1 root root 26657 2009-10-29 19:10 NA0.orig.ff
+-rw-r--r-- 1 root root 26657 2009-10-29 19:10 NA9.fake.ff
+
+
+es5001:~ # comm -3 NA0.orig.ff NA0.anders.ff 
+	555     sdba    sda     /sapdb/programs/bin/sdbverify
+555     sdba    sdb     /sapdb/programs/bin/sdbverify
+

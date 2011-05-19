@@ -107,6 +107,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/sleha_cleanup
 /usr/sbin/show_scores
 /usr/sbin/precheck_for_sap
+/usr/sbin/find_appconf
 #/usr/sbin/test_udpmcast
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2

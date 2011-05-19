@@ -1,0 +1,10 @@
+# /etc/ClusterTools2/filefind
+#
+DIRS="/sapmnt /usr/sap /home /sapdb"
+SID1=NA0
+SID2=NA9
+SADM1=na0adm
+SADM2=na9adm
+DADM1=sqdna0
+DADM2=sqdna9
+#

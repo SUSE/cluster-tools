@@ -94,6 +94,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 #/usr/sbin/clusterstate
 #/usr/sbin/cluster_actions
 /usr/sbin/grep_error_patterns
+/usr/sbin/grep_supportconfig
 /usr/sbin/sum_base_config
 #/usr/sbin/linkstate
 /usr/sbin/list_failcounts
@@ -107,6 +108,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/sleha_cleanup
 /usr/sbin/show_scores
 /usr/sbin/precheck_for_sap
+#/usr/sbin/precheck_for_oracle
 /usr/sbin/find_appconf
 #/usr/sbin/test_udpmcast
 /usr/share/ClusterTools2

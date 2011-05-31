@@ -221,13 +221,13 @@ PATTRN="
 # TODO: /etc/hosts, /etc/host.conf, etc/nsswitch.conf
 # TODO: etc/sysconfig/ifcfg-
 
-	grep -A14 "^# /etc/sysconfig/network/ifcfg-bond" $FIL
+	( grep -A14 "^# /etc/sysconfig/network/ifcfg-bond" $FIL
 	grep -A21 "^# /proc/net/bonding/bond" $FIL
 	
 	grep -A11 "^# /etc/sysconfig/network/ifcfg-eth" $FIL
 
-	grep -A1 "^# /sbin/chkconfig nscd" $FIL
-	echo	
+	grep -A1 "^# /sbin/chkconfig nscd" $FIL ) | grep -v "#==["
+	echo
 }
 
 
@@ -408,17 +408,57 @@ function chk_multipath() {
 }
 		
 
-function chk_storage() {
+function chk_filesys() {
 	
 	echo_msgsep $FUNCNAME
 	
-	FIL="lvm.txt"
-	FIL="fs-diskio.txt"
-	FIL="fs-softraid.txt"
 	FIL="fs-diskio.txt"
 
 	# TODO /etc/fstab
+	# TODO /proc/mounts
 
+	echo
+}
+
+
+function chk_storage() {
+	
+	echo_msgsep $FUNCNAME
+
+	FIL="rpm.txt"
+	# TODO: see whbsaprecheck
+PKG="
+dmraid
+lvm2
+libext2fs2
+mdadm
+multipath-tools
+nfs-client
+open-iscsi
+ocfs2-tools
+ocfs2-kmp-default
+xfsprogs
+"
+	for p in $PKG; do
+		awk '$1=="'$p'" {print $1,$NF} ' $FIL
+	done
+	echo
+
+# TODO: nfs
+MOD="
+ext2
+ext3
+ocfs2
+xfs
+"	
+	FIL="fs-diskio.txt"
+	#grep -B1 "^Disk./dev/" $FIL
+	grep -A1 "^Model:" $FIL | grep -v "^--$"
+	echo
+	
+	FIL="lvm.txt"
+	FIL="fs-softraid.txt"
+	
 	echo
 }
 
@@ -429,7 +469,7 @@ function chk_overview() {
 
 	FIL="basic-health-report.txt"
 
-	for p in "^Date.Checked: " "^Status: "  "\[...Red...\]" "\[.Yellow..\]"; do
+	for p in "^Date.Checked:" "^Status:"  "\[...Red...\]" "\[.Yellow..\]"; do
 		grep ${p} $FIL
 	done
 	echo
@@ -447,7 +487,7 @@ function chk_errors() {
 	echo -n "kernel.tainted : "
 	grep -c "^kernel.tainted" env.txt
 
-	LOG="boot.txt messages.txt ha.txt"
+	LOG="boot.txt messages.txt proc.txt ha.txt"
 	for e in ${ERROR_PATTERN} ${CLUERR_PATTERN}; do
 		echo -n "${e} : "
 		for f in ${LOG}; do
@@ -474,7 +514,8 @@ case $1 in
 		chk_kernel
 		chk_modules
 		chk_multipath
-		#chk_storage
+		chk_storage
+		#chk_filesys
 		chk_network
 		chk_timeset
 		chk_software
@@ -493,8 +534,9 @@ case $1 in
 	--test|-t)
 		cd $DIR
 		#set -x
-		chk_multipath
-		#chk_storage
+		#chk_multipath
+		chk_storage
+		#chk_filesys
 		#chk_cluster
 		exit
 	;;

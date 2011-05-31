@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version 0.01 2011-05-30
+# Version 0.01 2011-05-31
 #
 # For SLES11.
 # For Supportconfig Script Version: 2.25-237
@@ -14,12 +14,12 @@ COMD=$(basename $0)
 ERR="/dev/null"
 TMP="/tmp/cltl.$RANDOM"
 
-# TODO
+# TODO: make DIR= work
 DIR=${2:-$PWD}
 FUN=${3:-"chk_overview"}
 OWD=$PWD
 
-
+# TODO: config file /etc/ClusterTools2/grep_suppoertconfig
 # TODO: generic record split function for supportconfig files
 
 function echo_msgsep ()
@@ -505,6 +505,15 @@ case $1 in
 		echo "usage: $COMD OPTION"
 		echo "usage: $COMD OPTION <DIR>"
 		echo "usage: $COMD --function <DIR> <FUNC>"
+		echo
+		echo "OPTION:"
+                echo " --help           show help."
+                echo " --version        show version."
+		exit
+	;;
+	--version|-v)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
 		exit
 	;;
 	--generic|-g)

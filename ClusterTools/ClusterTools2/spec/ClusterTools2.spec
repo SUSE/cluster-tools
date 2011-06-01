@@ -15,7 +15,7 @@ License:      GPL
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.2.2
+Version:      2.2.4
 Release:      1 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
@@ -101,6 +101,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/reset_failcounts
 /usr/sbin/whbsaprecheck
 /usr/sbin/wow*
+/usr/sbin/fhcrmedit
 /usr/sbin/menueng2
 /usr/sbin/prepare_wowfile
 /usr/sbin/psauxlog
@@ -116,6 +117,10 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config /etc/ClusterTools2
 
 %changelog -n ClusterTools
+* Sat May 14 2011 - fabian.herschel@suse.com
+  2.2.4-1 added fhcrmedit to have a batch-able editor
+* Fri May 13 2011 - fabian.herschel@suse.com
+  2.2.3-1 simple stack now has now the option to skip the SFEX device resource (just let SFEX_DEVICE be empty)
 * Tue May 10 2011 - lars.pinne@novell.com
   2.2.2-1 added sum and error patterns, fixed minor bugs, added some man pages
 * Tue Apr 29 2011 - fabian.herschel@novell.com

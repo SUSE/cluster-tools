@@ -54,7 +54,7 @@ GRPID=grp_sap_$SAPSID
 #
 SAP_SCORES="1000 0"
 #
-IP_LABELS="sapna0ci,192.168.91.22 sapna0db,192.168.91.21 sapna0as,192.168.91.20"
+IP_LABELS="sap${SAPsid}ci,192.168.91.22 sap${SAPsid}db,192.168.91.21 sapn${SAPsid}as,192.168.91.20"
 #
 SAPsid=$(echo $SAPSID|tr [:upper:] [:lower:])
 #
@@ -62,8 +62,8 @@ SAPsid=$(echo $SAPSID|tr [:upper:] [:lower:])
 #
 SAP_INSTANCE_DEF=$(cat <<HERE-SAP
 # instance-typ instance-name                  profile-path                                                  optional-parameters
-ASCS           ${SAPSID}_ASCS00_sapna0as    /usr/sap/${SAPSID}/SYS/profile/START_ASCS00_sapna0as
-CI             ${SAPSID}_DVEBMGS01_sapna0ci /usr/sap/${SAPSID}/SYS/profile/START_DVEBMGS01_sapna0ci
+ASCS           ${SAPSID}_ASCS00_sap${SAPsid}as    /usr/sap/${SAPSID}/SYS/profile/START_ASCS00_sap${SAPsid}as
+CI             ${SAPSID}_DVEBMGS01_sap${SAPsid}ci /usr/sap/${SAPSID}/SYS/profile/START_DVEBMGS01_sap${SAPsid}ci
 HERE-SAP
 )
 #
@@ -72,9 +72,8 @@ HERE-SAP
 SFEX_DEVICE="/dev/mapper/sapvol1_part1"
 SFEX_INDEX=1
 #
-RAID1_DEVICES="/dev/md0"
 RAID1_DEVICES=$(cat <<HERE-MD
-/dev/md0 ${SAPSID}
+/dev/md0 ${SAPSID}_md0
 HERE-MD
 )
 RAID_CONFIG="/clusterconf/$SAPSID/mdadm.conf"

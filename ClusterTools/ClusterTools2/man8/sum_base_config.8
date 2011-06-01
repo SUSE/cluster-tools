@@ -4,7 +4,7 @@
 sum_base_config \- calculate checksums for common configuration and system parameters 
 .\"
 .SH SYNOPSIS
-.B sum_base_config \fIOPTION\fR
+.B sum_base_config \fI[OPTION]\fR
 .\"
 .SH DESCRIPTION
 \fBsum_base_config\fP calculates MD5 checksums for common configuration and system parameters.
@@ -57,6 +57,8 @@ Usage, syntax or execution errors.
 .\"
 .SH BUGS
 The number of files is limited to the maximum number of arguments for a shell loop.
+Single quotes "'" are not allowed in calls.
+Time is read from hwclock, but not compared to system time.
 Feedback is welcome, please use the project page at
 .br
 http://ClusterTools.sourceforge.net

@@ -1,4 +1,4 @@
-.TH psauxlog 8 "29 Apr 2011" "" "ClusterTools2"
+.TH psauxlog 8 "16 May 2011" "" "ClusterTools2"
 .\"
 .SH NAME
 psauxlog \- log the process list with timestamp
@@ -8,7 +8,8 @@ psauxlog \- log the process list with timestamp
 .\"
 .SH DESCRIPTION
 \fBpsauxlog\fP logs the process list with timestamp.
-Basically the script puts the output of "date +%F %T" in front of each line for the output of "ps aux".
+Basically the script puts the output of "date +%F %T" in front of each line for the output of "ps aux". If more data is needed, pidstat could be the right
+choice.
 .br
 .\"
 .SH EXAMPLES
@@ -58,7 +59,7 @@ Feedback is welcome, please use the project page at
 http://ClusterTools.sourceforge.net
 .\"
 .SH SEE ALSO
-\fBps\fP(1), \fBcrontab\fP(5), \fBlogrotate\fP(8), \fBClusterTools2\fP(7)
+\fBps\fP(1), \fBpidstat\fP(1), \fBcrontab\fP(5), \fBlogrotate\fP(8), \fBClusterTools2\fP(7)
 .\"
 .\"
 .SH COPYRIGHT

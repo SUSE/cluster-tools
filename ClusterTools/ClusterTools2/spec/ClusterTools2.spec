@@ -94,6 +94,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 #/usr/sbin/clusterstate
 #/usr/sbin/cluster_actions
 /usr/sbin/grep_error_patterns
+/usr/sbin/grep_supportconfig
 /usr/sbin/sum_base_config
 #/usr/sbin/linkstate
 /usr/sbin/list_failcounts
@@ -108,6 +109,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/sleha_cleanup
 /usr/sbin/show_scores
 /usr/sbin/precheck_for_sap
+#/usr/sbin/precheck_for_oracle
+/usr/sbin/find_appconf
 #/usr/sbin/test_udpmcast
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
@@ -123,7 +126,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 * Fri May 13 2011 - fabian.herschel@suse.com
   2.2.3-1 simple stack now has now the option to skip the SFEX device resource (just let SFEX_DEVICE be empty)
 * Tue May 10 2011 - lars.pinne@novell.com
-  2.2.2-1 added sum and error patterns, fixed minor bugs, added some man pages
+  2.2.2-1 added sum and error patterns, fixed minor bugs, added some man pages, updated ClusterService
 * Tue Apr 29 2011 - fabian.herschel@novell.com
   2.2.1-1 fixed package spec to get it build (added precheck_for_sap)
 * Tue Apr 29 2011 - lars.pinne@novell.com

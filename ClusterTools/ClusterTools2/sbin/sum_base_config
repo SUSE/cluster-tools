@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-05-10
+# Version: 0.2 2011-05-19
 #
 
 EXE="$0"
@@ -21,6 +21,8 @@ test -z "${CONF_FILES}" &&\
 /etc/zypp/zypp.conf
 /etc/zypp/repos.d/*.repo
 /etc/products.d/*.prod
+/boot/initrd-2.6*default
+/boot/vmlinuz-2.6*default
 /proc/cmdline
 /proc/sys/kernel/tainted
 /etc/ld.so.conf
@@ -29,6 +31,7 @@ test -z "${CONF_FILES}" &&\
 /etc/hosts
 /etc/resolv.conf
 /etc/ntp.conf
+/etc/adjtime
 /etc/passwd
 /etc/group
 /etc/ldap.conf
@@ -52,6 +55,7 @@ test -z "${CONF_FILES}" &&\
 /etc/sysconfig/security
 /etc/sysconfig/language
 /etc/sysconfig/clock
+/etc/sysconfig/ntp
 /etc/sysconfig/lvm
 /etc/sysconfig/o2cb
 /etc/ocfs2/cluster.conf
@@ -80,6 +84,7 @@ test -z "${CONF_CALLS}" &&\
 '/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
 '/bin/lsmod'
+'/sbin/hwclock -r --utc | /usr/bin/cut -b1-18'
 '/bin/rpm -qa'
 '/bin/rpm -Va'
 '/bin/cat /proc/mounts'
@@ -88,10 +93,11 @@ test -z "${CONF_CALLS}" &&\
 '/sbin/route -n'
 '/usr/sbin/iptables -L'
 '/bin/ip a s | /usr/bin/grep "^[123456789]\:"'
+'/usr/bin/grep -v "IPADDR=" /etc/sysconfig/network/ifcfg-* | /usr/bin/grep -v "UNIQUE="'
 "
 # TODO: better network listing 
 # TODO: dmsetup table 
-
+# TODO: calc diff between hwclock and Linux time, fe. based on hwclock --debug --test
 
 function help() {
 	echo "usage:	$(basename $0)"
@@ -109,12 +115,17 @@ function help() {
 # TODO: function to collect relevant files and output
 
 
+function sum_config() {
+	S="NA"
+	test -r $f && S=$(md5sum $f | awk '{print $1}')
+	echo "$f = $S"
+}
+
+
 function sum_files() {
 	nf=1
 	f=$CFG
-	S="NA"
-	test -r $f && S=$(md5sum $f | awk '{print $1}')
-	echo "$f $S"
+	sum_config
 	# TODO: better loop
 	for f in ${CONF_FILES}; do
 		(( nf++ ))
@@ -128,16 +139,19 @@ function sum_files() {
 
 function sum_calls() {
 	# TODO: replace errors by "$REPLY = NA" as above
+	# TODO: make single quotes "'" work in calls (want awk). maybe array instead of list?
 	mkdir $TMP
 	nc=0
+	f=$CFG
+	sum_config
 	echo ${CONF_CALLS} | tr "'" "\n" | tr -s "\n" |\
 	while read; do
 		echo -n "'${REPLY}' = "
-		${REPLY} | sort | md5sum - | awk '{print $1}'
+		eval ${REPLY} | sort | md5sum - | awk '{print $1}'
 		(( nc++ ))
 		echo $nc >${TMP}/nc
 	done | grep -v "'.*d41d8cd98f00b204e9800998ecf8427e"
-	nc=$(cat ${TMP}/nc)
+	nc=$(cat ${TMP}/nc); nc=$[ $nc / 2 ]
 	echo "INF0: $nc calls" >>/dev/stderr
 	rm -rf $TMP
 }

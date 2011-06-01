@@ -24,13 +24,11 @@ DONE: - man page sleha_cleanup: Hinweis auf Wow ist falsch
 - make_hb_backup update
 
 DONE: - add check to sleha_cleanup
-
 - naming sleha_cleanup : naming geschickt? Kann mit cleanup verwechselt werden.
 
 - whbsaprecheck : tests seem to be to static we need to test at least equal and newer...
 
 DONE: - external pattern file for grep-error-patterns
-
 DONE: - man grep-error-patterns.8
 
 - man watchdog.7
@@ -40,8 +38,9 @@ DONE: - man grep-error-patterns.8
 DONE: - /usr/share/man/man8/attrd_updater.8.gz
 DONE: - /usr/share/man/man8/crm_simulate.8.gz
 DONE: - /usr/share/man/man8/ptest.8.gz
-- update man sbd.7, sbd.8 for triple sbd
+DONE: - update man sbd.7, sbd.8 for triple sbd
 
 DONE: - whbsaprcheck: /etc/corosync/authkey (ohne s)
-TODO whbsaprcheck: mount option barrier= wird nicht gezeigt
-TODO whbsaprcheck: soll laufen, auch wenn paramter in wow file nicht gesetzt
+TODO - whbsaprcheck: mount option barrier= wird nicht gezeigt
+TODO - whbsaprcheck: soll laufen, auch wenn paramter in wow file nicht gesetzt
+TODO - find_appconf

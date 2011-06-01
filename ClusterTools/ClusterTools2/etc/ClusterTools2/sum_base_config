@@ -6,6 +6,8 @@ CONF_FILES="
 /etc/zypp/zypp.conf
 /etc/zypp/repos.d/*.repo
 /etc/products.d/*.prod
+/boot/initrd-2.6*default
+/boot/vmlinuz-2.6*default
 /proc/cmdline
 /proc/sys/kernel/tainted
 /etc/ld.so.conf
@@ -14,6 +16,7 @@ CONF_FILES="
 /etc/hosts
 /etc/resolv.conf
 /etc/ntp.conf
+/etc/adjtime
 /etc/passwd
 /etc/group
 /etc/ldap.conf
@@ -37,6 +40,7 @@ CONF_FILES="
 /etc/sysconfig/security
 /etc/sysconfig/language
 /etc/sysconfig/clock
+/etc/sysconfig/ntp
 /etc/sysconfig/lvm
 /etc/sysconfig/o2cb
 /etc/ocfs2/cluster.conf
@@ -62,6 +66,7 @@ CONF_CALLS="
 '/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
 '/bin/lsmod'
+'/sbin/hwclock -r --utc | /usr/bin/cut -b1-18'
 '/bin/rpm -qa'
 '/bin/rpm -Va'
 '/bin/cat /proc/mounts'
@@ -70,5 +75,6 @@ CONF_CALLS="
 '/sbin/route -n'
 '/usr/sbin/iptables -L'
 '/bin/ip a s | /usr/bin/grep "^[123456789]\:"'
+'/usr/bin/grep -v "IPADDR=" /etc/sysconfig/network/ifcfg-* | /usr/bin/grep -v "UNIQUE="'
 "
 #

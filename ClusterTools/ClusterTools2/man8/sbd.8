@@ -1,4 +1,4 @@
-.TH sbd 8 "10 Oct 2010" "" "cluster-glue"
+.TH sbd 8 "16 May 2011" "" "cluster-glue"
 .\"
 .SH NAME
 sbd \- Split Brain Detector daemon
@@ -11,10 +11,12 @@ sbd \- Split Brain Detector daemon
 .SH OPTIONS
 .TP
 \fB-d\fR <SBD>
-	Block device to use (mandatory)
+	Block device to use (mandatory),
+if you have more than one device, provide them by specifying this
+option multiple times
 .TP
 \fB-h\fR
-	Display this help.
+	Display this help
 .TP
 \fB-n\fR <node>
 	Set local node name; defaults to uname -n (optional)
@@ -30,6 +32,10 @@ sbd \- Split Brain Detector daemon
 .TP
 \fB-D\fR
 	Run as background daemon (optional) (watch only)
+.TP
+\fB-t\fR <N>
+ 	Set timeout to <N> seconds before automatic recover of failed SBD device
+(optional) (default is 3600, set to 0 to disable)
 .TP
 \fB-v\fR
 	Enable some verbose debug logging (optional)
@@ -97,8 +103,8 @@ nor DRBD. Please refer to sbd(7) for more information.
 The \fBsbd\fR can also be called manually to perform actions described in the 
 commands section of this manual page.
 
-In the rest of this text, this is referred to as "/dev/<SBD>", please substitute
-your actual pathname (ie, "/dev/sdc1") for this below.
+In the rest of this text, this is referred to as "/dev/<SBD>" or "/dev/<SBD_n>",
+please substitute your actual pathname (ie, "/dev/sdc1") for this below.
 
 .\"
 .SH EXAMPLES
@@ -110,8 +116,8 @@ All these steps must be performed as root.
 
 After having made very sure that this is indeed the device you want to
 use, and does not hold any data you need - as the sbd command will
-overwrite it without further requests for confirmation -, initialize the
-sbd device:
+overwrite it without further requests for confirmation -, initialize one
+single SBD device:
 
 # \fBsbd -d /dev/<SBD> create\fR
 
@@ -125,6 +131,10 @@ delivered to the node. For multipath, this should be the time required
 for MPIO to detect a path failure and switch to the next path. You may
 have to test this in your environment.
 
+Initialize three SBD devices in exact the same way, with identical settings:
+
+# \fBsbd -d /dev/<SBD_1> -d /dev/<SBD_2> -d /dev/<SBD_3> create\fR
+
 
 \fB* Setting Watchdog Timeout for SBD Partition\fR
 
@@ -136,6 +146,12 @@ estimate. This can be specified when the SBD device is initialized:
 # \fB/usr/sbin/sbd -d /dev/<SBD> -4 $msgwait -1 $watchdogtimeout create\fR
 
 (All timeouts are in seconds.)
+
+If your single sbd device resides on a multipath group, you may need to
+adjust the timeouts sbd uses, as MPIO's path down detection can cause
+delays. (If you have multiple devices, transient timeouts of a single
+device will not negatively affect SBD. However, if they all go through
+the same FC switches, you will still need to do this.)
 
 
 \fB* Dumping Content of SBD Partition\fR
@@ -170,7 +186,9 @@ following to /etc/sysconfig/sbd:
 
 ===
 .br
-SBD_DEVICE="/dev/<SBD>"
+# The next line points to three devices:
+.br
+SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
 # The next line enables the watchdog support:
 .br
@@ -209,6 +227,17 @@ This confirms that SBD is indeed up and running on the node, and that it
 is ready to receive messages.
 
 
+\fB* Recovering from temporary SBD device outage\fR 
+
+If you have multiple devices, failure of a single device is not immediately fatal.
+SBD will retry ten times in succession to reattach to the device, and then pause
+(as to not flood the system) before retrying. The pause intervall timeout could be
+configured. Thus, SBD should automatically recover from temporary outages.
+
+Should you wish to try reattach to the device right now, you can send a SIGUSR1 to
+the SBD parent daemon.
+
+
 \fB* Configuring the Fencing Resource in the Cluster Information Base\fR
 
 To complete the sbd setup, it is necessary to activate sbd as a
@@ -235,6 +264,16 @@ hostlist needs to be defined.
 Once the resource has started, your cluster is now successfully
 configured for shared-storage fencing, and will utilize this method in
 case a node needs to be fenced.
+
+The sbd agent does not need to and should not be cloned. If all of your nodes
+run SBD, as is most likely, not even a monitor action provides a real benefit,
+since the daemon would suicide the node if there was a problem.
+
+SBD also supports turning the reset request into a crash request, which may be
+helpful for debugging if you have kernel crashdumping configured; then, every
+fence request will cause the node to dump core. You can enable this via the
+crashdump="true" setting on the fencing resource. This is not recommended for
+on-going production use, but for debugging phases. 
 .\"
 .SH BUGS
 To report bugs for a SUSE or Novell product component, please use
@@ -245,14 +284,15 @@ To report bugs for a SUSE or Novell product component, please use
 \fBsbd\fP(7),
 http://www.linux-ha.org/wiki/SBD_Fencing ,
 http://www.mail-archive.com/pacemaker@oss.clusterlabs.org/msg03849.html ,
-http://www.novell.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/book_sleha/data/part_config.html
+http://www.novell.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/book_sleha/data/part_config.html ,
+http://www.novell.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/book_sleha/data/part_storage.html
 .\"
 .SH AUTHORS
 The content of this manual page was mostly derived from online documentation
 mentioned above and the programm's help option.
 .\"
 .SH COPYRIGHT
-(c) 2009-2010 SUSE Linux GmbH, Germany.
+(c) 2009-2011 SUSE Linux GmbH, Germany.
 .br
 sbd comes with ABSOLUTELY NO WARRANTY.
 .br

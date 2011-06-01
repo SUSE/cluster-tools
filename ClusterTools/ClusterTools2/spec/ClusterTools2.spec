@@ -118,7 +118,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 
 %changelog -n ClusterTools
 * Sat May 14 2011 - fabian.herschel@suse.com
-  2.2.4-1 added fhcrmedit to have a batch-able editor
+  2.2.4-1 added fhcrmedit to have a batch-able editor - fhcrmedit will be renamed in the future and is only a draft for 
+  internal tests
 * Fri May 13 2011 - fabian.herschel@suse.com
   2.2.3-1 simple stack now has now the option to skip the SFEX device resource (just let SFEX_DEVICE be empty)
 * Tue May 10 2011 - lars.pinne@novell.com

@@ -94,6 +94,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 #/usr/sbin/clusterstate
 #/usr/sbin/cluster_actions
 /usr/sbin/find_appconf
+/usr/sbin/fhcrmedit
 /usr/sbin/grep_error_patterns
 /usr/sbin/grep_supportconfig
 #/usr/sbin/linkstate
@@ -105,11 +106,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/reset_failcounts
 /usr/sbin/whbsaprecheck
 /usr/sbin/wow*
-<<<<<<< HEAD
-=======
-/usr/sbin/fhcrmedit
 /usr/sbin/menueng2
->>>>>>> 7e4cfd4622aaa003fcfa880907c8c01e2907483b
 /usr/sbin/prepare_wowfile
 /usr/sbin/precheck_for_sap
 #/usr/sbin/precheck_for_oracle

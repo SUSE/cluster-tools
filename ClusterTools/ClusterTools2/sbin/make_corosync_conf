@@ -2,14 +2,14 @@
 #
 # make_corosync_conf
 #
-# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011 SUSE Linux GmbH, Germany.
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 #
 # Version: 0.01 2011-06-08 13:20
 #
 
-EXE="make_corosync_conf"
+EXE="$0"
 
 CFG="/etc/ClusterTools2/make_corosync_conf"
 test -s $CFG && source $CFG

@@ -92,7 +92,8 @@ function chk_modules() {
 	FIL="boot.txt"
 	grep "^\[.*AppArmor:.*initialized" $FIL
 
-# TODO
+# TODO: external cfg file
+# TODO: add Cisco HBA
 MODLS="
 bfa.ko
 lpfc.ko

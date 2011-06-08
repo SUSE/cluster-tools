@@ -1,0 +1,18 @@
+# /etc/ClusterTools2/make_corosync_conf
+# For SLES11.
+#
+MEMBERS="test[0-9]$"
+MEMBER1_0="test1"
+MEMBER2_0="test2"
+RINGIF_0="bond0"
+RINGIF_1="eth0"
+MCASTPORT_0=5404"
+MCASTPORT_1=5406"
+SECAUTH="on"
+COROCONF="/etc/corosync/corosync.conf"
+TEMPLATE="/etc/corosync/corosync.conf.tmpl"
+RRPMODE="none"
+# calculated, if empty:
+# BINDNETADDR_0=""
+# THREADS=""
+#

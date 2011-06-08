@@ -11,6 +11,12 @@
 
 EXE="make_corosync_conf"
 
+CFG="/etc/ClusterTools2/make_corosync_conf"
+test -s $CFG && source $CFG
+
+TMP="/tmp/cltl.$RANDOM"
+
+# TODO: fill empty vars from config file
 MEMBER1_0=${1}
 MEMBER2_0=${2}
 RINGIF_0=${3:-"bond0"}
@@ -21,8 +27,6 @@ COROCONF="/etc/corosync/corosync.conf"
 TEMPLATE=${7:-"/etc/corosync/corosync.conf.tmpl"}
 RRPMODE="none"
 
-TMP=/tmp/mcf.$RANDOM
-
 
 function get_corosync_vals() {
 	echo "INFO: start $EXE $FUNCNAME"
@@ -30,6 +34,8 @@ function get_corosync_vals() {
 	# TODO: 2nd ring
 	# ip a s | grep "inet .*scope.global"
 	# grep "bindnetaddr:" /etc/corosync/corosync.conf
+
+	test -z "${BINDNETADDR_0}" &&
 	BINDNETADDR_0=$(ip a s $RINGIF_0 |\
 		awk '$1=="inet" && $7=="'$RINGIF_0'" {
 			# $2: ipaddr/netmask, f.e. 10.5.155.31/16
@@ -49,7 +55,8 @@ function get_corosync_vals() {
 			n=gsub("255","0",netaddr)	
 			print netaddr
 		}')
-	THREADS=$(grep -c "cpu.MHz.*:" /proc/cpuinfo)
+	test -z "${THREADS}" &&
+		THREADS=$(grep -c "cpu.MHz.*:" /proc/cpuinfo)
 	
 	echo "INFO: end $EXE $FUNCNAME"
 }

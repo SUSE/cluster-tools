@@ -42,5 +42,6 @@ DONE: - update man sbd.7, sbd.8 for triple sbd
 
 DONE: - whbsaprcheck: /etc/corosync/authkey (ohne s)
 TODO - whbsaprcheck: mount option barrier= wird nicht gezeigt
-TODO - whbsaprcheck: soll laufen, auch wenn paramter in wow file nicht gesetzt
+TODO - whbsaprcheck: soll laufen, auch wenn parameter in wow file nicht gesetzt
 TODO - find_appconf
+TODO - enhance make_corosync_conf, f.e. config file

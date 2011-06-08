@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 #
-# Version: 0.01 2011-06-08 13:20
+# Version: 0.01 2011-06-08 20:20
 #
 
 EXE="$0"
@@ -17,15 +17,16 @@ test -s $CFG && source $CFG
 TMP="/tmp/cltl.$RANDOM"
 
 # TODO: fill empty vars from config file
-MEMBER1_0=${1}
-MEMBER2_0=${2}
+test -z "${1}" || MEMBER1_0=${1}
+test -z "${2}" || MEMBER2_0=${2}
 RINGIF_0=${3:-"bond0"}
 MCASTPORT_0=${4:-"5404"}
 SECAUTH=${5:-"on"}
 RINGIF_1=${6:-"eth0"}
-COROCONF="/etc/corosync/corosync.conf"
+RRPMODE=${RRPMODE:-"none"}
+COROCONF=${COROCONF:-"/etc/corosync/corosync.conf"}
+# TODO: TEMPLATE=${7:-"$COROCONF.tmpl"}
 TEMPLATE=${7:-"/etc/corosync/corosync.conf.tmpl"}
-RRPMODE="none"
 
 
 function get_corosync_vals() {
@@ -38,22 +39,22 @@ function get_corosync_vals() {
 	test -z "${BINDNETADDR_0}" &&
 	BINDNETADDR_0=$(ip a s $RINGIF_0 |\
 		awk '$1=="inet" && $7=="'$RINGIF_0'" {
-			# $2: ipaddr/netmask, f.e. 10.5.155.31/16
-			# $4: brdcastaddr, f.e. 10.5.255.255
-			# BINDNETADDR: ... f.e. 10.5.0.0
-			# TODO correct calculation
-			# for now: 	/24 -> x.x.x.0
-			#		/16 -> x.x.0.0
-			#		/8  -> x.0.0.0
-			#netaddr=$2
-			#n=split(netaddr,netfield,"/")
-			#ipaddr=netfield[1]
-			#netmask=netfield[2]
-			#n=split(netaddr,netfield,".")
+		# $2: ipaddr/netmask, f.e. 10.5.155.31/16
+		# $4: brdcastaddr, f.e. 10.5.255.255
+		# BINDNETADDR: ... f.e. 10.5.0.0
+		# TODO correct calculation
+		# for now: 	/24 -> x.x.x.0
+		#		/16 -> x.x.0.0
+		#		/8  -> x.0.0.0
+		#netaddr=$2
+		#n=split(netaddr,netfield,"/")
+		#ipaddr=netfield[1]
+		#netmask=netfield[2]
+		#n=split(netaddr,netfield,".")
 
-			netaddr=$4
-			n=gsub("255","0",netaddr)	
-			print netaddr
+		netaddr=$4
+		n=gsub("255","0",netaddr)	
+		print netaddr
 		}')
 	test -z "${THREADS}" &&
 		THREADS=$(grep -c "cpu.MHz.*:" /proc/cpuinfo)
@@ -77,8 +78,8 @@ function get_cluster_members() {
 function fix_corosync_conf() {
 	echo "INFO: start $EXE $FUNCNAME"
 
-	cp -a $COROCONF ${COROCONF}.bak || exit 1
-	test -s $TEMPLATE || exit 2
+	cp -a $COROCONF ${COROCONF}.bak || exit 2 
+	test -s $TEMPLATE || exit 3
 
 	# TODO: 2nd ring
 	awk -F":" ' $2!~/@@[A-Z].*@@/ {print}
@@ -88,7 +89,7 @@ function fix_corosync_conf() {
 	$1~/mcastport/ && $2~/@@MCASTPORT_0@@/ { print $1":","'$MCASTPORT_0'"}
 	$1~/memberaddr/ && $2~/@@MEMBER1_0@@/ { print $1":","'$MEMBER1_0'"}
 	$1~/memberaddr/ && $2~/@@MEMBER2_0@@/ { print $1":","'$MEMBER2_0'"}
-	' $TEMPLATE #>$COROCONF
+	' $TEMPLATE >$COROCONF
 
 	echo "INFO: end $EXE $FUNCNAME"
 }
@@ -96,6 +97,12 @@ function fix_corosync_conf() {
 
 function echo_variables() {
 	echo "INFO: start $EXE $FUNCNAME"
+
+# TODO
+#	VARS="RINGIF_0 BINDNETADDR_0 MCASTPORT_0 MEMBER1_0 MEMBER2_0 THREADS SECAUTH TEMPLATE"
+#	for v in ${VARS}; do
+#		echo -n "${v}: "; eval '${v}'
+#	done
 
 	echo "RINGIF_0: $RINGIF_0"
 	echo "BINDNETADDR_0: $BINDNETADDR_0"
@@ -141,6 +148,9 @@ case $1 in
 		fix_corosync_conf
 
 		echo "INFO: normal_end $EXE"
+	;;
+	-t|--test)
+		echo_variables
 	;;
 	*)
 		echo "INFO: start $EXE"

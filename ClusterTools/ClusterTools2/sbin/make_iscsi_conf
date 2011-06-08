@@ -1,0 +1,98 @@
+#!/bin/bash
+#
+# make_iscsi_conf
+#
+# (c) 2011 SUSE Linux GmbH, Germany.
+# GNU Public License. No warranty.
+# Author: A.Rehg, L.Pinne.
+#
+# Version: 0.01 2011-06-08-14:20
+#
+
+EXE="$0"
+CFG="/etc/ClusterTools2/make_iscsi_conf"
+test -s $CFG && source $CFG
+
+TMP="/tmp/cltl.$RANDOM"
+
+ISCSI_CFG="/etc/iscsi/iscsid.conf"
+INITIATOR_CFG="/etc/iscsi/initiatorname.iscsi"
+INITIATORNAME=iqn.${INI_DATE}.${INI_NETW}":01:"${INI_UUID}
+INI_NETW="de.basf-ag.rz-c007-j650"
+
+
+# TODO: fill empty vars from config file
+
+
+function fix_iscsid_conf() {
+
+  echo "INFO: start $EXE $FUNCNAME"
+ 
+  MOD="automatic"
+  CFIL=$ISCSI_CFG
+  OFIL=$CFIL
+  BAK=${CFIL}.bak
+
+  grep "^node.startup.*$MOD" $FIL >/dev/null 
+  RC=$?
+
+  if [ $RC -gt 0 ]; then
+  	cp $FIL $BAK || exit $?
+  	awk '	$1=="node.startup" {print $1,$2,"'"$MOD"'"}
+		$1!="node.startup" {print}' $BAK >$OFIL
+  else
+	echo "WARN: found \"${MOD}\" already in ${CFIL}"
+  fi 
+
+  echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+function fix_initiatorname() {
+
+  echo "INFO: start $EXE $FUNCNAME"
+
+  INI_UUID=$HOSTNAME
+  #INI_UUID=$(uuidgen -r | awk -F"-" '{print $5}')
+  INI_DATE=$(date +%Y-%m)
+  # TODO 
+  #INI_NETW=$(hostname -f | awk -F"." '{print $}' )
+
+  CFIL=$INITIATOR_CFG
+  OFIL=$CFIL
+  BAK=${CFIL}.bak
+
+  cp $CFIL $BAK
+  awk -F"=" '	$1=="InitiatorName" {print $1"=""'"$INITIATORNAME"'"}
+        	$1!="InitiatorName" {print}' $BAK >$OFIL
+
+  echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+# function main()
+
+case $1 in
+	-h|--help)
+		echo "usage: $(basename $0) [OPTION]"
+		echo
+		echo "OPTION:"
+		echo " --help		show help."
+		echo " --version	show version."
+		exit
+	;;
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	*)
+		echo "INFO: start $EXE"
+
+		fix_iscsid_conf
+		fix_initiatorname
+
+		echo "INFO: normal_end $EXE"
+	;;
+esac
+#

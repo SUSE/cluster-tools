@@ -1,0 +1,116 @@
+.TH make_corosync_conf 8 "08 July 2011" "" "ClusterTools2"
+.\"
+.SH NAME
+make_corosync_conf \- make simple corosync configuration from template 
+.\"
+.SH SYNOPSIS
+.P
+.B make_corosync_config \fI<MEMBER1_0> <MEMBER2_0>\fR [ \fI<RINGIF_0> <SECAUTH> <TEMPLATE>\fR ]
+.P
+.B make_corosync_config --default \fI<MEMBERS>\fR
+.P
+.B make_corosync_config \fIOPTION\fR
+.\"
+.SH DESCRIPTION
+\fBmake_corosync_conf\fP generates a simple corosync configuration file from a template.
+.br
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+	show help.
+.HP
+\fB --version\fR
+	show version.
+.HP
+\fB --default\fR
+	make default configuration. Only a hostname pattern that matches both cluster nodes is needed as argument. All other options are built-in defaults.
+.\"
+.SH TEMPLATE FILE SYNTAX
+Basically a template file looks like any corosync.conf file. Only difference is that certain parameters are replaced by placeholders. Currently the following placeholders are recognized:
+.br
+@@SECAUTH@@
+.br
+@@THREADS@@
+.br
+@@RRPMODE@@
+.br
+@@BINDNETADDR_0@@
+.br
+@@MCASTPORT_0@@
+.br
+@@MEMBER1_0@@
+.br
+@@MEMBER2_0@@
+.\"
+.SH EXAMPLES
+.br
+.TP
+* Make default configuration for two-node cluster with nodes "nodep" and "nodeq"  , using built-in defaults
+.br
+# make_corosync_conf --default node[pq]$
+.TP
+* Make configuration for "nodep" and "nodeq", cluster link on bond0 using secauth, take other settings from named template file. 
+.br
+# make_corosync_conf nodep nodeq bond0 on /etc/corosync/corosync.conf.tmpl
+.TP
+The corresponding template file contains the following section, instead of the real parameter lines:
+.br
+secauth:        @@SECAUTH@@
+.br
+interface {
+.br
+ringnumber:     0
+.br
+bindnetaddr:    @@BINDNETADDR_0@@
+.br
+mcastport:      @@MCASTPORT_0@@
+.br
+member {
+.br
+memberaddr: @@MEMBER1_0@@
+.br
+}
+.br
+member {
+.br
+memberaddr: @@MEMBER2_0@@
+.br
+}
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/make_corosync_conf
+	the program itself.
+.TP
+/etc/ClusterTools2/make_corosync_conf
+	the program's configuration.
+.TP
+/etc/corosync/corosync.conf
+	the corosync configuration to be written.
+.\"
+.SH BUGS
+Only one TOTEM ring is configured. Only Unicast is supported.
+Feedback is welcome, please use the project page at
+.br
+http://ClusterTools.sourceforge.net
+.\"
+.SH SEE ALSO
+\fBcorosync.conf\fP(5), \fBcorosync\fP(8) \fBClusterTools2\fP(7)
+.\"
+.\"
+.SH COPYRIGHT
+(c) 2011 L.Pinne, Germany.
+.br
+make_corosync_conf comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

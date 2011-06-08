@@ -1,0 +1,147 @@
+#!/bin/bash
+#
+# make_corosync_conf
+#
+# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+# Author: A.Rehg, L.Pinne
+#
+# Version: 0.01 2011-06-08 13:20
+#
+
+EXE="make_corosync_conf"
+
+MEMBER1_0=${1}
+MEMBER2_0=${2}
+RINGIF_0=${3:-"bond0"}
+MCASTPORT_0=${4:-"5404"}
+SECAUTH=${5:-"on"}
+RINGIF_1=${6:-"eth0"}
+COROCONF="/etc/corosync/corosync.conf"
+TEMPLATE=${7:-"/etc/corosync/corosync.conf.tmpl"}
+RRPMODE="none"
+
+TMP=/tmp/mcf.$RANDOM
+
+
+function get_corosync_vals() {
+	echo "INFO: start $EXE $FUNCNAME"
+	
+	# TODO: 2nd ring
+	# ip a s | grep "inet .*scope.global"
+	# grep "bindnetaddr:" /etc/corosync/corosync.conf
+	BINDNETADDR_0=$(ip a s $RINGIF_0 |\
+		awk '$1=="inet" && $7=="'$RINGIF_0'" {
+			# $2: ipaddr/netmask, f.e. 10.5.155.31/16
+			# $4: brdcastaddr, f.e. 10.5.255.255
+			# BINDNETADDR: ... f.e. 10.5.0.0
+			# TODO correct calculation
+			# for now: 	/24 -> x.x.x.0
+			#		/16 -> x.x.0.0
+			#		/8  -> x.0.0.0
+			#netaddr=$2
+			#n=split(netaddr,netfield,"/")
+			#ipaddr=netfield[1]
+			#netmask=netfield[2]
+			#n=split(netaddr,netfield,".")
+
+			netaddr=$4
+			n=gsub("255","0",netaddr)	
+			print netaddr
+		}')
+	THREADS=$(grep -c "cpu.MHz.*:" /proc/cpuinfo)
+	
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+function get_cluster_members() {
+	echo "INFO: start $EXE $FUNCNAME"
+
+	awk '$3~/'"$MEMBERS"'/ {print $1}' /etc/hosts | sort -u >$TMP
+	MEMBER1_0=$(head -1 $TMP)
+	MEMBER2_0=$(tail -1 $TMP)
+	rm -f $TMP
+
+	echo "INFO: end $EXE $FUNCNAME" 
+}
+
+
+function fix_corosync_conf() {
+	echo "INFO: start $EXE $FUNCNAME"
+
+	cp -a $COROCONF ${COROCONF}.bak || exit 1
+	test -s $TEMPLATE || exit 2
+
+	# TODO: 2nd ring
+	awk -F":" ' $2!~/@@[A-Z].*@@/ {print}
+	$1~/threads/ && $2~/@@THREADS@@/ { print $1":","'$THREADS'"}
+	$1~/secauth/ && $2~/@@SECAUTH@@/ { print $1":","'$SECAUTH'"}
+	$1~/bindnetaddr/ && $2~/@@BINDNETADDR_0@@/ { print $1":","'$BINDNETADDR_0'"}
+	$1~/mcastport/ && $2~/@@MCASTPORT_0@@/ { print $1":","'$MCASTPORT_0'"}
+	$1~/memberaddr/ && $2~/@@MEMBER1_0@@/ { print $1":","'$MEMBER1_0'"}
+	$1~/memberaddr/ && $2~/@@MEMBER2_0@@/ { print $1":","'$MEMBER2_0'"}
+	' $TEMPLATE #>$COROCONF
+
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+function echo_variables() {
+	echo "INFO: start $EXE $FUNCNAME"
+
+	echo "RINGIF_0: $RINGIF_0"
+	echo "BINDNETADDR_0: $BINDNETADDR_0"
+	echo "MCASTPORT_0: $MCASTPORT_0"
+	echo "MEMBER1_0: $MEMBER1_0"
+	echo "MEMBER2_0: $MEMBER2_0"
+	echo "THREADS: $THREADS"
+	echo "SECAUTH: $SECAUTH"
+	echo "TEMPLATE: $TEMPLATE"
+
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+# function main()
+
+case $1 in
+	-h|--help)
+		echo "usage: $(basename $0) <MEMBER1_0> <MEMBER2_0> [<RINGIF_0> <SECAUTH> <TEMPLATE>]"
+		echo "usage: $(basename $0) --default <MEMBERS>"
+		echo "usage: $(basename $0) OPTION"
+		echo
+		echo "OPTION:"
+		echo " --help           show help."
+		echo " --version        show version."
+		echo
+		echo "Example:"
+		echo "$(basename $0) -d apple.110$"
+		exit
+	;;
+	-v|--version)
+                echo -n "$(basename $EXE) "
+                head -11 $EXE | grep "^# Version: "
+                exit
+        ;;
+	-d|default)
+		echo "INFO: start $EXE"
+
+		shift;
+		MEMBERS=$1
+		get_cluster_members
+		get_corosync_vals
+		fix_corosync_conf
+
+		echo "INFO: normal_end $EXE"
+	;;
+	*)
+		echo "INFO: start $EXE"
+
+		get_corosync_vals
+		fix_corosync_conf
+		
+		echo "INFO: normal_end $EXE"
+	;;
+esac
+#

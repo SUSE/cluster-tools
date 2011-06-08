@@ -22,8 +22,8 @@ ClusterTools2"
 SW_NOT="apparmor orarun ulimit"
 #
 RUNLVL=3
-SRV_RUN="boot.multipath multipathd ntp boot.sapconf boot.sysstat boot.clock"
-SRV_NOT="boot.md boot.apparmor boot.dmraid slpd alsasound openais SuSEfirewall2_init SuSEfirewall2_setup ocfs2 o2cb open-iscsi sapinit uuidd"
+SRV_RUN="boot.multipath multipathd ntp boot.sapconf boot.sysstat boot.clock uuidd"
+SRV_NOT="boot.md boot.apparmor boot.dmraid slpd alsasound openais SuSEfirewall2_init SuSEfirewall2_setup ocfs2 o2cb open-iscsi sapinit"
 
 # TODO: BWA user
 SAPUSER="...adm"

@@ -91,6 +91,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %files
 %defattr(-,root,root)
 /usr/sbin/ClusterService
+/usr/sbin/add_softdog_to_initrd
 #/usr/sbin/clusterstate
 #/usr/sbin/cluster_actions
 /usr/sbin/find_appconf

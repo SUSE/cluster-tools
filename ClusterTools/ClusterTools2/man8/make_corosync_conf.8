@@ -5,7 +5,7 @@ make_corosync_conf \- make simple corosync configuration from template
 .\"
 .SH SYNOPSIS
 .P
-.B make_corosync_config \fI<MEMBER1_0> <MEMBER2_0>\fR [ \fI<RINGIF_0> <MCASTPORT> <SECAUTH> <TEMPLATE>\fR ]
+.B make_corosync_config \fI<MEMBERNAM1_0> <MEMBERNAM2_0>\fR [ \fI<RINGIF_0> <MCASTPORT_0> <SECAUTH> <TEMPLATE>\fR ]
 .P
 .B make_corosync_config --default \fI<MEMBERS>\fR
 .P
@@ -39,9 +39,9 @@ Basically a template file looks like any corosync.conf file. Only difference is 
 .br
 @@MCASTPORT_0@@
 .br
-@@MEMBER1_0@@
+@@MEMBERADDR1_0@@
 .br
-@@MEMBER2_0@@
+@@MEMBERADDR2_0@@
 .\"
 .SH EXAMPLES
 .br
@@ -50,9 +50,9 @@ Basically a template file looks like any corosync.conf file. Only difference is 
 .br
 # make_corosync_conf --default node[pq]$
 .TP
-* Make configuration for "nodep" and "nodeq", cluster link on bond0 using secauth, take other settings from named template file. 
+* Make configuration for "nodep" and "nodeq", cluster link on bond0, port 5544, using secauth, take other settings from named template file. 
 .br
-# make_corosync_conf nodep nodeq bond0 on /etc/corosync/corosync.conf.tmpl
+# make_corosync_conf nodep nodeq bond0 5544 on /etc/corosync/corosync.conf.tmpl
 .TP
 The corresponding template file contains the following section, instead of the real parameter lines:
 .br
@@ -68,13 +68,13 @@ mcastport:      @@MCASTPORT_0@@
 .br
 member {
 .br
-memberaddr: @@MEMBER1_0@@
+memberaddr: @@MEMBERADDR1_0@@
 .br
 }
 .br
 member {
 .br
-memberaddr: @@MEMBER2_0@@
+memberaddr: @@MEMBERADDR2_0@@
 .br
 }
 .\"

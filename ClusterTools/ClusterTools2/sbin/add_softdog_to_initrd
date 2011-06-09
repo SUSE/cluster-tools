@@ -6,28 +6,66 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 # 
-# Version: 0.01 2011-06-08 12:50
+# Version: 0.01 2011-06-09 20:50
 #
 
-EXE="add_mod_to_initrd"
+EXE="$0"
 MOD=${1:-"softdog"}
 FIL="/etc/sysconfig/kernel"
 BAK=${FIL}.bak
 
-echo "INFO: start $EXE $FUNCNAME"
-test -s $FIL || exit 2
-grep -v "#.*INITRD_MODULES" $FIL | grep "INITRD_MODULES=.*$MOD" >/dev/null
-RC=$?
 
-if [ $RC -gt 0 ]; then
-	cp -a $FIL $BAK || exit $?
-	awk -F'"' '     $1=="INITRD_MODULES=" {print $1"\""$2" '"$MOD"'\" "}
-        	        $1!="INITRD_MODULES=" {print}' $BAK >$FIL
-	mkinitrd
-else
-        echo "WARN: found \"${MOD}\" already in ${FIL}"
-fi 
-	modprobe $MOD
+function help(){
+	echo "usage: $(basename $0) [<MODULE>]"
+	echo "usage: $(basename $0) [OPTION]"
+	echo
+	echo "OPTION:"
+	echo " --help		show help."
+	echo " --version	show version."
+	echo
+}
 
-echo "INFO: normal_end $EXE $FUNCNAME"
+
+function version(){
+	echo -n "$(basename $EXE) "
+	head -11 $EXE | grep "^# Version: "
+}
+
+
+function add_mod(){
+	echo "INFO: start $EXE $FUNCNAME"
+	test -s $FIL || exit 2
+	grep -v "#.*INITRD_MODULES" $FIL | grep "INITRD_MODULES=.*$MOD" >/dev/null
+	RC=$?
+
+	if [ $RC -gt 0 ]; then
+		cp -a $FIL $BAK || exit $?
+		awk -F'"' '     $1=="INITRD_MODULES=" {print $1"\""$2" '"$MOD"'\" "}
+        		        $1!="INITRD_MODULES=" {print}' $BAK >$FIL
+		mkinitrd
+	else
+        	echo "WARN: found \"${MOD}\" already in ${FIL}"
+	fi 
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+# function main()
+
+case $1 in
+	-h|--help)
+		help
+		exit
+	;;
+	-v|--version)
+		version
+		exit
+	;;
+	*)
+		echo "INFO: start $EXE"
+		add_mod
+		modprobe $MOD
+		echo "INFO: normal_end $EXE"
+	;;
+esac
 #

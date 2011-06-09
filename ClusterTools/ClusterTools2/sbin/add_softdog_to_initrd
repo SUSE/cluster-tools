@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 # 
-# Version: 20110608-1150
+# Version: 0.01 2011-06-08 12:50
 #
 
 EXE="add_mod_to_initrd"

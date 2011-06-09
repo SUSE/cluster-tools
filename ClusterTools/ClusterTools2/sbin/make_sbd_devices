@@ -34,6 +34,16 @@ function make_sbd_devices() {
 	echo "INFO: end $EXE $FUNCNAME"
 }
 
+function dump_sbd_devices() {
+	FIL=${SBD_CONF}
+
+	awk -F"=" '$1=="SBD_DEVICE" {print $2}' $FIL |tr -d "\""|tr ";" "\n"|\
+	while read; do
+		sbd -d $REPLY dump
+		sbd -d $REPLY list 
+	done
+}
+
 
 # function main()
 
@@ -43,6 +53,7 @@ case $1 in
 		echo "usage: $(basename $0) [OPTION]"
 		echo
 		echo "OPTION:"
+		echo " --dump           show content of SBD devices."
 		echo " --help           show help."
 		echo " --version        show version."
 		echo
@@ -52,6 +63,9 @@ case $1 in
 		echo -n "$(basename $EXE) "
 		head -11 $EXE | grep "^# Version: "
 		exit
+	;;
+	-d|--dump)
+		dump_sbd_devices
 	;;
 	*)
 		echo "INFO: start $EXE"

@@ -12,7 +12,7 @@ service {
 }
 totem {
 	version:	2
-	token:		5000
+	token:		1000
 	token_retransmits_before_loss_const: 10
 	join:		60
 	consensus:	6000
@@ -28,10 +28,10 @@ totem {
                 bindnetaddr:	@@BINDNETADDR_0@@   
                 mcastport:     	@@MCASTPORT_0@@ 
                 member {
-                        memberaddr: @@MEMBER1_0@@ 
+                        memberaddr: @@MEMBERADDR1_0@@ 
                 }
                 member {
-                        memberaddr: @@MEMBER2_0@@
+                        memberaddr: @@MEMBERADDR2_0@@
                 }
         }
 }

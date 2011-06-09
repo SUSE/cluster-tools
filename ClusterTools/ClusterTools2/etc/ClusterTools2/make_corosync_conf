@@ -12,7 +12,7 @@ SECAUTH="on"
 RRPMODE="none"
 COROCONF="/etc/corosync/corosync.conf"
 TEMPLATE="/etc/corosync/corosync.conf.tmpl"
-# calculated, if empty:
+# calculatet, if empty:
 # BINDNETADDR_0=""
 # THREADS=""
 #

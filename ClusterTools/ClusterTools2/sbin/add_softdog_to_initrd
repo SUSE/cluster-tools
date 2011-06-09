@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# add_mod_to_initrd
+#
+# (c) 2011 SUSE Linux GmbH, Germany.
+# GNU Public License. No warranty.
+# Author: A.Rehg, L.Pinne
+# 
+# Version: 20110608-1150
+#
+
+EXE="add_mod_to_initrd"
+MOD=${1:-"softdog"}
+FIL="/etc/sysconfig/kernel"
+BAK=${FIL}.bak
+
+echo "INFO: start $EXE"
+test -s $FIL || exit 2
+grep "INITRD_MODULES.*$MOD" $FIL >/dev/null
+RC=$?
+
+if [ $RC -gt 0 ]; then
+	cp -a $FIL $BAK || exit $?
+	awk -F'"' '     $1=="INITRD_MODULES=" {print $1"\""$2" '"$MOD"'\" "}
+        	        $1!="INITRD_MODULES=" {print}' $BAK >$FIL
+	mkinitrd
+else
+        echo "WARN: found \"${MOD}\" already in ${FIL}"
+fi 
+
+echo "INFO: normal_end $EXE"
+#

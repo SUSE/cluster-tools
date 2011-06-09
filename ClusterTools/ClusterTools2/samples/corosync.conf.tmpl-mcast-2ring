@@ -1,0 +1,50 @@
+# /etc/corosync/corosync.conf
+compatibility: whitetank
+aisexec {
+	user:		root
+	group:		root
+}
+service {
+	ver:		0
+	name:		pacemaker
+	use_mgmtd:	yes
+	use_logd:	yes
+}
+totem {
+	version:	2
+	token:		5000
+	token_retransmits_before_loss_const: 10
+	join:		60
+	consensus:	6000
+	vsftype:	none
+	max_messages:	20
+	clear_node_high_bit: yes
+	secauth:	@@SECAUTH@@
+	threads:	@@THREADS@@	
+	rrp_mode: 	@@RRPMODE@@
+	interface {
+		ringnumber:	0
+		bindnetaddr:	@@BINDNETADDR_0@@		
+		mcastaddr:	@@MCASTADDR_0@@
+		mcastport:	@@MCASTPORT_0@@
+	}
+	interface {
+		ringnumber:	1
+		bindnetaddr:	@@BINDNETADDR_1@@
+		mcastaddr:	@@MCASTADDR_1@@
+		mcastport:	@@MCASTPORT_1@@
+	}
+}
+logging {
+	fileline:	off
+	to_stderr:	no
+	to_logfile:	yes
+	logfile:	/var/log/corosync.log
+	to_syslog:	no	
+	syslog_facility: daemon
+	debug:		off
+	timestamp:	on
+}
+amf {
+	mode: disabled
+}

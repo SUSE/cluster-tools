@@ -14,9 +14,9 @@ MOD=${1:-"softdog"}
 FIL="/etc/sysconfig/kernel"
 BAK=${FIL}.bak
 
-echo "INFO: start $EXE"
+echo "INFO: start $EXE $FUNCNAME"
 test -s $FIL || exit 2
-grep "INITRD_MODULES.*$MOD" $FIL >/dev/null
+grep -v "#.*INITRD_MODULES" $FIL | grep "INITRD_MODULES=.*$MOD" >/dev/null
 RC=$?
 
 if [ $RC -gt 0 ]; then
@@ -27,6 +27,7 @@ if [ $RC -gt 0 ]; then
 else
         echo "WARN: found \"${MOD}\" already in ${FIL}"
 fi 
+	modprobe $MOD
 
-echo "INFO: normal_end $EXE"
+echo "INFO: normal_end $EXE $FUNCNAME"
 #

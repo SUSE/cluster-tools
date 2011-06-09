@@ -1,0 +1,6 @@
+# /etc/ClusterTools2/make_corosync_conf
+# For SLES11.
+#
+SBD_OPTS="-4 130 -1 30"
+SBD_CONF="/etc/sysconfig/sbd"
+#

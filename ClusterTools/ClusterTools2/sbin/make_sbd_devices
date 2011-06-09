@@ -1,0 +1,64 @@
+#!/bin/bash
+#
+# make_corosync_conf
+#
+# (c) 2011 SUSE Linux GmbH, Germany.
+# GNU Public License. No warranty.
+# Author: L.Pinne
+#
+# Version: 0.01 2011-06-09 15:00
+#
+
+EXE="$0"
+
+CFG="/etc/ClusterTools2/make_sbd_devices"
+test -s $CFG && source $CFG
+
+SBD_OPTS=${1:-"-4 130 -1 30"}
+SBD_CONF=${2:-"/etc/sysconfig/sbd"}
+
+TMP="/tmp/cltl.$RANDOM"
+
+
+function make_sbd_devices() {
+	echo "INFO: start $EXE $FUNCNAME"
+	
+	FIL=${SBD_CONF}
+	test -s $FIL || exit 4
+	grep "^SBD_DEVICE=" $FIL >/dev/null || exit 5
+
+	awk -F"=" '$1=="SBD_DEVICE" {print $2}' $FIL |tr -d "\""|tr ";" "\n"|\
+	while read; do
+		sbd -d $REPLY ${SBD_OPTS} create
+	done
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+# function main()
+
+case $1 in
+	-h|--help)
+		echo "usage: $(basename $0) [SBD_OPTS [SBD_CONF]]"
+		echo "usage: $(basename $0) [OPTION]"
+		echo
+		echo "OPTION:"
+		echo " --help           show help."
+		echo " --version        show version."
+		echo
+		exit
+	;;
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	*)
+		echo "INFO: start $EXE"
+
+		make_sbd_devices
+
+		echo "INFO: normal_end $EXE"
+	;;
+esac
+#

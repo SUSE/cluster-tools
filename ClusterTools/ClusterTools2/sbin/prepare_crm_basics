@@ -1,0 +1,91 @@
+#!/bin/bash
+#
+# prepare_crm_basics
+#
+# (c) 2011 SUSE Linux GmbH, Germany.
+# GNU Public License. No warranty.
+# Author: L.Pinne
+#
+# Version: 0.01 2011-06-10 15:00
+#
+
+EXE="$0"
+
+CFG="/etc/ClusterTools2/prepare_crm_basics"
+test -s $CFG && source $CFG
+
+test -z $DEFAULTS_TMPL &&\
+	DEFAULTS_TMPL=${1:-"/root/00_bootstrap.crm.tmpl"}
+test -z $STONITH_TMPL &&\
+	STONITH_TMPL=${2:-"/root/05_stonith.crm.tmpl"}
+test -z $DEFAULTS_CRM &&\
+	DEFAULTS_CRM=${3:-"/root/00_bootstrap.crm"}
+test -z $STONITH_CRM &&\
+	STONITH_CRM=${4:-"/root/05_stonith.crm"}
+test -z $SBD_CONF &&\
+	 SBD_CONF=${5:-"/etc/sysconfig/sbd"}
+
+TMP="/tmp/cltl.$RANDOM"
+
+
+function help(){
+	echo "usage: $(basename $0) [ OPTION ]"
+	echo "usage: $(basename $0) [ DEFAULTS_TMPL [ STONITH_TMPL ... [ SBD_CONF ] ] ]"
+	echo
+	echo "OPTION:"
+	echo " --help           show help."
+	echo " --version        show version."
+	echo
+}
+
+
+function prep_crm_sbd() {
+	echo "INFO: start $EXE $FUNCNAME"
+
+	FIL=${SBD_CONF}
+	test -s $FIL || exit 4
+	grep "^SBD_DEVICE=" $FIL >/dev/null || exit 5
+
+ 	SBD_DEVICE=$(awk -F"=" '$1=="SBD_DEVICE" {print $2}' $FIL)
+
+	awk -F"=" ' $2!~/@@[A-Z].*@@/ {print}
+		$2~/@@SBD_DEVICE@@/ { print $1,"=","\""'${SBD_DEVICE}'"\""}
+	' ${STONITH_TMPL} >${STONITH_CRM}
+	
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+function prep_crm_defaults() {
+	echo "INFO: start $EXE $FUNCNAME"
+
+	test -s $DEFAULTS_TMPL || exit 4
+	cp -a $DEFAULTS_TMPL $DEFAULTS_CRM
+
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+# function main()
+
+case $1 in
+	-h|--help)
+		help
+		exit
+	;;
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	*)
+		echo "INFO: start $EXE"
+
+		prep_crm_defaults
+		prep_crm_sbd
+
+		echo "INFO: normal_end $EXE"
+	;;
+esac
+#
+

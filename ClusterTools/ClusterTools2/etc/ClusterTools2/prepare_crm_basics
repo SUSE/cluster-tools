@@ -1,0 +1,9 @@
+# /etc/ClusterTools2/prepare_crm_basics
+# For SLES11.
+#
+DEFAULTS_TMPL="/root/00_bootstrap.crm.tmpl"
+STONITH_TMPL="/root/05_stonith.crm.tmpl"
+DEFAULTS_CRM="/root/00_bootstrap.crm"
+STONITH_CRM="/root/05_stonith.crm"
+SBD_CONF="/etc/sysconfig/sbd"
+#

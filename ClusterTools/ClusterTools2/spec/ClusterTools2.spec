@@ -110,6 +110,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/wow*
 /usr/sbin/menueng2
 /usr/sbin/prepare_wowfile
+/usr/sbin/prepare_crm_basics
 /usr/sbin/precheck_for_sap
 #/usr/sbin/precheck_for_oracle
 /usr/sbin/psauxlog

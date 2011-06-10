@@ -14,8 +14,8 @@ EXE="$0"
 CFG="/etc/ClusterTools2/make_sbd_devices"
 test -s $CFG && source $CFG
 
-SBD_OPTS=${1:-"-4 130 -1 30"}
-SBD_CONF=${2:-"/etc/sysconfig/sbd"}
+SBD_OPTS=${2:-"-4 130 -1 30"}
+SBD_CONF=${3:-"/etc/sysconfig/sbd"}
 
 TMP="/tmp/cltl.$RANDOM"
 

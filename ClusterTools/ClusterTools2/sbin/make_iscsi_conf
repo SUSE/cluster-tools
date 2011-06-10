@@ -4,9 +4,9 @@
 #
 # (c) 2011 SUSE Linux GmbH, Germany.
 # GNU Public License. No warranty.
-# Author: A.Rehg, L.Pinne.
+# Author: A.Rehg, H.Bertram, L.Pinne.
 #
-# Version: 0.01 2011-06-08-14:20
+# Version: 0.01 2011-06-10-14:20
 #
 
 EXE="$0"
@@ -16,16 +16,14 @@ test -s $CFG && source $CFG
 TMP="/tmp/cltl.$RANDOM"
 
 ISCSI_CFG="/etc/iscsi/iscsid.conf"
-INITIATOR_CFG="/etc/iscsi/initiatorname.iscsi"
+test -z ${INITIATOR_CFG} && INITIATOR_CFG="/etc/iscsi/initiatorname.iscsi"
+test -z ${INI_NETW} && INI_NETW=$(hostname -d)
 INITIATORNAME=iqn.${INI_DATE}.${INI_NETW}":01:"${INI_UUID}
-INI_NETW="de.basf-ag.rz-c007-j650"
-
 
 # TODO: fill empty vars from config file
 
 
 function fix_iscsid_conf() {
-
   echo "INFO: start $EXE $FUNCNAME"
  
   MOD="automatic"
@@ -33,11 +31,11 @@ function fix_iscsid_conf() {
   OFIL=$CFIL
   BAK=${CFIL}.bak
 
-  grep "^node.startup.*$MOD" $FIL >/dev/null 
+  grep "^node.startup.*$MOD" $CFIL >/dev/null 
   RC=$?
 
   if [ $RC -gt 0 ]; then
-  	cp $FIL $BAK || exit $?
+  	cp $CFIL $BAK || exit $?
   	awk '	$1=="node.startup" {print $1,$2,"'"$MOD"'"}
 		$1!="node.startup" {print}' $BAK >$OFIL
   else
@@ -49,14 +47,11 @@ function fix_iscsid_conf() {
 
 
 function fix_initiatorname() {
-
   echo "INFO: start $EXE $FUNCNAME"
 
   INI_UUID=$HOSTNAME
   #INI_UUID=$(uuidgen -r | awk -F"-" '{print $5}')
   INI_DATE=$(date +%Y-%m)
-  # TODO 
-  #INI_NETW=$(hostname -f | awk -F"." '{print $}' )
 
   CFIL=$INITIATOR_CFG
   OFIL=$CFIL

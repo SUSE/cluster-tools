@@ -4,9 +4,9 @@
 ISCSI_CFG="/etc/iscsi/iscsid.conf"
 INITIATOR_CFG="/etc/iscsi/initiatorname.iscsi"
 INITIATORNAME=iqn.${INI_DATE}.${INI_NETW}":01:"${INI_UUID}
-INI_NETW="gb.custom.dc007"
 #
 # calculated, if empty:
+#INI_NETW=""
 #INI_DATE=""
 #INI_UUID=""
 #

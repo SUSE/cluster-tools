@@ -15,7 +15,7 @@ License:      GPL
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.2.4
+Version:      2.2.5
 Release:      1 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
@@ -126,6 +126,9 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config /etc/ClusterTools2
 
 %changelog -n ClusterTools
+* Tue Jun 14 2011 - fabian.herschel@suse.com
+  2.2.5-1 added corrections/improvements from lars.pinne@novell.com
+  - changed menueng2, wow and ClusterService to display better help (program name now matches the use case)
 * Sat May 14 2011 - fabian.herschel@suse.com
   2.2.4-1 added fhcrmedit to have a batch-able editor - fhcrmedit will be renamed in the future and is only a draft for 
   internal tests

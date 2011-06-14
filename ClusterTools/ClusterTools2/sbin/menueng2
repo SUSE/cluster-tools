@@ -38,6 +38,7 @@ my $count = 0;
 my $countf = "";
 my $result = 0;
 my $help = 0;
+my $program = 'menueng2';
 
 my $width_all = 80;
 my $width_cmd =  8;
@@ -49,11 +50,12 @@ my $width_rst = $width_all - $width_cmd - $width_des - 6;
                                "help"  => \$help,
                                "verbose"  => \$verbose,
 			       "cmd=s" => \$command,
+		       		"program=s" => \$program,
 		       	);
 
 if ($help) {
-	printf "usage %s: --rscFile rscFile | --help\n", "ClusterService";
-	printf "usage %s: --rscFile rscFile --cmd command command-options\n", "ClusterService";
+	printf "usage %s:  [--rscFile rscFile] | --help\n", $program;
+	printf "usage %s:  [--rscFile rscFile] --cmd \"command command-options\"\n", $program;
 	exit 0;
 }
 

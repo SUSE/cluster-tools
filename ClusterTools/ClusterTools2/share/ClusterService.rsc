@@ -1,6 +1,7 @@
 #
 # resource get list
-%r:HIDE:Select resource:crm_resource -l
+#%r:HIDE:Select resource:crm_resource -l
+%r:HIDE:Select resource:/usr/lib/ClusterTools2/list_resources
 #%r:HIDE::/usr/bin/printf "rsc_A\nrsc_B\nrsc_C\n"
 #
 # node get list

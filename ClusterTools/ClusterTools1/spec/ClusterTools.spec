@@ -69,7 +69,7 @@ cp -a lib/Simple.pm %{buildroot}/usr/lib/perl5/site_perl/XML
 #
 # xml templates and defaults
 #
-cp -a ClusterTools/* %{buildroot}/ClusterTools
+cp -a etcClusterTools/* %{buildroot}/ClusterTools
 cp -a xml/*    %{buildroot}/usr/share/wow/xml
 #
 # doc and samples including license and man pages

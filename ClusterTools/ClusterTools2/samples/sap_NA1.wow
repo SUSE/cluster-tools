@@ -17,6 +17,7 @@ NRNODES="$(echo $ALLNODES | wc -w)"
 # IPMIADDRESSES - list of ipmi board adresses for all nodes; list items are seaparated by blanks and must match the oder of the cluster node definition (ALLNODES)
 # IPMISETTINGS -  definition of the cluster wide ipmi settings such as ipmi userid and ipmi password
 #
+#STONITH_ENABLED=true
 #IPMIADDRESSES='node3r node4r'
 #IPMISETTINGS="IPMI_USERID=admin IPMI_PASSWD=admin IPMI_STATUSMODE=ok"
 #
@@ -47,6 +48,7 @@ ILO_SETTINGS='ILO_USER=admin ILO_PASSWD=admin ILO_CANRESET=1'
 # FS_FILESYSTEMS - here document to make the defintion more easy for standard cases
 #
 SAPSID=NA1
+SAPsid=$(echo $SAPSID|tr [:upper:] [:lower:])
 #
 DBTYPE=ADA
 #
@@ -54,16 +56,15 @@ GRPID=grp_sap_$SAPSID
 #
 SAP_SCORES="1000 0"
 #
-IP_LABELS="sapna1ci,10.20.128.103 sapna1db,10.20.128.101 sapna1as,10.20.128.102"
+IP_LABELS="sap${SAPsid}ci,10.20.128.103 sap${SAPsid}db,10.20.128.101 sap${SAPsid}as,10.20.128.102"
 #
-SAPsid=$(echo $SAPSID|tr [:upper:] [:lower:])
 #
 ### SAP Instances
 #
 SAP_INSTANCE_DEF=$(cat <<HERE-SAP
 # instance-typ instance-name                  profile-path                                                  optional-parameters
-ASCS           ${SAPSID}_ASCS00_sapna1as    /usr/sap/${SAPSID}/SYS/profile/START_ASCS00_sapna1as
-CI             ${SAPSID}_DVEBMGS01_sapna1ci /usr/sap/${SAPSID}/SYS/profile/START_DVEBMGS01_sapna1ci
+ASCS           ${SAPSID}_ASCS00_sap${SAPsid}as    /usr/sap/${SAPSID}/SYS/profile/START_ASCS00_sap${SAPsid}as
+CI             ${SAPSID}_DVEBMGS01_sap${SAPsid}ci /usr/sap/${SAPSID}/SYS/profile/START_DVEBMGS01_sap${SAPsid}ci
 HERE-SAP
 )
 #

@@ -17,6 +17,7 @@ NRNODES="$(echo $ALLNODES | wc -w)"
 # IPMIADDRESSES - list of ipmi board adresses for all nodes; list items are seaparated by blanks and must match the oder of the cluster node definition (ALLNODES)
 # IPMISETTINGS -  definition of the cluster wide ipmi settings such as ipmi userid and ipmi password
 #
+#STONITH_ENABLED=true
 IPMIADDRESSES='node1r node2r'
 IPMISETTINGS="IPMI_USERID=admin IPMI_PASSWD=admin IPMI_STATUSMODE=ok"
 #
@@ -47,6 +48,7 @@ IPMISETTINGS="IPMI_USERID=admin IPMI_PASSWD=admin IPMI_STATUSMODE=ok"
 # FS_FILESYSTEMS - here document to make the defintion more easy for standard cases
 #
 SAPSID=NA0
+SAPsid=$(echo $SAPSID|tr [:upper:] [:lower:])
 #
 DBTYPE=ADA
 #
@@ -56,7 +58,6 @@ SAP_SCORES="1000 0"
 #
 IP_LABELS="sap${SAPsid}ci,192.168.91.22 sap${SAPsid}db,192.168.91.21 sapn${SAPsid}as,192.168.91.20"
 #
-SAPsid=$(echo $SAPSID|tr [:upper:] [:lower:])
 #
 ### SAP Instances
 #

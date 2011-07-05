@@ -31,6 +31,7 @@ export DEFAULT_RESOURCE_STICKINESS=10000
 export DEFAULT_MIGRATION_THRESHOLD=5
 export DEFAULT_ACTION_TIMEOUT=120s
 export DEFAULT_IPagent=IPaddr2
+export STONITH_ENABLED=true
 #
 
 if [ -n "$config" ]; then

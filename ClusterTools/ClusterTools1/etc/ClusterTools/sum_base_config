@@ -1,0 +1,78 @@
+# /etc/ClusterTools/sum_base_config
+# For SLES10.
+#
+CONF_FILES="
+/etc/SuSE-release
+/etc/zypp/zypp.conf
+/etc/zypp/repos.d/*.repo
+/etc/products.d/*.prod
+/boot/initrd-2.6*default
+/boot/vmlinuz-2.6*default
+/proc/cmdline
+/proc/sys/kernel/tainted
+/etc/ld.so.conf
+/etc/ld.so.conf.d/*
+/etc/inittab
+/etc/hosts
+/etc/resolv.conf
+/etc/ntp.conf
+/etc/adjtime
+/etc/passwd
+/etc/group
+/etc/ldap.conf
+/etc/openldap/ldap.conf
+/etc/krb5.conf
+/etc/drbd.conf
+/etc/drbd.d/*
+/etc/lvm/lvm.conf
+/etc/multipath.conf
+/etc/multipath.bind
+/etc/mdadm.conf
+/clusterconf/mdadm.*.conf
+/etc/iscsi/iscsid.conf
+/etc/iscsi/initiatorname.iscsi
+/etc/sysconfig/kernel
+/etc/sysconfig/sbd
+/etc/sysconfig/oracle
+/etc/sysconfig/sapconf
+/etc/sysconfig/ulimit
+/etc/sysconfig/uuidd
+/etc/sysconfig/security
+/etc/sysconfig/language
+/etc/sysconfig/clock
+/etc/sysconfig/ntp
+/etc/sysconfig/lvm
+/etc/sysconfig/o2cb
+/etc/ocfs2/cluster.conf
+/etc/oratab
+/etc/security/limits.conf
+/etc/pam.d/login
+/etc/pam.d/sapstartsrv
+/etc/sysctl.conf
+/etc/modprobe.conf.local
+/etc/ha.d/ha.cf
+/etc/ha.d/authkeys
+/etc/xen/xend-config.sxp
+/etc/xen/vm/*.xml
+"
+#
+CONF_CALLS="
+'/usr/sbin/dmidecode -t system | /usr/bin/grep -v "UUID:" | /usr/bin/grep -v "Serial.Number:"'
+'/sbin/lspci'
+'/usr/bin/grep "model.name" /proc/cpuinfo'
+'/usr/bin/grep "MemTotal:" /proc/meminfo'
+'/usr/bin/lsscsi --kname'
+'/bin/uname -s -r -v -m -p -i -o'
+'/bin/lsmod'
+'/sbin/hwclock -r --utc | /usr/bin/cut -b1-18'
+'/bin/rpm -qa'
+'/bin/rpm -Va'
+'/bin/cat /proc/mounts'
+'/bin/multipath -ll'
+'/sbin/chkconfig -A'
+'/sbin/route -n'
+'/usr/sbin/iptables -L'
+'/bin/ip a s | /usr/bin/grep "^[123456789]\:"'
+'/usr/bin/grep -v "IPADDR=" /etc/sysconfig/network/ifcfg-* | /usr/bin/grep -v "UNIQUE="'
+"
+#

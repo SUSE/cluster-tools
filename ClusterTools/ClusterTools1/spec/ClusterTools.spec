@@ -45,6 +45,7 @@ There are some other commandline tools to make life easier.
 test "$RPM_BUILD_ROOT" != "/" && rm -rf $RPM_BUILD_ROOT
 
 %install
+mkdir -p %{buildroot}/etc/ClusterTools/
 mkdir -p %{buildroot}/usr/sbin/
 mkdir -p %{buildroot}/usr/lib/perl5/site_perl/XML/
 mkdir -p %{buildroot}/usr/lib/wow/agents
@@ -66,8 +67,9 @@ cp -a agents/* %{buildroot}/usr/lib/wow/agents
 cp -a lib/*    %{buildroot}/usr/lib/wow
 cp -a lib/Simple.pm %{buildroot}/usr/lib/perl5/site_perl/XML
 #
-# xml templates
+# xml templates and defaults
 #
+cp -a ClusterTools/* %{buildroot}/ClusterTools
 cp -a xml/*    %{buildroot}/usr/share/wow/xml
 #
 # doc and samples including license and man pages
@@ -91,12 +93,17 @@ chmod a+x 	%{buildroot}/usr/sbin/*
 /usr/sbin/ClusterService*
 /usr/sbin/clusterstate
 /usr/sbin/cluster_actions
+/usr/sbin/check-split-brain
+/usr/sbin/find_appconf
+/usr/sbin/grep_error_patterns
 /usr/sbin/linkstate
 /usr/sbin/list_failcounts
-/usr/sbin/check-split-brain
 /usr/sbin/make_hb_backup
+/usr/sbin/psauxlog
 /usr/sbin/reset_failcounts
 /usr/sbin/showscores
+/usr/sbin/sleha_cleanup
+/usr/sbin/sum_base_config
 /usr/sbin/wow
 /usr/sbin/woweng
 /usr/sbin/whbcc
@@ -109,6 +116,8 @@ chmod a+x 	%{buildroot}/usr/sbin/*
 %doc /usr/share/man/man8/*
 
 %changelog -n ClusterTools
+* Tue Jul 05 2011 - fabian.herschel@novell.com, lars.pinne@novell.com
+  1.0.0 added backported scripts from ClusterTools2
 * Mon Feb 15 2010 - fabian.herschel@novell.com
   0.9.6-1 IP agent can now select to use IPaddr2 or IPaddr
 * Tue Jan 26 2010 - fabian.herschel@novell.com

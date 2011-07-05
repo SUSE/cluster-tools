@@ -15,8 +15,8 @@ License:      GPL
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.2.5
-Release:      1 
+Version:      2.2.7
+Release:      2 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
@@ -126,6 +126,13 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config /etc/ClusterTools2
 
 %changelog -n ClusterTools
+* Tue Jul 05 2011 - fabian.herschel@suse.com
+  2.2.7 fixed comamnd line option
+  - fixed missing groups in resource list
+* Tue Jul 05 2011 - fabian.herschel@suse.com
+  2.2.6 new package version for opensuse.org
+  - You could (only recommended for test scenarious) switchoff STONITH by setting STONITH_ENABLED=false in your WOW file
+  - corrected error in samples (uninitialized SAPsid)
 * Tue Jun 14 2011 - fabian.herschel@suse.com
   2.2.5-1 added corrections/improvements from lars.pinne@novell.com
   - changed menueng2, wow and ClusterService to display better help (program name now matches the use case)

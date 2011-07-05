@@ -1,0 +1,12 @@
+<group id="$GROUPID">
+         <primitive class="ocf" provider="heartbeat" type="Raid1" id="${UUID}">
+           <operations>
+             <op id="${UUID}_mon" interval="120s" name="monitor" timeout="60s" start_delay="0" disabled="false" role="Started"/>           </operations>
+           <instance_attributes id="${UUID}">
+             <attributes>
+               <nvpair id="${UUID}_attr_0" name="raidconf" value="$MDADM_CONF"/> <!-- /clusterconf/idm_mdadm.conf -->
+               <nvpair id="${UUID}_attr_1" name="raiddev" value="$DEVICE"/> <!-- /dev/md0 -->
+             </attributes>
+           </instance_attributes>
+         </primitive>
+</group>

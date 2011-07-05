@@ -1,0 +1,6 @@
+source /usr/lib/wow/wowlib
+myILO_ADRESSES=$ILO_ADDRESSES
+for node in $ALLNODES; do
+	ILO_ADDR=$(firstof_var myILO_ADRESSES); shift_var myILO_ADRESSES
+	woweng $WOWRSRCECREATE UUID=rsc_stonith_ilo_${node} ILO_HOST="$node" ILO_ADDR="$ILO_ADDR" $ILO_SETTINGS $wowxml/02-primitive_stonith_riloe.xml
+done

@@ -1,0 +1,310 @@
+#!/usr/bin/perl
+#
+# Perlscript to analyze the status of a
+# Heartbeat 2 cluster (crm enabled)
+#
+# Written by Markus Guertler (Novell Inc.)
+#
+# Last update: 22.02.2007
+#
+# Licence: GPL
+#
+#
+
+use strict;
+use XML::Simple;
+use Data::Dumper;
+use Getopt::Std;
+
+my %opts;
+getopts("trslf:",\%opts);
+
+&usage if (!$opts{l} and !$opts{f});
+
+my $cib = ReadCIB();
+
+if ($opts{r})
+	{
+	&PrintHistory();
+	} else
+	{
+	&ClusterStatus();
+	}
+
+sub ClusterStatus
+{
+
+	if (!$opts{s})
+		{
+		print "\nWarnings and errors: \n\n";
+		}
+
+	my $status = 0;
+
+	$status = &SetStatus($status,2,"This cluster partition doesn't have a quorum!") if ($cib->{"have_quorum"} eq "false");
+
+        my $base = $cib->{status}->[0]->{node_state};
+        foreach my $nodeuuid (keys %{$base})
+                {
+		my $nodeuname = $base->{$nodeuuid}->{uname};
+		#print "\n-> Node $nodeuname $base->{$nodeuuid}->{ha}\n\n";
+		$status = &SetStatus($status,1,"Node $nodeuname is offline!") if ($base->{$nodeuuid}->{ha} eq "dead");
+		$status = &SetStatus($status,1,"the status of node $nodeuname is: '$base->{$nodeuuid}->{join}'. The expected status is: '$base->{$nodeuuid}->{expected}'!") if ($base->{$nodeuuid}->{join} ne $base->{$nodeuuid}->{expected});
+		$status = &SetStatus($status,2,"The node $nodeuname is unexpected down and didn't sign off correctly from the cluster! This may happen i.e. if Heartbeat or the node died. It's also possible, that the node has been fenced, if STONITH is activated.") if (($base->{$nodeuuid}->{join} ne $base->{$nodeuuid}->{expected}) and ($base->{$nodeuuid}->{join} eq "down"));
+
+                my $base2 = $base->{$nodeuuid}->{lrm};
+                foreach my $lrmuuid (keys %{$base2})
+                        {
+                        my $base3 = $base2->{$lrmuuid}->{lrm_resources}->[0]->{lrm_resource};
+                        foreach my $rsc (keys %{$base3})
+                                {
+                                my $base4 = $base3->{$rsc}->{lrm_rsc_op};
+                                foreach my $op (sort { $base4->{$b}->{call_id} <=> $base4->{$a}->{call_id}} keys %{$base4})
+                                        {
+                                        my $base5 = $base4->{$op};
+					my $op_status_resolved = &ResolveOpStatus($base5->{op_status});
+					my $ocf_status_resolved = &ResolveOCFStatus($base5->{rc_code});
+					#print "$rsc, $op: $base5->{call_id}\n";
+					#print "$nodeuname $rsc $shortop $base5->{call_id} $base5->{rc_code} $base5->{op_status}\n";
+					$op =~ /^$rsc\_(.+)\_\d+$/;
+					my $shortop = $1;
+					next if ($op =~ /^$rsc\_monitor\_0$/);
+					#$status = &SetStatus($status,1,"Resource $rsc seems not to be running on node $nodeuname.") if ($shortop eq "stop");
+					$status = &SetStatus($status,2,"Failed to $shortop resource $rsc on node $nodeuname! The operation $op with call_id $base5->{call_id} of resource $rsc has the rc_code $base5->{rc_code} ($ocf_status_resolved) and op_status $base5->{op_status} ($op_status_resolved)!") if ((($base5->{rc_code} != 0) and ($base5->{rc_code} != 8)) or ($base5->{op_status} != 0));
+					last if ($op =~ /^$rsc\_start\_0$/);
+                                        }
+                                }
+                        }
+			my $base2_attr=$base->{$nodeuuid}->{transient_attributes}->{$nodeuuid}->{instance_attributes}->{"status-$nodeuuid"}->{attributes}->[0]->{nvpair};
+			#print Dumper $base->{$nodeuuid}->{transient_attributes}->{$nodeuuid}->{instance_attributes}->{"status-$nodeuuid"}->{attributes}->[0]->{nvpair};
+                        foreach my $attr (keys %{$base2_attr})
+				{
+				$status = &SetStatus($status,1,"Couldn't ping all ping-nodes on $nodeuname! pingd attribute value = $base2_attr->{$attr}->{value} !") if ($base2_attr->{$attr}->{name} eq "pingd" and $base2_attr->{$attr}->{value} < 100);
+				$status = &SetStatus($status,2,"Couldn't ping any ping-nodes on $nodeuname! pingd attribute value = $base2_attr->{$attr}->{value} !") if ($base2_attr->{$attr}->{name} eq "pingd" and $base2_attr->{$attr}->{value} == 0);
+				$status = &SetStatus($status,1,"Resource restart detected! Failcount $base2_attr->{$attr}->{name} with value $base2_attr->{$attr}->{value} for resource $1 on node $nodeuname") if ($base2_attr->{$attr}->{name} =~ /fail-count-(.+)/ and ($base2_attr->{$attr}->{value} > 0 and $base2_attr->{$attr}->{value} ne "INFINITY"));
+				$status = &SetStatus($status,1,"Failcount $base2_attr->{$attr}->{name} with value $base2_attr->{$attr}->{value} for resource $1 on node $nodeuname. This can happen if a previous start of this resource failed.") if ($base2_attr->{$attr}->{name} =~ /fail-count-(.+)/ and $base2_attr->{$attr}->{value} eq "INFINITY");
+				}
+                }
+	if ($opts{s})
+		{
+		print &ResolveStatus($status)."\n";
+		} else
+		{
+		print "\nCluster status: ".&ResolveStatus($status)."\n\n";
+		}
+
+}
+
+sub PrintHistory
+{
+	my $status = 0;
+
+	my %ops = &WalkStatus();
+	
+	foreach my $nodeuuid (keys %ops)
+	{
+
+		my $nodeuname = &GetUnameByUuid($nodeuuid);
+
+		print "\n-> Node $nodeuname\n\n";
+		my $count = 0;
+		my $op_status_resolved;
+		my $ocf_status_resolved;
+		my $op_transition_key;
+
+		foreach my $oneop (@{$ops{$nodeuuid}->{ops}})
+		{
+			$count++;
+			next if (!$oneop);
+			$op_status_resolved = &ResolveOpStatus($oneop->{op_status});
+			$ocf_status_resolved = &ResolveOCFStatus($oneop->{rc_code});
+			$op_transition_key = $oneop->{transition_key};
+			
+			if ($opts{t}) {
+				print "ID $count: Name = $oneop->{cibopname}, Return Code = $oneop->{rc_code} ($ocf_status_resolved), Op status = $oneop->{op_status} ($op_status_resolved), transition key = $op_transition_key\n";
+			} else {
+				print "ID $count: Name = $oneop->{cibopname}, Return Code = $oneop->{rc_code} ($ocf_status_resolved), Op status = $oneop->{op_status} ($op_status_resolved)\n";
+			 }
+			## fh
+		}
+	}
+}
+
+sub WalkStatus
+{
+	my %ops;
+        my $base = $cib->{status}->[0]->{node_state};
+        foreach my $nodeuuid (keys %{$base})
+                {
+		$ops{$nodeuuid}->{nodestatus} = $base->{$nodeuuid};
+                #print "Node: $base->{$nodeuuid}->{uname}\n";
+		my $base2 = $base->{$nodeuuid}->{lrm};
+		foreach my $lrmuuid (keys %{$base2})
+			{
+			#print "LRM UUID: $lrmuuid\n";
+			my $base3 = $base2->{$lrmuuid}->{lrm_resources}->[0]->{lrm_resource};
+			foreach my $rsc (keys %{$base3})
+				{
+				#print "Resource: $rsc\n";
+				my $base4 = $base3->{$rsc}->{lrm_rsc_op};
+				foreach my $op (keys %{$base4})
+					{
+					#print "-> Operation: $op\n";
+					my $base5 = $base3->{$rsc}->{lrm_rsc_op}->{$op};
+					$ops{$nodeuuid}->{ops}->[$base5->{call_id}] = $base5;
+					$ops{$nodeuuid}->{ops}->[$base5->{call_id}]->{cibopname} = $op;
+					$ops{$nodeuuid}->{ops}->[$base5->{call_id}]->{ciboprsc} = $rsc;
+					}
+				}
+			}
+                }
+	return (%ops);
+}
+
+sub SetStatus
+{
+	my ($oldstatus,$newstatus,$msg) = @_;
+	print "Status ".&ResolveStatus($newstatus).": $msg\n" if (!$opts{s});
+	return ($oldstatus) if ($newstatus <= $oldstatus);
+	return ($newstatus);
+}
+
+sub ResolveStatus
+{
+	my $status_num = $_[0];
+	my %status_overview = (
+		0 => "GREEN",
+		1 => "YELLOW",
+		2 => "RED"
+	);
+	return ($status_overview{$status_num});
+	
+}
+
+sub GetUnameByUuid
+{
+	my $uuid = $_[0];
+	my $uname = $cib->{configuration}->[0]->{nodes}->[0]->{node}->{$uuid}->{uname};
+	return ($uname);
+}
+
+sub ResolveOpStatus
+{
+	my $status_num = $_[0];
+	return ("pending") if ($status_num == -1);
+	return ("done") if ($status_num == 0);
+	return ("cancelled") if ($status_num == 1);
+	return ("timeout") if ($status_num == 2);
+	return ("not supported") if ($status_num == 3);
+	return ("error") if ($status_num == 4);
+	return ("unknown");
+}
+
+sub ResolveOCFStatus
+{
+	my $status_num = $_[0];
+	return ("OCF_SUCCESS") if ($status_num == 0);
+	return ("OCF_ERR_GENERIC") if ($status_num == 1);
+	return ("OCF_ERR_ARGS") if ($status_num == 2);
+	return ("OCF_ERR_UNIMPLEMENTED") if ($status_num == 3);
+	return ("OCF_ERR_PERM") if ($status_num == 4);
+	return ("OCF_ERR_INSTALLED") if ($status_num == 5);
+	return ("OCF_ERR_CONFIGURED") if ($status_num == 6);
+	return ("OCF_NOT_RUNNING") if ($status_num == 7);
+	return ("OCF_RUNNING_MASTER") if ($status_num == 8);
+	return ("OCF_FAILED_MASTER") if ($status_num == 9);
+	return ("unknown");
+}
+
+sub ReadCIB
+{
+        if ($opts{f})
+                {
+                &error("File $opts{f} not found!") if (!-e $opts{f});
+                return (XML::Simple::XMLin($opts{f},ForceArray=>1,KeyAttr=>'id'));
+                } elsif ($opts{l})
+                {
+                open(CIBADMIN,"cibadmin -Q |");
+                my $xmlstring = do { local $/; <CIBADMIN> };
+                return (XML::Simple::XMLin($xmlstring,ForceArray=>1,KeyAttr=>'id'));
+                }
+
+}
+
+sub usage
+{
+	print <<EOF;
+$0 [-f <cib file> | -l <live check>] [-r] [-s]
+
+	Uses the live configuration or a CIB file to determine the cluster status
+	* Returns an overall status: GREEN, YELLOW or RED
+	* Prints a status message for each identified problem
+	* Prints a list of all recorded operations in the chronological correct order
+
+	-f <cib file>	: Uses XML cib configuration file as input
+	-l		: Does a live check using the current cib from the cluster
+
+	-r		: Print a list of all recorded operations in the chronological correct order
+	-s		: Just print the overall status, without status messages
+
+	Example:
+	
+	$0 -l
+	$0 -l -r
+
+EOF
+	exit 1;
+}
+
+sub error
+{
+	print "Error: $_[0]\n";
+	exit 2;
+}
+
+sub ReadCIB
+{
+        if ($opts{f})
+                {
+                &error("File $opts{f} not found!") if (!-e $opts{f});
+                return (XML::Simple::XMLin($opts{f},ForceArray=>1,KeyAttr=>'id'));
+                } elsif ($opts{l})
+                {
+                open(CIBADMIN,"cibadmin -Q |");
+                my $xmlstring = do { local $/; <CIBADMIN> };
+                return (XML::Simple::XMLin($xmlstring,ForceArray=>1,KeyAttr=>'id'));
+                }
+
+}
+
+sub usage
+{
+	print <<EOF;
+$0 [-f <cib file> | -l <live check>] [-r] [-s]
+
+	Uses the live configuration or a CIB file to determine the cluster status
+	* Returns an overall status: GREEN, YELLOW or RED
+	* Prints a status message for each identified problem
+	* Prints a list of all recorded operations in the chronological correct order
+
+	-f <cib file>	: Uses XML cib configuration file as input
+	-l		: Does a live check using the current cib from the cluster
+
+	-r		: Print a list of all recorded operations in the chronological correct order
+	-t              : incombination with -r also shows the transition_keys
+	-s		: Just print the overall status, without status messages
+
+	Example:
+	
+	$0 -l
+	$0 -l -r
+
+EOF
+	exit 1;
+}
+
+sub error
+{
+	print "Error: $_[0]\n";
+	exit 2;
+}

@@ -1,0 +1,99 @@
+#
+set +u
+#
+# call specific setup
+#
+if [ -z "$WOW_SIMULATE" ]; then 
+	WOW_SIMULATE=yes
+fi
+
+#
+# scan command line
+#
+while [ $# -gt 0 ]; do
+	case "$1" in
+		--config )
+				config="$2"
+				shift
+				;;
+	esac
+	shift
+done
+#
+##############################
+#
+# some defaults
+#
+SFEXID=1
+DEFAULT_RESOURCE_STICKINESS=10000
+DEFAULT_ACTION_TIMEOUT=120s
+DEFAULT_IPagent=IPaddr2
+#
+
+if [ -n "$config" ]; then
+	source $config
+else
+	echo "FATAL ERROR: No config file specified"
+	echo "Please use option '--config configfile'"
+        exit 2
+fi
+
+set -u
+##############################
+#
+# wow generic setup
+#
+ WOWRSRCECREATE="WOW_SIMULATE=$WOW_SIMULATE CIBREMOTE=$CIBREMOTE CIBOBJTYPE=resources CIBACTION=-C"
+ WOWRSRCEMODIFY="WOW_SIMULATE=$WOW_SIMULATE CIBREMOTE=$CIBREMOTE CIBOBJTYPE=resources CIBACTION=-M"
+
+ WOWCONFGCREATE="WOW_SIMULATE=$WOW_SIMULATE CIBREMOTE=$CIBREMOTE CIBOBJTYPE=crm_config CIBACTION=-C"
+ WOWCONFGMODIFY="WOW_SIMULATE=$WOW_SIMULATE CIBREMOTE=$CIBREMOTE CIBOBJTYPE=crm_config CIBACTION=-M"
+ WOWCONFGUPDATE="WOW_SIMULATE=$WOW_SIMULATE CIBREMOTE=$CIBREMOTE CIBOBJTYPE=crm_config CIBACTION=-U"
+
+ WOWCONSTCREATE="WOW_SIMULATE=$WOW_SIMULATE CIBREMOTE=$CIBREMOTE CIBOBJTYPE=constraints CIBACTION=-C"
+ WOWCONSTMODIFY="WOW_SIMULATE=$WOW_SIMULATE CIBREMOTE=$CIBREMOTE CIBOBJTYPE=constraints CIBACTION=-M"
+
+ wowxml=/usr/share/wow/xml
+
+function set_var()
+{
+        local var value
+        var=$1
+        value="$2"
+        var=$(echo ${var} | tr '-' '_')
+        eval export $var=\"\$value\"
+}
+
+function get_var()
+{
+        local var
+        var=$1
+        var=$(echo ${var} | tr '-' '_')
+        echo $var
+}
+
+function firstof_var()
+{
+        local var value help
+        var=$1
+        eval value=\${$var%% *}
+        echo "$value"
+}
+
+function shift_var()
+{
+        local var value help help2
+        var=$1
+        eval value=\${$var%% *}
+        eval help=\${$var#* }
+        help2=0
+        eval test \"\$help\" == \"\$${var}\" && help2=1
+        if [ $help2 -eq 0 ]
+        then
+           eval export $var=\"\$help\"
+        else
+           eval export $var=\"\"
+        fi
+        return $help2
+}
+

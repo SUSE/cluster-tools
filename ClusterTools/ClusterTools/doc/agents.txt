@@ -1,0 +1,56 @@
+wow 0.1.1
+
+WARNING:
+For change request / changes managenment / config chages in running productive clusters you 
+need to take care of which resources will be affected by the wow calls. The resources might
+be changed and thus restarted by the cluster. So you might have two config files. One for
+the complete cluster and one for your change. The latter one must only contain the resources,
+which have to been added.
+
+has the following configuration agents for SAP clusters
+00_crm_config				- configure the crm itself (cluster bootstrap/parameters)
+01-A-01-group_sap_create                - create a NEW sap resource group
+01-A-02-group_sap_add_sfex1		- add an sfex1 (single sfex lun) to the sap resource group
+01-A-02-group_sap_add_sfex2		- add an sfex2 (two sfex luns) to the sap resource group
+01-A-03-group_sap_add_ip                - add ip adresses to the sap resource group
+01-A-04-group_sap_add_raid1             - add raid resources to the sap resource group
+01-A-05-group_sap_add_lvm               - add lvm resources to the sap resource group
+01-A-06-group_sap_add_fs                - add file system resources to the sap resource group
+01-A-07-group_sap_add_sapdatabase       - add a SAPDatabase resource to the sap resource group
+01-A-08-group_sap_add_sapinstance       - add a SAPInstance resource to the sap resource group 
+02_create_sunipmi                       - add the sunipmi stonith resources for fencing
+03_constraints                          - add needed constraints for the sap standard cluster
+
+
+beside the normal vars to be set in wowrc, the agents need special variables to be set to
+configure the resources:
+
+00_crm_config
+- Needs the following Variables to be set: none
+
+01-A-01-group_sap_create
+- Needs the following Variables to be set: SAPSID
+
+01-A-02-group_sap_add_sfex1
+- Needs the following Variables to be set:  SAPSID SFEX_INDEX SFEX_DEVICE 
+
+01-A-02-group_sap_add_sfex2
+- Needs the following Variables to be set:  SAPSID SFEX_INDEX SFEX_DEVICE SFEX_DEVICE2
+
+01-A-03-group_sap_add_ip
+- Needs the following Variables to be set:  SAPSID IP_LABELS
+
+01-A-04-group_sap_add_raid1
+- Needs the following Variables to be set:  SAPSID RAID1_DEVICES RAID1_CONFIG
+
+01-A-05-group_sap_add_lvm
+- Needs the following Variables to be set:  SAPSID LVM_VOLUMEGROUPS 
+
+01-A-06-group_sap_add_fs
+- Needs the following Variables to be set:  SAPSID FS_FILESYSTEMS
+
+01-A-07-group_sap_add_sapdatabase
+- Needs the following Variables to be set:  SAPSID 
+
+01-A-08-group_sap_add_sapinstance
+- Needs the following Variables to be set:  SAPSID SAP_INSTANCE_DEF

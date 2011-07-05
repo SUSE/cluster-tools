@@ -1,0 +1,15 @@
+source /usr/lib/wow/wowlib
+echo "TODO: Check constraints"
+
+
+#
+# sap scores per node
+#
+mySCORE=$SAP_SCORES
+for node in $ALLNODES
+do
+	nSCORE=$(firstof_var mySCORE); shift_var mySCORE
+	woweng $WOWCONSTCREATE UUID=loc_${GRPID}_on_${node} RESOURCE=$GRPID $wowxml/03-constraint_canvas.xml
+	woweng $WOWCONSTMODIFY CONSTID=loc_${GRPID}_on_${node} UUID=prefered_loc_${GRPID}_on_${node} SCORE=$nSCORE $wowxml/03-constraint_rule.xml
+	woweng $WOWCONSTMODIFY RULEID=prefered_loc_${GRPID}_on_${node} UUID=prefered_loc_${GRPID}_on_${node}_name ATTRIBUTE="#uname" OPERATOR="eq" VALUE="${node}" $wowxml/03-constraint_rule_expression.xml
+done

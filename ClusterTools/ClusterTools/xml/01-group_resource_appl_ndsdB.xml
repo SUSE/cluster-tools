@@ -1,0 +1,17 @@
+<group id="${GROUPID}">
+	<primitive id="${UUID}" class="ocf" type="eDir88" provider="heartbeat">
+	  <instance_attributes id="${UUID}_instance_attrs">
+	    <attributes>
+	      <nvpair id="${UUID}_instance_attrs_01" name="eDir_config_file" value="${edir_conf}"/>
+	    </attributes>
+	  </instance_attributes>
+	  <meta_attributes id="${UUID}_meta_attrs">
+	    <attributes/>
+	  </meta_attributes>
+	  <operations>
+	    <op id="op_${UUID}_stop_timout" name="stop" description="edit_stop_timeout" timeout="600" disabled="false" start_delay="0" role="Started"/>
+	    <op id="op_${UUID}_start_timeout" name="start" description="edir_start_timeout" timeout="600" disabled="false" start_delay="0" role="Started"/>
+	  </operations>
+	</primitive>
+</group>
+

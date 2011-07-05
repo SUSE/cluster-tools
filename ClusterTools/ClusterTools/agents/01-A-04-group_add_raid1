@@ -1,0 +1,9 @@
+source /usr/lib/wow/wowlib
+for raiddev in $RAID1_DEVICES; do
+	raidname=${raiddev#/dev/}
+	woweng $WOWRSRCEMODIFY GROUPID=${GRPID} \
+		UUID=rsc_RAID1_${SAPSID}_${raidname} \
+		DEVICE=$raiddev \
+		MDADM_CONF=$RAID_CONFIG \
+		$wowxml/01-group_resource_raid1.xml
+done

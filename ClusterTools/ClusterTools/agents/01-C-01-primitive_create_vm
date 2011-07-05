@@ -1,0 +1,12 @@
+source /usr/lib/wow/wowlib
+echo "$XEN_VMS" | while read vm vmmigrate vmpath scores
+do 
+	if [ -n "${vm%%\#*}" ]; then # neither an empty line nor a comemnt line (# is first char)
+		woweng $WOWRSRCECREATE  \
+			UUID=xen_${vm} \
+			XMFILE=$vmpath \
+			VMMIGRATE=$vmmigrate \
+			$wowxml/01-primitive_xen_live_vm.xml </dev/null
+	fi
+done
+

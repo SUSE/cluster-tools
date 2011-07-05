@@ -1,0 +1,112 @@
+.TH whbsaprecheck 8 "10 Dec 2009" "" "ClusterTools"
+.\"
+.SH NAME
+whbsaprecheck \- check system for SAP HA cluster pre-requisites
+.\"
+.SH SYNOPSIS
+.B whbsaprecheck 
+\fIOPTION\fR \fIPARAMETER\fR
+.br
+.B whbsaprecheck 
+\fIOPTION\fR
+.br
+.B wow sc 
+\fIOPTION\fR [\fIPARAMETER\fR]
+.\"
+.SH DESCRIPTION
+\fBwhbsaprecheck\fP checks if a Linux system is prepared to become a heartbeat2
+based high-availability cluster for SAP instances.
+The check is done according to the concepts described in the technical guide
+\fISAP Applications Made High Available on SUSE Linux Enterprise Server 10\fR . 
+This concepts cover SAP application servers as well as central instances or
+database instances.
+
+A check could be done on one of two levels:
+
+- Generic check of system basics. The script will look for
+generic pre-requisites that are needed to setup an HA cluster for SAP.
+This includes software packages, runlevel services, and other
+conditions that are common to all heartbeat2 clusters for any SAP instance or
+cluster installation.
+
+- Detailed check for conditions that have to be met to run a 
+specific SAP instance with defined cluster resources. This includes a complete
+storage stack, STONITH devices, and more.
+
+All nodes of a cluster should be checked.
+.\"
+.SH OPTIONS
+Global options are:
+.HP
+\fB --help\fR
+	Help information.
+.HP
+\fB --version\fR
+	Version information.
+.HP
+\fB --generic\fR
+	Generic check of system basics. Works without wow cluster configuration file.
+.HP
+\fB --cluster\fR
+	Detailed check of cluster pre-requisites, according to wow cluster configuration file.
+This option needs a file name as parameter.
+.HP
+\fB --all\fR
+	All checks. Includes --generic and --cluster.
+This option needs a file name as parameter.
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH EXAMPLES
+.TP
+# whbsaprecheck --help 
+show help.
+.TP
+# whbsaprecheck --generic
+check for basic pre-requisites that are needed to set up an HA cluster for SAP.
+.TP
+# whbsaprecheck --cluster wowconfig
+check for specific pre-requistes that are needed to set up an HA cluster for a certain SAP instance.
+Read information about the needed resources from file wowconfig. 
+.TP
+# whbsaprecheck --all sap_C11.wow >precheck-sap_C11-$HOST
+check for allmost all pre-requistes that are needed to set up an HA cluster for SAP instance C11. 
+Read information about the needed resources from file sap_C11.wow . Write output into file precheck-sap_C11-<hostname>. 
+.\"
+.SH FILES
+.TP
+/usr/sbin/whbsaprecheck
+	the program itself.
+.TP
+/usr/lib/wow/
+	whbsaprecheck components.
+.TP
+/usr/share/doc/packages/wow/samples/sap_sample_C11.wow
+	wow config sample file. 
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+http://ClusterTools.sourceforge.net
+.\"
+.SH SEE ALSO
+\fBwow\fP(8), \fBmake_hb_backup\fP(8),
+.br
+http://www.novell.com/partners/sap/sap_on_hasi.pdf
+.\"
+.SH AUTHORS
+F.Herschel, L.Pinne
+.\"
+.SH COPYRIGHT
+(c) 2009 SUSE Linux GmbH, Germany. 
+.br
+whbsaprecheck comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

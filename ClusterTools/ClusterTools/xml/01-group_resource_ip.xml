@@ -1,0 +1,13 @@
+<group id="$GROUPID">
+         <primitive class="ocf" provider="heartbeat" type="$IPagent" id="${UUID}">
+           <operations>
+             <op id="${UUID}_op_0" name="monitor" description="monitor" interval="5s" timeout="20s" start_delay="10s" disabled="false" role="Started"/>
+             <op id="${UUID}_op_1" name="start" timeout="15s" disabled="false" role="Started" start_delay="5s"/>
+           </operations>
+           <instance_attributes id="${UUID}_inst_attr">
+             <attributes>
+               <nvpair id="${UUID}_attr_0" name="ip" value="$IP"/>
+             </attributes>
+           </instance_attributes>
+         </primitive>
+</group>

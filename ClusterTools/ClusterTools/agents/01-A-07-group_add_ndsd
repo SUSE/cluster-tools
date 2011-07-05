@@ -1,0 +1,10 @@
+source /usr/lib/wow/wowlib
+edirid=edir
+echo woweng $WOWRSRCEMODIFY GROUPID=${GRPID} \
+        UUID=rsc_APP_${SAPSID}_${edirid} \
+        edir_conf=${EDIR_CONF} \
+        $wowxml/01-group_resource_appl_ndsdB.xml </dev/null
+woweng $WOWRSRCEMODIFY GROUPID=${GRPID} \
+	UUID=rsc_APP_${SAPSID}_${edirid} \
+	edir_conf=${EDIR_CONF} \
+	$wowxml/01-group_resource_appl_ndsdB.xml </dev/null

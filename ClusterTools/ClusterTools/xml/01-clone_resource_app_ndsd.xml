@@ -1,0 +1,14 @@
+<clone id="${CLONEID}">
+	<primitive id="${UUID}" class="ocf" type="ndsd" provider="heartbeat">
+           <instance_attributes id="${UUID}_instance_attrs">
+             <attributes>
+               <nvpair id="${UUID}_instance_attr_01" name="nds_parm_file" value="$NDS_CONF"/>
+             </attributes>
+           </instance_attributes>
+           <operations>
+             <op id="${UUID}_instance_op_01" name="start" timeout="180" start_delay="5" disabled="false" role="Started"/>
+             <op id="${UUID}_instance_op_02" name="stop" timeout="180" start_delay="5" disabled="false" role="Started" on_fail="block"/>
+             <op id="${UUID}_instance_op_03" name="monitor" interval="10s" timeout="60" start_delay="10s" disabled="false" role="Started"/>
+           </operations>
+         </primitive>
+</clone>

@@ -1,0 +1,16 @@
+<primitive id="rsc_${UUID}" class="ocf" type="Xen" provider="heartbeat">
+	<operations>
+		<op name="monitor" interval="10s" timeout="60s" prereq="nothing" id="rsc_${UUID}_op-01"/>
+		<op name="stop"  timeout="60s" prereq="nothing" id="rsc_${UUID}_op-02"/>
+	</operations>
+	<instance_attributes id="rsc_${UUID}_attr">
+		<attributes>
+			<nvpair id="rsc_${UUID}_attr_01" name="xmfile" value="$XMFILE"/>
+		</attributes>
+	</instance_attributes>
+	<meta_attributes id="rsc_${UUID}-meta-01">
+		<attributes>
+			<nvpair id="rsc_${UUID}-meta-attr-01" name="allow_migrate" value="$VMMIGRATE"/>
+		</attributes>
+	</meta_attributes>
+</primitive>

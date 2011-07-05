@@ -1,0 +1,14 @@
+source /usr/lib/wow/wowlib
+echo "$FS_FILESYSTEMS" | while read dev dir fsid fstype
+do 
+	echo $dev -- $dir
+	if [ -n "${dev%%\#*}" ]; then # neither an empty line nor a comemnt line (# is first char)
+		woweng $WOWRSRCECREATE  \
+			UUID=fs_${fsid} \
+			DEVICE=$dev \
+			MOUNTPOINT=$dir \
+			FSTYPE=$fstype \
+			$wowxml/02-clone_clusterfs.xml </dev/null
+	fi
+done
+

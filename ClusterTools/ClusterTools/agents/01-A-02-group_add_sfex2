@@ -1,0 +1,8 @@
+source /usr/lib/wow/wowlib
+SFEX_DEVICE=${SFEX_DEVICES% *}
+SFEX_DEVICE2=${SFEX_DEVICES#* }
+ woweng $WOWRSRCEMODIFY UUID=rsc_sfex2_$SAPSID GROUPID=${GRPID} \
+	SFEX_INDEX=$SFEX_INDEX \
+	SFEX_DEVICE=$SFEX_DEVICE \
+	SFEX_DEVICE2=$SFEX_DEVICE2 \
+	$wowxml/01-group_resource_sfex2.xml

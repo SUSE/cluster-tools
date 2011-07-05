@@ -1,0 +1,4 @@
+source /usr/lib/wow/wowlib
+	woweng $WOWRSRCECREATE UUID=rsc_stonith_ssh NODES="$ALLNODES" $wowxml/02-clone_stonith_ssh.xml
+echo "WARNING: stonith-ssh is NOT feasable for productive environments"
+echo "INFO: you need to run atd on both systems"

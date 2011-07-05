@@ -1,0 +1,20 @@
+       <clone id="clone_stonith_sunipmi2">
+         <meta_attributes id="clone_stonith_sunipmi2_meta_attrs">
+           <attributes>
+             <nvpair id="clone_stonith_sunipmi2_meta_attr-target_role" name="target_role" value="stopped"/>
+             <nvpair id="clone_stonith_sunipmi2_meta_attr-clone_max" name="clone_max" value="$CLONE_MAX"/>
+             <nvpair id="clone_stonith_sunipmi2_meta_attr-clone_node_max" name="clone_node_max" value="$CLONE_NODE_MAX"/>
+           </attributes>
+         </meta_attributes>
+         <primitive id="rsc_stonith_sunipmi2" class="stonith" type="external/sunipmi2" provider="heartbeat">
+           <instance_attributes id="rsc_stonith_sunipmi2_instance_attrs">
+             <attributes>
+               <nvpair id="f4e78f9b-a7aa-4dfb-8349-c8ac06c7f62d" name="hostlist" value="$IPMPI_HOSTLIST"/>
+               <nvpair id="795ada7f-aeba-497a-9290-29b12fff64aa" name="hostmap" value="$IPMI_HOSTMAP"/>
+               <nvpair id="b602cdc7-7b7f-44cd-a2a3-146163db5e78" name="userid" value="$IPMI_USERID"/>
+               <nvpair id="fdcde9be-7b09-4f13-ac5b-8b1c5fe4648e" name="passwd" value="$IPMI_PASSWD"/>
+               <nvpair id="edf59954-5f68-4b2e-9b52-352146b27193" name="statusmode" value="$IPMI_STATUSMODE"/>
+             </attributes>
+           </instance_attributes>
+         </primitive>
+       </clone>

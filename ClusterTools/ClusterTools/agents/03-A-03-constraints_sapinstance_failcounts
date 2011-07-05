@@ -1,0 +1,26 @@
+source /usr/lib/wow/wowlib
+echo "TODO: Check constraints"
+
+#
+# sap move-a-way if failcount is to high
+#
+mySAPInstances=$SAP_INSTANCES
+woweng $WOWCONSTCREATE UUID=failcount-checks-for-${GRPID} RESOURCE=$GRPID $wowxml/03-constraint_canvas.xml
+woweng $WOWCONSTMODIFY CONSTID=failcount-checks-for-${GRPID} UUID=fc-check-move-away-${GRPID} SCORE=-INFINITY $wowxml/03-constraint_rule.xml
+woweng $WOWCONSTMODIFY RULEID=fc-check-move-away-${GRPID} UUID=fc-check-${GRPID}-rsc_SAPDatabase_${SAPSID} ATTRIBUTE=fail-count-rsc_SAPDatabase_${SAPSID} OPERATOR="gt" VALUE="2" $wowxml/03-constraint_rule_expression.xml
+for sap in $mySAPInstances; do
+	woweng $WOWCONSTMODIFY RULEID=fc-check-move-away-${GRPID} UUID=fail-count-rsc_SAPInstance_${sap} ATTRIBUTE=fail-count-rsc_SAPInstance_${sap} OPERATOR="gt" VALUE="2" $wowxml/03-constraint_rule_expression.xml
+done
+
+#
+# sap move-a-way if pingnode is not reachable
+#
+echo "TODO: check the need of the attr blafasel"
+woweng $WOWCONSTCREATE UUID=loc_${GRPID}_noping RESOURCE=$GRPID $wowxml/03-constraint_canvas.xml
+woweng $WOWCONSTMODIFY CONSTID=loc_${GRPID}_noping UUID=prefered_loc_${GRPID}_noping SCORE=-INFINITY $wowxml/03-constraint_rule.xml
+woweng $WOWCONSTMODIFY RULEID=prefered_loc_${GRPID}_noping UUID=loc_${GRPID}_noping_pind ATTRIBUTE=pingd OPERATOR="eq" VALUE="0" $wowxml/03-constraint_rule_expression.xml
+
+#
+#
+#
+

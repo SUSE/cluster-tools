@@ -1,0 +1,66 @@
+#
+set -u
+#
+#
+##############################
+#
+# call specific setup
+# CIBREMOTE - set user@host to define where to run the changes, empty for localhost
+# WOW_SIMULATE - set to yes to get an simutate output; set to no to run real updates
+#
+#CIBREMOTE=root@hyp20
+CIBREMOTE=""
+WOW_SIMULATE=yes
+#
+##############################
+#
+# cluster crm setup
+#
+DEFAULT_RESOURCE_STICKINESS=INFINITY
+DEFAULT_ACTION_TIMEOUT=120s
+#
+##############################
+#
+# cluster specific setup
+# ALLNODES - set the cluster node names separated by a blank 
+# NRNODES - set to number of nodes (should be set automatically)
+#
+ALLNODES="hyp20 hyp21"
+NRNODES="$(echo $ALLNODES | wc -w)"
+#
+##############################
+#
+# ipmi specific setup
+# IPMIADDRESSES - list of ipmi board adresses for all nodes; list items are seaparated by blanks and must match the oder of the cluster node definition (ALLNODES)
+# IPMISETTINGS -  definition of the cluster wide ipmi settings such as ipmi userid and ipmi password
+#
+IPMIADDRESSES='10.11.10.100 10.11.10.101'
+IPMISETTINGS="IPMI_USERID=root IPMI_PASSWD=pwd IPMI_STATUSMODE=ok"
+#
+#############################
+#
+# resource definition
+# GRPID - Define your SAP resource group name here; default is grp_sap_$SAPSID
+# IP_LABELS - list of ipnames and ipadresses to be configured as resouces for the group; each list item has the format name,address; list items are separated by blanks
+# FS_FILESYSTEMS - here document to make the defintion more easy for standard cases
+#                  each line has the following elements: device-path mount-pint file-system-id file-system-type
+#		   the file-system-id is only needed for cluster resource naming and must be unique
+# XEN_VMS - Define the cluster controlled vms here - each line has the format: vmname live-migration(true|false) xen-profile-path scores-per-node
+#
+### IO stack
+#
+FS_FILESYSTEMS=$(cat <<HERE-FS
+/dev/disk/by-id/scsi-149455400000000000000000002000000bd3600000d000000 /var/lib/xen/images   ocfs1	ocfs2
+/dev/dev1					    /etc/xen/vm                              ocfs2	ocfs2
+HERE-FS
+)
+#
+###
+#
+XEN_VMS=$(cat <<HERE-VM
+vm01						false		/etc/xen/vm/vm01	1000:0
+vm02						true		/etc/xen/vm/vm02	0:1000
+HERE-VM
+)
+#
+echo "OK Settings END"

@@ -1,0 +1,114 @@
+.TH wow 8 "10 Dec 2009" "" "ClusterTools"
+.\"
+.SH NAME
+wow \- configure heartbeat2 high-availability cluster
+.\"
+.SH SYNOPSIS
+.B wow
+\fIOPTIONS\fR \fIPARAMETER\fR
+.\"
+.SH DESCRIPTION
+\fBwow\fP helps you to create linux-ha system resources.
+The main option to be called is wow cc (wow heartbeat2 config change).
+The wow package countains some agents (which are used to figure out
+config values) and xml-templates (which are used to create the xml-
+snipsets to be inserted into the cluster).
+
+The program is a frontend to a set of tool.
+Currently the tools are mainly used to setup high-availability
+clusters for following workloads:
+
+- SAP application servers, SAP central instances, SAP database servers
+
+- XEN virtual machine hosts
+
+- Novell eDirectory servers
+
+- Novell ZENworks Linux Management servers
+
+- NFS file servers
+
+- Apache web servers, LAMP servers
+
+- MySQL, PostgreSQL, Oracle database servers
+
+In addition wow could backup cluster configuration from all nodes of a cluster
+within one run.
+It also could check if a Linux system is prepared to become a heartbeat2
+based high-availability cluster for SAP instances.
+.\"
+.SH OPTIONS
+Global options are:
+.HP
+\fB bk\fR
+	make backup of heartbeat2 cluster configuration.
+.HP
+\fB cc\fR
+	make cluster configuration change.
+.HP
+\fB cs\fR
+	cluster check for SAP pre-requisites. The check is done according to the concepts described
+in the technical guide \fISAP Applications Made High Available on SUSE Linux Enterprise Server 10\fR .
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH EXAMPLES
+.TP
+# wow --help
+show help.
+.TP
+# wow cc --config edir01.wow 01-A-07-group_add_ndsd
+add configuration for a resource of type Novell eDirectory to the cluster. 
+Use configuration agent 01-A-07-group_add_ndsd.
+Read information about the resource from file edir01.wow . 
+.TP
+# wow cs --all sap_C11.wow >precheck-sap_C11-$HOST
+check for allmost all pre-requistes that are needed to set up an HA cluster for SAP instance C11. 
+Read information about the needed resources from file sap_C11.wow . Write output into file precheck-sap_C11-<hostname>.
+.TP
+# wow bk --autodetect
+ 
+.\"
+.SH FILES
+.TP
+/usr/sbin/wow
+	the program itself.
+.TP
+/usr/lib/wow/
+	wow components in general.
+.TP
+/usr/lib/wow/agents/
+        wow configuration agents for heartbeat2.
+.TP
+/usr/share/wow/xml/
+        wow configuration templates for heartbeat2.
+.TP
+/usr/share/doc/packages/wow/samples/
+	wow config file samples.
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+http://ClusterTools.sourceforge.net
+.\"
+.SH SEE ALSO
+\fBwhbsaprecheck\fP(8), \fBwhbcc\fP(8), \fBmake_hb_backup\fP(8),
+.br
+http://www.novell.com/partners/sap/sap_on_hasi.pdf
+.\"
+.SH AUTHORS
+Fabian Herschel
+.\"
+.SH COPYRIGHT
+(c) 2009 Fabian Herschel, Germany.
+.br
+wow comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

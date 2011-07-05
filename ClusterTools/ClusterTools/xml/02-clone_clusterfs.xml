@@ -1,0 +1,19 @@
+<clone id="clone_${UUID}" notify="true" globally_unique="false">
+	<instance_attributes id="clone_${UUID}_attr">
+		<attributes>
+			<nvpair id="clone_${UUID}_attr-01" name="clone_node_max" value="1"/>
+		</attributes>
+	</instance_attributes>
+	<primitive id="rsc_${UUID}" class="ocf" type="Filesystem" provider="heartbeat">
+		<operations>
+			<op name="monitor" interval="20s" timeout="60s" prereq="nothing" id="rsc_${UUID}_op_01"/>
+		</operations>
+		<instance_attributes id="rsc_${UUID}_attr">
+			<attributes>
+				<nvpair id="rsc_${UUID}_attr_01" name="device"    value="$DEVICE"/>
+				<nvpair id="rsc_${UUID}_attr_02" name="directory" value="$MOUNTPOINT"/>
+				<nvpair id="rsc_${UUID}_attr_03" name="fstype"    value="$FSTYPE"/>
+			</attributes>
+		</instance_attributes>
+	</primitive>
+</clone>

@@ -1,0 +1,30 @@
+<master_slave id="${MSUUID}">
+	<meta_attributes id="${MSUUID}_meta_attrs">
+		<attributes>
+			<nvpair id="${MSUUID}_meta_attrs-clone_max" name="clone_max" value="2"/>
+			<nvpair id="${MSUUID}_meta_attrs-clone_node_max" name="clone_node_max" value="1"/>
+			<nvpair id="${MSUUID}_meta_attrs-master_max" name="master_max" value="1"/>
+			<nvpair id="${MSUUID}_meta_attrs-master_node_max" name="master_node_max" value="1"/>
+			<nvpair id="${MSUUID}_meta_attrs-notify" name="notify" value="true"/>
+			<nvpair id="${MSUUID}_meta_attrs-globally_unique" name="globally_unique" value="false"/>
+		</attributes>
+	</meta_attributes>
+	<primitive id="${UUID}" class="ocf" type="SAPInstance" provider="heartbeat">
+	<instance_attributes id="${UUID}_attrs">
+		<attributes>
+			<nvpair id="${UUID}_attrs-InstanceName" name="InstanceName" value="$SAP_INSTANCE"/>
+			<nvpair id="${UUID}_attrs-AUTOMATIC_RECOVER" name="AUTOMATIC_RECOVER" value="true"/>
+			<nvpair id="${UUID}_attrs-START_PROFILE" name="START_PROFILE" value="$SAP_PROFILE"/>
+			<nvpair id="${UUID}_attrs-ERS_InstanceName" name="ERS_InstanceName" value="$SAP_ERS_INSTANCE"/>
+			<nvpair id="${UUID}_attrs-ERS_START_PROFILE" name="ERS_START_PROFILE" value="$SAP_ERS_PROFILE"/>
+		</attributes>
+	</instance_attributes>
+	<operations>
+		<op id="${UUID}_op_start" name="start" timeout="180" role="Started" start_delay="0" disabled="false"/>
+		<op id="${UUID}_op_stop" name="stop" timeout="240" role="Started" start_delay="0" disabled="false"/>
+		<op id="${UUID}_op_monitor" name="monitor" interval="30" timeout="60" start_delay="5" role="Master" disabled="false"/>
+		<op id="${UUID}_op_promote" name="promote" timeout="320" start_delay="0" role="Master" disabled="false"/>
+		<op id="${UUID}_op_demote" name="demote" timeout="320" role="Slave" start_delay="0" disabled="false"/>
+	</operations>
+	</primitive>
+</master_slave>

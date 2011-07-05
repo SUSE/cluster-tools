@@ -1,0 +1,54 @@
+#!/usr/bin/perl
+#
+#
+# (c) Fabian herschel, SUSE Linux GmbH Germnany
+# GPL
+
+use strict;
+use Getopt::Std;
+
+my %opts;
+getopts("i:",\%opts);
+
+my $node;
+
+my %transitions={};
+
+while (1) {
+	system("date");
+	open HIST, "/usr/sbin/clusterstate -lrt |";
+	while (<HIST>) {
+		chomp();
+		if ( /Node ([a-zA-Z0-9_\-\.]+)/) {
+			$node=$1;
+			printf "%s\n", $1;
+			#
+			# following actions belongs to node $node
+			#
+		} elsif (/^ID ([0-9]+).*transition key = (.*)/ ) {
+			my $id=$1;
+			my $key=$2;
+			#
+			# skip, if transition already captured
+			#
+			if ( ! defined $transitions{$key} ) {
+				$transitions{$key}=1;
+				printf "%s\n", $_;
+			} 
+		}
+		#printf "%s\n", $_;
+	}
+	if ($opts{i}) {
+		system ("sleep $opts{i}");
+	} else {
+		printf "-------------\n";
+		printf "Press enter to get next list\n";
+		my $enter=<>;
+	}
+	
+}
+
+sub usage
+{
+	return 1;
+}

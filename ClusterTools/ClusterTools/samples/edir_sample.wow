@@ -1,0 +1,80 @@
+#
+set -u
+#
+#
+##############################
+#
+# call specific setup
+# CIBREMOTE - set user@host to define where to run the changes, empty for localhost
+# WOW_SIMULATE - set to yes to get an simutate output; set to no to run real updates
+#
+CIBREMOTE=""
+WOW_SIMULATE=yes
+#
+##############################
+#
+# cluster specific setup
+# ALLNODES - set the cluster node names separated by a blank 
+# NRNODES - set to number of nodes (should be set automatically)
+#
+ALLNODES="zsap00 zsap01"
+NRNODES="$(echo $ALLNODES | wc -w)"
+#
+##############################
+#
+# ipmi specific setup
+# IPMIADDRESSES - list of ipmi board adresses for all nodes; list items are seaparated by blanks and must match the oder of the cluster node definition (ALLNODES)
+# IPMISETTINGS -  definition of the cluster wide ipmi settings such as ipmi userid and ipmi password
+#
+#IPMIADDRESSES='10.11.10.100 10.11.10.101'
+#IPMISETTINGS="IPMI_USERID=root IPMI_PASSWD=pwd IPMI_STATUSMODE=ok"
+ILO_ADDRESSES='10.11.10.100 10.11.10.101'
+ILO_SETTINGS="ILO_USER=root ILO_PASSWD=pwd"
+#
+#############################
+#
+# sap resource definition
+# GRPID - Define your SAP resource group name here; default is grp_sap_$SAPSID
+# SAP_SCORES - Scores to run the entrire sap group on the first, second, ... node; the list items are separated by blanks; the order must match the cluster node definition (ALLNODES)
+# IP_LABELS - list of ipnames and ipadresses to be configured as resouces for the group; each list item has the format name,address; list items are separated by blanks
+# SAPSID - SAP system id like C11, WAS or WOW (upper case); Is there anybody out there, which could remeber the good old C11 SAP1.1 systems?
+# SAPsid - automatically set SAP system id in lower case
+# SAP_INSTANCE_DEF - Table with definition of the SAP instances; each row defines the instance type; instance name; profile path and optional parameters which might be needed by more complex resource definitions; 
+# SFEX_DEVICE -	defines the path of the sfex devices to be used to add more security to the cluster
+# SFEX2_DEVICES - defines the paths of two parallel sfex devices to be used for special cases
+# SFEXID - defaults to 1; needs to be set, when you need to have more than one sfex device in different groups
+# SFEX_INDEX - defines the sfex index (default to be used 1)
+# RAID1_DEVICES - defines the paths of the md devices to be used in the resource group
+# RAID_CONFIG - defines the path of the raid configuration file for cluster controlled md devices
+# LVM_VOLUMEGROUPS - defines the list of volume groups to be used
+# FS_FILESYSTEMS - here document to make the defintion more easy for standard cases
+#
+SAPSID=C11
+#
+GRPID=grp_edir
+#
+SAP_SCORES="1000 0"
+#
+IP_LABELS="zsapc11,10.10.10.10"
+#
+# 
+EDIR_CONF=/etc/opt/novell/edirectory/conf/ndsd.conf
+#
+### IO stack
+#
+echo "CHECK: define the correct sfex devices"
+SFEX_DEVICE="/dev/disk/by-name/36005076304ffc3eb000000000000445e"
+SFEX2_DEVICES="/dev/disk/by-name/36005076304ffc3eb000000000000445e /dev/disk/by-name/36005076304ffc3b3000000000000445e"
+SFEX_INDEX=1
+#
+RAID1_DEVICES="/dev/md0 /dev/md1 /dev/md2 /dev/md3"
+RAID_CONFIG="/clusterconf/mdadm.conf"
+#
+LVM_VOLUMEGROUPS="edirvg"
+#
+FS_FILESYSTEMS=$(cat <<HERE-FS
+/dev/xyz					/edirdata			edirdata
+HERE-FS
+)
+#
+echo "OK Settings END"

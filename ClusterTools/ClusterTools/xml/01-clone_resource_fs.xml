@@ -1,0 +1,16 @@
+<group id="$CLONEID">
+         <primitive class="ocf" provider="heartbeat" type="Filesystem" id="${UUID}"> <!-- rsc_Filesystem_idm_common -->
+           <operations>
+             <op id="${UUID}_mon" interval="120s" name="monitor" timeout="60s" start_delay="0" disabled="false" role="Started"/>
+             <op id="${UUID}_stop" name="stop" description="stoptimeout" timeout="300s" disabled="false" role="Stopped"/>
+           </operations>
+           <instance_attributes id="${UUID}">
+             <attributes>
+               <nvpair id="${UUID}_attr_0" name="device"    value="$DEVICE"/> 
+               <nvpair id="${UUID}_attr_1" name="directory" value="$MOUNTPOINT"/> 
+	       <nvpair id="${UUID}_attr_2" name="fstype"    value="$FSTYPE"/>
+             </attributes>
+           </instance_attributes>
+         </primitive>
+</group>
+

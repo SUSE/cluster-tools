@@ -1,0 +1,79 @@
+#!/bin/bash
+#
+# (c) 2008 Fabian Herschel
+# GPL
+# Last changes: 
+# 2008-09-23: correction for *=*; now can handle unplaned right side with characters like '=', ';', ' ' and so on
+#
+set -u
+PATH="$PATH:/usr/sbin"
+
+UUID=$(uuidgen)
+CIBOBJTYPE=resources
+CIBACTION="-C"
+CIBREMOTE=""
+XML=""
+WOW_SIMULATE=no
+
+while [ $# -gt 0 ]
+do
+	case "$1" in
+	-? | -h | --help )
+		echo "usage: $0 {var=val} xml-snipset"
+		echo "       var could be one of:"
+		echo "       - UUID (The unique id to be used for the resource naming)"
+		echo "       - CIBOBJTYPE (default: \"resources\", could be either resources, constraints or crm_config)"
+		echo "       - CIBACTION  (default: -C for create, could also be -D for delete, -U for update or -M for modify)"
+		echo "       - CIBREMOTE  (default: empty for localhost, could also be set to a remote hostname or hostip address)"
+		echo "       - WOW_SIMULATE (default: no, if set ro yes do not sent the change to the cluster)"
+		exit 0
+		;;
+	*=* )
+		var=${1%%=*}
+                val=${1#*=}
+		eval $var="\$val";
+		;;
+	* ) 
+		XML=$1
+		;;
+	esac
+	shift
+
+done
+
+if [ -z "$XML" ]; then
+	echo "You did not specify any XML file on the command line" >&2
+	exit 2
+fi
+
+(
+	echo "cat <<$UUID"
+	cat $XML
+	echo "$UUID"
+) > /tmp/$UUID.xml
+A=$(. /tmp/$UUID.xml)
+
+#ssh hacluster@simplonvm01 "cibadmin -C -o $CIBOBJTYPE -X \"$A\""
+
+if [ -n "$CIBREMOTE" ]
+then
+	CIBREMOTESSH="ssh $CIBREMOTE"
+	MESSAGE="Connecting to $CIBREMOTE"
+else
+	MESSAGE="Connecting locally"
+	CIBREMOTESSH="bash -c"
+fi
+if [ "$WOW_SIMULATE" = "yes" ]
+then
+	echo "------------"
+	echo "$CIBREMOTESSH cibadmin $CIBACTION -o $CIBOBJTYPE -X \'$A\'"
+	echo "------------"
+	rc=$?
+else
+	echo $MESSAGE
+	$CIBREMOTESSH "cibadmin $CIBACTION -o $CIBOBJTYPE -X '$A'"
+	rc=$?
+	echo "return code is: $rc"
+fi
+rm /tmp/$UUID.xml
+exit $rc

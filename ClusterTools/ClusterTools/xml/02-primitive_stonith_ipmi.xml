@@ -1,0 +1,16 @@
+<primitive id="${UUID}" class="stonith" type="external/ipmi" provider="heartbeat">
+	<instance_attributes id="${UUID}_instance_attrs">
+		<attributes>
+			<nvpair id="${UUID}_hostlist" name="hostname" value="$IPMPI_HOSTNAME"/>
+			<nvpair id="${UUID}_hostmap"  name="ipaddr"   value="$IPMI_IPADDR"/>
+			<nvpair id="${UUID}_userid" name="userid" value="$IPMI_USERID"/>
+			<nvpair id="${UUID}_passwd" name="passwd" value="$IPMI_PASSWD"/>
+			<nvpair id="${UUID}_interface" name="interface" value="lan"/>
+		</attributes>
+	</instance_attributes>
+	<meta_attributes id="${UUID}_meta_attrs">
+		<attributes>
+			<nvpair id="${UUID}_meta_attr_target_role" name="target_role" value="stopped"/>
+		</attributes>
+	</meta_attributes>
+</primitive>

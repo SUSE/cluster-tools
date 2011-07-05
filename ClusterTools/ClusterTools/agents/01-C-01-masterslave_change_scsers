@@ -1,0 +1,20 @@
+source /usr/lib/wow/wowlib
+echo "$SAP_INSTANCE_DEF" | while read sap_type sap_inst sap_prof sap_ersinst sap_ersprof sap_parm; do
+  if [ "$sap_type" == "SCSERS" ]; then
+	  echo "sap_type $sap_type"
+	  echo "sap_inst $sap_inst"
+	  echo "sap_prof $sap_prof"
+	  echo "sap_ersinst $sap_ersinst"
+	  echo "sap_ersprof $sap_ersprof"
+	  echo "sap_parm $sap_parm"
+	  echo
+	  woweng $WOWRSRCEMODIFY UUID=rsc_SAPInstance_${sap_inst}  \
+		MSUUID=${GRPID} \
+		SAP_INSTANCE=$sap_inst \
+		SAP_PROFILE=$sap_prof \
+		SAP_ERS_INSTANCE=$sap_ersinst \
+		SAP_ERS_PROFILE=$sap_ersprof \
+		$sap_parm \
+		$wowxml/01-masterslave_appl_sapinstance_SCSERS.xml </dev/null
+  fi
+done

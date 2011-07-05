@@ -114,6 +114,7 @@ chmod a+x 	%{buildroot}/usr/sbin/*
 %doc /usr/share/doc/packages/wow
 %doc /usr/share/man/man7/*
 %doc /usr/share/man/man8/*
+%config /etc/ClusterTools
 
 %changelog -n ClusterTools
 * Tue Jul 05 2011 - fabian.herschel@novell.com, lars.pinne@novell.com

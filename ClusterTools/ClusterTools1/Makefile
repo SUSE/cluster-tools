@@ -26,13 +26,12 @@ test:
 	
 
 tar:	
-	tar -czf internal/tmp/${PKT}-${VERS}.tgz --exclude internal --exclude .svn  .
+	tar -cvzf ${PKT}-${VERS}.tgz man? share sbin spec agents lib scripts samples xml etc
 
 rpm:	tar
-	cp internal/tmp/${PKT}-${VERS}.tgz /usr/src/packages/SOURCES
+	mv ${PKT}-${VERS}.tgz /usr/src/packages/SOURCES
 	cp spec/${PKT}.spec /usr/src/packages/SPECS
-	( cd /usr/src/packages; rpmbuild -ba --target noarch SPECS/${PKT}.spec )
-#	( cd /usr/src/packages;  sudo rpmbuild -ba --target noarch SPECS/${PKT}.spec )
+	( cd /usr/src/packages; sudo rpmbuild -ba --target noarch SPECS/${PKT}.spec )
 
 all:	tar rpm
 	echo building ${PKT}-${VERS}-${REL}

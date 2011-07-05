@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+
+# License: GPL
+# Author: fabian herschel
+# (c) 2011 SUSE Linux Products GmbH
+export LANG=en_US; 
+crm resource list | awk ' /^\W*Resource Group:/ { print $3 } 
+                         !/^\W*Resource Group:/  {print $1}'

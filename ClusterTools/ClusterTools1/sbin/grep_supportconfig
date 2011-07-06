@@ -336,10 +336,10 @@ function chk_software() {
 	echo
 	grep -A1 "# /etc/lsb-release" $FIL
 	echo	
-
-	FIL="sam.txt"
-	grep -A4 "\.prod:" $FIL
-	echo
+# TODO: SPident
+#	FIL="sam.txt"
+#	grep -A4 "\.prod:" $FIL
+#	echo
 
 	FIL="rpm.txt"
 	grep "(none)" $FIL | grep -v "gpg-pubkey"

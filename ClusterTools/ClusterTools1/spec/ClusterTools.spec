@@ -96,6 +96,7 @@ chmod a+x 	%{buildroot}/usr/sbin/*
 /usr/sbin/check-split-brain
 /usr/sbin/find_appconf
 /usr/sbin/grep_error_patterns
+/usr/sbin/grep_supportconfig
 /usr/sbin/linkstate
 /usr/sbin/list_failcounts
 /usr/sbin/make_hb_backup

@@ -19,7 +19,7 @@ DIR=${2:-$PWD}
 FUN=${3:-"chk_overview"}
 OWD=$PWD
 
-# TODO: config file /etc/ClusterTools2/grep_suppoertconfig
+# TODO: config file /etc/ClusterTools/grep_suppoertconfig
 # TODO: generic record split function for supportconfig files
 
 function echo_msgsep ()
@@ -482,7 +482,7 @@ function chk_errors() {
 	echo_msgsep $FUNCNAME
 
 	# TODO: see grep_error_patterns
-	source /etc/ClusterTools2/grep_error_patterns
+	source /etc/ClusterTools/grep_error_patterns
 
 	# TODO: taint.flag ??
 	echo -n "kernel.tainted : "

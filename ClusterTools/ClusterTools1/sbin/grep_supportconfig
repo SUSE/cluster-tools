@@ -1,0 +1,554 @@
+#!/bin/bash
+#
+# grep_supportconfig
+#
+# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version 0.01-sle10 2011-07-06
+#
+# For SLES10.
+# For Supportconfig Script Version: 2.25-136
+
+COMD=$(basename $0)
+ERR="/dev/null"
+TMP="/tmp/cltl.$RANDOM"
+
+# TODO: make DIR= work
+DIR=${2:-$PWD}
+FUN=${3:-"chk_overview"}
+OWD=$PWD
+
+# TODO: config file /etc/ClusterTools2/grep_suppoertconfig
+# TODO: generic record split function for supportconfig files
+
+function echo_msgsep ()
+{
+	echo "============================================================ ${1:0
+:14} ==="
+}
+
+
+function chk_hardware() {
+
+	echo_msgsep $FUNCNAME
+
+	FIL="hardware.txt"
+	grep "system.hardware.*=" $FIL | grep -v "system.*video"
+	grep "system.firmware.*=" $FIL
+	grep -A4 "^# Virtualisation" $FIL
+	echo
+	
+	FIL="hardware.txt"
+	grep -A16 "^# /usr/bin/lscpu" $FIL
+	grep "^model.name.*:" $FIL | sort -u
+	
+	FIL="boot.txt"
+#	grep "^\[.*Detected.*MHz.processor" $FIL
+	grep "^\[.*Brought up.*CPUs" $FIL
+	echo
+
+	FIL="boot.txt"
+	grep "^\[.*System RAM: " $FIL
+
+	FIL="basic-health-check.txt"
+	grep -A 4 "# /usr/bin/free -k" $FIL | tail -3 
+	echo
+
+# TODO: more specific patterns
+#	FIL="hardware.txt"
+#	for f in "iLO" "IPMI" "DRAC" "Emulex" "Brocade" "QLogic" "Broadcom" "MPT"; do
+#		grep ${f} $FIL | grep "pci.product.=" | sort -u
+#	done
+
+	FIL="hardware.txt"
+	grep "pci.product.=" $FIL | sort -u
+	grep "scsi.vendor.=" $FIL | sort -u
+	echo
+
+	FIL="hardware.txt"
+	for f in "supports.DPO.and.FUA" "support.DPO.or.FUA"; do
+		echo -n "${f} : "
+		grep -c ${f}  $FIL
+	done
+	
+	FIL="messages.txt"
+	for f in "disabling.barriers"; do
+		echo -n "${f} : "
+		grep -c ${f}  $FIL
+	done
+	echo	
+}
+
+
+function chk_modules() {
+
+	echo_msgsep $FUNCNAME
+
+	# tainted
+	#FIL="basic-health-check.txt"
+	#csplit $FIL ""
+
+	FIL="boot.txt"
+	grep "^\[.*AppArmor:.*initialized" $FIL
+
+# TODO: external cfg file
+# TODO: add Cisco HBA
+MODLS="
+bfa.ko
+lpfc.ko
+qlge.ko
+qla2xxx.ko
+bnx2.ko
+bnx.ko
+e1000.ko
+tg3.ko
+be2net.ko
+cciss.ko
+mptbase.ko
+dm_multipath.ko
+dm_mirror.ko
+bonding.ko
+hpwdt.ko
+softdog.ko
+"
+	FIL="boot.txt"
+	for m in $MODLS; do
+		grep ${m} $FIL | sort -u
+	done
+
+# TODO: split file to records instead of -A9, to find "supported:"
+	FIL="modules.txt"
+	for m in $MODLS; do
+		grep -A9 "^filename:.*${m}" $FIL |\
+		 awk '$1=="filename:" || $1=="license:" || $1=="supported:" {print $0}' 
+	done
+	echo
+}
+
+
+function chk_services() {
+
+	echo_msgsep $FUNCNAME
+
+	FIL="boot.txt"
+	grep "exits with status" $FIL | grep -v "exits with status 0$"
+ 	grep "Skipped.features:" $FIL | sort -u
+	echo
+	grep "INIT: Entering runlevel:" $FIL | sort -u
+	echo
+
+	FIL="chkconfig.txt"
+	for p in "3:on" "3:off"; do
+		echo -n "${p} : "
+		grep -c "${p}" $FIL
+	done
+	echo
+
+# TODO: whbsaprecheck
+SVC_YES="
+boot.clock
+boot.devicemapper
+boot.lvm
+boot.multipath
+boot.sapconf
+boot.sysstat
+boot.sysctl
+multipathd
+ntp
+"
+SVC_OFF="
+boot.dmraid
+boot.md
+alsasound
+hp-asrd
+ipmi
+mdadmd
+oracle
+openais
+powerd
+slpd
+smartd
+sapinit
+uuidd
+"
+	for s in $SVC_YES; do
+		grep "${s}:..on" $FIL
+		grep "${s}:..off" $FIL
+		grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
+		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+	done
+	echo
+	for s in $SVC_OFF; do
+		grep "${s}:..off" $FIL
+		grep "${s}:..on" $FIL
+		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+		grep "^${s}.*0.*3:on" $FIL | grep -v "boot\."
+	done
+	echo
+}
+
+
+function chk_network() {
+	
+	echo_msgsep $FUNCNAME
+	
+PATTRN="
+"Setting.up.hostname"
+"Setting.up.loopback.interface"
+"eth.*IP.address:"
+"bond.*enslaved.interfacce:"
+"bond.*IP.address:.*as.bonding.master"
+"
+	FIL="boot.txt"
+	for p in $PATTRN; do
+		grep $p $FIL
+	done | sort -u
+	echo
+
+	FIL="network.txt"
+	grep -A3 "^# /sbin/ethtool bond" $FIL
+	grep -A18 "^# /sbin/ethtool eth" $FIL
+	echo
+
+# TODO: DNS
+	grep -A1 "^# /etc/HOSTNAME" $FIL
+	grep -A1 "^# /bin/hostname" $FIL
+	
+	grep -A6 "^# /etc/resolv.conf" $FIL	
+	grep -A3 "^# /etc/sysconfig/network/routes" $FIL
+
+# TODO: split function
+# TODO: /etc/hosts, /etc/host.conf, etc/nsswitch.conf
+# TODO: etc/sysconfig/ifcfg-
+
+	( grep -A14 "^# /etc/sysconfig/network/ifcfg-bond" $FIL
+	grep -A21 "^# /proc/net/bonding/bond" $FIL
+	
+	grep -A11 "^# /etc/sysconfig/network/ifcfg-eth" $FIL
+
+	grep -A1 "^# /sbin/chkconfig nscd" $FIL ) | grep -v "#==["
+	echo
+}
+
+
+function chk_timeset() {
+
+	echo_msgsep $FUNCNAME
+
+	FIL="ntp.txt"
+	for p in "^#.rpm.-V" "^#.Verification.Status:"; do
+		grep ${p} $FIL
+	done
+	echo
+	grep -A1 "^# /sbin/chkconfig" $FIL
+
+	grep -A5 "# /usr/sbin/ntpq -p" $FIL | grep -v "====="
+	echo
+
+# TODO: real ntp.conf
+	grep "^server" $FIL
+	echo
+
+ERRPTN="
+"synchronized.to.LOCAL"
+"ntpd.*time.reset"
+"ntpd.*failed"
+"
+	for p in $ERRPTN; do
+		echo -n "${p} : "
+		grep -c ${p} $FIL
+	done
+	echo
+
+	FIL="sysconfig.txt"
+
+PATTRN="
+HWCLOCK
+SYSTOHC
+TIMEZONE
+DEFAULT_TIMEZONE
+"	
+	for p in $PATTRN; do
+		grep "^${p}" $FIL | sort -u
+	done
+	echo
+
+	FIL="etc.txt"
+	grep -A4 "^/etc/adjtime" $FIL
+	echo
+
+# TODO: /etc/adjtime, elevenmin mode, ...
+	
+}
+
+
+function  chk_cluster() {
+
+	echo_msgsep $FUNCNAME
+
+	# TODO: check /etc/corosync/
+	# TODO: check ???, see sum_base_config, whbsaprecheck
+	echo
+}
+
+
+function  chk_oracle() {
+
+	echo_msgsep $FUNCNAME
+
+	# TODO: check /etc/sysconfig/oracle
+	# TODO: check ???, see sum_base_config, whbsaprecheck
+	echo
+}
+
+
+function  chk_sap() {
+
+	echo_msgsep $FUNCNAME
+
+	# TODO: check /etc/sysconfig/sapconf
+	# TODO: check ???, see sum_base_config, whbsaprecheck
+	echo
+}
+
+
+function chk_kernel() {
+	
+	echo_msgsep $FUNCNAME
+
+	FIL="boot.txt"
+	grep -A1 "^# /bin/uname -a" $FIL
+	grep -A1 "^# /proc/cmdline" $FIL
+	grep "^INITRD_MODULES=" $FIL	
+	grep "^\[.*Booting paravirtualized kernel on bare hardware" $FIL
+	echo
+}
+
+
+function chk_software() {
+
+	echo_msgsep $FUNCNAME
+	
+	FIL="basic-environment.txt"
+
+	grep -A3 "# /etc/SuSE-release" $FIL
+	echo
+	grep -A1 "# /etc/lsb-release" $FIL
+	echo	
+
+	FIL="sam.txt"
+	grep -A4 "\.prod:" $FIL
+	echo
+
+	FIL="rpm.txt"
+	grep "(none)" $FIL | grep -v "gpg-pubkey"
+	echo	
+
+	FIL="sam.txt"
+PATTRN="
+System.architecture:
+Baseproduct:
+not.our.package:
+"	
+	for p in $PATTRN; do
+		grep "${p}" $FIL
+	done
+	echo
+}
+
+
+function chk_updates() {
+
+	echo_msgsep $FUNCNAME
+	
+	FIL="updates.txt"
+# TODO
+PRODS="
+"SLES11-"
+"SLES11-SP"
+"SLE11-HAE-SP"
+"SLE11-HAE-SP"
+"
+	for p in ${PRODS}; do
+		grep "|.*|.${p}.*|.*|" $FIL | sort -u
+	done
+	echo
+	grep "patches needed" $FIL
+	echo
+}
+
+
+function chk_multipath() {
+	
+	echo_msgsep $FUNCNAME
+	
+	FIL="mpio.txt"
+	for p in "^#.rpm.-V" "^#.Verification.Status:"; do
+		grep "${p}" $FIL
+	done
+	grep "^# RPM Not Installed:" $FIL
+	grep "^INITRD_MODULES=" $FIL
+	echo
+
+	for p in "^boot.device-mapper.*o" "^boot.multipath.*o" "^multipathd.*0:.*3:on"; do
+		grep ${p} $FIL
+	done
+	echo
+	
+	grep -B1 "^size=.*features=.*hwhandler=" $FIL
+
+	# TODO: by-id
+	# TODO: dmsetup
+	# TODO: multipath.conf
+
+	for p in "loading.*prioritizer" "path.checker.=" "prio.="; do
+		grep ${p} $FIL
+	done | awk '{print $6,$7,$8}' | sort -u
+	echo
+}
+		
+
+function chk_filesys() {
+	
+	echo_msgsep $FUNCNAME
+	
+	FIL="fs-diskio.txt"
+
+	# TODO /etc/fstab
+	# TODO /proc/mounts
+
+	echo
+}
+
+
+function chk_storage() {
+	
+	echo_msgsep $FUNCNAME
+
+	FIL="rpm.txt"
+	# TODO: see whbsaprecheck
+PKG="
+dmraid
+lvm2
+libext2fs2
+mdadm
+multipath-tools
+nfs-client
+open-iscsi
+ocfs2-tools
+ocfs2-kmp-default
+xfsprogs
+"
+	for p in $PKG; do
+		awk '$1=="'$p'" {print $1,$NF} ' $FIL
+	done
+	echo
+
+# TODO: nfs
+MOD="
+ext2
+ext3
+ocfs2
+xfs
+"	
+	FIL="fs-diskio.txt"
+	#grep -B1 "^Disk./dev/" $FIL
+	grep -A1 "^Model:" $FIL | grep -v "^--$"
+	echo
+	
+	FIL="lvm.txt"
+	FIL="fs-softraid.txt"
+	
+	echo
+}
+
+
+function chk_overview() {
+	
+	echo_msgsep $FUNCNAME
+
+	FIL="basic-health-report.txt"
+
+	for p in "^Date.Checked:" "^Status:"  "\[...Red...\]" "\[.Yellow..\]"; do
+		grep ${p} $FIL
+	done
+	echo
+}
+
+
+function chk_errors() {
+	
+	echo_msgsep $FUNCNAME
+
+	# TODO: see grep_error_patterns
+	source /etc/ClusterTools2/grep_error_patterns
+
+	# TODO: taint.flag ??
+	echo -n "kernel.tainted : "
+	grep -c "^kernel.tainted" env.txt
+
+	LOG="boot.txt messages.txt proc.txt ha.txt"
+	for e in ${ERROR_PATTERN} ${CLUERR_PATTERN}; do
+		echo -n "${e} : "
+		for f in ${LOG}; do
+			cat $f
+		done | grep -ic ${e} 
+	done
+	echo
+}
+
+
+# main()
+
+case $1 in
+	--help|-h)
+		echo "usage: $COMD OPTION"
+		echo "usage: $COMD OPTION <DIR>"
+		echo "usage: $COMD --function <DIR> <FUNC>"
+		echo
+		echo "OPTION:"
+                echo " --help           show help."
+                echo " --version        show version."
+		exit
+	;;
+	--version|-v)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	--generic|-g)
+		cd $DIR
+		chk_overview
+		chk_hardware
+		chk_kernel
+		chk_modules
+		chk_multipath
+		chk_storage
+		#chk_filesys
+		chk_network
+		chk_timeset
+		chk_software
+		chk_updates
+		chk_services
+		#chk_cluster
+		chk_errors
+		exit
+	;;
+	--function|-f)
+		cd $DIR
+		# TODO: shift loop for multiple functions
+		$FUN
+		exit
+	;;
+	--test|-t)
+		cd $DIR
+		#set -x
+		#chk_multipath
+		chk_storage
+		#chk_filesys
+		#chk_cluster
+		exit
+	;;
+esac
+#

@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-# make_corosync_conf
+# make_sbd_devices
 #
 # (c) 2011 SUSE Linux GmbH, Germany.
 # GNU Public License. No warranty.
 # Author: L.Pinne
 #
-# Version: 0.01 2011-06-09 15:00
+# Version: 0.01 2011-07-12 20:20
 #
 
 EXE="$0"
@@ -25,9 +25,9 @@ function help(){
 	echo "usage: $(basename $0) --init [SBD_OPTS [SBD_CONF]]"
 	echo
 	echo "OPTION:"
-	echo " --dump           show content of SBD devices."
-	echo " --help           show help."
-	echo " --version        show version."
+	echo " --dump		show content of SBD devices."
+	echo " --help		show help."
+	echo " --version	show version."
 	echo " --init		initialise SBD devices."
 	echo
 }

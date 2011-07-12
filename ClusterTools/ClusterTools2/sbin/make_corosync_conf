@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 #
-# Version: 0.01 2011-06-09 12:20
+# Version: 0.01 2011-07-12 21:12
 #
 
 EXE="$0"
@@ -15,17 +15,7 @@ CFG="/etc/ClusterTools2/make_corosync_conf"
 test -s $CFG && source $CFG
 
 TMP="/tmp/cltl.$RANDOM"
-
-# TODO: fill empty vars from config file
-test -z "${1}" || MEMBERNAM1_0=${1}
-test -z "${2}" || MEMBERNAM2_0=${2}
-RINGIF_0=${3:-"bond0"}
-MCASTPORT_0=${4:-"5404"}
-SECAUTH=${5:-"on"}
-RRPMODE=${RRPMODE:-"none"}
 COROCONF=${COROCONF:-"/etc/corosync/corosync.conf"}
-# TODO: TEMPLATE=${7:-"$COROCONF.tmpl"}
-TEMPLATE=${6:-"/etc/corosync/corosync.conf.tmpl"}
 
 
 function get_corosync_vals() {
@@ -35,11 +25,18 @@ function get_corosync_vals() {
 	# ip a s | grep "inet .*scope.global"
 	# grep "bindnetaddr:" /etc/corosync/corosync.conf
 
-	MEMBERADDR1_0=$(host ${MEMBERNAM1_0} | awk '{print $4}')
-	MEMBERADDR2_0=$(host ${MEMBERNAM2_0} | awk '{print $4}')
-
+	test -z "${MEMBERADDR1_0}" &&\
+		MEMBERADDR1_0=$(host ${MEMBERNAM1_0} | awk '{print $4}')
+	test -z "${MEMBERADDR2_0}" &&\
+		MEMBERADDR2_0=$(host ${MEMBERNAM2_0} | awk '{print $4}')
+	test -z "${RINGIF_0}" &&\
+		RINGIF_0=$(ip -o a s | awk '\
+		($2=="bond0"&&$NF=="bond0") ||\
+		($2=="eth0"&&$NF=="eth0") ||\
+		($2=="br0"&&$NF=="br0") \
+		{print $2; exit}')
 	test -z "${BINDNETADDR_0}" &&
-	BINDNETADDR_0=$(ip a s $RINGIF_0 |\
+		BINDNETADDR_0=$(ip a s $RINGIF_0 |\
 		awk '$1=="inet" && $7=="'$RINGIF_0'" {
 		# $2: ipaddr/netmask, f.e. 10.5.155.31/16
 		# $4: brdcastaddr, f.e. 10.5.255.255
@@ -81,11 +78,12 @@ function get_cluster_members() {
 function fix_corosync_conf() {
 	echo "INFO: start $EXE $FUNCNAME"
 
-	cp -a $COROCONF ${COROCONF}.bak || exit 2 
+	test -s $COROCONF && cp -a $COROCONF ${COROCONF}.bak || exit 2 
 	test -s $TEMPLATE || exit 3
 
 	# TODO: 2nd ring
 	awk -F":" ' $2!~/@@[A-Z].*@@/ {print}
+	$1~/rrp_mode/ && $2~/@@RRPMODE@@/ { print $1":","'$RRPMODE'"}
 	$1~/threads/ && $2~/@@THREADS@@/ { print $1":","'$THREADS'"}
 	$1~/secauth/ && $2~/@@SECAUTH@@/ { print $1":","'$SECAUTH'"}
 	$1~/bindnetaddr/ && $2~/@@BINDNETADDR_0@@/ { print $1":","'$BINDNETADDR_0'"}
@@ -102,7 +100,7 @@ function echo_variables() {
 	echo "INFO: start $EXE $FUNCNAME"
 
 # TODO
-#	VARS="RINGIF_0 BINDNETADDR_0 MCASTPORT_0 MEMBER1_0 MEMBER2_0 THREADS SECAUTH TEMPLATE"
+#	VARS="RINGIF_0 BINDNETADDR_0 MCASTPORT_0 MEMBER1_0 MEMBER2_0 THREADS SECAUTH RRPMODE TEMPLATE"
 #	for v in ${VARS}; do
 #		echo -n "${v}: "; eval '${v}'
 #	done
@@ -114,6 +112,7 @@ function echo_variables() {
 	echo "MEMBERADDR2_0: $MEMBERADDR2_0"
 	echo "THREADS: $THREADS"
 	echo "SECAUTH: $SECAUTH"
+	echo "RRPMODE: $RRPMODE"
 	echo "TEMPLATE: $TEMPLATE"
 
 	echo "INFO: end $EXE $FUNCNAME"
@@ -124,7 +123,7 @@ function echo_variables() {
 
 case $1 in
 	-h|--help)
-		echo "usage: $(basename $0) <MEMBER1_0> <MEMBER2_0> [<RINGIF_0> <SECAUTH> <TEMPLATE>]"
+		echo "usage: $(basename $0) <MEMBER1_0> <MEMBER2_0> [<RINGIF_0>  <MCASTPORT> [<SECAUTH> [<RRPMODE> [<TEMPLATE>]]]]"
 		echo "usage: $(basename $0) --default <MEMBERS>"
 		echo "usage: $(basename $0) OPTION"
 		echo
@@ -145,7 +144,9 @@ case $1 in
 		echo "INFO: start $EXE"
 
 		shift;
-		MEMBERS=$1
+		MEMBERS_ARG=$1
+		source $CFG
+		test -z "${MEMBERS_ARG}" || MEMBERS=${MEMBERS_ARG}
 		get_cluster_members
 		get_corosync_vals
 		fix_corosync_conf
@@ -153,11 +154,26 @@ case $1 in
 		echo "INFO: normal_end $EXE"
 	;;
 	-t|--test)
+		shift; shift;
+		MEMBERS_ARG=$1
+		source $CFG
+		test -z "${MEMBERS_ARG}" || MEMBERS=${MEMBERS_ARG}
+		get_cluster_members
+		get_corosync_vals
 		echo_variables
 	;;
 	*)
 		echo "INFO: start $EXE"
 
+		# TODO: fill empty vars from config file
+		test -z "${1}" || MEMBERNAM1_0=${1}
+		test -z "${2}" || MEMBERNAM2_0=${2}
+		RINGIF_0=${3:-"bond0"}
+		MCASTPORT_0=${4:-"5404"}
+		SECAUTH=${5:-"on"}
+		RRPMODE=${6:-"none"}
+		TEMPLATE=${7:-"$COROCONF.tmpl"}
+	
 		get_corosync_vals
 		fix_corosync_conf
 		

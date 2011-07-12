@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 # 
-# Version: 0.01 2011-06-09 20:50
+# Version: 0.02 2011-07-12 16:20
 #
 
 EXE="$0"
@@ -22,7 +22,7 @@ function help(){
 	echo "OPTION:"
 	echo " --help		show help."
 	echo " --version	show version."
-	echo " --show 		show available wathdog modules and initrd line."
+	echo " --show 	show available wathdog modules and initrd line."
 	echo
 }
 
@@ -61,12 +61,13 @@ case $1 in
 	-v|--version)
 		version
 		exit
+	;;
 	-s|--show)
 		echo "configured initrd watchdog module:"
 		grep -v "#.*INITRD_MODULES" $FIL | grep "INITRD_MODULES=.*$MOD"	
 		echo "available watchdog modules:"
 		V=$(uname -a | awk '{print $3}')
-		ls /lib/modules/${V}/kernel/
+		ls /lib/modules/${V}/kernel/drivers/watchdog/
 		exit
 	;;
 	*)

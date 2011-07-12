@@ -2,7 +2,7 @@
 #
 # list_failcounts
 #
-# Version: 1.1 2011-04-14
+# Version: 1.1 2011-07-12
 #
 # (c) 2009-2011 SUSE Linux GmbH, Germany. Author: F.Herschel.
 # GNU Public License. No warranty.
@@ -21,12 +21,11 @@ function help() {
 
 
 function do_list() {
-	#NODES=`cl_status listnodes -n`
 	CRM_RESOURCE=/usr/sbin/crm_resource
 	CRM_FAILCOUNT=/usr/sbin/crm_failcount
 	CRM_NODE=/usr/sbin/crm_node
-	NODES=$( $CRM_NODE -A -l | awk '/member/ { print $2 }')
-	RESOURCES=$($CRM_RESOURCE -l )
+	NODES=$($CRM_NODE -l | awk '/member/ { print $2 }')
+	RESOURCES=$($CRM_RESOURCE -l)
 
 	echo DBG:
 	echo "$RESOURCES"

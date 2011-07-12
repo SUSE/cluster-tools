@@ -5,7 +5,7 @@ make_corosync_conf \- make simple corosync configuration from template
 .\"
 .SH SYNOPSIS
 .P
-.B make_corosync_config \fI<MEMBERNAM1_0> <MEMBERNAM2_0>\fR [ \fI<RINGIF_0> <MCASTPORT_0> <SECAUTH> <TEMPLATE>\fR ]
+.B make_corosync_config \fI<MEMBERNAM1_0> <MEMBERNAM2_0> \fR[\fI<RINGIF_0> <MCASTPORT> \fR[\fI<SECAUTH> \fR[\fI<RRPMODE> \fR[\fI<TEMPLATE> \fR]]]]
 .P
 .B make_corosync_config --default \fI<MEMBERS>\fR
 .P
@@ -56,7 +56,11 @@ Basically a template file looks like any corosync.conf file. Only difference is 
 .TP
 The corresponding template file contains the following section, instead of the real parameter lines:
 .br
+threads:        @@THREADS@@
+.br
 secauth:        @@SECAUTH@@
+.br
+rrp_mode:        @@RRPMODE@@
 .br
 interface {
 .br
@@ -95,6 +99,9 @@ Usage, syntax or execution errors.
 .TP
 /etc/corosync/corosync.conf
 	the corosync configuration to be written.
+.TP
+/etc/corosync/corosync.conf.tmpl
+	the default corosync configuration template.
 .\"
 .SH BUGS
 Only one TOTEM ring is configured. Only Unicast is supported.

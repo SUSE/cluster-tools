@@ -70,7 +70,7 @@ CONF_CALLS="
 '/bin/rpm -qa'
 '/bin/rpm -Va'
 '/bin/cat /proc/mounts'
-'/bin/multipath -ll'
+'/sbin/multipath -ll'
 '/sbin/chkconfig -A'
 '/sbin/route -n'
 '/usr/sbin/iptables -L'

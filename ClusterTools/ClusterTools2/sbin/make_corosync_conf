@@ -123,7 +123,7 @@ function echo_variables() {
 
 case $1 in
 	-h|--help)
-		echo "usage: $(basename $0) <MEMBER1_0> <MEMBER2_0> [<RINGIF_0>  <MCASTPORT> [<SECAUTH> [<RRPMODE> [<TEMPLATE>]]]]"
+		echo "usage: $(basename $0) <MEMBER1_0> <MEMBER2_0> [<RINGIF_0> <MCASTPORT> [<SECAUTH> [<RRPMODE> [<TEMPLATE>]]]]"
 		echo "usage: $(basename $0) --default <MEMBERS>"
 		echo "usage: $(basename $0) OPTION"
 		echo

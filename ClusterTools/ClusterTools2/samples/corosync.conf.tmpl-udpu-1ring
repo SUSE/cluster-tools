@@ -30,10 +30,10 @@ totem {
                 bindnetaddr:	@@BINDNETADDR_0@@   
                 mcastport:     	@@MCASTPORT_0@@ 
                 member {
-                        memberaddr: @@MEMBER1_0@@ 
+                        memberaddr: @@MEMBERADDR1_0@@ 
                 }
                 member {
-                        memberaddr: @@MEMBER2_0@@
+                        memberaddr: @@MEMBERADDR2_0@@
                 }
         }
 }

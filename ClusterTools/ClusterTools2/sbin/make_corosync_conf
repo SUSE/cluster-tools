@@ -78,7 +78,7 @@ function get_cluster_members() {
 function fix_corosync_conf() {
 	echo "INFO: start $EXE $FUNCNAME"
 
-	test -s $COROCONF && cp -a $COROCONF ${COROCONF}.bak || exit 2 
+	cp -af $COROCONF ${COROCONF}.bak 
 	test -s $TEMPLATE || exit 3
 
 	# TODO: 2nd ring
@@ -154,7 +154,8 @@ case $1 in
 		echo "INFO: normal_end $EXE"
 	;;
 	-t|--test)
-		shift; shift;
+		shift;
+		shift;
 		MEMBERS_ARG=$1
 		source $CFG
 		test -z "${MEMBERS_ARG}" || MEMBERS=${MEMBERS_ARG}
@@ -165,7 +166,7 @@ case $1 in
 	*)
 		echo "INFO: start $EXE"
 
-		# TODO: fill empty vars from config file
+		source $CFG
 		test -z "${1}" || MEMBERNAM1_0=${1}
 		test -z "${2}" || MEMBERNAM2_0=${2}
 		RINGIF_0=${3:-"bond0"}

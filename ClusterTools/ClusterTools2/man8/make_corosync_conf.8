@@ -7,7 +7,9 @@ make_corosync_conf \- make simple corosync configuration from template
 .P
 .B make_corosync_config \fI<MEMBERNAM1_0> <MEMBERNAM2_0> \fR[\fI<RINGIF_0> <MCASTPORT> \fR[\fI<SECAUTH> \fR[\fI<RRPMODE> \fR[\fI<TEMPLATE> \fR]]]]
 .P
-.B make_corosync_config --default \fI<MEMBERS>\fR
+.B make_corosync_config --default \fI<MEMBERS_0>\fR
+.P
+.B make_corosync_config --DEFAULT \fI<MEMBERS_0> <MEMBERS_1>\fR
 .P
 .B make_corosync_config \fIOPTION\fR
 .\"
@@ -24,7 +26,10 @@ make_corosync_conf \- make simple corosync configuration from template
 	show version.
 .HP
 \fB --default\fR
-	make default configuration. Only a hostname pattern that matches both cluster nodes is needed as argument. All other options are built-in defaults.
+	make default configuration, one ring. Only a hostname pattern that matches both cluster nodes is needed as argument. All other options are built-in defaults.
+.HP
+\fB --DEFAULT\fR
+	make default configuration, two rings. For each ring, only a hostname pattern that matches both cluster nodes is needed as arguments. All other options are built-in defaults.
 .\"
 .SH TEMPLATE FILE SYNTAX
 Basically a template file looks like any corosync.conf file. Only difference is that certain parameters are replaced by placeholders. Currently the following placeholders are recognized:
@@ -37,20 +42,28 @@ Basically a template file looks like any corosync.conf file. Only difference is 
 .br
 @@BINDNETADDR_0@@
 .br
+@@BINDNETADDR_1@@
+.br
 @@MCASTPORT_0@@
+.br
+@@MCASTPORT_1@@
 .br
 @@MEMBERADDR1_0@@
 .br
+@@MEMBERADDR1_1@@
+.br
 @@MEMBERADDR2_0@@
+.br
+@@MEMBERADDR2_1@@
 .\"
 .SH EXAMPLES
 .br
 .TP
-* Make default configuration for two-node cluster with nodes "nodep" and "nodeq"  , using built-in defaults
+* Make default configuration for two-node cluster with nodes "nodep" and "nodeq", two cluster links (rings), using built-in defaults.
 .br
-# make_corosync_conf --default node[pq]$
+# make_corosync_conf --DEFAULT node[pq]$ node[pq]-r$
 .TP
-* Make configuration for "nodep" and "nodeq", cluster link on bond0, port 5544, using secauth, take other settings from named template file. 
+* Make configuration for "nodep" and "nodeq", one cluster link on bond0, port 5544, using secauth, take other settings from named template file. 
 .br
 # make_corosync_conf nodep nodeq bond0 5544 on /etc/corosync/corosync.conf.tmpl
 .TP
@@ -88,6 +101,15 @@ Successful program execution.
 .br
 .B >0 
 Usage, syntax or execution errors.
+.br
+.B 2
+template has wrong ring number.
+.br
+.B 3
+template not readable.
+.br
+.B 4
+/etc/hosts not readable.
 .\"
 .SH FILES
 .TP
@@ -104,7 +126,7 @@ Usage, syntax or execution errors.
 	the default corosync configuration template.
 .\"
 .SH BUGS
-Only one TOTEM ring is configured. Only Unicast is supported.
+Only Unicast is supported.
 Feedback is welcome, please use the project page at
 .br
 http://ClusterTools.sourceforge.net

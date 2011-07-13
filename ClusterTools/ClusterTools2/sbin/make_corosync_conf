@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 #
-# Version: 0.01 2011-07-12 21:12
+# Version: 0.01 2011-07-13 20:00
 #
 
 EXE="$0"
@@ -24,6 +24,21 @@ function get_corosync_vals() {
 	# TODO: 2nd ring
 	# ip a s | grep "inet .*scope.global"
 	# grep "bindnetaddr:" /etc/corosync/corosync.conf
+		# BINDNETADDR_0=$(ip a s $RINGIF_0 |\
+                # awk '$1=="inet" && $7=="'$RINGIF_0'" {
+		# $2: ipaddr/netmask, f.e. 10.5.155.31/16
+		# $4: brdcastaddr, f.e. 10.5.255.255
+		# BINDNETADDR: ... f.e. 10.5.0.0
+		# TODO correct calculation
+		# for now: 	/24 -> x.x.x.0
+		#		/16 -> x.x.0.0
+		#		/8  -> x.0.0.0
+		#netaddr=$2
+		#n=split(netaddr,netfield,"/")
+		#ipaddr=netfield[1]
+		#netmask=netfield[2]
+		#n=split(netaddr,netfield,".")
+		#...
 
 	test -z "${MEMBERADDR1_0}" &&\
 		MEMBERADDR1_0=$(host ${MEMBERNAM1_0} | awk '{print $4}')
@@ -38,19 +53,24 @@ function get_corosync_vals() {
 	test -z "${BINDNETADDR_0}" &&
 		BINDNETADDR_0=$(ip a s $RINGIF_0 |\
 		awk '$1=="inet" && $7=="'$RINGIF_0'" {
-		# $2: ipaddr/netmask, f.e. 10.5.155.31/16
-		# $4: brdcastaddr, f.e. 10.5.255.255
-		# BINDNETADDR: ... f.e. 10.5.0.0
-		# TODO correct calculation
-		# for now: 	/24 -> x.x.x.0
-		#		/16 -> x.x.0.0
-		#		/8  -> x.0.0.0
-		#netaddr=$2
-		#n=split(netaddr,netfield,"/")
-		#ipaddr=netfield[1]
-		#netmask=netfield[2]
-		#n=split(netaddr,netfield,".")
-
+		netaddr=$4
+		n=gsub("255","0",netaddr)	
+		print netaddr
+		}')
+	
+	test -z "${MEMBERADDR1_1}" &&\
+		MEMBERADDR1_1=$(host ${MEMBERNAM1_1} | awk '{print $4}')
+	test -z "${MEMBERADDR2_1}" &&\
+		MEMBERADDR2_1=$(host ${MEMBERNAM2_1} | awk '{print $4}')
+	test -z "${RINGIF_1}" &&\
+		RINGIF_1=$(ip -o a s | awk '\
+		($2=="bond1"&&$NF=="bond1") ||\
+		($2=="eth1"&&$NF=="eth1") ||\
+		($2=="br1"&&$NF=="br1") \
+		{print $2; exit}')
+	test -z "${BINDNETADDR_1}" &&
+		BINDNETADDR_1=$(ip a s $RINGIF_1 |\
+		awk '$1=="inet" && $7=="'$RINGIF_1'" {
 		netaddr=$4
 		n=gsub("255","0",netaddr)	
 		print netaddr
@@ -66,9 +86,15 @@ function get_cluster_members() {
 	echo "INFO: start $EXE $FUNCNAME"
 
 	test -s /etc/hosts || exit 4	
-	awk '$3~/'"$MEMBERS"'/ {print $1}' /etc/hosts | sort -u >$TMP
+	awk '$3~/'"$MEMBERS_0"'/ {print $1}' /etc/hosts | sort -u >$TMP
 	MEMBERADDR1_0=$(head -1 $TMP)
 	MEMBERADDR2_0=$(tail -1 $TMP)
+	
+	test -n "${MEMBERS_1}" && test $NUMRING -eq 2 &&\
+	(	awk '$3~/'"$MEMBERS_1"'/ {print $1}' /etc/hosts | sort -u >$TMP
+		MEMBERADDR1_1=$(head -1 $TMP)
+		MEMBERADDR2_1=$(tail -1 $TMP)
+	)
 	rm -f $TMP
 
 	echo "INFO: end $EXE $FUNCNAME" 
@@ -78,10 +104,9 @@ function get_cluster_members() {
 function fix_corosync_conf() {
 	echo "INFO: start $EXE $FUNCNAME"
 
-	cp -af $COROCONF ${COROCONF}.bak 
+	cp -af $COROCONF ${COROCONF}.bak 2>/dev/null 
 	test -s $TEMPLATE || exit 3
 
-	# TODO: 2nd ring
 	awk -F":" ' $2!~/@@[A-Z].*@@/ {print}
 	$1~/rrp_mode/ && $2~/@@RRPMODE@@/ { print $1":","'$RRPMODE'"}
 	$1~/threads/ && $2~/@@THREADS@@/ { print $1":","'$THREADS'"}
@@ -90,9 +115,21 @@ function fix_corosync_conf() {
 	$1~/mcastport/ && $2~/@@MCASTPORT_0@@/ { print $1":","'$MCASTPORT_0'"}
 	$1~/memberaddr/ && $2~/@@MEMBERADDR1_0@@/ { print $1":","'$MEMBERADDR1_0'"}
 	$1~/memberaddr/ && $2~/@@MEMBERADDR2_0@@/ { print $1":","'$MEMBERADDR2_0'"}
+	$1~/bindnetaddr/ && $2~/@@BINDNETADDR_1@@/ { print $1":","'$BINDNETADDR_1'"}
+	$1~/mcastport/ && $2~/@@MCASTPORT_1@@/ { print $1":","'$MCASTPORT_1'"}
+	$1~/memberaddr/ && $2~/@@MEMBERADDR1_1@@/ { print $1":","'$MEMBERADDR1_1'"}
+	$1~/memberaddr/ && $2~/@@MEMBERADDR2_1@@/ { print $1":","'$MEMBERADDR2_1'"}
 	' $TEMPLATE >$COROCONF
 
 	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+function check_template() {
+	test -s $TEMPLATE || exit 3
+	NUMTMPL=$(grep -v "#" $TEMPLATE |\
+		 grep -c "bindnetaddr:.*@@BINDNETADDR_.@@")
+	test $NUMRING -eq $NUMTMPL || exit 2
 }
 
 
@@ -110,6 +147,11 @@ function echo_variables() {
 	echo "MCASTPORT_0: $MCASTPORT_0"
 	echo "MEMBERADDR1_0: $MEMBERADDR1_0"
 	echo "MEMBERADDR2_0: $MEMBERADDR2_0"
+	echo "RINGIF_1: $RINGIF_1"
+	echo "BINDNETADDR_1: $BINDNETADDR_1"
+	echo "MCASTPORT_1: $MCASTPORT_1"
+	echo "MEMBERADDR1_1: $MEMBERADDR1_1"
+	echo "MEMBERADDR2_1: $MEMBERADDR2_1"
 	echo "THREADS: $THREADS"
 	echo "SECAUTH: $SECAUTH"
 	echo "RRPMODE: $RRPMODE"
@@ -123,8 +165,9 @@ function echo_variables() {
 
 case $1 in
 	-h|--help)
-		echo "usage: $(basename $0) <MEMBER1_0> <MEMBER2_0> [<RINGIF_0> <MCASTPORT> [<SECAUTH> [<RRPMODE> [<TEMPLATE>]]]]"
-		echo "usage: $(basename $0) --default <MEMBERS>"
+		echo "usage: $(basename $0) <MEMBERNAM1_0> <MEMBERNAM2_0> [<RINGIF_0> <MCASTPORT_0> [<SECAUTH> [<RRPMODE> [<TEMPLATE>]]]]"
+		echo "usage: $(basename $0) --default <MEMBERS_0>"
+		echo "usage: $(basename $0) --DEFAULT <MEMBERS_0> <MEMBERS_1>"
 		echo "usage: $(basename $0) OPTION"
 		echo
 		echo "OPTION:"
@@ -144,9 +187,30 @@ case $1 in
 		echo "INFO: start $EXE"
 
 		shift;
-		MEMBERS_ARG=$1
+		NUMRING=1
+		check_template
+
+		MEMBARG_0=$1
 		source $CFG
-		test -z "${MEMBERS_ARG}" || MEMBERS=${MEMBERS_ARG}
+		test -z "${MEMBARG_0}" || MEMBERS_0=${MEMBARG_0}
+		get_cluster_members
+		get_corosync_vals
+		fix_corosync_conf
+
+		echo "INFO: normal_end $EXE"
+	;;
+	-D|DEFAULT)
+		echo "INFO: start $EXE"
+
+		shift;
+		NUMRING=2
+		check_template
+ 
+		MEMBARG_0=$1
+		MEMBARG_1=$2
+		source $CFG
+		test -z "${MEMBARG_0}" || MEMBERS_0=${MEMBARG_0}
+		test -z "${MEMBARG_1}" || MEMBERS_1=${MEMBARG_1}
 		get_cluster_members
 		get_corosync_vals
 		fix_corosync_conf
@@ -156,9 +220,12 @@ case $1 in
 	-t|--test)
 		shift;
 		shift;
-		MEMBERS_ARG=$1
+		NUMRING=2
+		MEMBARG_0=$1
+		MEMBARG_1=$2
 		source $CFG
-		test -z "${MEMBERS_ARG}" || MEMBERS=${MEMBERS_ARG}
+		test -z "${MEMBARG_0}" || MEMBERS_0=${MEMBARG_0}
+		test -z "${MEMBARG_1}" || MEMBERS_1=${MEMBARG_1}
 		get_cluster_members
 		get_corosync_vals
 		echo_variables
@@ -166,6 +233,7 @@ case $1 in
 	*)
 		echo "INFO: start $EXE"
 
+		NUMRING=1
 		source $CFG
 		test -z "${1}" || MEMBERNAM1_0=${1}
 		test -z "${2}" || MEMBERNAM2_0=${2}

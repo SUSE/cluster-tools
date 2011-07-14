@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 #
-# Version: 0.01 2011-07-13 20:00
+# Version: 0.02 2011-07-14 09:30
 #
 
 EXE="$0"
@@ -16,6 +16,8 @@ test -s $CFG && source $CFG
 
 TMP="/tmp/cltl.$RANDOM"
 COROCONF=${COROCONF:-"/etc/corosync/corosync.conf"}
+SMPLTMPL1="/usr/share/ClusterTools2/samples/corosync.conf.tmpl-udpu-1ring"
+SMPLTMPL2="/usr/share/ClusterTools2/samples/corosync.conf.tmpl-udpu-2ring"
 
 
 function get_corosync_vals() {
@@ -91,10 +93,10 @@ function get_cluster_members() {
 	MEMBERADDR2_0=$(tail -1 $TMP)
 	
 	test -n "${MEMBERS_1}" && test $NUMRING -eq 2 &&\
-	(	awk '$3~/'"$MEMBERS_1"'/ {print $1}' /etc/hosts | sort -u >$TMP
+		( awk '$3~/'"$MEMBERS_1"'/ {print $1}' /etc/hosts | sort -u >$TMP
 		MEMBERADDR1_1=$(head -1 $TMP)
 		MEMBERADDR2_1=$(tail -1 $TMP)
-	)
+		)
 	rm -f $TMP
 
 	echo "INFO: end $EXE $FUNCNAME" 
@@ -126,10 +128,20 @@ function fix_corosync_conf() {
 
 
 function check_template() {
+	echo "INFO: start $EXE $FUNCNAME"
+
+	# TODO if no template exists, try sample
+	#test -s $TEMPLATE || TEMPLATE="${1}"
+	#or
+	#test -s $TEMPLATE || ln -s $1 $TEMPLATE
 	test -s $TEMPLATE || exit 3
+
 	NUMTMPL=$(grep -v "#" $TEMPLATE |\
 		 grep -c "bindnetaddr:.*@@BINDNETADDR_.@@")
 	test $NUMRING -eq $NUMTMPL || exit 2
+	# TODO check template for mandatory lines
+
+	echo "INFO: end $EXE $FUNCNAME"
 }
 
 
@@ -188,7 +200,7 @@ case $1 in
 
 		shift;
 		NUMRING=1
-		check_template
+		check_template $SMPLTPML1
 
 		MEMBARG_0=$1
 		source $CFG
@@ -204,7 +216,7 @@ case $1 in
 
 		shift;
 		NUMRING=2
-		check_template
+		check_template $SMPLTPML2
  
 		MEMBARG_0=$1
 		MEMBARG_1=$2

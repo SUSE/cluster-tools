@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 #
-# Version: 0.02 2011-07-14 09:30
+# Version: 0.02 2011-07-14 19:30
 #
 
 EXE="$0"
@@ -87,16 +87,20 @@ function get_corosync_vals() {
 function get_cluster_members() {
 	echo "INFO: start $EXE $FUNCNAME"
 
-	test -s /etc/hosts || exit 4	
+	test -s /etc/hosts || exit 24	
 	awk '$3~/'"$MEMBERS_0"'/ {print $1}' /etc/hosts | sort -u >$TMP
 	MEMBERADDR1_0=$(head -1 $TMP)
 	MEMBERADDR2_0=$(tail -1 $TMP)
-	
+	test -z "$MEMBERADDR1_0" && exit 25
+	test -z "$MEMBERADDR2_0" && exit 25
+
 	test -n "${MEMBERS_1}" && test $NUMRING -eq 2 &&\
-		( awk '$3~/'"$MEMBERS_1"'/ {print $1}' /etc/hosts | sort -u >$TMP
-		MEMBERADDR1_1=$(head -1 $TMP)
-		MEMBERADDR2_1=$(tail -1 $TMP)
-		)
+	( awk '$3~/'"$MEMBERS_1"'/ {print $1}' /etc/hosts | sort -u >$TMP
+	MEMBERADDR1_1=$(head -1 $TMP)
+	MEMBERADDR2_1=$(tail -1 $TMP)
+	test -z "$MEMBERADDR1_1" && exit 25
+	test -z "$MEMBERADDR2_1" && exit 25
+	)
 	rm -f $TMP
 
 	echo "INFO: end $EXE $FUNCNAME" 
@@ -107,7 +111,7 @@ function fix_corosync_conf() {
 	echo "INFO: start $EXE $FUNCNAME"
 
 	cp -af $COROCONF ${COROCONF}.bak 2>/dev/null 
-	test -s $TEMPLATE || exit 3
+	test -s $TEMPLATE || exit 11
 
 	awk -F":" ' $2!~/@@[A-Z].*@@/ {print}
 	$1~/rrp_mode/ && $2~/@@RRPMODE@@/ { print $1":","'$RRPMODE'"}
@@ -133,13 +137,41 @@ function check_template() {
 	# TODO if no template exists, try sample
 	#test -s $TEMPLATE || TEMPLATE="${1}"
 	#or
-	#test -s $TEMPLATE || ln -s $1 $TEMPLATE
-	test -s $TEMPLATE || exit 3
+	test -s $TEMPLATE || ln -s ${1} $TEMPLATE
+	test -s $TEMPLATE || exit 11
 
-	NUMTMPL=$(grep -v "#" $TEMPLATE |\
-		 grep -c "bindnetaddr:.*@@BINDNETADDR_.@@")
-	test $NUMRING -eq $NUMTMPL || exit 2
-	# TODO check template for mandatory lines
+	# TODO grep -v "^<blanks>#"
+	grep -v "#" $TEMPLATE >$TMP
+
+	# TODO list and loop
+	PTRN='
+'^aisexec.{'
+'^service.{'
+'^totem.{'
+'^logging.{'
+'^amf.{'
+'transport:.*udpu'
+'
+# TODO use_logd ?
+
+	for p in ${PTRN}; do
+		grep ${p} $TMP >/dev/null 2>&1 || exit 120
+	done
+
+	NUMTMPL=$(grep -c "member.{" $TMP)
+		N2=$[ 2 * $NUMRING ]
+		test $N2 -eq $NUMTMPL || exit 121
+	NUMTMPL=$(grep -c "ringnumber:.*[01]" $TMP)
+		test $NUMRING -eq $NUMTMPL || exit 122
+	NUMTMPL=$(grep -c "bindnetaddr:.*@@BINDNETADDR_.@@" $TMP)
+		test $NUMRING -eq $NUMTMPL || exit 123
+	NUMTMPL=$(grep -c "mcastport:.*@@MCASTPORT_.@@" $TMP)
+		test $NUMRING -eq $NUMTMPL || exit 124
+	NUMTMPL=$(grep -c "memberaddr:.*@@MEMBERADDR1_.@@" $TMP)
+		test $NUMRING -eq $NUMTMPL || exit 125
+	NUMTMPL=$(grep -c "memberaddr:.*@@MEMBERADDR2_.@@" $TMP)
+		test $NUMRING -eq $NUMTMPL || exit 126
+	rm -f $TMP
 
 	echo "INFO: end $EXE $FUNCNAME"
 }
@@ -200,7 +232,7 @@ case $1 in
 
 		shift;
 		NUMRING=1
-		check_template $SMPLTPML1
+		check_template $SMPLTMPL1
 
 		MEMBARG_0=$1
 		source $CFG
@@ -216,7 +248,7 @@ case $1 in
 
 		shift;
 		NUMRING=2
-		check_template $SMPLTPML2
+		check_template $SMPLTMPL2
  
 		MEMBARG_0=$1
 		MEMBARG_1=$2

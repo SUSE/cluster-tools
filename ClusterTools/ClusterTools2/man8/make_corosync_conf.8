@@ -26,10 +26,10 @@ make_corosync_conf \- make simple corosync configuration from template
 	show version.
 .HP
 \fB --default\fR
-	make default configuration, one ring. Only a hostname pattern that matches both cluster nodes is needed as argument. All other options are built-in defaults.
+	make default configuration, one ring. Only a hostname pattern that matches both cluster nodes is needed as argument. All other options are built-in defaults. Since name servers do not resolve wildcards, only local name resolution is used.
 .HP
 \fB --DEFAULT\fR
-	make default configuration, two rings. For each ring, only a hostname pattern that matches both cluster nodes is needed as arguments. All other options are built-in defaults.
+	make default configuration, two rings. For each ring, only a hostname pattern that matches both cluster nodes is needed as arguments. All other options are built-in defaults. Since DNS servers do not resolve wildcards, only local name resolution is used.
 .\"
 .SH TEMPLATE FILE SYNTAX
 Basically a template file looks like any corosync.conf file. Only difference is that certain parameters are replaced by placeholders. Currently the following placeholders are recognized:
@@ -102,14 +102,17 @@ Successful program execution.
 .B >0 
 Usage, syntax or execution errors.
 .br
-.B 2
-template has wrong ring number.
-.br
-.B 3
+.B 11
 template not readable.
 .br
-.B 4
+.B 12x
+template has wrong ring number, missing keyword, or other error.
+.br
+.B 24
 /etc/hosts not readable.
+.br
+.B 25
+member address not found.
 .\"
 .SH FILES
 .TP
@@ -124,6 +127,9 @@ template not readable.
 .TP
 /etc/corosync/corosync.conf.tmpl
 	the default corosync configuration template.
+.TP
+/etc/hosts
+	the local hostname resolution table.
 .\"
 .SH BUGS
 Only Unicast is supported.

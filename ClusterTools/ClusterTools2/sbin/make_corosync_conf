@@ -56,7 +56,7 @@ function get_corosync_vals() {
 		BINDNETADDR_0=$(ip a s $RINGIF_0 |\
 		awk '$1=="inet" && $7=="'$RINGIF_0'" {
 		netaddr=$4
-		n=gsub("255","0",netaddr)	
+		n=gsub("255","0",netaddr)
 		print netaddr
 		}')
 	
@@ -89,18 +89,19 @@ function get_cluster_members() {
 
 	test -s /etc/hosts || exit 24	
 	awk '$3~/'"$MEMBERS_0"'/ {print $1}' /etc/hosts | sort -u >$TMP
-	MEMBERADDR1_0=$(head -1 $TMP)
-	MEMBERADDR2_0=$(tail -1 $TMP)
-	test -z "$MEMBERADDR1_0" && exit 25
-	test -z "$MEMBERADDR2_0" && exit 25
+		MEMBERADDR1_0=$(head -1 $TMP)
+		MEMBERADDR2_0=$(tail -1 $TMP)
+		test -z "$MEMBERADDR1_0" && exit 25
+		test -z "$MEMBERADDR2_0" && exit 25
 
-	test -n "${MEMBERS_1}" && test $NUMRING -eq 2 &&\
-	( awk '$3~/'"$MEMBERS_1"'/ {print $1}' /etc/hosts | sort -u >$TMP
-	MEMBERADDR1_1=$(head -1 $TMP)
-	MEMBERADDR2_1=$(tail -1 $TMP)
-	test -z "$MEMBERADDR1_1" && exit 25
-	test -z "$MEMBERADDR2_1" && exit 25
-	)
+	test -n "${MEMBERS_1}" && test $NUMRING -eq 2 && {
+		awk '$3~/'"$MEMBERS_1"'/ {print $1}' /etc/hosts | sort -u >$TMP
+		MEMBERADDR1_1=$(head -1 $TMP)
+		MEMBERADDR2_1=$(tail -1 $TMP)
+
+		test -z "$MEMBERADDR1_1" && exit 25
+		test -z "$MEMBERADDR2_1" && exit 25
+	}
 	rm -f $TMP
 
 	echo "INFO: end $EXE $FUNCNAME" 
@@ -270,6 +271,7 @@ case $1 in
 		source $CFG
 		test -z "${MEMBARG_0}" || MEMBERS_0=${MEMBARG_0}
 		test -z "${MEMBARG_1}" || MEMBERS_1=${MEMBARG_1}
+
 		get_cluster_members
 		get_corosync_vals
 		echo_variables

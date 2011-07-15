@@ -18,6 +18,7 @@ TMP="/tmp/cltl.$RANDOM"
 ISCSI_CFG="/etc/iscsi/iscsid.conf"
 test -z ${INITIATOR_CFG} && INITIATOR_CFG="/etc/iscsi/initiatorname.iscsi"
 test -z ${INI_NETW} && INI_NETW=$(hostname -d | perl -e 'chomp($ar = <STDIN>); print join(".", reverse(split(/\./, $ar))), "\n";')
+# f.e InitiatorName=iqn.1996-04.de.suse:01:1d635b8070c2	
 INITIATORNAME=iqn.$(date +%Y-%m).${INI_NETW}:$(hostname):0
 
 # TODO: fill empty vars from config file
@@ -28,7 +29,6 @@ function fix_iscsid_conf() {
  
   MOD="automatic"
   CFIL=$ISCSI_CFG
-  OFIL=$CFIL
   BAK=${CFIL}.bak
 
   grep "^node.startup.*$MOD" $CFIL >/dev/null 
@@ -37,7 +37,7 @@ function fix_iscsid_conf() {
   if [ $RC -gt 0 ]; then
   	cp $CFIL $BAK || exit $?
   	awk '	$1=="node.startup" {print $1,$2,"'"$MOD"'"}
-		$1!="node.startup" {print}' $BAK >$OFIL
+		$1!="node.startup" {print}' $BAK >$CFIL
   else
 	echo "WARN: found \"${MOD}\" already in ${CFIL}"
   fi 
@@ -49,19 +49,39 @@ function fix_iscsid_conf() {
 function fix_initiatorname() {
   echo "INFO: start $EXE $FUNCNAME"
 
-  INI_UUID=$HOSTNAME
-  #INI_UUID=$(uuidgen -r | awk -F"-" '{print $5}')
-  INI_DATE=$(date +%Y-%m)
-
   CFIL=$INITIATOR_CFG
-  OFIL=$CFIL
   BAK=${CFIL}.bak
 
-  cp $CFIL $BAK
-  awk -F"=" '	$1=="InitiatorName" {print $1"=""'"$INITIATORNAME"'"}
-        	$1!="InitiatorName" {print}' $BAK >$OFIL
+  echo CFIL: $CFIL
+  cp $CFIL $BAK >/dev/null
+  grep "^InitiatorName=" $CFIL >/dev/null &&\
+	echo "WARN: found InitiatorName already in ${CFIL}"
+
+  awk -F"=" '	$1!="InitiatorName" {print "InitiatorName=""'"$INITIATORNAME"'"}
+        	$1=="InitiatorName" {print}' $BAK >$CFIL
 
   echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+function make_account(){
+	echo "INFO: start $EXE $FUNCNAME"
+
+	# TODO portal var
+	ISCSI_PRT="10.4.17.2"
+	ISCSI_CLSTR="hpsgeval1-hpsgeval2"
+	ISCSI_TGT=$(iscsiadm --mode discovery --type sendtargets --portal ${ISCSI_PRT} |\
+		grep ".$ISCSI_CLSTR:" | awk -F" " '{print $2}' )
+	ISCSI_USR="$ISCSI_CLSTR"
+	ISCSI_PWD="$ISCSI_CLSTR"
+	# iscsiadm --mode discovery --type sendtargets --portal ${ISCSI_PRT} 
+	echo "iscsiadm -m node -T ${ISCSI_TGT} --op update -n node.conn[0].startup -v automatic"
+	echo "iscsiadm -m node -T ${ISCSI_TGT} --op update \
+		-n node.session.auth.username -v ${ISCSI_USR}"
+	echo "iscsiadm -m node -T ${ISCSI_TGT} --op update \
+		-n node.session.auth.password -v ${ISCSI_PWD}"
+	
+	echo "INFO: end $EXE $FUNCNAME"
 }
 
 
@@ -86,6 +106,7 @@ case $1 in
 
 		fix_iscsid_conf
 		fix_initiatorname
+		make_account
 
 		echo "INFO: normal_end $EXE"
 	;;

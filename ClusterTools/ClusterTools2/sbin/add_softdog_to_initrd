@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 # 
-# Version: 0.02 2011-07-12 16:20
+# Version: 0.02 2011-07-16 14:20
 #
 
 EXE="$0"
@@ -46,7 +46,23 @@ function add_mod(){
 		mkinitrd
 	else
         	echo "WARN: found \"${MOD}\" already in ${FIL}"
-	fi 
+	fi
+
+	# TODO write blacklist
+	echo blacklist hpwdt >>/etc/modprobe.d/hae_blacklist
+	echo blacklist iTCO_wdt >>/etc/modprobe.d/hae_blacklist
+	echo blacklist ibmasr >>/etc/modprobe.d/hae_blacklist
+
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+function load_mod() {
+	echo "INFO: start $EXE $FUNCNAME"
+		# V=$(uname -a | awk '{print $3}')
+		# TODO MODS=$(/lib/modules/${V}/kernel/drivers/watchdog/ | )
+		rmmod hpwdt
+		modprobe $MOD
 	echo "INFO: end $EXE $FUNCNAME"
 }
 
@@ -63,6 +79,9 @@ case $1 in
 		exit
 	;;
 	-s|--show)
+		# TODO
+		# echo "loaded watchdog module:"
+		# lsmod list from dirtectory
 		echo "configured initrd watchdog module:"
 		grep -v "#.*INITRD_MODULES" $FIL | grep "INITRD_MODULES=.*$MOD"	
 		echo "available watchdog modules:"
@@ -73,7 +92,7 @@ case $1 in
 	*)
 		echo "INFO: start $EXE"
 		add_mod
-		modprobe $MOD
+		load_mod	
 		echo "INFO: normal_end $EXE"
 	;;
 esac

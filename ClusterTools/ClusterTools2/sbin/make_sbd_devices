@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: L.Pinne
 #
-# Version: 0.01 2011-07-12 20:20
+# Version: 0.01 2011-07-16 14:20
 #
 
 EXE="$0"
@@ -29,7 +29,34 @@ function help(){
 	echo " --help		show help."
 	echo " --version	show version."
 	echo " --init		initialise SBD devices."
+	echo " --guess		guess SBD config file, write it."
 	echo
+}
+
+
+function guess_sysconfig_sbd() {
+	echo "INFO: start $EXE $FUNCNAME"
+	
+	grep "^SBD_DEVICE=/dev/.*;/dev/.*;/dev/" $SBD_CONF 2>/dev/null &&\
+	echo "WARN: $SBD_CONF already exists" && return 2
+	
+	cp -a $SBD_CONF $SBD_CONF.bak 2>/dev/null
+
+	echo "# $SBD_CONF" > $SBD_CONF
+	echo -n "SBD_DEVICE=\"" >>$SBD_CONF
+
+	# TODO do this better 
+	SBDEV=$(multipath -ll | grep -B1 "size=..M" |\
+		awk '$2~/dm-/ {print "/dev/disk/by-id/scsi-"$1";"}' |\
+		head -3 | tr -d "\n" | sed s/\;$// ) 
+
+	echo -n $SBDEV >>$SBD_CONF
+	echo "\"" >>$SBD_CONF
+	echo "# watchdog support" >>$SBD_CONF
+	echo "SBD_OPTS=\"-W -1 30\"" >>$SBD_CONF
+	echo "#" >>$SBD_CONF
+
+	echo "INFO: end $EXE $FUNCNAME"
 }
 
 
@@ -68,6 +95,13 @@ case $1 in
 	;;
 	-d|--dump)
 		dump_sbd_devices
+	;;
+	-g|--guess)
+		echo "INFO: start $EXE"
+
+		guess_sysconfig_sbd
+
+		echo "INFO: normal_end $EXE"
 	;;
 	-i|--init)
 		echo "INFO: start $EXE"

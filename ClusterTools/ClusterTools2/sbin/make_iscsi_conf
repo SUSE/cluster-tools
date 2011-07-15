@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, H.Bertram, L.Pinne.
 #
-# Version: 0.01 2011-06-10-14:20
+# Version: 0.02 2011-06-25
 #
 
 EXE="$0"
@@ -17,8 +17,8 @@ TMP="/tmp/cltl.$RANDOM"
 
 ISCSI_CFG="/etc/iscsi/iscsid.conf"
 test -z ${INITIATOR_CFG} && INITIATOR_CFG="/etc/iscsi/initiatorname.iscsi"
-test -z ${INI_NETW} && INI_NETW=$(hostname -d)
-INITIATORNAME=iqn.${INI_DATE}.${INI_NETW}":01:"${INI_UUID}
+test -z ${INI_NETW} && INI_NETW=$(hostname -d | perl -e 'chomp($ar = <STDIN>); print join(".", reverse(split(/\./, $ar))), "\n";')
+INITIATORNAME=iqn.$(date +%Y-%m).${INI_NETW}:$(hostname):0
 
 # TODO: fill empty vars from config file
 

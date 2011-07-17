@@ -42,7 +42,12 @@ function guess_sysconfig_sbd() {
 	
 	cp -a $SBD_CONF $SBD_CONF.bak 2>/dev/null
 
-	echo "# $SBD_CONF" > $SBD_CONF
+	echo "# $SBD_CONF" >$SBD_CONF
+	echo -n "# check SBD_DEVICE for correct pathes and order" >>$SBD_CONF
+
+	# TODO use devices from defaults
+	#test -z "SBD_DEVS" 
+
 	echo -n "SBD_DEVICE=\"" >>$SBD_CONF
 
 	# TODO do this better 
@@ -52,7 +57,9 @@ function guess_sysconfig_sbd() {
 
 	echo -n $SBDEV >>$SBD_CONF
 	echo "\"" >>$SBD_CONF
+
 	echo "# watchdog support" >>$SBD_CONF
+	# TODO use start opts from defaults	
 	echo "SBD_OPTS=\"-W -1 30\"" >>$SBD_CONF
 	echo "#" >>$SBD_CONF
 

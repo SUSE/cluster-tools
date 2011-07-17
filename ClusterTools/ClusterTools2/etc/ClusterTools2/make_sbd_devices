@@ -1,6 +1,11 @@
 # /etc/ClusterTools2/make_corosync_conf
 # For SLES11.
 #
+# TODO create opts?
 SBD_OPTS="-4 130 -1 30"
+# TODO start opts:
+# SBD_OPTS= ?
+#SBD_DEVS=""
+SBD_DEVS="$(multipath -ll | )"
 SBD_CONF="/etc/sysconfig/sbd"
 #

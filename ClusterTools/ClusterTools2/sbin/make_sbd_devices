@@ -8,7 +8,6 @@
 #
 # Version: 0.02 2011-07-16 17:20
 #
-
 #set -x
 
 EXE="$0"
@@ -112,8 +111,8 @@ case $1 in
 	;;
 	-i|--init)
 		echo "INFO: start $EXE"
-		test -z "${2}" && SBD_INIT_OPTS="${2}"
-		test -z "${3}" && SBD_CONF="${3}"
+		test -z "${2}" || SBD_INIT_OPTS="${2}"
+		test -z "${3}" || SBD_CONF="${3}"
 		test -z "${SBD_INIT_OPTS}" &&\
 			SBD_INIT_OPTS="-4 130 -1 30"
 		test -z "${SBD_CONF}" &&\

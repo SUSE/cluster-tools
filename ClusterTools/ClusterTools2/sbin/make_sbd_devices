@@ -17,15 +17,15 @@ test -s $CFG && source $CFG
 
 
 function help(){
-	echo "usage: $(basename $0) [OPTION]"
-	echo "usage: $(basename $0) --init [SBD_OPTS [SBD_CONF]]"
+	echo "usage: $(basename $0) OPTION"
+	echo "usage: $(basename $0) --init [<SBD_OPTS> [<SBD_CONF>]]"
 	echo
 	echo "OPTION:"
 	echo " --dump		show content of SBD devices."
+	echo " --guess	guess SBD config file."
 	echo " --help		show help."
 	echo " --version	show version."
 	echo " --init		initialise SBD devices."
-	echo " --guess	guess SBD config file."
 	echo
 }
 

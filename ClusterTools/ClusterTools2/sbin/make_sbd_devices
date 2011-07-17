@@ -6,18 +6,15 @@
 # GNU Public License. No warranty.
 # Author: L.Pinne
 #
-# Version: 0.01 2011-07-16 14:20
+# Version: 0.02 2011-07-16 17:20
 #
 
-EXE="$0"
+#set -x
 
+EXE="$0"
+TMP="/tmp/cltl.$RANDOM"
 CFG="/etc/ClusterTools2/make_sbd_devices"
 test -s $CFG && source $CFG
-
-SBD_OPTS=${2:-"-4 130 -1 30"}
-SBD_CONF=${3:-"/etc/sysconfig/sbd"}
-
-TMP="/tmp/cltl.$RANDOM"
 
 
 function help(){
@@ -29,7 +26,7 @@ function help(){
 	echo " --help		show help."
 	echo " --version	show version."
 	echo " --init		initialise SBD devices."
-	echo " --guess		guess SBD config file, write it."
+	echo " --guess	guess SBD config file."
 	echo
 }
 
@@ -37,31 +34,37 @@ function help(){
 function guess_sysconfig_sbd() {
 	echo "INFO: start $EXE $FUNCNAME"
 	
-	grep "^SBD_DEVICE=/dev/.*;/dev/.*;/dev/" $SBD_CONF 2>/dev/null &&\
+	CFI=${SBD_CONF}
+	CFO=${SBD_CONF}
+	#CFO="/dev/stdout"
+
+	grep "^SBD_DEVICE=\"/dev/.*\"$" $CFI >/dev/null 2>&1 &&\
+	# TODO use correct number of devives
+	# grep "^SBD_DEVICE=\"/dev/.*;/dev/.*;/dev/.*\"$" $CFI >/dev/null 2>&1 &&\
 	echo "WARN: $SBD_CONF already exists" && return 2
-	
-	cp -a $SBD_CONF $SBD_CONF.bak 2>/dev/null
 
-	echo "# $SBD_CONF" >$SBD_CONF
-	echo -n "# check SBD_DEVICE for correct pathes and order" >>$SBD_CONF
+	cp -a $CFI $CFI.bak 2>/dev/null
 
-	# TODO use devices from defaults
-	#test -z "SBD_DEVS" 
-
-	echo -n "SBD_DEVICE=\"" >>$SBD_CONF
-
-	# TODO do this better 
-	SBDEV=$(multipath -ll | grep -B1 "size=..M" |\
+	test -z "${SBD_DEVICE}" || SBDEV=${SBD_DEVICE}
+	test -z "$SBDEV" || test -s $SBD_GUESS || exit 6
+	SBDEV=$( exec $SBD_GUESS 2>/dev/null )
+	test -z "$SBDEV" &&\
+	{	# TODO do this better
+		SBDEV=$( multipath -ll | grep -B1 "size=..M" |\
 		awk '$2~/dm-/ {print "/dev/disk/by-id/scsi-"$1";"}' |\
-		head -3 | tr -d "\n" | sed s/\;$// ) 
-
-	echo -n $SBDEV >>$SBD_CONF
-	echo "\"" >>$SBD_CONF
-
-	echo "# watchdog support" >>$SBD_CONF
-	# TODO use start opts from defaults	
-	echo "SBD_OPTS=\"-W -1 30\"" >>$SBD_CONF
-	echo "#" >>$SBD_CONF
+		head -3 | tr -d "\n" | sed s/\;$// )
+	}
+	test -z "${SBD_OPTS}" || SBDOPT=${SBD_OPTS}
+	test -z "${SBDOPT}" || SBDOPT="-W -1 30"
+	{ 
+	echo "# $CFI"
+	echo "# check SBD_DEVICE for correct pathes and order"
+	echo  "SBD_DEVICE=\"${SBDEV}\""
+	echo "# watchdog support"
+	# TODO use start opts from defaults
+	echo "SBD_OPTS=\"${SBDOPT}\""
+	echo "#"
+	} >$CFO
 
 	echo "INFO: end $EXE $FUNCNAME"
 }
@@ -69,22 +72,21 @@ function guess_sysconfig_sbd() {
 
 function make_sbd_devices() {
 	echo "INFO: start $EXE $FUNCNAME"
-	
-	FIL=${SBD_CONF}
-	test -s $FIL || exit 4
-	grep "^SBD_DEVICE=" $FIL >/dev/null || exit 5
-
-	awk -F"=" '$1=="SBD_DEVICE" {print $2}' $FIL |tr -d "\""|tr ";" "\n"|\
+	CFI=${SBD_CONF}
+	test -s $CFI || exit 4
+	grep "^SBD_DEVICE=" $CFI >/dev/null || exit 5
+	awk -F"=" '$1=="SBD_DEVICE" {print $2}' $CFI |tr -d "\""|tr ";" "\n"|\
 	while read; do
-		sbd -d $REPLY ${SBD_OPTS} create
+		sbd -d $REPLY ${SBD_INIT_OPTS} create
 	done
 	echo "INFO: end $EXE $FUNCNAME"
 }
 
-function dump_sbd_devices() {
-	FIL=${SBD_CONF}
 
-	awk -F"=" '$1=="SBD_DEVICE" {print $2}' $FIL |tr -d "\""|tr ";" "\n"|\
+function dump_sbd_devices() {
+	CFI=${SBD_CONF}
+
+	awk -F"=" '$1=="SBD_DEVICE" {print $2}' $CFI |tr -d "\""|tr ";" "\n"|\
 	while read; do
 		sbd -d $REPLY dump
 		sbd -d $REPLY list 
@@ -105,16 +107,18 @@ case $1 in
 	;;
 	-g|--guess)
 		echo "INFO: start $EXE"
-
 		guess_sysconfig_sbd
-
 		echo "INFO: normal_end $EXE"
 	;;
 	-i|--init)
 		echo "INFO: start $EXE"
-
+		test -z "${2}" && SBD_INIT_OPTS="${2}"
+		test -z "${3}" && SBD_CONF="${3}"
+		test -z "${SBD_INIT_OPTS}" &&\
+			SBD_INIT_OPTS="-4 130 -1 30"
+		test -z "${SBD_CONF}" &&\
+			 SBD_CONF="/etc/sysconfig/sbd"
 		make_sbd_devices
-
 		echo "INFO: normal_end $EXE"
 	;;
 	*)

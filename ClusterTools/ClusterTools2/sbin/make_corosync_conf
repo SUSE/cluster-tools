@@ -23,7 +23,9 @@ SMPLTMPL2="/usr/share/ClusterTools2/samples/corosync.conf.tmpl-udpu-2ring"
 function get_corosync_vals() {
 	echo "INFO: start $EXE $FUNCNAME"
 	
-	# TODO: 2nd ring
+	# TODO calculate netmask for bindnetaddr	
+	#LIBIP="/usr/local/lib/functions.ip"
+	#test -s $LIBIP && source $LIBIP
 	# ip a s | grep "inet .*scope.global"
 	# grep "bindnetaddr:" /etc/corosync/corosync.conf
 		# BINDNETADDR_0=$(ip a s $RINGIF_0 |\
@@ -58,6 +60,7 @@ function get_corosync_vals() {
 		netaddr=$4
 		n=gsub("255","0",netaddr)
 		print netaddr
+		
 		}')
 	
 	test -z "${MEMBERADDR1_1}" &&\

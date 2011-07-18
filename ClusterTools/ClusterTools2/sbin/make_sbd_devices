@@ -51,10 +51,10 @@ function guess_sysconfig_sbd() {
 	{	# TODO do this better
 		SBDEV=$( multipath -ll | grep -B1 "size=..M" |\
 		awk '$2~/dm-/ {print "/dev/disk/by-id/scsi-"$1";"}' |\
-		head -3 | tr -d "\n" | sed s/\;$// )
+		head -3 | sort | tr -d "\n" | sed s/\;$// )
 	}
 	test -z "${SBD_OPTS}" || SBDOPT=${SBD_OPTS}
-	test -z "${SBDOPT}" || SBDOPT="-W -1 30"
+	test -z "${SBDOPT}" || SBDOPT="-W"
 	{ 
 	echo "# $CFI"
 	echo "# check SBD_DEVICE for correct pathes and order"

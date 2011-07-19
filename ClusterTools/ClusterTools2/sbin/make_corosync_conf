@@ -6,13 +6,15 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 #
-# Version: 0.02 2011-07-14 19:30
+# Version: 0.03 2011-07-19 16:30
 #
 
 EXE="$0"
 
 CFG="/etc/ClusterTools2/make_corosync_conf"
 test -s $CFG && source $CFG
+test -s $LIBFUNCIP || LIBFUNCIP="/usr/lib/ClusterTools2/libfuncip"
+test -s $LIBFUNCIP || LIBFUNCIP="/usr/local/lib/functions.ip"
 
 TMP="/tmp/cltl.$RANDOM"
 COROCONF=${COROCONF:-"/etc/corosync/corosync.conf"}
@@ -22,27 +24,6 @@ SMPLTMPL2="/usr/share/ClusterTools2/samples/corosync.conf.tmpl-udpu-2ring"
 
 function get_corosync_vals() {
 	echo "INFO: start $EXE $FUNCNAME"
-	
-	# TODO calculate netmask for bindnetaddr	
-	#LIBIP="/usr/local/lib/functions.ip"
-	#test -s $LIBIP && source $LIBIP
-	# ip a s | grep "inet .*scope.global"
-	# grep "bindnetaddr:" /etc/corosync/corosync.conf
-		# BINDNETADDR_0=$(ip a s $RINGIF_0 |\
-                # awk '$1=="inet" && $7=="'$RINGIF_0'" {
-		# $2: ipaddr/netmask, f.e. 10.5.155.31/16
-		# $4: brdcastaddr, f.e. 10.5.255.255
-		# BINDNETADDR: ... f.e. 10.5.0.0
-		# TODO correct calculation
-		# for now: 	/24 -> x.x.x.0
-		#		/16 -> x.x.0.0
-		#		/8  -> x.0.0.0
-		#netaddr=$2
-		#n=split(netaddr,netfield,"/")
-		#ipaddr=netfield[1]
-		#netmask=netfield[2]
-		#n=split(netaddr,netfield,".")
-		#...
 
 	test -z "${MEMBERADDR1_0}" &&\
 		MEMBERADDR1_0=$(host ${MEMBERNAM1_0} | awk '{print $4}')
@@ -54,15 +35,25 @@ function get_corosync_vals() {
 		($2=="eth0"&&$NF=="eth0") ||\
 		($2=="br0"&&$NF=="br0") \
 		{print $2; exit}')
-	test -z "${BINDNETADDR_0}" &&
-		BINDNETADDR_0=$(ip a s $RINGIF_0 |\
-		awk '$1=="inet" && $7=="'$RINGIF_0'" {
-		netaddr=$4
-		n=gsub("255","0",netaddr)
-		print netaddr
-		
-		}')
-	
+	test -z "${BINDNETADDR_0}" && {
+		source $LIBFUNCIP 
+	# TODO use guessing, if no libfuncip:
+	#	/24 -> x.x.x.0
+	#	/16 -> x.x.0.0
+	#	/8  -> x.0.0.0
+	#BINDNETADDR_0=$(ip a s $RINGIF_0 |\
+	#awk '$1=="inet" && $7=="'$RINGIF_0'" {
+	#netaddr=$4
+	#n=gsub("255","0",netaddr)
+	#print netaddr
+	#}')
+		NETMSK=$( ip a s $RINGIF_0 |\
+			awk '$1=="inet"&&$7=="'$RINGIF_0'" {
+			n=split($2,a,"/"); print a[2]}' | head -1 )
+		BINDNETADDR_0=$(ipcalc $MEMBERADDR1_0 $NETMSK |\
+			awk '$1=="Network"&&$2=="address"{print $4}')
+		}
+
 	test -z "${MEMBERADDR1_1}" &&\
 		MEMBERADDR1_1=$(host ${MEMBERNAM1_1} | awk '{print $4}')
 	test -z "${MEMBERADDR2_1}" &&\
@@ -73,13 +64,15 @@ function get_corosync_vals() {
 		($2=="eth1"&&$NF=="eth1") ||\
 		($2=="br1"&&$NF=="br1") \
 		{print $2; exit}')
-	test -z "${BINDNETADDR_1}" &&
-		BINDNETADDR_1=$(ip a s $RINGIF_1 |\
-		awk '$1=="inet" && $7=="'$RINGIF_1'" {
-		netaddr=$4
-		n=gsub("255","0",netaddr)	
-		print netaddr
-		}')
+	test -z "${BINDNETADDR_1}" && {
+		source $LIBFUNCIP
+	# TODO see above
+		NETMSK=$( ip a s $RINGIF_1 |\
+			awk '$1=="inet"&&$7=="'$RINGIF_1'" {
+			n=split($2,a,"/"); print a[2]}' | head -1 )
+		BINDNETADDR_1=$(ipcalc $MEMBERADDR1_1 $NETMSK |\
+			awk '$1=="Network"&&$2=="address"{print $4}')
+		}
 	test -z "${THREADS}" &&
 		THREADS=$(grep -c "cpu.MHz.*:" /proc/cpuinfo)
 	
@@ -95,15 +88,18 @@ function get_cluster_members() {
 		MEMBERADDR1_0=$(head -1 $TMP)
 		MEMBERADDR2_0=$(tail -1 $TMP)
 		test -z "$MEMBERADDR1_0" && exit 25
+			MEMBERNAM1_0=$(host $MEMBERADDR1_0 | awk '{print $NF}')
 		test -z "$MEMBERADDR2_0" && exit 25
+			MEMBERNAM2_0=$(host $MEMBERADDR2_0 | awk '{print $NF}')
 
 	test -n "${MEMBERS_1}" && test $NUMRING -eq 2 && {
 		awk '$3~/'"$MEMBERS_1"'/ {print $1}' /etc/hosts | sort -u >$TMP
 		MEMBERADDR1_1=$(head -1 $TMP)
 		MEMBERADDR2_1=$(tail -1 $TMP)
-
 		test -z "$MEMBERADDR1_1" && exit 25
+			MEMBERNAM1_0=$(host $MEMBERADDR1_0 | awk '{print $NF}')
 		test -z "$MEMBERADDR2_1" && exit 25
+			MEMBERNAM2_0=$(host $MEMBERADDR2_0 | awk '{print $NF}')
 	}
 	rm -f $TMP
 
@@ -138,9 +134,6 @@ function fix_corosync_conf() {
 function check_template() {
 	echo "INFO: start $EXE $FUNCNAME"
 
-	# TODO if no template exists, try sample
-	#test -s $TEMPLATE || TEMPLATE="${1}"
-	#or
 	test -s $TEMPLATE || ln -s ${1} $TEMPLATE
 	test -s $TEMPLATE || exit 11
 

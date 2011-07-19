@@ -16,7 +16,7 @@ Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.2.8
-Release:      6 
+Release:      7 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
@@ -115,6 +115,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/psauxlog
 /usr/sbin/sleha_cleanup
 /usr/sbin/show_scores
+/usr/sbin/showscores
 /usr/sbin/sum_base_config
 #/usr/sbin/test_udpmcast
 /usr/share/ClusterTools2

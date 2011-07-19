@@ -5,6 +5,7 @@ property $id="cib-bootstrap-options" \
 	no-quorum-policy="ignore" \
 	dc-deadtime="20s" \
 	default-resource-stickiness="1000" \
+	stonith-enabled="true" \
 	stonith-timeout="150s"
 configure \
 rsc_defaults $id="rsc_defaults-options" \

@@ -69,12 +69,15 @@ function make_account(){
 		grep "\.${ISCSI_CLSTR}:" | awk -F" " '{print $2}' )
 
 	iscsiadm -m node -T ${ISCSI_TGT} --op update \
+		-n node.startup -v manual 
+	iscsiadm -m node -T ${ISCSI_TGT} --op update \
 		-n node.conn[0].startup -v automatic
 	iscsiadm -m node -T ${ISCSI_TGT} --op update \
 		-n node.session.auth.username -v ${ISCSI_USR}
 	iscsiadm -m node -T ${ISCSI_TGT} --op update \
 		-n node.session.auth.password -v ${ISCSI_PWD}
-	
+	iscsiadm -m node -T ${ISCSI_TGT} --portal ${ISCSI_PRT} --login
+		
 	#echo "iscsiadm --mode discovery --type sendtargets --portal ${ISCSI_PRT}"
 	#echo "iscsiadm -m node -T ${ISCSI_TGT} --op update \
 	#	-n node.conn[0].startup -v automatic"
@@ -82,6 +85,7 @@ function make_account(){
 	#	-n node.session.auth.username -v ${ISCSI_USR}"
 	#echo "iscsiadm -m node -T ${ISCSI_TGT} --op update \
 	#	-n node.session.auth.password -v ${ISCSI_PWD}"
+	#echo iscsiadm -m node -T ${ISCSI_TGT} --portal ${ISCSI_PRT} --login
 
 	echo "INFO: end $EXE $FUNCNAME"
 }

@@ -16,7 +16,7 @@ Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.2.8
-Release:      5 
+Release:      6 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
@@ -122,11 +122,11 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %doc /usr/share/man/man5/*.gz
 %doc /usr/share/man/man7/*.gz
 %doc /usr/share/man/man8/*.gz
-%config /etc/ClusterTools2
+%config(noreplace) /etc/ClusterTools2
 
 %changelog -n ClusterTools
-* Tue Jul 14 2011 - lars.pinne@novell.com
-  2.2.8 added man page, fixed config scripts, 2nd ring in make_corosync_conf
+* Tue Jul 18 2011 - lars.pinne@novell.com
+  2.2.8 added man page, fixed config scripts, 2nd ring in make_corosync_conf, set config (noreplace)
 * Tue Jul 05 2011 - fabian.herschel@suse.com
   2.2.7 fixed command line option
   - fixed missing groups in resource list

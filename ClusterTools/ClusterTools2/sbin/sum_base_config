@@ -87,8 +87,11 @@ test -z "${CONF_CALLS}" &&\
 '/sbin/hwclock -r --utc | /usr/bin/cut -b1-18'
 '/bin/rpm -qa'
 '/bin/rpm -Va'
+'/usr/bin/zypper lr'
+'/usr/bin/zypper lu'
 '/bin/cat /proc/mounts'
 '/sbin/multipath -ll'
+'/sbin/dmsetup table | sort'
 '/sbin/chkconfig -A'
 '/sbin/route -n'
 '/usr/sbin/iptables -L'
@@ -96,8 +99,8 @@ test -z "${CONF_CALLS}" &&\
 '/usr/bin/grep -v "IPADDR=" /etc/sysconfig/network/ifcfg-* | /usr/bin/grep -v "UNIQUE="'
 "
 # TODO: better network listing 
-# TODO: dmsetup table 
 # TODO: calc diff between hwclock and Linux time, fe. based on hwclock --debug --test
+
 
 function help() {
 	echo "usage:	$(basename $0)"

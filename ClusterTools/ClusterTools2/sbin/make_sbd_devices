@@ -85,10 +85,11 @@ function make_sbd_devices() {
 function dump_sbd_devices() {
 	CFI=${SBD_CONF}
 
+	RC=0
 	awk -F"=" '$1=="SBD_DEVICE" {print $2}' $CFI |tr -d "\""|tr ";" "\n"|\
 	while read; do
-		sbd -d $REPLY dump
-		sbd -d $REPLY list 
+		sbd -d $REPLY dump 2>/dev/null; RC=$?
+		sbd -d $REPLY list 2>/dev/null; RC=$[ $RC + $? ]
 	done
 }
 

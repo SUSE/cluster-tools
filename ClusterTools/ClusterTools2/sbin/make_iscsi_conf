@@ -55,7 +55,7 @@ function fix_initiatorname() {
   grep "^InitiatorName=" $CFIL >/dev/null &&\
 	echo "WARN: found InitiatorName already in ${CFIL}" # && return 3
 
-  awk -F"=" '	$1=="InitiatorName" {print "InitiatorName=""'"$INITIATORNAME"'"}
+  awk -F"=" '	$1=="InitiatorName" && $2!="'$INITIATORNAME'" {print "InitiatorName=""'"$INITIATORNAME"'"}
         	$1!="InitiatorName" {print}' $BAK >$CFIL
   grep "^InitiatorName=$INITIATORNAME" $CFIL >/dev/null ||\
 	echo "InitiatorName=$INITIATORNAME" >>$CFIL

@@ -43,7 +43,7 @@ function guess_sysconfig_sbd() {
 	test -z "${SBD_DEVICE}" || SBDEV=${SBD_DEVICE}
 	test -z "$SBDEV" || test -s $SBD_GUESS || exit 6
 	SBDEV=$( exec $SBD_GUESS 2>/dev/null )
-	echo SBDEV: $SBDEV
+	#echo "INFO: SBD_DEVICE=$SBDEV"
 	test -z "$SBDEV" &&\
 	{	# TODO do this better
 		SBDEV=$( multipath -ll | grep -B1 -P "^size=\d(\d|\.\d)M" |\

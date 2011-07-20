@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: L.Pinne
 #
-# Version: 0.02 2011-07-16 17:20
+# Version: 0.02 2011-07-20 17:20
 #
 #set -x
 
@@ -34,13 +34,13 @@ function guess_sysconfig_sbd() {
 	echo "INFO: start $EXE $FUNCNAME"
 	
 	CFI=${SBD_CONF}
-	CFO=${SBD_CONF}
+	CFO=${SBD_CONF}.guess
 	#CFO="/dev/stdout"
 
 	grep "^SBD_DEVICE=\"/dev/.*\"$" $CFI >/dev/null 2>&1 &&\
 	# TODO use correct number of devives
 	# grep "^SBD_DEVICE=\"/dev/.*;/dev/.*;/dev/.*\"$" $CFI >/dev/null 2>&1 &&\
-	echo "WARN: $SBD_CONF already exists" && return 2
+	echo "WARN: $SBD_CONF already exists" # && return 2
 
 	cp -a $CFI $CFI.bak 2>/dev/null
 
@@ -49,7 +49,7 @@ function guess_sysconfig_sbd() {
 	SBDEV=$( exec $SBD_GUESS 2>/dev/null )
 	test -z "$SBDEV" &&\
 	{	# TODO do this better
-		SBDEV=$( multipath -ll | grep -B1 "size=..M" |\
+		SBDEV=$( multipath -ll | grep -B1 "size=\d(\d|\.\d)M" |\
 		awk '$2~/dm-/ {print "/dev/disk/by-id/scsi-"$1";"}' |\
 		head -3 | sort | tr -d "\n" | sed s/\;$// )
 	}
@@ -63,8 +63,9 @@ function guess_sysconfig_sbd() {
 	# TODO use start opts from defaults
 	echo "SBD_OPTS=\"${SBDOPT}\""
 	echo "#"
-	} >$CFO
+	} >$CFO &&
 
+	echo "INFO: wrote $CFO"
 	echo "INFO: end $EXE $FUNCNAME"
 }
 

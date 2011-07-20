@@ -9,7 +9,7 @@
 # Version: 0.01 2011-07-20 17:00
 #
 # TODO do this better
-multipath -ll | grep -B1 "^size=\d(\d|\.\d)M" |\
+multipath -ll | grep -B1 -P "^size=\d(\d|\.\d)M" |\
 awk '$2~/dm-/ {print "/dev/disk/by-id/scsi-"$1";"}' |\
 head -3 | sort | tr -d "\n" | sed s/\;$//
 #

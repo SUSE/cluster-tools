@@ -35,20 +35,18 @@ function guess_sysconfig_sbd() {
 	
 	CFI=${SBD_CONF}
 	CFO=${SBD_CONF}.guess
-	#CFO="/dev/stdout"
 
-	grep "^SBD_DEVICE=\"/dev/.*\"$" $CFI >/dev/null 2>&1 &&\
-	# TODO use correct number of devives
-	# grep "^SBD_DEVICE=\"/dev/.*;/dev/.*;/dev/.*\"$" $CFI >/dev/null 2>&1 &&\
-	# echo "WARN: $SBD_CONF already exists" # && return 2
-	# cp -a $CFI $CFI.bak 2>/dev/null
+	#grep "^SBD_DEVICE=\"/dev/.*\"$" $CFI >/dev/null 2>&1 &&\
+	#echo "WARN: $SBD_CONF already exists" # && return 2
+	#cp -a $CFI $CFI.bak 2>/dev/null
 
 	test -z "${SBD_DEVICE}" || SBDEV=${SBD_DEVICE}
 	test -z "$SBDEV" || test -s $SBD_GUESS || exit 6
 	SBDEV=$( exec $SBD_GUESS 2>/dev/null )
+	echo SBDEV: $SBDEV
 	test -z "$SBDEV" &&\
 	{	# TODO do this better
-		SBDEV=$( multipath -ll | grep -B1 "^size=\d(\d|\.\d)M" |\
+		SBDEV=$( multipath -ll | grep -B1 -P "^size=\d(\d|\.\d)M" |\
 		awk '$2~/dm-/ {print "/dev/disk/by-id/scsi-"$1";"}' |\
 		head -3 | sort | tr -d "\n" | sed s/\;$// )
 	}

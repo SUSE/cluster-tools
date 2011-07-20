@@ -67,6 +67,7 @@ function make_account(){
 
 	ISCSI_TGT=$(iscsiadm --mode discovery --type sendtargets --portal ${ISCSI_PRT} |\
 		grep "\.${ISCSI_CLSTR}:" | awk -F" " '{print $2}' )
+	# TODO add USR_CLSTR to cmdline instead of guessing it
 
 	iscsiadm -m node -T ${ISCSI_TGT} --op update \
 		-n node.startup -v manual 

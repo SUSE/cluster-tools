@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, H.Bertram, L.Pinne.
 #
-# Version: 0.02 2011-06-25
+# Version: 0.02 2011-07-20
 #
 
 EXE="$0"
@@ -53,10 +53,12 @@ function fix_initiatorname() {
   BAK=${CFIL}.bak
   cp $CFIL $BAK >/dev/null
   grep "^InitiatorName=" $CFIL >/dev/null &&\
-	echo "WARN: found InitiatorName already in ${CFIL}" && return 3
+	echo "WARN: found InitiatorName already in ${CFIL}" # && return 3
 
-  awk -F"=" '	$1!="InitiatorName" {print "InitiatorName=""'"$INITIATORNAME"'"}
-        	$1=="InitiatorName" {print}' $BAK >$CFIL
+  awk -F"=" '	$1=="InitiatorName" {print "InitiatorName=""'"$INITIATORNAME"'"}
+        	$1!="InitiatorName" {print}' $BAK >$CFIL
+  grep "^InitiatorName=$INITIATORNAME" $CFIL >/dev/null ||\
+	echo "InitiatorName=$INITIATORNAME" >>$CFIL
 
   echo "INFO: end $EXE $FUNCNAME"
 }

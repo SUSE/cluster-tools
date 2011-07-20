@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 # 
-# Version: 0.02 2011-07-16 14:20
+# Version: 0.02 2011-07-20 17:20
 #
 
 EXE="$0"
@@ -30,6 +30,18 @@ function help(){
 function version(){
 	echo -n "$(basename $EXE) "
 	head -11 $EXE | grep "^# Version: "
+}
+
+
+function disable_hpasr(){
+	echo "INFO: start $EXE $FUNCNAME"
+
+	# TODO process return codes
+	/etc/init.d/hp-asrd stop
+	chkconfig hp-asrd off
+	rmmod hpwdt
+	
+	echo "INFO: end $EXE $FUNCNAME"
 }
 
 
@@ -91,6 +103,7 @@ case $1 in
 	;;
 	*)
 		echo "INFO: start $EXE"
+		disable_hpasr
 		add_mod
 		load_mod	
 		echo "INFO: normal_end $EXE"

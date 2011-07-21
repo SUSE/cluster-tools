@@ -32,13 +32,14 @@ function get_header() {
 
 
 function get_storage_sap() {
+	# TODO better string manipulation
 	echo -n "RAID1_DEVICES=\""
-	pvs | awk '$2~/'"$SID"'/ {print $1" "}' | tr -d "\n"
+	pvs | awk '$2~/'"$SID"'/ {print $1" "}' | tr -d "\n" | sed s/" "$//
 	echo "\""
 	echo
 	#
 	echo -n "LVM_VOLUMEGROUPS=\""
-	pvs | awk '$2~/'"$SID"'/ {print $2" "}' | sort -du | tr -d "\n"
+	pvs | awk '$2~/'"$SID"'/ {print $2" "}' | sort -du | tr -d "\n" | sed s/" "$//
 	echo "\""
 	echo
 	#
@@ -51,13 +52,14 @@ function get_storage_sap() {
 
 
 function get_storage_ora() {
+	# TODO better string manipulation
 	echo -n "RAID1_DEVICES=\""
-	pvs | awk '$1~/^\/dev\/md.$/ && $2~/^'"$VG"'/ {print $1" "}' | tr -d "\n"
+	pvs | awk '$1~/^\/dev\/md.$/ && $2~/^'"$VG"'/ {print $1" "}' | tr -d "\n" | sed s/" "$//
 	echo "\""
 	echo
 	#
 	echo -n "LVM_VOLUMEGROUPS=\""
-	pvs | awk '$1~/^\/dev\/md.$/ && $2~/^'"$VG"'/ {print $2" "}' | sort -du | tr -d "\n"
+	pvs | awk '$1~/^\/dev\/md.$/ && $2~/^'"$VG"'/ {print $2" "}' | sort -du | tr -d "\n" | sed s/" "$//
 	echo "\""
 	echo
 	#

@@ -54,7 +54,7 @@ function guess_sysconfig_sbd() {
 	test -z "${SBDOPT}" || SBDOPT="-W"
 	{ 
 	echo "# $CFI"
-	echo "# check SBD_DEVICE for correct pathes and order"
+	echo "# please check SBD_DEVICE for correct pathes and order"
 	echo  "SBD_DEVICE=\"${SBDEV}\""
 	echo "# watchdog support"
 	# TODO use start opts from defaults

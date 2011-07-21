@@ -8,10 +8,6 @@
 # Version: 0.01 2011-07-21
 #
 
-SID=${1:-"ZSAdb"}
-SVCNAM=${2}
-test -z "$SVCNAM" && SVCNAM=$(echo $SID|tr [:upper:] [:lower:])
-
 EXE=$(basename $0)
 
 function help() {
@@ -95,7 +91,6 @@ function sys_ora() {
 }
 
 
-
 # main()
 
 case $1 in
@@ -108,10 +103,6 @@ case $1 in
 		SVCNAM=${2:-"ora01"}
 		VG=${3:-"vg01"}
 
-		echo SID: $SID
-		echo SVCNAM: $SVCNAM
-		echo VG: $VG
-	
 		network
 		sys_ora
 		storage_ora

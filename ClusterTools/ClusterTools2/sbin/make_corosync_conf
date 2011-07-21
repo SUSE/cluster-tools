@@ -126,7 +126,8 @@ function fix_corosync_conf() {
 	$1~/mcastport/ && $2~/@@MCASTPORT_1@@/ { print $1":","'$MCASTPORT_1'"}
 	$1~/memberaddr/ && $2~/@@MEMBERADDR1_1@@/ { print $1":","'$MEMBERADDR1_1'"}
 	$1~/memberaddr/ && $2~/@@MEMBERADDR2_1@@/ { print $1":","'$MEMBERADDR2_1'"}
-	' $TEMPLATE >$COROCONF
+	' $TEMPLATE >$COROCONF &&\
+	echo "INFO: wrote $COROCONF"
 
 	echo "INFO: end $EXE $FUNCNAME"
 }
@@ -139,7 +140,8 @@ function check_template() {
 	test -s $TEMPLATE || exit 11
 
 	# TODO grep -v "^<blanks>#"
-	grep -v "#" $TEMPLATE >$TMP
+	grep -v "#" $TEMPLATE >$TMP &&
+	echo "INFO: read $TEMPLATE"
 
 	# TODO list and loop
 	PTRN='

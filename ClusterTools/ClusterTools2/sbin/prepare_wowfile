@@ -27,7 +27,7 @@ function version() {
 
 function get_header() {
 	echo "# $DAT - $EXE $*"
-	echo "# please check for correct values and order"
+	echo "# please check for correct values and order, and add missing nodes."
 }
 
 

@@ -26,7 +26,7 @@ fi
 #
 #
 #
-cli_batch=${config%.wow}.fs.cli
+cli_batch=${config%.wow}.oracle-simple.cli
 echo "creating crm batch file $cli_batch"
 #
 # create the resulting cli file

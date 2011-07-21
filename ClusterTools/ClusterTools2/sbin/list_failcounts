@@ -27,9 +27,6 @@ function do_list() {
 	NODES=$($CRM_NODE -l | awk '/member/ { print $2 }')
 	RESOURCES=$($CRM_RESOURCE -l)
 
-	echo DBG:
-	echo "$RESOURCES"
-
 	for node in $NODES
         	do
         	echo

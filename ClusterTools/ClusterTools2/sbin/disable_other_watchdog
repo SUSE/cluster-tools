@@ -1,0 +1,79 @@
+#!/bin/bash
+#
+# disable_other_watchdog
+#
+# (c) 2011 SUSE Linux GmbH, Germany.
+# GNU Public License. No warranty.
+# Author: L.Pinne
+#
+# Version: 0.01 2011-07-21 09:20
+#
+#set -x
+
+EXE="$0"
+TMP="/tmp/cltl.$RANDOM"
+CFG="/etc/ClusterTools2/disable_other_watchdog"
+test -s $CFG && source $CFG
+
+
+function help(){
+        echo "usage: $(basename $0) OPTION"
+        echo "usage: $(basename $0) --stop <METHOD>"
+        echo
+        echo "OPTION:"
+        echo " --help		show help."
+        echo " --version	show version."
+        echo " --stop		disable other restart method."
+        echo
+}
+
+
+function disable_hpasr() {
+	echo "INFO: start $EXE $FUNCNAME"
+
+	test -z "$MODCFG" && MODCFG="/etc/modprobe.d/ClusterTools2"
+	# TODO process return codes
+	/etc/init.d/hp-asrd stop
+	chkconfig hp-asrd off
+	rmmod hpwdt
+
+	# TODO separate function that checks for loaded modules from /lib/...
+	echo blacklist hpwdt >>$MODCFG
+	echo blacklist iTCO_wdt >>$MODCFG
+	echo blacklist ibmasr >>$MODCFG
+
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+function guess_other_restart() {
+	echo "INFO: start $EXE $FUNCNAME"
+	echo noop
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+# function main()
+
+case $1 in
+        -v|--version)
+                echo -n "$(basename $EXE) "
+                head -11 $EXE | grep "^# Version: "
+                exit
+        ;;
+        -g|--guess)
+                echo "INFO: start $EXE"
+                guess_other_restart
+                echo "INFO: normal_end $EXE"
+        ;;
+	-s|--stop)
+		echo "INFO: start $EXE"
+		disable_hpasr
+		echo "INFO: normal_end $EXE"	
+	;;
+        *)
+                help
+                exit
+        ;;
+esac
+#

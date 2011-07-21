@@ -33,18 +33,6 @@ function version(){
 }
 
 
-function disable_hpasr(){
-	echo "INFO: start $EXE $FUNCNAME"
-
-	# TODO process return codes
-	/etc/init.d/hp-asrd stop
-	chkconfig hp-asrd off
-	rmmod hpwdt
-	
-	echo "INFO: end $EXE $FUNCNAME"
-}
-
-
 function add_mod(){
 	echo "INFO: start $EXE $FUNCNAME"
 	test -s $FIL || exit 2
@@ -59,12 +47,6 @@ function add_mod(){
 	else
         	echo "WARN: found \"${MOD}\" already in ${FIL}"
 	fi
-
-	# TODO write blacklist
-	echo blacklist hpwdt >>/etc/modprobe.d/hae_blacklist
-	echo blacklist iTCO_wdt >>/etc/modprobe.d/hae_blacklist
-	echo blacklist ibmasr >>/etc/modprobe.d/hae_blacklist
-
 	echo "INFO: end $EXE $FUNCNAME"
 }
 
@@ -103,7 +85,6 @@ case $1 in
 	;;
 	*)
 		echo "INFO: start $EXE"
-		disable_hpasr
 		add_mod
 		load_mod	
 		echo "INFO: normal_end $EXE"

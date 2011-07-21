@@ -49,7 +49,7 @@ do
 	fi
 done <<< "$FS_FILESYSTEMS"
 
-woweng2 UUID=grp_sap_${SAPSID} \
+woweng2 UUID=grp_ora_${SAPSID} \
     GROUP_MEMBERS="$GROUP_MEMBERS" \
     $wowcli/01-grp-sap.cli
 #
@@ -57,7 +57,7 @@ woweng2 UUID=grp_sap_${SAPSID} \
 #
 
 #
-# sap scores per node
+# oracle scores per node
 #
 mySCORE=$SAP_SCORES
 for node in $ALLNODES

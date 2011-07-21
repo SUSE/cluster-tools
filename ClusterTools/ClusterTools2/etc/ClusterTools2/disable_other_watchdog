@@ -2,4 +2,6 @@
 # For SLES11.
 #
 MODCFG="/etc/modprobe.d/ClusterTools2"
+MODULES="hpwdt iTCO_wdt ibmasr"
+METHOD="hp-asrd"
 #

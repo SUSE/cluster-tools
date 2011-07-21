@@ -42,7 +42,8 @@ function add_mod(){
 	if [ $RC -gt 0 ]; then
 		cp -a $FIL $BAK || exit $?
 		awk -F'"' '     $1=="INITRD_MODULES=" {print $1"\""$2" '"$MOD"'\" "}
-        		        $1!="INITRD_MODULES=" {print}' $BAK >$FIL
+        		        $1!="INITRD_MODULES=" {print}' $BAK >$FIL &&
+		echo "INFO: wrote $FIL"
 		mkinitrd
 	else
         	echo "WARN: found \"${MOD}\" already in ${FIL}"
@@ -53,9 +54,6 @@ function add_mod(){
 
 function load_mod() {
 	echo "INFO: start $EXE $FUNCNAME"
-		# V=$(uname -a | awk '{print $3}')
-		# TODO MODS=$(/lib/modules/${V}/kernel/drivers/watchdog/ | )
-		rmmod hpwdt
 		modprobe $MOD
 	echo "INFO: end $EXE $FUNCNAME"
 }
@@ -73,21 +71,25 @@ case $1 in
 		exit
 	;;
 	-s|--show)
+		echo "INFO: start $EXE"
 		# TODO
 		# echo "loaded watchdog module:"
 		# lsmod list from dirtectory
 		echo "configured initrd watchdog module:"
-		grep -v "#.*INITRD_MODULES" $FIL | grep "INITRD_MODULES=.*$MOD"	
+		grep -v "#.*INITRD_MODULES" $FIL | grep "^INITRD_MODULES=.*$MOD"	
 		echo "available watchdog modules:"
 		V=$(uname -a | awk '{print $3}')
 		ls /lib/modules/${V}/kernel/drivers/watchdog/
+		echo "INFO: normal_end $EXE"
 		exit
 	;;
 	*)
 		echo "INFO: start $EXE"
+		rmmod hpwdt 2>/dev/null
 		add_mod
 		load_mod	
 		echo "INFO: normal_end $EXE"
+		exit
 	;;
 esac
 #

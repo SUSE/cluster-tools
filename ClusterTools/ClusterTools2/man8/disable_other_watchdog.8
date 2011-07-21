@@ -5,7 +5,7 @@ disable_other_watchdog \- disable other watchdog and reboot-daemons
 .\"
 .SH SYNOPSIS
 .P
-.B disable_other_watchdog
+.B disable_other_watchdog \fR[\fIOPTION\fR] 
 .\"
 .SH DESCRIPTION
 \fBdisable_other_watchdog\fP 
@@ -20,15 +20,18 @@ stop reboot-daemon, disable service, remove watchdog module from running kernel.
 \fB --version\fR
 	show version.
 .HP
-\fB --show\fR
-	show available watchdog modules and current initrd line.
+\fB --list\fR
+	list module blacklist and initrd line.
+.HP
+\fB --stop\fR
+	disable other restart method.
 .\"
 .SH EXAMPLES
 .br
 .TP
 * disable watchdog and stop reboot-daemon.
 .br
-# disable_other_watchdog
+# disable_other_watchdog --stop
 .\"
 .SH EXIT STATUS
 .B 0
@@ -44,6 +47,9 @@ Usage, syntax or execution errors.
 .TP
 /etc/ClusterTools2/disable_other_watchdog
 	the configuration file.
+.TP
+/etc/modprobe.d/ClusterTools2
+	the module blacklist.
 .TP
 /etc/sysconfig/kernel
 	the sysconfig kernel section.

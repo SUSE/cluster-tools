@@ -12,18 +12,6 @@ if [ -n "$SFEX_DEVICE" ]; then
 	GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
 fi
 #
-# ip
-#
-if [ -z "$IPagent" ]; then
-	IPagent=$DEFAULT_IPagent
-fi
-for ip_label in $IP_LABELS; do
-	ipaddr=${ip_label#*,}
-	ipname=${ip_label%,*}
-	NGM=rsc_ip_${SAPSID}_${ipname} 
-	GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
-done
-#
 # RAID1 / MD
 #
 for raiddev in $RAID1_DEVICES; do
@@ -48,7 +36,21 @@ do
 		GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
 	fi
 done <<< "$FS_FILESYSTEMS"
-
+#
+# ip
+#
+if [ -z "$IPagent" ]; then
+	IPagent=$DEFAULT_IPagent
+fi
+for ip_label in $IP_LABELS; do
+	ipaddr=${ip_label#*,}
+	ipname=${ip_label%,*}
+	NGM=rsc_ip_${SAPSID}_${ipname} 
+	GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
+done
+#
+#
+#
 woweng2 UUID=grp_ora_${SAPSID} \
     GROUP_MEMBERS="$GROUP_MEMBERS" \
     $wowcli/01-grp-sap.cli

@@ -4,10 +4,10 @@
 # TODO: oracle, oralsnr
 #
 SIMPLESTACK_ALL_WOW_AGENTS=$(cat <<EOC
+01-03-add_ip
 01-04-add_md
 01-05-add_lvm 
 01-06-add_fs 
-01-10-add_ip
 01-99-add_group-oracle
 EOC
 )

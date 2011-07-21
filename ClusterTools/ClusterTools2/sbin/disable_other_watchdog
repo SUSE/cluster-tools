@@ -40,13 +40,15 @@ function disable_hpasr() {
 	test -z "$MODULES" && MODULES="hpwdt iTCO_wdt ibmasr"
 
 	mv $MODCFG $MODCFG.bak
-	for m in$MODULES; do
+	for m in $MODULES; do
 		echo blacklist ${m} >>$MODCFG
 	done
-	for m in$MODULES; do
+	for m in $MODULES; do
 		rmmod ${m}
 	done
 
+	# TODO: /etc/sysconfig/kernel
+	# TODO: mkinitrd ?
 	echo "INFO: end $EXE $FUNCNAME"
 }
 

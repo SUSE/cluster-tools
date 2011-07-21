@@ -9,6 +9,7 @@
 #
 
 EXE=$(basename $0)
+DAT=$(date +"%F %T")
 
 function help() {
 	echo "usage:	$EXE --sap <SID>"
@@ -25,7 +26,12 @@ function version() {
 }
 
 
-function storage_sap() {
+function get_header() {
+	echo "# $DAT - $EXE $*"
+}
+
+
+function get_storage_sap() {
 	echo -n "RAID1_DEVICES=\""
 	pvs | awk '$2~/'"$SID"'/ {print $1" "}' | tr -d "\n"
 	echo "\""
@@ -44,7 +50,7 @@ function storage_sap() {
 }
 
 
-function storage_ora() {
+function get_storage_ora() {
 	echo -n "RAID1_DEVICES=\""
 	pvs | awk '$1~/^\/dev\/md.$/ && $2~/^'"$VG"'/ {print $1" "}' | tr -d "\n"
 	echo "\""
@@ -62,7 +68,7 @@ function storage_ora() {
 }
 
 
-function network() {
+function get_network() {
 	echo
 	echo "ALLNODES=\"$HOSTNAME\""
 	echo
@@ -71,7 +77,7 @@ function network() {
 }
 
 
-function sys_sap() {
+function get_sys_sap() {
 	echo
 	echo "SAPSID=\"$SID\""
 	echo "DBTYPE=ORA"
@@ -81,7 +87,7 @@ function sys_sap() {
 }
 
 
-function sys_ora() {
+function get_sys_ora() {
 	echo
 	echo "ORASID=\"$SID\""
 	echo "DBTYPE=ORA"
@@ -102,10 +108,12 @@ case $1 in
 		SID=${1:-"ora01"}	
 		SVCNAM=${2:-"ora01"}
 		VG=${3:-"vg01"}
-
-		network
-		sys_ora
-		storage_ora
+		
+		get_header "${*}"
+		get_network
+		get_sys_ora
+		get_storage_ora
+		echo "#"
 	;;
 	-s|sap)
 		shift
@@ -113,9 +121,11 @@ case $1 in
 		SVCNAM=${2}
 		test -z "$SVCNAM" && SVCNAM=$(echo $SID|tr [:upper:] [:lower:])
 
-		network
-		sys_sap
-		storage_sap
+		get_header "${*}"
+		get_network
+		get_sys_sap
+		get_storage_sap
+		echo "#"
 	;;
 	-h|--help|*)
 		help

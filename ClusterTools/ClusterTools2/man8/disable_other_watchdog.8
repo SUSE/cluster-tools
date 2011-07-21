@@ -1,18 +1,15 @@
-.TH add_softdog_to_initrd 8 "12 July 2011" "" "ClusterTools2"
+.TH disable_other_watchdog 8 "20 July 2011" "" "ClusterTools2"
 .\"
 .SH NAME
-add_softdog_to_initrd \- add kernel module to initrd 
+disable_other_watchdog \- disable other watchdog and reboot-daemons 
 .\"
 .SH SYNOPSIS
 .P
-.B add_softdog_to_initrd \fIOPTION\fR
-.P
-.B add_softdog_to_initrd \fR[\fI<MODULE>\fR]
+.B disable_other_watchdog
 .\"
 .SH DESCRIPTION
-\fBadd_softdog_to_initrd\fP adds one kernel module to the sysconfig kernel
-section and to the default initrd. The successfully added module is also loaded
-into the running kernel.
+\fBdisable_other_watchdog\fP 
+stop reboot-daemon, disable service, remove watchdog module from running kernel. Write watchdog to modprobe blacklist.
 .br
 .\"
 .SH OPTIONS
@@ -29,13 +26,9 @@ into the running kernel.
 .SH EXAMPLES
 .br
 .TP
-* Add watchdog to sysconfig kernel section and build new initrd, use built-in default.
+* disable watchdog and stop reboot-daemon.
 .br
-# add_softdog_to_initrd
-.TP
-* Add hpwdt.ko watchdog module to sysconfig kernel section and build new initrd.
-.br
-# add_softdog_to_initrd hpwdt
+# disable_other_watchdog
 .\"
 .SH EXIT STATUS
 .B 0
@@ -46,8 +39,11 @@ Usage, syntax or execution errors.
 .\"
 .SH FILES
 .TP
-/usr/sbin/add_softdog_to_initrd
+/usr/sbin/disable_other_watchdog
 	the program itself.
+.TP
+/etc/ClusterTools2/disable_other_watchdog
+	the configuration file.
 .TP
 /etc/sysconfig/kernel
 	the sysconfig kernel section.
@@ -56,18 +52,20 @@ Usage, syntax or execution errors.
 	the kernel's watchdog modules.
 .\"
 .SH BUGS
+Currently only HP ASR daemon and few watchdogs are handled. 
 Feedback is welcome, please use the project page at
 .br
 http://ClusterTools.sourceforge.net
 .\"
 .SH SEE ALSO
 \fBmkinitrd\fP(8), \fBSuSEconfig\fP(8), \fBsbd\fP(7),
-\fBdisable_other_watchdog\fP(8), \fBClusterTools2\fP(7)
+\fBadd_softdog_to_initrd\fR(8), \fBClusterTools2\fP(7)
+.\"
 .\"
 .SH COPYRIGHT
 (c) 2011 L.Pinne, Germany.
 .br
-add_softdog_to_initrd comes with ABSOLUTELY NO WARRANTY.
+disable_other_watchdog comes with ABSOLUTELY NO WARRANTY.
 .br
 For details see the GNU General Public License at
 http://www.gnu.org/licenses/gpl.html

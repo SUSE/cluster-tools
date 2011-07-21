@@ -12,8 +12,7 @@ EXE=$(basename $0)
 DAT=$(date +"%F %T")
 
 function help() {
-	echo "usage:	$EXE --sap <SID>"
-	echo "	$EXE --sap <SID> <SVC_LABEL>"
+	echo "usage:	$EXE --sap <SID> [<SVC_LABEL>]"
 	echo "	$EXE --ora <SID> <SVC_LABEL> [<VG>]"
 	echo "	$EXE --help|--version"
 	exit

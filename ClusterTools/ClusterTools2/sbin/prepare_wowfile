@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2011-04-12
+# Version: 0.01 2011-07-21
 #
 
 SID=${1:-"ZSAdb"}
@@ -15,8 +15,9 @@ test -z "$SVCNAM" && SVCNAM=$(echo $SID|tr [:upper:] [:lower:])
 EXE=$(basename $0)
 
 function help() {
-	echo "usage:	$EXE <SID>"
-	echo "	$EXE <SID> <SVC_LABEL>"
+	echo "usage:	$EXE --sap <SID>"
+	echo "	$EXE --sap <SID> <SVC_LABEL>"
+	echo "	$EXE --ora <SID> <SVC_LABEL> [<VG>]"
 	echo "	$EXE --help|--version"
 	exit
 }
@@ -28,7 +29,7 @@ function version() {
 }
 
 
-function storage() {
+function storage_sap() {
 	echo -n "RAID1_DEVICES=\""
 	pvs | awk '$2~/'"$SID"'/ {print $1" "}' | tr -d "\n"
 	echo "\""
@@ -47,6 +48,24 @@ function storage() {
 }
 
 
+function storage_ora() {
+	echo -n "RAID1_DEVICES=\""
+	pvs | awk '$1~/^\/dev\/md.$/ && $2~/^'"$VG"'/ {print $1" "}' | tr -d "\n"
+	echo "\""
+	echo
+	#
+	echo -n "LVM_VOLUMEGROUPS=\""
+	pvs | awk '$1~/^\/dev\/md.$/ && $2~/^'"$VG"'/ {print $2" "}' | sort -du | tr -d "\n"
+	echo "\""
+	echo
+	#
+	echo 'FS_FILESYSTEMS=$(cat <<HERE-FS'
+	mount | awk '$1~/\/dev\/.*\/'"$VG"'-lv/ && $3~/^\/'"$VG"'lv/ { print $1,$3,"noatime,defaults"}'
+	echo 'HERE-FS'
+	echo ')'
+}
+
+
 function network() {
 	echo
 	echo "ALLNODES=\"$HOSTNAME\""
@@ -56,7 +75,7 @@ function network() {
 }
 
 
-function sapsys() {
+function sys_sap() {
 	echo
 	echo "SAPSID=\"$SID\""
 	echo "DBTYPE=ORA"
@@ -66,19 +85,49 @@ function sapsys() {
 }
 
 
+function sys_ora() {
+	echo
+	echo "ORASID=\"$SID\""
+	echo "DBTYPE=ORA"
+	echo "GRPID=grp_ora_$SID"
+	echo "SAP_SCORES=\"1000 0\""
+	echo
+}
+
+
+
 # main()
 
 case $1 in
-	-h|--help)
-		help
-	;;
 	-v|--version)
 		version
 	;;
-	*)
+	-o|ora|oracle)
+		shift
+		SID=${1:-"ora01"}	
+		SVCNAM=${2:-"ora01"}
+		VG=${3:-"vg01"}
+
+		echo SID: $SID
+		echo SVCNAM: $SVCNAM
+		echo VG: $VG
+	
 		network
-		sapsys
-		storage
+		sys_ora
+		storage_ora
+	;;
+	-s|sap)
+		shift
+		SID=${1:-"ZSAdb"}
+		SVCNAM=${2}
+		test -z "$SVCNAM" && SVCNAM=$(echo $SID|tr [:upper:] [:lower:])
+
+		network
+		sys_sap
+		storage_sap
+	;;
+	-h|--help|*)
+		help
 	;;
 esac
 #

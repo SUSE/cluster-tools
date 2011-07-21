@@ -13,7 +13,7 @@ DAT=$(date +"%F %T")
 
 function help() {
 	echo "usage:	$EXE --sap <SID> [<SVC_LABEL>]"
-	echo "	$EXE --ora <SID> <SVC_LABEL> [<VG>]"
+	echo "	$EXE --ora <SID> <SVC_LABEL> [<VG> [<RAID_CFG>]]"
 	echo "	$EXE --help|--version"
 	exit
 }
@@ -33,6 +33,8 @@ function get_header() {
 
 function get_storage_sap() {
 	# TODO better string manipulation
+	echo -n "RAID_CONFIG=\"${RAID_CFG}\""
+	echo
 	echo -n "RAID1_DEVICES=\""
 	pvs | awk '$2~/'"$SID"'/ {print $1" "}' | tr -d "\n" | sed s/" "$//
 	echo "\""
@@ -53,6 +55,8 @@ function get_storage_sap() {
 
 function get_storage_ora() {
 	# TODO better string manipulation
+	echo -n "RAID_CONFIG=\"${RAID_CFG}\""
+	echo
 	echo -n "RAID1_DEVICES=\""
 	pvs | awk '$1~/^\/dev\/md.$/ && $2~/^'"$VG"'/ {print $1" "}' | tr -d "\n" | sed s/" "$//
 	echo "\""
@@ -64,7 +68,8 @@ function get_storage_ora() {
 	echo
 	#
 	echo 'FS_FILESYSTEMS=$(cat <<HERE-FS'
-	mount | awk '$1~/\/dev\/.*\/'"$VG"'-lv/ && $3~/^\/'"$VG"'lv/ { print $1,$3,"noatime,defaults"}'
+	mount | awk '$1~/\/dev\/.*\/'"$VG"'-lv/ && $3~/^\/'"$VG"'lv/ { n=split($1,label,"-");
+		print $1,$3,label[2],"noatime,defaults"}'
 	echo 'HERE-FS'
 	echo ')'
 }
@@ -109,7 +114,8 @@ case $1 in
 		shift
 		SID=${1:-"ora01"}	
 		SVCNAM=${2:-"ora01"}
-		VG=${3:-"vg01"}
+		RAID_CFG=${3:-"/clusterconf/${SID}/mdadm.conf"}
+		VG=${4:-"vg01"}
 		
 		get_header "${*}"
 		get_network
@@ -122,6 +128,7 @@ case $1 in
 		SID=${1:-"ZSAdb"}
 		SVCNAM=${2}
 		test -z "$SVCNAM" && SVCNAM=$(echo $SID|tr [:upper:] [:lower:])
+		RAID_CFG=${3:-"/clusterconf/${SID}/mdadm.conf"}
 
 		get_header "${*}"
 		get_network

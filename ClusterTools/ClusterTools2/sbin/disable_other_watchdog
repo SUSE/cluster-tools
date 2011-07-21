@@ -35,12 +35,17 @@ function disable_hpasr() {
 	# TODO process return codes
 	/etc/init.d/hp-asrd stop
 	chkconfig hp-asrd off
-	rmmod hpwdt
 
 	# TODO separate function that checks for loaded modules from /lib/...
-	echo blacklist hpwdt >>$MODCFG
-	echo blacklist iTCO_wdt >>$MODCFG
-	echo blacklist ibmasr >>$MODCFG
+	test -z "$MODULES" && MODULES="hpwdt iTCO_wdt ibmasr"
+
+	mv $MODCFG $MODCFG.bak
+	for m in$MODULES; do
+		echo blacklist ${m} >>$MODCFG
+	done
+	for m in$MODULES; do
+		rmmod ${m}
+	done
 
 	echo "INFO: end $EXE $FUNCNAME"
 }

@@ -113,7 +113,7 @@ case $1 in
 	-v|--version)
 		version
 	;;
-	-o|ora|oracle)
+	-o|--ora|--oracle)
 		shift
 		SID=${1:-"ora01"}	
 		SVCNAM=${2:-"ora01"}
@@ -126,7 +126,7 @@ case $1 in
 		get_storage_ora
 		echo "#"
 	;;
-	-s|sap)
+	-s|--sap)
 		shift
 		SID=${1:-"ZSAdb"}
 		SVCNAM=${2}

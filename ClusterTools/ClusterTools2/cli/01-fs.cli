@@ -4,4 +4,4 @@ directory="$MOUNTPOINT" \
 fstype="$FSTYPE" \
 options="$MOPTIONS" \
 op stop timeout=300s \
-op monitor interval=30s timeout=60s
+op monitor interval=30s timeout=130s

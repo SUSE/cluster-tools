@@ -13,7 +13,7 @@ DAT=$(date +"%F %T")
 
 function help() {
 	echo "usage:	$EXE --sap <SID> [<SVC_LABEL>]"
-	echo "	$EXE --ora <SID> <SVC_LABEL> [<VG> [<RAID_CFG>]]"
+	echo "	$EXE --ora <SID> <SVC_LABEL> [<RAID_CFG> [<VG>]]"
 	echo "	$EXE --help|--version"
 	exit
 }
@@ -27,7 +27,7 @@ function version() {
 
 function get_header() {
 	echo "# $DAT - $EXE $*"
-	echo "# please check for correct values and order, and add missing nodes."
+	echo "# please check for correct values and order"
 }
 
 

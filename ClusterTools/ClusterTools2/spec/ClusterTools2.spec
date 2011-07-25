@@ -15,8 +15,8 @@ License:      GPL
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.2.7
-Release:      2 
+Version:      2.2.8
+Release:      1 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
@@ -126,6 +126,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config /etc/ClusterTools2
 
 %changelog -n ClusterTools
+* Wed Jul 06 2011 - fabian.herschel@suse.com
+  2.2.8 fixed node status (CSN)
 * Tue Jul 05 2011 - fabian.herschel@suse.com
   2.2.7 fixed comamnd line option
   - fixed missing groups in resource list

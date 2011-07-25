@@ -1,0 +1,4 @@
+configure \
+primitive rsc_stonith_sbd stonith:external/sbd \
+	op monitor interval="60s" timeout="130s" \
+	params sbd_device=@@SBD_DEVICE@@

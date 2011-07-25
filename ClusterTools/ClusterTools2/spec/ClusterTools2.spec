@@ -16,7 +16,7 @@ Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.2.8
-Release:      1 
+Release:      <release8> 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
@@ -67,20 +67,19 @@ mkdir -p %{buildroot}/usr/share/man/man8
 cp -va sbin/* %{buildroot}/usr/sbin/
 #
 # etc
-cp -va etc/ClusterTools2/*  %{buildroot}/etc/ClusterTools2/
 #
+cp -va etc/ClusterTools2/*  %{buildroot}/etc/ClusterTools2/
 #
 # share 
 #
 cp -a share/* %{buildroot}/usr/share/ClusterTools2/
 cp -a cli/* %{buildroot}/usr/share/ClusterTools2/cli/
 cp -a samples/* %{buildroot}/usr/share/ClusterTools2/samples/
-#
-#
 cp -a lib/* %{buildroot}/usr/lib/ClusterTools2/
 cp -a agents/* %{buildroot}/usr/lib/ClusterTools2/agents/
 cp -a scripts/* %{buildroot}/usr/lib/ClusterTools2/scripts
-# man page(s) and license
+#
+# man pages and license
 #
 cp -a man5/*.gz %{buildroot}/usr/share/man/man5/
 cp -a man7/*.gz %{buildroot}/usr/share/man/man7/
@@ -94,6 +93,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/add_softdog_to_initrd
 #/usr/sbin/clusterstate
 #/usr/sbin/cluster_actions
+/usr/sbin/disable_other_watchdog
 /usr/sbin/find_appconf
 /usr/sbin/fhcrmedit
 /usr/sbin/grep_error_patterns
@@ -116,6 +116,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/psauxlog
 /usr/sbin/sleha_cleanup
 /usr/sbin/show_scores
+/usr/sbin/showscores
 /usr/sbin/sum_base_config
 #/usr/sbin/test_udpmcast
 /usr/share/ClusterTools2
@@ -123,13 +124,15 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %doc /usr/share/man/man5/*.gz
 %doc /usr/share/man/man7/*.gz
 %doc /usr/share/man/man8/*.gz
-%config /etc/ClusterTools2
+%config(noreplace) /etc/ClusterTools2
 
 %changelog -n ClusterTools
+* Tue Jul 18 2011 - lars.pinne@novell.com
+  2.2.8 added man page, fixed config scripts, 2nd ring in make_corosync_conf, set config (noreplace)
 * Wed Jul 06 2011 - fabian.herschel@suse.com
   2.2.8 fixed node status (CSN)
 * Tue Jul 05 2011 - fabian.herschel@suse.com
-  2.2.7 fixed comamnd line option
+  2.2.7 fixed command line option
   - fixed missing groups in resource list
 * Tue Jul 05 2011 - fabian.herschel@suse.com
   2.2.6 new package version for opensuse.org
@@ -139,8 +142,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
   2.2.5-1 added corrections/improvements from lars.pinne@novell.com
   - changed menueng2, wow and ClusterService to display better help (program name now matches the use case)
 * Sat May 14 2011 - fabian.herschel@suse.com
-  2.2.4-1 added fhcrmedit to have a batch-able editor - fhcrmedit will be renamed in the future and is only a draft for 
-  internal tests
+  2.2.4-1 added fhcrmedit to have a batch-able editor - fhcrmedit will be renamed in the future and is only a draft for internal tests
 * Fri May 13 2011 - fabian.herschel@suse.com
   2.2.3-1 simple stack now has now the option to skip the SFEX device resource (just let SFEX_DEVICE be empty)
 * Tue May 10 2011 - lars.pinne@novell.com

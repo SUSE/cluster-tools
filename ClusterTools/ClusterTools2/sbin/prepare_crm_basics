@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: L.Pinne
 #
-# Version: 0.01 2011-06-10 15:00
+# Version: 0.02 2011-07-12 11:00
 #
 
 EXE="$0"
@@ -49,7 +49,7 @@ function prep_crm_sbd() {
  	SBD_DEVICE=$(awk -F"=" '$1=="SBD_DEVICE" {print $2}' $FIL)
 
 	awk -F"=" ' $2!~/@@[A-Z].*@@/ {print}
-		$2~/@@SBD_DEVICE@@/ { print $1,"=","\""'${SBD_DEVICE}'"\""}
+		$2~/@@SBD_DEVICE@@/ { print $1"=""\""'${SBD_DEVICE}'"\""}
 	' ${STONITH_TMPL} >${STONITH_CRM}
 	
 	echo "INFO: end $EXE $FUNCNAME"
@@ -88,4 +88,3 @@ case $1 in
 	;;
 esac
 #
-

@@ -1,0 +1,72 @@
+IPagent=""
+GROUP_MEMBERS=""
+DBTYPE=ORA
+test -z $ORASID && SAPSID=$ORASID
+
+source wowlib2
+#
+# sfex
+#
+if [ -n "$SFEX_DEVICE" ]; then
+	NGM=rsc_sfex_${SFEXID}_${SFEX_INDEX}_$SAPSID
+	GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
+fi
+#
+# RAID1 / MD
+#
+for raiddev in $RAID1_DEVICES; do
+	raidname=${raiddev#/dev/}
+	NGM=rsc_md_${SAPSID}_${raidname} 
+	GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
+done
+#
+# LVM
+#
+for volumegroup in $LVM_VOLUMEGROUPS; do
+	NGM=rsc_lvm_${SAPSID}_${volumegroup} 
+	GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
+done
+#
+# FS
+# 
+while read dev dir fsid fstype moptions
+do 
+	if [ -n "${dev%%\#*}" ]; then # neither an empty line nor a comemnt line (# is first char)
+		NGM=rsc_fs_${SAPSID}_${fsid} 
+		GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
+	fi
+done <<< "$FS_FILESYSTEMS"
+#
+# ip
+#
+if [ -z "$IPagent" ]; then
+	IPagent=$DEFAULT_IPagent
+fi
+for ip_label in $IP_LABELS; do
+	ipaddr=${ip_label#*,}
+	ipname=${ip_label%,*}
+	NGM=rsc_ip_${SAPSID}_${ipname} 
+	GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
+done
+#
+#
+#
+woweng2 UUID=grp_ora_${SAPSID} \
+    GROUP_MEMBERS="$GROUP_MEMBERS" \
+    $wowcli/01-grp-sap.cli
+#
+# LOC
+#
+
+#
+# oracle scores per node
+#
+mySCORE=$SAP_SCORES
+for node in $ALLNODES
+do
+        nSCORE=$(firstof_var mySCORE); shift_var mySCORE
+        woweng2 UUID=loc_${GRPID}_on_${node} RESOURCE=$GRPID SCORE=$nSCORE  NODE=${node} $wowcli/03-loc.cli
+#        woweng $WOWCONSTMODIFY CONSTID=loc_${GRPID}_on_${node} UUID=prefered_loc_${GRPID}_on_${node} SCORE=$nSCORE $wowxml/03-constraint_rule.xml
+#        woweng $WOWCONSTMODIFY RULEID=prefered_loc_${GRPID}_on_${node} UUID=prefered_loc_${GRPID}_on_${node}_name ATTRIBUTE="#uname" OPERATOR="eq" VALUE="${node}" $wowxml/03-constraint_rule_expression.xml
+done
+

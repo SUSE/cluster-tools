@@ -36,6 +36,17 @@ totem {
                         memberaddr: @@MEMBERADDR2_0@@
                 }
         }
+        interface {
+                ringnumber:	1 
+                bindnetaddr:	@@BINDNETADDR_1@@   
+                mcastport:     	@@MCASTPORT_1@@ 
+                member {
+                        memberaddr: @@MEMBERADDR1_1@@ 
+                }
+                member {
+                        memberaddr: @@MEMBERADDR2_1@@
+                }
+        }
 }
 logging {
 	fileline:	off

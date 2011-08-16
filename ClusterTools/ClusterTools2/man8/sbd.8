@@ -161,11 +161,17 @@ You can look at what was written to the device using:
 # \fBsbd -d /dev/<SBD> dump\fR 
 .br
 Header version     : 2
+.br
 Number of slots    : 255
+.br
 Sector size        : 512
+.br
 Timeout (watchdog) : 5
+.br
 Timeout (allocate) : 2
+.br
 Timeout (loop)     : 1
+.br
 Timeout (msgwait)  : 10
 
 As you can see, the timeouts are also stored in the header, to ensure

@@ -8,12 +8,32 @@
 # Version: 0.1 2011-08-18
 #
 
-ETH="bond0 eth3"
-SCF="/etc/sysconfig/sbd"
-SBD=$( awk -F"=" '$1=="SBD_DEVICE" {print $2}' $SCF |tr -d "\""|tr ";" "\n" )
+EXE="$0"
+
+CFG="/etc/ClusterTools2/clusterstate"
+test -s $CFG && source $CFG
+
+test -z "${ETH}" &&\
+	 ETH="bond0 eth3"
+test -z "${SCF}" &&\
+	 SCF="/etc/sysconfig/sbd"
+test -z "${SBD}" && test -s $SCF &&\
+	SBD=$( awk -F"=" '$1=="SBD_DEVICE" {print $2}' $SCF |\
+		tr -d "\""|tr ";" "\n" )
+
 HST=$(hostname -f)
 DAT=$(date +"%Y-%m-%d %T")
 
+
+function help() {
+	echo "usage:    $(basename $0) [OPTION]"
+	echo
+	echo " --help           show help."
+	echo " --version        show version."
+}
+
+
+function get_state() {
 echo "### $HST - $DAT ###"
 echo
 crm_mon -r1 |\
@@ -51,6 +71,24 @@ done
 echo
 cat /proc/mdstat | grep -v "Personalities.:" | grep -v "bitmap.*chunk$" |\
 	 tr -s "\n" 
+}
 
-exit
+
+# main()
+
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-h|--help)
+		help
+		exit
+	;;
+	*)
+		get_state
+		exit
+	;;
+esac
 #

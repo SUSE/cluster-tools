@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+# clusterstate 
+#
+# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version: 0.1 2011-08-18
+#
+
+ETH="bond0 eth3"
+SCF="/etc/sysconfig/sbd"
+SBD=$( awk -F"=" '$1=="SBD_DEVICE" {print $2}' $SCF |tr -d "\""|tr ";" "\n" )
+HST=$(hostname -f)
+DAT=$(date +"%Y-%m-%d %T")
+
+echo "### $HST - $DAT ###"
+echo
+crm_mon -r1 |\
+ awk '$1=="Current"||$1=="Online:"||$1=="OFFLINE:"||$3=="UNCLEAN"{print $0}'
+# TODO: efficient awk
+echo -n "Stopped/FAILED resources: "
+crm_mon -r1 | awk '$3=="Stopped"||$0~/FAILED/{print $0}' | wc -l
+echo -n "Started resources: "
+crm_mon -r1 | awk '$3=="Started"{print $0}' | wc -l
+
+echo
+corosync-cfgtool -s | grep -B1 "status.*ring" | grep -v - "--"
+
+echo
+for i in $ETH; do
+	ip -o a s $i | awk '$0~/state/{print $2,$3}'
+	case $i in
+	bond?)
+		cat /proc/net/bonding/$i | grep -B1 "MII.Status" | grep -v - "--"
+	 	# TODO ethtool
+	;;
+	eth?)
+		# TODO ethtool
+	;;
+	esac
+done
+
+echo
+for s in $SBD; do
+	echo ${s}
+	sbd -d ${s} list
+done
+
+# TODO no grep-grep
+echo
+cat /proc/mdstat | grep -v "Personalities.:" | grep -v "bitmap.*chunk$" |\
+	 tr -s "\n" 
+
+exit
+#

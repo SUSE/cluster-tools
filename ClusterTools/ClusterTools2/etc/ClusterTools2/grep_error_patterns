@@ -4,6 +4,7 @@
 ERROR_PATTERN="
 "taint.flag"
 "no.device.*found"
+"bfa.*err"
 "lpfc.*err"
 "qla.*err"
 "qlge.*error"

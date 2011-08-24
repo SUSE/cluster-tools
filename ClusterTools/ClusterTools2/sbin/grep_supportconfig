@@ -5,22 +5,28 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version 0.01 2011-05-31
+# Version 0.01 2011-08-24
 #
 # For SLES11.
 # For Supportconfig Script Version: 2.25-237
+# set -x
 
 COMD=$(basename $0)
 ERR="/dev/null"
 TMP="/tmp/cltl.$RANDOM"
+
+CFG="/etc/ClusterTools2/grep_supportconfig"
+test -s $CFG && source $CFG
 
 # TODO: make DIR= work
 DIR=${2:-$PWD}
 FUN=${3:-"chk_overview"}
 OWD=$PWD
 
-# TODO: config file /etc/ClusterTools2/grep_suppoertconfig
+
 # TODO: generic record split function for supportconfig files
+
+
 
 function echo_msgsep ()
 {
@@ -92,9 +98,9 @@ function chk_modules() {
 	FIL="boot.txt"
 	grep "^\[.*AppArmor:.*initialized" $FIL
 
-# TODO: external cfg file
 # TODO: add Cisco HBA
-MODLS="
+test -z "${HARDW_MOD}" &&\
+	HARDW_MOD="
 bfa.ko
 lpfc.ko
 qlge.ko
@@ -110,16 +116,18 @@ dm_multipath.ko
 dm_mirror.ko
 bonding.ko
 hpwdt.ko
+ibmasr.ko
+iTCO_wdt.ko
 softdog.ko
 "
 	FIL="boot.txt"
-	for m in $MODLS; do
+	for m in $HARDW_MOD; do
 		grep ${m} $FIL | sort -u
 	done
 
 # TODO: split file to records instead of -A9, to find "supported:"
 	FIL="modules.txt"
-	for m in $MODLS; do
+	for m in $HARD_MOD; do
 		grep -A9 "^filename:.*${m}" $FIL |\
 		 awk '$1=="filename:" || $1=="license:" || $1=="supported:" {print $0}' 
 	done
@@ -146,7 +154,8 @@ function chk_services() {
 	echo
 
 # TODO: whbsaprecheck
-SVC_YES="
+test -z "${SVC_YES}" &&\
+	SVC_YES="
 boot.clock
 boot.devicemapper
 boot.lvm
@@ -157,7 +166,8 @@ boot.sysctl
 multipathd
 ntp
 "
-SVC_OFF="
+test -z "${SVC_OFF}" &&\
+	SVC_OFF="
 boot.dmraid
 boot.md
 alsasound
@@ -193,7 +203,8 @@ function chk_network() {
 	
 	echo_msgsep $FUNCNAME
 	
-PATTRN="
+test -z "${NETW_PTRN}" &&\
+	NETW_PTRN="
 "Setting.up.hostname"
 "Setting.up.loopback.interface"
 "eth.*IP.address:"
@@ -201,7 +212,7 @@ PATTRN="
 "bond.*IP.address:.*as.bonding.master"
 "
 	FIL="boot.txt"
-	for p in $PATTRN; do
+	for p in $NETW_PTRN; do
 		grep $p $FIL
 	done | sort -u
 	echo
@@ -227,7 +238,7 @@ PATTRN="
 	
 	grep -A11 "^# /etc/sysconfig/network/ifcfg-eth" $FIL
 
-	grep -A1 "^# /sbin/chkconfig nscd" $FIL ) | grep -v "#==["
+	grep -A1 "^# /sbin/chkconfig nscd" $FIL ) | grep -v "#==\["
 	echo
 }
 
@@ -250,26 +261,27 @@ function chk_timeset() {
 	grep "^server" $FIL
 	echo
 
-ERRPTN="
+test -z "${TIME_ERR}" &&\
+	TIME_ERR="
 "synchronized.to.LOCAL"
 "ntpd.*time.reset"
 "ntpd.*failed"
 "
-	for p in $ERRPTN; do
+	for p in $TIME_ERR; do
 		echo -n "${p} : "
 		grep -c ${p} $FIL
 	done
 	echo
 
 	FIL="sysconfig.txt"
-
-PATTRN="
+test -z "${TIME_PTRN}" &&\
+	TIME_PTRN="
 HWCLOCK
 SYSTOHC
 TIMEZONE
 DEFAULT_TIMEZONE
-"	
-	for p in $PATTRN; do
+"
+	for p in $TIME_PTRN; do
 		grep "^${p}" $FIL | sort -u
 	done
 	echo
@@ -346,12 +358,13 @@ function chk_software() {
 	echo	
 
 	FIL="sam.txt"
-PATTRN="
+test -z "${SOFTW_PTRN}" &&\
+	SOFTW_PTRN="
 System.architecture:
 Baseproduct:
 not.our.package:
 "	
-	for p in $PATTRN; do
+	for p in $SOFTW_PTRN; do
 		grep "${p}" $FIL
 	done
 	echo
@@ -364,17 +377,18 @@ function chk_updates() {
 	
 	FIL="updates.txt"
 # TODO
-PRODS="
+test -z "${UPDT_PTRN}" &&\
+	UPDT_PTRN="
 "SLES11-"
 "SLES11-SP"
 "SLE11-HAE-SP"
 "SLE11-HAE-SP"
 "
-	for p in ${PRODS}; do
+	for p in ${UPDT_PTRN}; do
 		grep "|.*|.${p}.*|.*|" $FIL | sort -u
 	done
 	echo
-	grep "patches needed" $FIL
+	grep "patches.needed" $FIL
 	echo
 }
 
@@ -387,7 +401,7 @@ function chk_multipath() {
 	for p in "^#.rpm.-V" "^#.Verification.Status:"; do
 		grep "${p}" $FIL
 	done
-	grep "^# RPM Not Installed:" $FIL
+	grep "^#.RPM.Not.Installed:" $FIL
 	grep "^INITRD_MODULES=" $FIL
 	echo
 
@@ -428,7 +442,8 @@ function chk_storage() {
 
 	FIL="rpm.txt"
 	# TODO: see whbsaprecheck
-PKG="
+test -z "${STOR_PKG}" &&\
+	STOR_PKG="
 dmraid
 lvm2
 libext2fs2
@@ -440,13 +455,14 @@ ocfs2-tools
 ocfs2-kmp-default
 xfsprogs
 "
-	for p in $PKG; do
+	for p in $STOR_PKG; do
 		awk '$1=="'$p'" {print $1,$NF} ' $FIL
 	done
 	echo
-
+# TODO check if local disk is in multipath
 # TODO: nfs
-MOD="
+test -z "${STOR_MOD}" &&\
+	STOR_MOD="
 ext2
 ext3
 ocfs2
@@ -470,7 +486,7 @@ function chk_overview() {
 
 	FIL="basic-health-report.txt"
 
-	for p in "^Date.Checked:" "^Status:"  "\[...Red...\]" "\[.Yellow..\]"; do
+	for p in "^Date.Checked:" "^Status:" "\[...Red...\]" "\[.Yellow..\]"; do
 		grep ${p} $FIL
 	done
 	echo
@@ -482,8 +498,10 @@ function chk_errors() {
 	echo_msgsep $FUNCNAME
 
 	# TODO: see grep_error_patterns
-	source /etc/ClusterTools2/grep_error_patterns
-
+	test -z "${ERRCFG}" &&\
+		ERRCFG="/etc/ClusterTools2/grep_error_patterns"
+	test -s $ERRCFG && source $ERRCFG
+ 
 	# TODO: taint.flag ??
 	echo -n "kernel.tainted : "
 	grep -c "^kernel.tainted" env.txt
@@ -504,7 +522,7 @@ function chk_errors() {
 case $1 in
 	--help|-h)
 		echo "usage: $COMD OPTION"
-		echo "usage: $COMD OPTION <DIR>"
+		echo "usage: $COMD --generic <DIR>"
 		echo "usage: $COMD --function <DIR> <FUNC>"
 		echo
 		echo "OPTION:"

@@ -5,13 +5,12 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version 0.01 2011-08-24
+# Version: 0.01 2011-08-24
 #
 # For SLES11.
 # For Supportconfig Script Version: 2.25-237
-# set -x
 
-COMD=$(basename $0)
+EXE=$0
 ERR="/dev/null"
 TMP="/tmp/cltl.$RANDOM"
 
@@ -125,6 +124,7 @@ softdog.ko
 		grep ${m} $FIL | sort -u
 	done
 
+# TODO: sysconfig/kernel INITRD_MODULES MODULES_LOADED_ON_BOOT
 # TODO: split file to records instead of -A9, to find "supported:"
 	FIL="modules.txt"
 	for m in $HARD_MOD; do
@@ -334,6 +334,9 @@ function chk_kernel() {
 	grep -A1 "^# /proc/cmdline" $FIL
 	grep "^INITRD_MODULES=" $FIL	
 	grep "^\[.*Booting paravirtualized kernel on bare hardware" $FIL
+
+	echo -n "kernel.tainted : "
+	grep -c "^kernel.tainted" env.txt
 	echo
 }
 
@@ -376,12 +379,12 @@ function chk_updates() {
 	echo_msgsep $FUNCNAME
 	
 	FIL="updates.txt"
+# TODO sles-for-sap
 # TODO
 test -z "${UPDT_PTRN}" &&\
 	UPDT_PTRN="
 "SLES11-"
 "SLES11-SP"
-"SLE11-HAE-SP"
 "SLE11-HAE-SP"
 "
 	for p in ${UPDT_PTRN}; do
@@ -521,18 +524,24 @@ function chk_errors() {
 
 case $1 in
 	--help|-h)
-		echo "usage: $COMD OPTION"
-		echo "usage: $COMD --generic <DIR>"
-		echo "usage: $COMD --function <DIR> <FUNC>"
+		BEX=$(basename $EXE)
+		echo "usage: $BEX OPTION"
+		echo "usage: $BEX --generic <DIR>"
+		echo "usage: $BEX --function <DIR> <FUNC>"
 		echo
 		echo "OPTION:"
                 echo " --help           show help."
+                echo " --listfunc       show available functions."
                 echo " --version        show version."
 		exit
 	;;
 	--version|-v)
 		echo -n "$(basename $EXE) "
 		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	--listfunc|-l)
+		awk '$1=="function" && $2~/^chk_/ {print $2}' $EXE | sort
 		exit
 	;;
 	--generic|-g)
@@ -555,8 +564,14 @@ case $1 in
 	;;
 	--function|-f)
 		cd $DIR
-		# TODO: shift loop for multiple functions
-		$FUN
+		shift
+		if [ $# -gt 1 ]; then	
+			for f in $*; do
+				grep "^function ${f}()..$" ${OWD}/$EXE && $f
+				shift
+			done
+		else $FUN
+		fi
 		exit
 	;;
 	--test|-t)

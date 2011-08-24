@@ -14,13 +14,18 @@ COMD=$(basename $0)
 ERR="/dev/null"
 TMP="/tmp/cltl.$RANDOM"
 
+CFG="/etc/ClusterTools2/grep_supportconfig"
+test -s $CFG && source $CFG
+
 # TODO: make DIR= work
 DIR=${2:-$PWD}
 FUN=${3:-"chk_overview"}
 OWD=$PWD
 
-# TODO: config file /etc/ClusterTools2/grep_suppoertconfig
+
 # TODO: generic record split function for supportconfig files
+
+
 
 function echo_msgsep ()
 {
@@ -92,9 +97,9 @@ function chk_modules() {
 	FIL="boot.txt"
 	grep "^\[.*AppArmor:.*initialized" $FIL
 
-# TODO: external cfg file
 # TODO: add Cisco HBA
-MODLS="
+test -z "${MODLS}" &&\
+	MODLS="
 bfa.ko
 lpfc.ko
 qlge.ko
@@ -110,6 +115,8 @@ dm_multipath.ko
 dm_mirror.ko
 bonding.ko
 hpwdt.ko
+ibmasr.ko
+iTCO_wdt.ko
 softdog.ko
 "
 	FIL="boot.txt"
@@ -146,7 +153,8 @@ function chk_services() {
 	echo
 
 # TODO: whbsaprecheck
-SVC_YES="
+test -z "${SVC_YES}" &&\
+	SVC_YES="
 boot.clock
 boot.devicemapper
 boot.lvm
@@ -157,7 +165,8 @@ boot.sysctl
 multipathd
 ntp
 "
-SVC_OFF="
+test -z "${SVC_OFF}" &&\
+	SVC_OFF="
 boot.dmraid
 boot.md
 alsasound
@@ -193,7 +202,8 @@ function chk_network() {
 	
 	echo_msgsep $FUNCNAME
 	
-PATTRN="
+test -z "${NETW_PTRN}" &&\
+	NETW_PTRN="
 "Setting.up.hostname"
 "Setting.up.loopback.interface"
 "eth.*IP.address:"
@@ -201,7 +211,7 @@ PATTRN="
 "bond.*IP.address:.*as.bonding.master"
 "
 	FIL="boot.txt"
-	for p in $PATTRN; do
+	for p in $NETW_PTRN; do
 		grep $p $FIL
 	done | sort -u
 	echo
@@ -250,12 +260,12 @@ function chk_timeset() {
 	grep "^server" $FIL
 	echo
 
-ERRPTN="
+TIME_ERR="
 "synchronized.to.LOCAL"
 "ntpd.*time.reset"
 "ntpd.*failed"
 "
-	for p in $ERRPTN; do
+	for p in $TIME_ERR; do
 		echo -n "${p} : "
 		grep -c ${p} $FIL
 	done
@@ -263,13 +273,13 @@ ERRPTN="
 
 	FIL="sysconfig.txt"
 
-PATTRN="
+TIME_PTRN="
 HWCLOCK
 SYSTOHC
 TIMEZONE
 DEFAULT_TIMEZONE
 "	
-	for p in $PATTRN; do
+	for p in $TIME_PTRN; do
 		grep "^${p}" $FIL | sort -u
 	done
 	echo
@@ -346,12 +356,12 @@ function chk_software() {
 	echo	
 
 	FIL="sam.txt"
-PATTRN="
+SOFTW_PTRN="
 System.architecture:
 Baseproduct:
 not.our.package:
 "	
-	for p in $PATTRN; do
+	for p in $SOFTW_PTRN; do
 		grep "${p}" $FIL
 	done
 	echo
@@ -364,13 +374,13 @@ function chk_updates() {
 	
 	FIL="updates.txt"
 # TODO
-PRODS="
+UPDT_PTRN="
 "SLES11-"
 "SLES11-SP"
 "SLE11-HAE-SP"
 "SLE11-HAE-SP"
 "
-	for p in ${PRODS}; do
+	for p in ${UPDT_PTRN}; do
 		grep "|.*|.${p}.*|.*|" $FIL | sort -u
 	done
 	echo
@@ -428,7 +438,7 @@ function chk_storage() {
 
 	FIL="rpm.txt"
 	# TODO: see whbsaprecheck
-PKG="
+STOR_PKG="
 dmraid
 lvm2
 libext2fs2
@@ -440,7 +450,7 @@ ocfs2-tools
 ocfs2-kmp-default
 xfsprogs
 "
-	for p in $PKG; do
+	for p in $STOR_PKG; do
 		awk '$1=="'$p'" {print $1,$NF} ' $FIL
 	done
 	echo
@@ -504,7 +514,7 @@ function chk_errors() {
 case $1 in
 	--help|-h)
 		echo "usage: $COMD OPTION"
-		echo "usage: $COMD OPTION <DIR>"
+		echo "usage: $COMD --generic <DIR>"
 		echo "usage: $COMD --function <DIR> <FUNC>"
 		echo
 		echo "OPTION:"

@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.2 2011-05-18
+# Version: 0.2 2011-08-18
 #
 
 EXE="$0"
@@ -32,6 +32,7 @@ test -z "${ERROR_PATTERN}" &&\
 	 ERROR_PATTERN="
 "taint.flag"
 "no.device.*found"
+"bfa.*err"
 "lpfc.*err"
 "qla.*err"
 "qlge.*error"

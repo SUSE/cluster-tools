@@ -2,7 +2,9 @@
 # For SLES11.
 # The variable names and contents are under development.
 #
-MODLS="
+ERRCFG="/etc/ClusterTools2/grep_error_patterns"
+#
+HARDW_MOD="
 bfa.ko
 lpfc.ko
 qlge.ko
@@ -96,5 +98,12 @@ open-iscsi
 ocfs2-tools
 ocfs2-kmp-default
 xfsprogs
+"
+#
+STOR_MOD="
+ext2
+ext3
+ocfs2
+xfs
 "
 #

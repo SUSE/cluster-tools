@@ -1,2 +1,2 @@
-configure primitive $UUID stonith::external/sbd params SBD_DEVICE=$SBD_DEVICE opmonitor interval=15 timeout=15 start-delay=15
+configure primitive $UUID stonith::external/sbd params SBD_DEVICE=$SBD_DEVICE opmonitor interval=30 timeout=60 on-fail="restart"
 configure clone cln_$UUID $UUID 

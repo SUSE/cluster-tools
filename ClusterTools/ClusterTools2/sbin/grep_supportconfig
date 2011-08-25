@@ -583,37 +583,37 @@ function chk_load() {
 	echo "max. memory commit:"
 	echo "hh:mm:ss xM kbmemfree kbmemused  %memused kbbuffers  kbcached  kbcommit   %commit"
 	for f in sa??; do
-		sar -r $f 
+		sar -r -f $f 
 	done | grep "^[0-9][0-9]:" | sort -n -k8 | tail
 
 	echo "max. memory cache:"
 	echo "hh:mm:ss xM kbmemfree kbmemused  %memused kbbuffers  kbcached  kbcommit   %commit"
 	for f in sa??; do
-		sar -r $f 
+		sar -r -f $f 
 	done | grep "^[0-9][0-9]:" | sort -n -k7 | tail
 
 	echo "max. network write tps:"
 	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
 	for f in sa??; do
-		sar -r $f 
+		sar -r -f $f 
 	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k5 | tail
 
 	echo "max. network write kB:"
 	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
 	for f in sa??; do
-		sar -r $f 
+		sar -r -f $f 
 	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k7 | tail
 
 	echo "max. network read tps :"
 	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
 	for f in sa??; do
-		sar -r $f 
+		sar -r -f $f 
 	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k4 | tail
 
 	echo "max. network read kB:"
 	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
 	for f in sa??; do
-		sar -r $f 
+		sar -r -f $f 
 	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k6 | tail
 
 	# TODO: network errors?

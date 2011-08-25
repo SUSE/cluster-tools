@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 # 
-# Version: 0.02 2011-07-20 17:20
+# Version: 0.02 2011-08-25 09:45
 #
 
 EXE="$0"
@@ -30,6 +30,33 @@ function help(){
 function version(){
 	echo -n "$(basename $EXE) "
 	head -11 $EXE | grep "^# Version: "
+}
+
+
+function show_mod(){
+	V=$(uname -a | awk '{print $3}')
+	OTHMOD=$(ls /lib/modules/${V}/kernel/drivers/watchdog/)
+
+# TODO
+#	echo "active watchdog module:"
+#	fuser -f /dev/watchdog
+#	lsof ?
+
+	echo "loaded watchdog modules:"
+	for m in $OTHMOD; do
+		lsmod $m 2>/dev/null
+	done
+
+	echo "configured watchdog module:"
+	grep -v "#.*INITRD_MODULES" $FIL | grep "^INITRD_MODULES=.*$MOD"
+	grep -v "#.*MODULES_LOADED_ON_BOOT" $FIL | grep "^MODULES_LOADED_ON_BOOT=.*$MOD"
+	
+	echo "initrd watchdog module:"
+	/bin/zcat /boot/initrd | cpio -itv 2>/dev/null |\
+               	grep "lib/modules/*/kernel/drivers/watchdog/.*ko$"
+
+	echo "available watchdog modules:"
+	echo $OTHMOD
 }
 
 
@@ -72,22 +99,17 @@ case $1 in
 	;;
 	-s|--show)
 		echo "INFO: start $EXE"
-		# TODO
-		# echo "loaded watchdog module:"
-		# lsmod list from dirtectory
-		echo "configured initrd watchdog module:"
-		grep -v "#.*INITRD_MODULES" $FIL | grep "^INITRD_MODULES=.*$MOD"	
-		echo "available watchdog modules:"
-		V=$(uname -a | awk '{print $3}')
-		ls /lib/modules/${V}/kernel/drivers/watchdog/
+		show_mod
 		echo "INFO: normal_end $EXE"
 		exit
 	;;
 	*)
 		echo "INFO: start $EXE"
-		rmmod hpwdt 2>/dev/null
+		for w in hpwdt ibmasr iTCO_wdt; do
+			rmmod $w 2>/dev/null
+		done
 		add_mod
-		load_mod	
+		load_mod
 		echo "INFO: normal_end $EXE"
 		exit
 	;;

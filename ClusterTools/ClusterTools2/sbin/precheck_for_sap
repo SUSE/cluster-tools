@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version 0.2.10 2011-04-19
+# Version: 0.2.10 2011-08-25
 #
 # For SLES11.
 
@@ -22,14 +22,12 @@ else
 fi
 
 
-function echo_msgsep ()
-{
+function echo_msgsep() {
 	echo "============================================================ ${1:0:14} ==="
 }
 
 
-function chk_gen_kernel ()
-{
+function chk_gen_kernel() {
 	echo_msgsep $FUNCNAME
 	# TODO: correct uname string 
 	echo "--- conf for cluster needs:"
@@ -51,8 +49,7 @@ function chk_gen_kernel ()
 }
 
 
-function chk_gen_swpkg ()
-{
+function chk_gen_swpkg() {
 	# TODO: sam instead
 	echo_msgsep $FUNCNAME
 	echo "--- conf for cluster needs:"
@@ -80,8 +77,7 @@ function chk_gen_swpkg ()
 }
 
 
-function chk_gen_runlvl ()
-{
+function chk_gen_runlvl() {
 	echo_msgsep $FUNCNAME
 	echo "--- conf for cluster needs:"
 	echo "runlevel "$RUNLVL
@@ -122,8 +118,7 @@ function chk_gen_runlvl ()
 }
 
 
-function chk_gen_memory ()
-{
+function chk_gen_memory() {
 	echo_msgsep $FUNCNAME
 	echo "--- conf for cluster needs:"
 	ncpu=$(grep -c "cpu MHz" /proc/cpuinfo)
@@ -148,8 +143,22 @@ function chk_gen_memory ()
 }
 
 
-function chk_gen_storag ()
-{
+# TODO: function_gen_initrd
+        # INRD_PTRN="
+#etc/multipath
+#etc/lvm/lvm.conf
+#etc/sysconfig
+#etc/modprobe
+#lib/modules/*/kernel/drivers/watchdog/.*ko$
+#lib/modules/*/kernel/drivers/scsi/.*ko$
+#lib/modules/*/kernel/drivers/block/.*ko$
+#"
+# TODO: look into initrd, see supportconfig's boot.txt
+# /bin/zcat /boot/initrd | cpio -itv 2>/dev/null
+#
+
+
+function chk_gen_storag() {
 	# TODO: check for storage's barrier support and write-back cache
 	echo_msgsep $FUNCNAME
 	echo "--- conf for cluster needs:"
@@ -176,8 +185,7 @@ function chk_gen_storag ()
 }
 
 
-function chk_gen_fsys ()
-{
+function chk_gen_fsys() {
 	# TODO: check for mount opt barrier=0
 	echo_msgsep $FUNCNAME
 	echo "--- conf for cluster needs:"
@@ -194,8 +202,7 @@ function chk_gen_fsys ()
 }
 
 
-function chk_gen_netwrk ()
-{
+function chk_gen_netwrk() {
 	echo_msgsep $FUNCNAME
 	echo "--- conf for cluster needs:"
 	echo "number of network if  : 3"
@@ -225,8 +232,7 @@ function chk_gen_netwrk ()
 }
 
 
-function chk_gen_auth ()
-{
+function chk_gen_auth() {
 	echo_msgsep $FUNCNAME
 	echo "--- conf for cluster needs:"
 	echo "CRYPT="$PWDENC
@@ -252,8 +258,7 @@ function chk_gen_auth ()
 }
 
 
-function chk_wow_hacf ()
-{	
+function chk_wow_hacf() {	
 	# TODO: corosync
 	# TODO: ha_logd
 	echo_msgsep $FUNCNAME
@@ -276,8 +281,7 @@ function chk_wow_hacf ()
 }
 
 
-function chk_wow_node ()
-{
+function chk_wow_node() {
 	echo_msgsep $FUNCNAME
 	echo "--- conf $CFIL needs:"
 	echo "CIBREMOTE="$CIBREMOTE
@@ -295,8 +299,7 @@ function chk_wow_node ()
 }
 
 
-function chk_wow_dbase ()
-{
+function chk_wow_dbase() {
 	echo_msgsep $FUNCNAME
 	echo "--- conf $CFIL needs:"
 	echo "db type: "$DBTYPE
@@ -334,10 +337,10 @@ function chk_wow_dbase ()
 }
 
 
-# TODO: add chk_wow_sbd
+# TODO: add chk_wow_sbd, see make_sbd_config, see disable_other_restart 
 
-function chk_wow_sfex ()
-{
+
+function chk_wow_sfex() {
 	echo_msgsep $FUNCNAME
 	echo "--- conf $CFIL needs:"
 	echo "SFEX_DEVICE="$SFEX_DEVICE
@@ -350,8 +353,7 @@ function chk_wow_sfex ()
 }
 
 
-function chk_wow_md ()
-{
+function chk_wow_md() {
 	echo_msgsep $FUNCNAME
 	echo "--- conf $CFIL needs:"
 	echo "RAID_CONFIG="$RAID_CONFIG
@@ -379,8 +381,7 @@ function chk_wow_md ()
 }
 
 
-function chk_wow_lvm ()
-{
+function chk_wow_lvm() {
 	echo_msgsep $FUNCNAME
 	echo "--- conf $CFIL needs:"
 	echo "LVM_VOLUMEGROUPS="$LVM_VOLUMEGROUPS
@@ -398,8 +399,7 @@ function chk_wow_lvm ()
 }
 
 
-function chk_wow_fs ()
-{
+function chk_wow_fs() {
 	echo_msgsep $FUNCNAME
 	echo "--- conf $CFIL needs:"
 	# TODO: look into FH wow agents for parsing 	
@@ -430,8 +430,7 @@ function chk_wow_fs ()
 }
 
 
-function chk_wow_sap ()
-{
+function chk_wow_sap() {
 	echo_msgsep $FUNCNAME
 	echo "--- conf $CFIL needs:"
 	echo "SAP_INSTANCE_DEF=""${SAP_INSTANCE_DEF}"
@@ -458,8 +457,7 @@ function chk_wow_sap ()
 
 # TODO: check file ownership and permission for hacluster, maxdb ...
 
-function chk_for_wowfil ()
-{
+function chk_for_wowfil() {
         if test -r $CFIL ; then
                . $CFIL
         else    echo "can not read $CFIL"
@@ -496,13 +494,16 @@ case $1 in
 	fi
   ;;
   --version|-v)
-        echo -n "$COMD "; head -15 $(type -p $COMD) | grep "# Version "
+	EXE=$(type -p $COMD)
+	test -z $EXE && EXE=$0
+	echo -n "$COMD "
+	head -11 $(type -p $EXE) | grep "^# Version: "
   ;;
   --test|-t)
-        if test -r $CFIL ; then
-               . $CFIL
-        else    echo "can not read $CFIL"
-        fi
+	if test -r $CFIL ; then
+		. $CFIL
+	else	echo "can not read $CFIL"
+	fi
 
 	chk_wow_dbase
   ;;

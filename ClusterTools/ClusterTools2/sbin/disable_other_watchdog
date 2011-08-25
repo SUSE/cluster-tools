@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: L.Pinne
 #
-# Version: 0.01 2011-07-21 22:22
+# Version: 0.01 2011-08-25 09:45
 #
 #set -x
 
@@ -67,8 +67,10 @@ function list_other_restart() {
 	echo "available watchdog modules:"
 	echo $OTHMOD
 
-	echo "configured initrd watchdog module:"
+	# TODO: see add_watchdog_to_initrd
+	echo "configured watchdog module:"
 	grep -v "#.*INITRD_MODULES" $FIL | grep "^INITRD_MODULES="
+	grep -v "#.*MODULES_LOADED_ON_BOOT" $FIL | grep "^MODULES_LOADED_ON_BOOT="
 
 	echo "loaded watchdog modules:"
 	for m in $OTHMOD; do
@@ -81,15 +83,26 @@ function list_other_restart() {
 		/etc/init.d/$METHOD status 2>/dev/null
 		chkconfig -l $METHOD 2>/dev/null
 	done
+	# TODO: search process list
 	
 	echo "installed initrds:"
 	ls -l /boot/initrd*
+
+	echo "initrd watchdog module:"
+	/bin/zcat /boot/initrd | cpio -itv 2>/dev/null |\
+		grep "lib/modules/*/kernel/drivers/watchdog/.*ko$"
 }
 
 
 function guess_other_restart() {
 	echo "INFO: start $EXE $FUNCNAME"
-	echo noop
+	# TODO: look into initrd, see above
+	# TODO: search loaded modules for files from /lib/modules/.../watchdog/
+	# TODO: search process list for process that has /dev/watchdog
+
+	fuser -f /dev/watchdog
+	# TODO: lsof ?
+	#echo noop
 	echo "INFO: end $EXE $FUNCNAME"
 }
 

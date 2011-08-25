@@ -5,7 +5,7 @@
 # (c) 2009-2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version 0.2.06 2011-02-21
+# Version 0.2.06 2011-02-21 - last version
 #
 # For SLES11.
 
@@ -520,14 +520,15 @@ case $1 in
 		echo "usage: $wowpropt [ --cluster | --all ] CONFIG_FILE"
 		echo "usage: $wowpropt [ --generic | --help | --version ]"
 		echo
-		test $UID -gt 0 && echo "please call as root." 
-		
+		#test $UID -gt 0 && echo "please call as root."	
 	else
 		echo "usage: $COMD [ --cluster | --all ] CONFIG_FILE"
 		echo "usage: $COMD [ --generic | --help | --version ]"
 		echo
-		test $UID -gt 0 && echo "please call as root." 
+		#test $UID -gt 0 && echo "please call as root." 
 	fi
+	echo "whbsaprecheck is not longer maintained. On SLES11 use precheck_for_sap, please."
+	echo
   ;;
   --version|-v)
         echo -n "$COMD "; head -15 $(type -p $COMD) | grep "# Version "

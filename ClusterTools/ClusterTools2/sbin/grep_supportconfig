@@ -509,6 +509,14 @@ function chk_errors() {
 	echo -n "kernel.tainted : "
 	grep -c "^kernel.tainted" env.txt
 
+	# TODO: add plugin-messages.txt, man supportconfig for plugin
+	# TODO: find start and end time for each log files
+
+	FIL="messages.txt"
+	FRST=$(grep -A1 "# /var/log/messages - Last.*Lines" $FIL |\
+		tail -1 | awk '{print $1,$2,$3}')
+	echo "$FIL starts $FRST"
+	
 	LOG="boot.txt messages.txt proc.txt ha.txt"
 	for e in ${ERROR_PATTERN} ${CLUERR_PATTERN}; do
 		echo -n "${e} : "

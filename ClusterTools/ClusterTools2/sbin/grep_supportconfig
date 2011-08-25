@@ -36,6 +36,7 @@ function split_file(){
 	cd ${TMP}/$F
 #	csplit $F /^#==\[ [a-zA-Z] ^C \]==*#$/ {*}
 	csplit $F /^#==..Co.*===========================#$/ {*} >>$ERR
+	cd $OLDPWD
 }
 
 
@@ -297,17 +298,20 @@ function chk_timeset() {
 	echo_msgsep $FUNCNAME
 
 	FIL="ntp.txt"
+	echo "software:"
 	for p in "^#.rpm.-V" "^#.Verification.Status:"; do
 		grep ${p} $FIL
 	done
 	echo
+	echo "service:"
 	grep -A1 "^# /sbin/chkconfig" $FIL
-
 	grep -A5 "# /usr/sbin/ntpq -p" $FIL | grep -v "====="
-	echo
 
-# TODO: real ntp.conf
-	grep "^server" $FIL
+	echo "# /etc/ntp.conf:"
+	split_file $FIL 
+	f=$(grep -l "^# /etc/ntp.conf$" ${TMP}/${FIL}/xx*)
+        grep -v "^#" $f | tr -s "\n"
+        rm -rf ${TMP}/${FIL}
 	echo
 
 test -z "${TIME_ERR}" &&\
@@ -316,12 +320,14 @@ test -z "${TIME_ERR}" &&\
 "ntpd.*time.reset"
 "ntpd.*failed"
 "
+	echo "errors:"
 	for p in $TIME_ERR; do
 		echo -n "${p} : "
 		grep -c ${p} $FIL
 	done
 	echo
 
+	echo "hwclock:"
 	FIL="sysconfig.txt"
 test -z "${TIME_PTRN}" &&\
 	TIME_PTRN="

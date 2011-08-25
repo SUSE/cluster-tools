@@ -592,31 +592,32 @@ function chk_load() {
 		sar -r -f $f 
 	done | grep "^[0-9][0-9]:" | sort -n -k7 | tail
 
-	echo "max. network write tps:"
-	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
-	for f in sa??; do
-		sar -n -f $f 
-	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k5 | tail
+#	echo "max. network write tps:"
+#	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
+#	for f in sa??; do
+#		sar -n DEV -f $f 
+#	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k5 | tail
 
 	echo "max. network write kB:"
 	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
 	for f in sa??; do
-		sar -n -f $f 
+		sar -n DEV -f $f 
 	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k7 | tail
 
-	echo "max. network read tps :"
-	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
-	for f in sa??; do
-		sar -n -f $f 
-	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k4 | tail
+#	echo "max. network read tps :"
+#	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
+#	for f in sa??; do
+#		sar -n DEV -f $f 
+#	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k4 | tail
 
 	echo "max. network read kB:"
 	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
 	for f in sa??; do
-		sar -n -f $f 
+		sar -n DEV -f $f 
 	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k6 | tail
 
 	# TODO: network errors?
+	# TODO: NFS client and server reports?
 
 	cd $OLDPWD
 	echo
@@ -695,6 +696,7 @@ case $1 in
 		chk_services
 		#chk_cluster
 		chk_errors
+		chk_load
 		exit
 	;;
 	--function|-f)

@@ -345,8 +345,7 @@ DEFAULT_TIMEZONE
 	grep -A4 "^/etc/adjtime" $FIL
 	echo
 
-# TODO: /etc/adjtime, elevenmin mode, ...
-	
+# TODO: elevenmin mode, ...
 }
 
 

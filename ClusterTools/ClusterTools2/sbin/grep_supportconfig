@@ -496,6 +496,131 @@ function chk_overview() {
 }
 
 
+function chk_load() {
+
+	echo_msgsep $FUNCNAME
+
+	cd sar
+	# TODO: print date of sar file to each output line
+	#	either by adding date from sar-fiel header,
+	#	or by grep-ing the alreday known maxima out of the files
+
+	echo "max. load-avg15:"
+	echo "hh:mm:ss xM   runq-sz  plist-sz   ldavg-1   ldavg-5  ldavg-15"
+	for f in sa??; do
+		sar -q -f $f
+	done | grep "^[0-9][0-9]:" | sort -n -k7 | tail
+
+	echo "max. user CPU utilisation:"
+	echo "hh:mm:ss xM     CPU     %user     %nice   %system   %iowait    %steal     %idle"
+	for f in sa??; do
+		sar -f $f
+	done | grep "^[0-9][0-9]:" | grep -v "%" | sort -n -k4 | tail
+
+	echo "max. system CPU utilisation:"
+	echo "hh:mm:ss xM     CPU     %user     %nice   %system   %iowait    %steal     %idle"
+	for f in sa??; do
+		sar -f $f 
+	done | grep "^[0-9][0-9]:" | grep -v "%" | sort -n -k6 | tail
+
+	echo "max. iowait CPU utilisation:"
+	echo "hh:mm:ss xM     CPU     %user     %nice   %system   %iowait    %steal     %idle"
+	for f in sa??; do
+		sar -f $f
+	done | grep "^[0-9][0-9]:" | grep -v "%" | sort -n -k7 | tail
+
+	echo "max. interrupts:"
+	echo "hh:mm:ss xM       INTR    intr/s"
+	for f in sa??; do
+		sar -I SUM -f $f
+	done | grep "^[0-9][0-9]:" | sort -n -k4 | tail
+
+	echo "max. disk write tps:"
+	echo "hh:mm:ss xM       tps      rtps      wtps   bread/s   bwrtn/s"
+	for f in sa??; do
+		sar -f $f 
+	done | grep "^[0-9][0-9]:" | sort -n -k5 | tail
+
+	echo "max. disk write blocks:"
+	echo "hh:mm:ss xM       tps      rtps      wtps   bread/s   bwrtn/s"
+	for f in sa??; do
+		sar -f $f 
+	done | grep "^[0-9][0-9]:" | sort -n -k7 | tail
+
+	echo "max. disk read tps:"
+	echo "hh:mm:ss xM       tps      rtps      wtps   bread/s   bwrtn/s"
+	for f in sa??; do
+		sar -f $f 
+	done | grep "^[0-9][0-9]:" | sort -n -k4 | tail
+
+	echo "max. disk read blocks:"
+	echo "hh:mm:ss xM       tps      rtps      wtps   bread/s   bwrtn/s"
+	for f in sa??; do
+		sar -f $f 
+	done | grep "^[0-9][0-9]:" | sort -n -k6 | tail
+
+	echo "max. swap used:"
+	echo "hh:mm:ss xM kbswpfree kbswpused  %swpused  kbswpcad   %swpcad"
+	for f in sa??; do
+		sar -f $f 
+	done | grep "^[0-9][0-9]:" | sort -n -k4 | tail
+
+	echo "max. pageout:"
+	echo "hh:mm:ss xM pgpgin/s pgpgout/s   fault/s  majflt/s  pgfree/s pgscank/s pgscand/s pgsteal/s    %vmeff "
+	for f in sa??; do
+		sar -B -f $f 
+	done | grep "^[0-9][0-9]:" | sort -n -k4 | tail
+
+	# find lowest vmeff% that is not 0.00. 0.00 means "nothing done".
+	echo "min. vmeff:"
+	echo "hh:mm:ss xM pgpgin/s pgpgout/s   fault/s  majflt/s  pgfree/s pgscank/s pgscand/s pgsteal/s    %vmeff "
+	for f in sa??; do
+		sar -B -f $f 
+	done | grep "^[0-9][0-9]:" | grep -v "%" |\
+	 	awk '$11 != "0.00" {print}' | sort -n -k11 | head
+
+	# TODO: sum up buffer+cache, estimated use memory 
+	echo "max. memory commit:"
+	echo "hh:mm:ss xM kbmemfree kbmemused  %memused kbbuffers  kbcached  kbcommit   %commit"
+	for f in sa??; do
+		sar -r $f 
+	done | grep "^[0-9][0-9]:" | sort -n -k8 | tail
+
+	echo "max. memory cache:"
+	echo "hh:mm:ss xM kbmemfree kbmemused  %memused kbbuffers  kbcached  kbcommit   %commit"
+	for f in sa??; do
+		sar -r $f 
+	done | grep "^[0-9][0-9]:" | sort -n -k7 | tail
+
+	echo "max. network write tps:"
+	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
+	for f in sa??; do
+		sar -r $f 
+	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k5 | tail
+
+	echo "max. network write kB:"
+	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
+	for f in sa??; do
+		sar -r $f 
+	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k7 | tail
+
+	echo "max. network read tps :"
+	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
+	for f in sa??; do
+		sar -r $f 
+	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k4 | tail
+
+	echo "max. network read kB:"
+	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
+	for f in sa??; do
+		sar -r $f 
+	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k6 | tail
+
+	# TODO: network errors?
+	echo
+}
+
+
 function chk_errors() {
 	
 	echo_msgsep $FUNCNAME
@@ -585,8 +710,9 @@ case $1 in
 	--test|-t)
 		cd $DIR
 		#set -x
+		chk_load
 		#chk_multipath
-		chk_storage
+		#chk_storage
 		#chk_filesys
 		#chk_cluster
 		exit

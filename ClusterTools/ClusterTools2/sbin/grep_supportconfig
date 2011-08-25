@@ -67,7 +67,9 @@ function chk_hardware() {
 #	done
 
 	FIL="hardware.txt"
-	grep "pci.product.=" $FIL | sort -u
+	grep "pci.product.=" $FIL |\
+		 grep -v "USB.*HCI.*ontroller" | grep -v "PCI.*Port" |\
+		 grep -v "I/O Hub" | sort -u
 	grep "scsi.vendor.=" $FIL | sort -u
 	echo
 
@@ -82,6 +84,19 @@ function chk_hardware() {
 		echo -n "${f} : "
 		grep -c ${f}  $FIL
 	done
+	echo
+
+	FIL="network.txt"
+test -z "${NIC_PTRN}" &&\
+	NIC_PTRN="
+Model:
+Device.File:
+"	
+	# TODO: better loop
+	for f in $NIC_PTRN; do
+		grep -A20 "^..: PCI.*Ethernet controller" $FIL |\
+		grep $f
+	done | sort -u | sed s/Device.File:/"NIC Device File:"/g
 	echo	
 }
 
@@ -208,7 +223,6 @@ test -z "${NETW_PTRN}" &&\
 "Setting.up.hostname"
 "Setting.up.loopback.interface"
 "eth.*IP.address:"
-"bond.*enslaved.interfacce:"
 "bond.*IP.address:.*as.bonding.master"
 "
 	FIL="boot.txt"
@@ -218,27 +232,32 @@ test -z "${NETW_PTRN}" &&\
 	echo
 
 	FIL="network.txt"
-	grep -A3 "^# /sbin/ethtool bond" $FIL
-	grep -A18 "^# /sbin/ethtool eth" $FIL
+	( grep -A3 "^# /sbin/ethtool bond" $FIL
+	grep -A18 "^# /sbin/ethtool eth" $FIL ) |\
+		 grep -v "^#==\[ " | grep -v "^# /sbin/ethtool" | grep -v - "--"
 	echo
 
 # TODO: DNS
-	grep -A1 "^# /etc/HOSTNAME" $FIL
+	( grep -A1 "^# /etc/HOSTNAME" $FIL
 	grep -A1 "^# /bin/hostname" $FIL
 	
 	grep -A6 "^# /etc/resolv.conf" $FIL	
-	grep -A3 "^# /etc/sysconfig/network/routes" $FIL
+	grep -A3 "^# /etc/sysconfig/network/routes" $FIL ) |\
+		 grep -v "^#==\[ " | grep -v "^# /sbin/ethtool" | grep -v - "--"
 
 # TODO: split function
 # TODO: /etc/hosts, /etc/host.conf, etc/nsswitch.conf
-# TODO: etc/sysconfig/ifcfg-
 
-	( grep -A14 "^# /etc/sysconfig/network/ifcfg-bond" $FIL
+	( grep -A14 "^# /etc/sysconfig/network/ifcfg-bond" $FIL |\
+		grep -v "=''$"
+		echo
 	grep -A21 "^# /proc/net/bonding/bond" $FIL
-	
-	grep -A11 "^# /etc/sysconfig/network/ifcfg-eth" $FIL
 
-	grep -A1 "^# /sbin/chkconfig nscd" $FIL ) | grep -v "#==\["
+	grep -A11 "^# /etc/sysconfig/network/ifcfg-eth" $FIL |\
+		 grep -v "=''$"
+
+	grep -A1 "^# /sbin/chkconfig nscd" $FIL ) |\
+		 grep -v "^#==\[ " 
 	echo
 }
 
@@ -489,6 +508,7 @@ function chk_overview() {
 
 	FIL="basic-health-report.txt"
 
+	echo "Supportconfig: " $DIR
 	for p in "^Date.Checked:" "^Status:" "\[...Red...\]" "\[.Yellow..\]"; do
 		grep ${p} $FIL
 	done
@@ -496,7 +516,7 @@ function chk_overview() {
 }
 
 
-function chk_load() {
+function chk_sysload() {
 
 	echo_msgsep $FUNCNAME
 
@@ -504,6 +524,7 @@ function chk_load() {
 	# TODO: print date of sar file to each output line
 	#	either by adding date from sar-fiel header,
 	#	or by grep-ing the alreday known maxima out of the files
+	# TODO: reduce number of columns
 
 	echo "max. load-avg15:"
 	echo "hh:mm:ss xM   runq-sz  plist-sz   ldavg-1   ldavg-5  ldavg-15"
@@ -517,11 +538,11 @@ function chk_load() {
 		sar -f $f
 	done | grep "^[0-9][0-9]:" | grep -v "%" | sort -n -k4 | tail
 
-	echo "max. system CPU utilisation:"
-	echo "hh:mm:ss xM     CPU     %user     %nice   %system   %iowait    %steal     %idle"
-	for f in sa??; do
-		sar -f $f 
-	done | grep "^[0-9][0-9]:" | grep -v "%" | sort -n -k6 | tail
+#	echo "max. system CPU utilisation:"
+#	echo "hh:mm:ss xM     CPU     %user     %nice   %system   %iowait    %steal     %idle"
+#	for f in sa??; do
+#		sar -f $f 
+#	done | grep "^[0-9][0-9]:" | grep -v "%" | sort -n -k6 | tail
 
 	echo "max. iowait CPU utilisation:"
 	echo "hh:mm:ss xM     CPU     %user     %nice   %system   %iowait    %steal     %idle"
@@ -529,17 +550,17 @@ function chk_load() {
 		sar -f $f
 	done | grep "^[0-9][0-9]:" | grep -v "%" | sort -n -k7 | tail
 
-	echo "max. interrupts:"
-	echo "hh:mm:ss xM       INTR    intr/s"
-	for f in sa??; do
-		sar -I SUM -f $f
-	done | grep "^[0-9][0-9]:" | sort -n -k4 | tail
+#	echo "max. interrupts:"
+#	echo "hh:mm:ss xM       INTR    intr/s"
+#	for f in sa??; do
+#		sar -I SUM -f $f
+#	done | grep "^[0-9][0-9]:" | sort -n -k4 | tail
 
-	echo "max. disk write tps:"
-	echo "hh:mm:ss xM       tps      rtps      wtps   bread/s   bwrtn/s"
-	for f in sa??; do
-		sar -f $f 
-	done | grep "^[0-9][0-9]:" | sort -n -k5 | tail
+#	echo "max. disk write tps:"
+#	echo "hh:mm:ss xM       tps      rtps      wtps   bread/s   bwrtn/s"
+#	for f in sa??; do
+#		sar -f $f 
+#	done | grep "^[0-9][0-9]:" | sort -n -k5 | tail
 
 	echo "max. disk write blocks:"
 	echo "hh:mm:ss xM       tps      rtps      wtps   bread/s   bwrtn/s"
@@ -547,11 +568,11 @@ function chk_load() {
 		sar -f $f 
 	done | grep "^[0-9][0-9]:" | sort -n -k7 | tail
 
-	echo "max. disk read tps:"
-	echo "hh:mm:ss xM       tps      rtps      wtps   bread/s   bwrtn/s"
-	for f in sa??; do
-		sar -f $f 
-	done | grep "^[0-9][0-9]:" | sort -n -k4 | tail
+#	echo "max. disk read tps:"
+#	echo "hh:mm:ss xM       tps      rtps      wtps   bread/s   bwrtn/s"
+#	for f in sa??; do
+#		sar -f $f 
+#	done | grep "^[0-9][0-9]:" | sort -n -k4 | tail
 
 	echo "max. disk read blocks:"
 	echo "hh:mm:ss xM       tps      rtps      wtps   bread/s   bwrtn/s"
@@ -571,13 +592,13 @@ function chk_load() {
 		sar -B -f $f 
 	done | grep "^[0-9][0-9]:" | sort -n -k4 | tail
 
-	# find lowest vmeff% that is not 0.00. 0.00 means "nothing done".
-	echo "min. vmeff:"
-	echo "hh:mm:ss xM pgpgin/s pgpgout/s   fault/s  majflt/s  pgfree/s pgscank/s pgscand/s pgsteal/s    %vmeff "
-	for f in sa??; do
-		sar -B -f $f 
-	done | grep "^[0-9][0-9]:" | grep -v "%" |\
-	 	awk '$11 != "0.00" {print}' | sort -n -k11 | head
+#	# find lowest vmeff% that is not 0.00. 0.00 means "nothing done".
+#	echo "min. vmeff:"
+#	echo "hh:mm:ss xM pgpgin/s pgpgout/s   fault/s  majflt/s  pgfree/s pgscank/s pgscand/s pgsteal/s    %vmeff "
+#	for f in sa??; do
+#		sar -B -f $f 
+#	done | grep "^[0-9][0-9]:" | grep -v "%" |\
+#	 	awk '$11 != "0.00" {print}' | sort -n -k11 | head
 
 	# TODO: sum up buffer+cache, estimated use memory 
 	echo "max. memory commit:"
@@ -696,7 +717,7 @@ case $1 in
 		chk_services
 		#chk_cluster
 		chk_errors
-		chk_load
+		chk_sysload
 		exit
 	;;
 	--function|-f)
@@ -713,8 +734,10 @@ case $1 in
 	;;
 	--test|-t)
 		cd $DIR
-		#set -x
-		chk_load
+		set -x
+		chk_sysload
+		chk_hardware
+		chk_network
 		#chk_multipath
 		#chk_storage
 		#chk_filesys

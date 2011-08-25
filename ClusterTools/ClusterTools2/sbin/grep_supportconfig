@@ -23,14 +23,19 @@ FUN=${3:-"chk_overview"}
 OWD=$PWD
 
 
-# TODO: generic record split function for supportconfig files
-
-
-
-function echo_msgsep ()
-{
+function echo_msgsep() {
 	echo "============================================================ ${1:0
 :14} ==="
+}
+
+
+function split_file(){
+	F=$1
+	mkdir -p ${TMP}/$F
+	cp $F ${TMP}/${F}/
+	cd ${TMP}/$F
+#	csplit $F /^#==\[ [a-zA-Z] ^C \]==*#$/ {*}
+	csplit $F /^#==..Co.*===========================#$/ {*} >>$ERR
 }
 
 
@@ -38,23 +43,25 @@ function chk_hardware() {
 
 	echo_msgsep $FUNCNAME
 
+	echo "machine:"
 	FIL="hardware.txt"
 	grep "system.hardware.*=" $FIL | grep -v "system.*video"
 	grep "system.firmware.*=" $FIL
 	grep -A4 "^# Virtualisation" $FIL
 	echo
 	
+	echo "processor:"
 	FIL="hardware.txt"
 	grep -A16 "^# /usr/bin/lscpu" $FIL
 	grep "^model.name.*:" $FIL | sort -u
-	
 	FIL="boot.txt"
 #	grep "^\[.*Detected.*MHz.processor" $FIL
 	grep "^\[.*Brought up.*CPUs" $FIL
 	echo
 
+	echo "memory:"
 	FIL="boot.txt"
-	grep "^\[.*System RAM: " $FIL
+	grep "System RAM: " $FIL | sort -u
 
 	FIL="basic-health-check.txt"
 	grep -A 4 "# /usr/bin/free -k" $FIL | tail -3 
@@ -66,6 +73,7 @@ function chk_hardware() {
 #		grep ${f} $FIL | grep "pci.product.=" | sort -u
 #	done
 
+	echo "boards:"
 	FIL="hardware.txt"
 	grep "pci.product.=" $FIL |\
 		 grep -v "USB.*HCI.*ontroller" | grep -v "PCI.*Port" |\
@@ -73,12 +81,20 @@ function chk_hardware() {
 	grep "scsi.vendor.=" $FIL | sort -u
 	echo
 
+	echo "disk:"
+	FIL="fs-diskio.txt"
+	grep -A1 "^Model:" $FIL | grep -v "^--$"
+	echo
+
+	echo "storage:"
+	FIL="mpio.txt"
+	grep "Vendor:.*Model:.*Rev:" $FIL | sort -u
+	echo
 	FIL="hardware.txt"
 	for f in "supports.DPO.and.FUA" "support.DPO.or.FUA"; do
 		echo -n "${f} : "
 		grep -c ${f}  $FIL
 	done
-	
 	FIL="messages.txt"
 	for f in "disabling.barriers"; do
 		echo -n "${f} : "
@@ -86,6 +102,7 @@ function chk_hardware() {
 	done
 	echo
 
+	echo "network_card:"
 	FIL="network.txt"
 test -z "${NIC_PTRN}" &&\
 	NIC_PTRN="
@@ -135,18 +152,31 @@ iTCO_wdt.ko
 softdog.ko
 "
 	FIL="boot.txt"
+	for m in INITRD_MODULES MODULES_LOADED_ON_BOOT; do
+		grep "^${m}=" $FIL
+	done 
+	echo
 	for m in $HARDW_MOD; do
 		grep ${m} $FIL | sort -u
 	done
-
-# TODO: sysconfig/kernel INITRD_MODULES MODULES_LOADED_ON_BOOT
-# TODO: split file to records instead of -A9, to find "supported:"
+	echo
+# TODO: see below - use split files to records instead of -A9, to find "supported:"
 	FIL="modules.txt"
-	for m in $HARD_MOD; do
+	for m in $HARDW_MOD; do
 		grep -A9 "^filename:.*${m}" $FIL |\
 		 awk '$1=="filename:" || $1=="license:" || $1=="supported:" {print $0}' 
 	done
 	echo
+	for m in $HARDW_MOD; do
+		n=$(basename $m .ko)
+		grep "options $n" $FIL
+	done
+	echo
+	FIL="modules.txt"
+	split_file $FIL
+	f=$(grep -l "^# /sbin/lsmod$" ${TMP}/${FIL}/xx*)
+	grep -v "^#==..Co.*==#" $f
+	rm -rf ${TMP}/${FIL}
 }
 
 
@@ -351,7 +381,7 @@ function chk_kernel() {
 	FIL="boot.txt"
 	grep -A1 "^# /bin/uname -a" $FIL
 	grep -A1 "^# /proc/cmdline" $FIL
-	grep "^INITRD_MODULES=" $FIL	
+
 	grep "^\[.*Booting paravirtualized kernel on bare hardware" $FIL
 
 	echo -n "kernel.tainted : "
@@ -404,6 +434,7 @@ test -z "${UPDT_PTRN}" &&\
 	UPDT_PTRN="
 "SLES11-"
 "SLES11-SP"
+"SLE11-HAE-"
 "SLE11-HAE-SP"
 "
 	for p in ${UPDT_PTRN}; do
@@ -424,7 +455,6 @@ function chk_multipath() {
 		grep "${p}" $FIL
 	done
 	grep "^#.RPM.Not.Installed:" $FIL
-	grep "^INITRD_MODULES=" $FIL
 	echo
 
 	for p in "^boot.device-mapper.*o" "^boot.multipath.*o" "^multipathd.*0:.*3:on"; do
@@ -432,8 +462,9 @@ function chk_multipath() {
 	done
 	echo
 	
-	grep -B1 "^size=.*features=.*hwhandler=" $FIL
-
+	grep -B1 "^size=.*features=.*hwhandler=" $FIL |\
+		sed s/^size/"	size"/g | grep -v "^--$"
+	echo
 	# TODO: by-id
 	# TODO: dmsetup
 	# TODO: multipath.conf
@@ -477,6 +508,7 @@ ocfs2-tools
 ocfs2-kmp-default
 xfsprogs
 "
+	echo "software:"
 	for p in $STOR_PKG; do
 		awk '$1=="'$p'" {print $1,$NF} ' $FIL
 	done
@@ -490,6 +522,7 @@ ext3
 ocfs2
 xfs
 "	
+	echo "disk:"
 	FIL="fs-diskio.txt"
 	#grep -B1 "^Disk./dev/" $FIL
 	grep -A1 "^Model:" $FIL | grep -v "^--$"
@@ -718,6 +751,8 @@ case $1 in
 		#chk_cluster
 		chk_errors
 		chk_sysload
+
+		rm -rf $TMP
 		exit
 	;;
 	--function|-f)
@@ -730,18 +765,22 @@ case $1 in
 			done
 		else $FUN
 		fi
+
+		rm -rf $TMP
 		exit
 	;;
 	--test|-t)
 		cd $DIR
-		set -x
-		chk_sysload
-		chk_hardware
-		chk_network
-		#chk_multipath
+		#set -x
+		#split_file modules.txt
+		#chk_hardware
 		#chk_storage
+		#chk_multipath
+		chk_modules
 		#chk_filesys
 		#chk_cluster
+		
+		rm -rf $TMP
 		exit
 	;;
 esac

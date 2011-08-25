@@ -1,12 +1,14 @@
-.TH grep_supportconfig 8 "26 Mar 2011" "" "ClusterTools2"
+.TH grep_supportconfig 8 "25 Aug 2011" "" "ClusterTools2"
 .\"
 .SH NAME
 grep_supportconfig \- collect information from supportconfig files
 .\"
 .SH SYNOPSIS
 .B grep_supportconfig \fIOPTION\fR
-.B grep_supportconfig \fI--generic\fR \fIDIR\fR
-.B grep_supportconfig \fI--function\fR \fIDIR\fR \fIFUNC\fR
+.br
+.B grep_supportconfig --generic \fIDIR\fR
+.br
+.B grep_supportconfig --function \fIDIR\fR \fIFUNC\fR
 .\"
 .SH DESCRIPTION
 \fBgrep_supportconfig\fP collects information from supportconfig files.
@@ -49,8 +51,8 @@ Usage, syntax or execution errors.
 	the default error patterns.
 .\"
 .SH BUGS
-The error summary depends on supportconfig's messages.txt file which is only a
-short trunc of the real messages file.
+The error summary depends on supportconfig's messages.txt file which contains
+only a short trunc of the real messages file.
 Feedback is welcome, please use the project page at
 .br
 http://ClusterTools.sourceforge.net
@@ -62,7 +64,7 @@ http://ClusterTools.sourceforge.net
 .SH COPYRIGHT
 (c) 2011 L.Pinne, Germany.
 .br
-grep_error_patterns comes with ABSOLUTELY NO WARRANTY.
+grep_supportconfig comes with ABSOLUTELY NO WARRANTY.
 .br
 For details see the GNU General Public License at
 http://www.gnu.org/licenses/gpl.html

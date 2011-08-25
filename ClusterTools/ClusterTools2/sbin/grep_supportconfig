@@ -617,6 +617,8 @@ function chk_load() {
 	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k6 | tail
 
 	# TODO: network errors?
+
+	cd $OLDPWD
 	echo
 }
 

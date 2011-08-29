@@ -61,6 +61,7 @@ test -z "${ERROR_PATTERN}" &&\
 "bond.*link.*down"
 "bond.*duplicate.address"
 "bond.*not.detect.*failures"
+"bond.*permanent.HWaddr.*in.use"
 "Link.Failure.Count"
 "link.*not.ready"
 "link.failure"

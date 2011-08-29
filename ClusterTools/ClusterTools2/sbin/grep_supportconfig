@@ -256,6 +256,7 @@ function chk_network() {
 "eth.*IP.address:.*/"
 "bond.*IP.address:.*/"
 "
+# TODO: find bond in network.txt, if it did not work at boot.
 	FIL="boot.txt"
 	for p in $NETW_PTRN; do
 		grep $p $FIL

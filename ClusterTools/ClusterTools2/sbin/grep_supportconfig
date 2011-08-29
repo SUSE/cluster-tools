@@ -105,7 +105,7 @@ function chk_hardware() {
 
 	echo "network_card:"
 	FIL="network.txt"
-test -z "${NIC_PTRN}" &&\
+	test -z "${NIC_PTRN}" &&\
 	NIC_PTRN="
 Model:
 Device.File:
@@ -130,8 +130,8 @@ function chk_modules() {
 	FIL="boot.txt"
 	grep "^\[.*AppArmor:.*initialized" $FIL
 
-# TODO: add Cisco HBA
-test -z "${HARDW_MOD}" &&\
+	# TODO: add Cisco HBA
+	test -z "${HARDW_MOD}" &&\
 	HARDW_MOD="
 bfa.ko
 lpfc.ko
@@ -199,8 +199,8 @@ function chk_services() {
 	done
 	echo
 
-# TODO: whbsaprecheck
-test -z "${SVC_YES}" &&\
+# TODO: precheck_for_sap
+	test -z "${SVC_YES}" &&\
 	SVC_YES="
 boot.clock
 boot.devicemapper
@@ -212,7 +212,7 @@ boot.sysctl
 multipathd
 ntp
 "
-test -z "${SVC_OFF}" &&\
+	test -z "${SVC_OFF}" &&\
 	SVC_OFF="
 boot.dmraid
 boot.md
@@ -249,7 +249,7 @@ function chk_network() {
 	
 	echo_msgsep $FUNCNAME
 	
-test -z "${NETW_PTRN}" &&\
+	test -z "${NETW_PTRN}" &&\
 	NETW_PTRN="
 "Setting.up.hostname"
 "Setting.up.loopback.interface"
@@ -267,7 +267,8 @@ test -z "${NETW_PTRN}" &&\
 	grep -A18 "^# /sbin/ethtool eth" $FIL ) |\
 		 grep -v "^#==\[ " | grep -v "^# /sbin/ethtool" | grep -v - "--"
 	echo
-
+	
+# TODO: summary num. NICs, num. "not connected"
 # TODO: DNS
 	( grep -A1 "^# /etc/HOSTNAME" $FIL
 	grep -A1 "^# /bin/hostname" $FIL
@@ -329,7 +330,7 @@ test -z "${TIME_ERR}" &&\
 
 	echo "hwclock:"
 	FIL="sysconfig.txt"
-test -z "${TIME_PTRN}" &&\
+	test -z "${TIME_PTRN}" &&\
 	TIME_PTRN="
 HWCLOCK
 SYSTOHC
@@ -415,7 +416,7 @@ function chk_software() {
 	echo	
 
 	FIL="sam.txt"
-test -z "${SOFTW_PTRN}" &&\
+	test -z "${SOFTW_PTRN}" &&\
 	SOFTW_PTRN="
 System.architecture:
 Baseproduct:
@@ -433,9 +434,9 @@ function chk_updates() {
 	echo_msgsep $FUNCNAME
 	
 	FIL="updates.txt"
-# TODO sles-for-sap
-# TODO
-test -z "${UPDT_PTRN}" &&\
+	# TODO sles-for-sap
+	# TODO
+	test -z "${UPDT_PTRN}" &&\
 	UPDT_PTRN="
 "SLES11-"
 "SLES11-SP"
@@ -518,9 +519,9 @@ xfsprogs
 		awk '$1=="'$p'" {print $1,$NF} ' $FIL
 	done
 	echo
-# TODO check if local disk is in multipath
-# TODO: nfs
-test -z "${STOR_MOD}" &&\
+	# TODO check if local disk is in multipath
+	# TODO: nfs
+	test -z "${STOR_MOD}" &&\
 	STOR_MOD="
 ext2
 ext3
@@ -545,7 +546,7 @@ function chk_overview() {
 	echo_msgsep $FUNCNAME
 
 	FIL="basic-health-report.txt"
-
+	# TODO: FQHN
 	echo "Supportconfig: " $DIR
 	for p in "^Date.Checked:" "^Status:" "\[...Red...\]" "\[.Yellow..\]"; do
 		grep ${p} $FIL
@@ -557,6 +558,18 @@ function chk_overview() {
 function chk_sysload() {
 
 	echo_msgsep $FUNCNAME
+	
+	FIL="basic-health-report.txt"	
+	echo "basic-health-report:"
+	grep "^[A-Z].*\[....e....\]$" $FIL | grep -v "Kernel.Taint"
+	# TODO: make dfull work
+	dfull=""
+	dfull=$( grep "%.>=.90%" $FIL )
+	test -z "${dfull}" &&\
+	(	echo "Used Disk Space:"
+		echo $dfull
+	)
+	echo
 
 	cd sar
 	# TODO: print date of sar file to each output line

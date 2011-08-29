@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2011-08-24
+# Version: 0.01 2011-08-29
 #
 # For SLES11.
 # For Supportconfig Script Version: 2.25-237
@@ -253,8 +253,8 @@ function chk_network() {
 	NETW_PTRN="
 "Setting.up.hostname"
 "Setting.up.loopback.interface"
-"eth.*IP.address:"
-"bond.*IP.address:.*as.bonding.master"
+"eth.*IP.address:.*/"
+"bond.*IP.address:.*/"
 "
 	FIL="boot.txt"
 	for p in $NETW_PTRN; do

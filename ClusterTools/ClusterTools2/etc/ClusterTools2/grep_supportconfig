@@ -62,8 +62,8 @@ uuidd
 NETW_PTRN="
 "Setting.up.hostname"
 "Setting.up.loopback.interface"
-"eth.*IP.address:"
-"bond.*IP.address:.*as.bonding.master"
+"eth.*IP.address:.*/"
+"bond.*IP.address:.*/"
 "
 #
 TIME_ERR="

@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-08-18
+# Version: 0.1 2011-08-30
 #
 
 EXE="$0"
@@ -45,6 +45,7 @@ echo -n "Started resources: "
 crm_mon -r1 | awk '$3=="Started"{print $0}' | wc -l
 
 echo
+echo "Ring:"
 corosync-cfgtool -s | grep -B1 "status.*ring" | grep -v - "--"
 
 echo

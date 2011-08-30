@@ -1,0 +1,14 @@
+source wowlib2
+export FSTYPE=""
+echo "$FS_FILESYSTEMS" | while read dev dir fsid fstype moptions
+do 
+	#echo $dev -- $dir
+	if [ -n "${dev%%\#*}" ]; then # neither an empty line nor a comemnt line (# is first char)
+		woweng2 UUID=rsc_fs_${SAPSID}_${fsid} \
+			DEVICE=$dev \
+			MOUNTPOINT=$dir \
+			FSTYPE=$fstype \
+			MOPTIONS=$moptions \
+			$wowcli/01-fs.cli </dev/null
+	fi
+done

@@ -14,6 +14,7 @@ bnx.ko
 e1000.ko
 tg3.ko
 be2net.ko
+be2iscsi.ko
 cciss.ko
 mptbase.ko
 dm_multipath.ko
@@ -62,8 +63,9 @@ uuidd
 NETW_PTRN="
 "Setting.up.hostname"
 "Setting.up.loopback.interface"
-"eth.*IP.address:"
-"bond.*IP.address:.*as.bonding.master"
+"eth.*IP.address:.*/"
+"bond.*enslaved.interface:"
+"bond.*IP.address:.*/"
 "
 #
 TIME_ERR="

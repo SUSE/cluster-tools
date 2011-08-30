@@ -61,6 +61,7 @@ test -z "${ERROR_PATTERN}" &&\
 "bond.*link.*down"
 "bond.*duplicate.address"
 "bond.*not.detect.*failures"
+"bond.*permanent.HWaddr.*in.use"
 "Link.Failure.Count"
 "link.*not.ready"
 "link.failure"
@@ -69,6 +70,7 @@ test -z "${ERROR_PATTERN}" &&\
 "refused.mount.request"
 "logrotate.*error"
 "Failed.to.read"
+"exits.with.status.*[1-9]"
 "Failed.services.*runlevel"
 "
 # TODO: pattern for failed module (could not load)

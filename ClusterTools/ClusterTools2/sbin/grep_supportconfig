@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2011-08-24
+# Version: 0.01 2011-08-29
 #
 # For SLES11.
 # For Supportconfig Script Version: 2.25-237
@@ -105,7 +105,7 @@ function chk_hardware() {
 
 	echo "network_card:"
 	FIL="network.txt"
-test -z "${NIC_PTRN}" &&\
+	test -z "${NIC_PTRN}" &&\
 	NIC_PTRN="
 Model:
 Device.File:
@@ -130,8 +130,8 @@ function chk_modules() {
 	FIL="boot.txt"
 	grep "^\[.*AppArmor:.*initialized" $FIL
 
-# TODO: add Cisco HBA
-test -z "${HARDW_MOD}" &&\
+	# TODO: add Cisco HBA
+	test -z "${HARDW_MOD}" &&\
 	HARDW_MOD="
 bfa.ko
 lpfc.ko
@@ -142,6 +142,7 @@ bnx.ko
 e1000.ko
 tg3.ko
 be2net.ko
+be2iscsi.ko
 cciss.ko
 mptbase.ko
 dm_multipath.ko
@@ -199,8 +200,8 @@ function chk_services() {
 	done
 	echo
 
-# TODO: whbsaprecheck
-test -z "${SVC_YES}" &&\
+# TODO: precheck_for_sap
+	test -z "${SVC_YES}" &&\
 	SVC_YES="
 boot.clock
 boot.devicemapper
@@ -212,7 +213,7 @@ boot.sysctl
 multipathd
 ntp
 "
-test -z "${SVC_OFF}" &&\
+	test -z "${SVC_OFF}" &&\
 	SVC_OFF="
 boot.dmraid
 boot.md
@@ -249,14 +250,21 @@ function chk_network() {
 	
 	echo_msgsep $FUNCNAME
 	
-test -z "${NETW_PTRN}" &&\
+	test -z "${NETW_PTRN}" &&\
 	NETW_PTRN="
 "Setting.up.hostname"
 "Setting.up.loopback.interface"
-"eth.*IP.address:"
-"bond.*IP.address:.*as.bonding.master"
+"eth.*IP.address:.*/"
+"bond.*enslaved.interface:"
+"bond.*IP.address:.*/"
 "
 	FIL="boot.txt"
+	echo "boot setup:"
+	for p in $NETW_PTRN; do
+		grep $p $FIL
+	done | sort -u
+	echo "last setup:"
+	FIL="network.txt"
 	for p in $NETW_PTRN; do
 		grep $p $FIL
 	done | sort -u
@@ -265,35 +273,61 @@ test -z "${NETW_PTRN}" &&\
 	FIL="network.txt"
 	( grep -A3 "^# /sbin/ethtool bond" $FIL
 	grep -A18 "^# /sbin/ethtool eth" $FIL ) |\
-		 grep -v "^#==\[ " | grep -v "^# /sbin/ethtool" | grep -v - "--"
+		 grep -v "^#==\[ " | grep -v "^# /sbin/ethtool" | grep -v "^--$"
 	echo
-
-# TODO: DNS
-	( grep -A1 "^# /etc/HOSTNAME" $FIL
-	grep -A1 "^# /bin/hostname" $FIL
 	
-	grep -A6 "^# /etc/resolv.conf" $FIL	
-	grep -A3 "^# /etc/sysconfig/network/routes" $FIL ) |\
-		 grep -v "^#==\[ " | grep -v "^# /sbin/ethtool" | grep -v - "--"
+# TODO: summary num. NICs, num. "not connected"
+	( grep -A3 "^# /etc/sysconfig/network/routes$" $FIL ) |\
+		 grep -v "^#==\[ " | grep -v "^# /sbin/ethtool"
 
-# TODO: split function
-# TODO: /etc/hosts, /etc/host.conf, etc/nsswitch.conf
-
-	( grep -A14 "^# /etc/sysconfig/network/ifcfg-bond" $FIL |\
+	( grep -A13 "^# /etc/sysconfig/network/ifcfg-bond" $FIL |\
 		grep -v "=''$"
 		echo
 	grep -A21 "^# /proc/net/bonding/bond" $FIL
 
-	grep -A11 "^# /etc/sysconfig/network/ifcfg-eth" $FIL |\
-		 grep -v "=''$"
-
-	grep -A1 "^# /sbin/chkconfig nscd" $FIL ) |\
+	grep -A10 "^# /etc/sysconfig/network/ifcfg-eth" $FIL |\
+		 grep -v "=''$" ) |\
 		 grep -v "^#==\[ " 
 	echo
 }
 
 
-function chk_timeset() {
+function chk_nameres() {
+
+	echo_msgsep $FUNCNAME
+
+	FIL="network.txt"
+	( grep -A1 "^# /etc/HOSTNAME" $FIL
+	grep -A1 "^# /bin/hostname" $FIL
+	grep -A1 "^# /sbin/chkconfig nscd" $FIL ) |\
+		 grep -v "^#==\[ " 
+	echo
+	split_file $FIL 
+
+	echo "# /etc/hosts:"
+	f=$(grep -l "^# /etc/hosts$" ${TMP}/${FIL}/xx*)
+        grep -v "^#" $f | tr -s "\n"
+	echo
+	echo "# /etc/resolv.conf:"
+	f=$(grep -l "^# /etc/resolv.conf$" ${TMP}/${FIL}/xx*)
+        grep -v "^#" $f | tr -s "\n"
+	echo
+#	echo "# /etc/nsswitch.conf:"
+#	f=$(grep -l "^# /etc/nsswitch.conf$" ${TMP}/${FIL}/xx*)
+#       grep -v "^#" $f | tr -s "\n"
+#	echo
+	echo "# /etc/host.conf:"
+	f=$(grep -l "^# /etc/host.conf$" ${TMP}/${FIL}/xx*)
+        grep -v "^#" $f | tr -s "\n"
+
+        rm -rf ${TMP}/${FIL}
+	echo
+
+# TODO: DNS
+}
+
+
+function chk_timeres() {
 
 	echo_msgsep $FUNCNAME
 
@@ -306,7 +340,8 @@ function chk_timeset() {
 	echo "service:"
 	grep -A1 "^# /sbin/chkconfig" $FIL
 	grep -A5 "# /usr/sbin/ntpq -p" $FIL | grep -v "====="
-
+	echo
+	echo "config:"
 	echo "# /etc/ntp.conf:"
 	split_file $FIL 
 	f=$(grep -l "^# /etc/ntp.conf$" ${TMP}/${FIL}/xx*)
@@ -314,7 +349,7 @@ function chk_timeset() {
         rm -rf ${TMP}/${FIL}
 	echo
 
-test -z "${TIME_ERR}" &&\
+	test -z "${TIME_ERR}" &&\
 	TIME_ERR="
 "synchronized.to.LOCAL"
 "ntpd.*time.reset"
@@ -329,7 +364,7 @@ test -z "${TIME_ERR}" &&\
 
 	echo "hwclock:"
 	FIL="sysconfig.txt"
-test -z "${TIME_PTRN}" &&\
+	test -z "${TIME_PTRN}" &&\
 	TIME_PTRN="
 HWCLOCK
 SYSTOHC
@@ -415,7 +450,7 @@ function chk_software() {
 	echo	
 
 	FIL="sam.txt"
-test -z "${SOFTW_PTRN}" &&\
+	test -z "${SOFTW_PTRN}" &&\
 	SOFTW_PTRN="
 System.architecture:
 Baseproduct:
@@ -433,9 +468,9 @@ function chk_updates() {
 	echo_msgsep $FUNCNAME
 	
 	FIL="updates.txt"
-# TODO sles-for-sap
-# TODO
-test -z "${UPDT_PTRN}" &&\
+	# TODO sles-for-sap
+	# TODO
+	test -z "${UPDT_PTRN}" &&\
 	UPDT_PTRN="
 "SLES11-"
 "SLES11-SP"
@@ -500,7 +535,7 @@ function chk_storage() {
 
 	FIL="rpm.txt"
 	# TODO: see whbsaprecheck
-test -z "${STOR_PKG}" &&\
+	test -z "${STOR_PKG}" &&\
 	STOR_PKG="
 dmraid
 lvm2
@@ -518,9 +553,9 @@ xfsprogs
 		awk '$1=="'$p'" {print $1,$NF} ' $FIL
 	done
 	echo
-# TODO check if local disk is in multipath
-# TODO: nfs
-test -z "${STOR_MOD}" &&\
+	# TODO check if local disk is in multipath
+	# TODO: nfs
+	test -z "${STOR_MOD}" &&\
 	STOR_MOD="
 ext2
 ext3
@@ -544,8 +579,10 @@ function chk_overview() {
 	
 	echo_msgsep $FUNCNAME
 
+	FIL="network.txt"
+	echo -n "Hostname: "
+	grep -A1 "#./etc/HOSTNAME" $FIL | tail -1
 	FIL="basic-health-report.txt"
-
 	echo "Supportconfig: " $DIR
 	for p in "^Date.Checked:" "^Status:" "\[...Red...\]" "\[.Yellow..\]"; do
 		grep ${p} $FIL
@@ -557,8 +594,21 @@ function chk_overview() {
 function chk_sysload() {
 
 	echo_msgsep $FUNCNAME
+	
+	FIL="basic-health-report.txt"	
+	echo "basic-health-report:"
+	grep "^[A-Z].*\[....e....\]$" $FIL | grep -v "Kernel.Taint"
+	# TODO: make dfull work
+	dfull="X"
+	dfull=$( grep "%.>=.90%" $FIL )
+	test "${dfull}" = "X" &&\
+	(	echo "Used Disk Space:"
+		echo $dfull
+	)
+	echo
 
-	cd sar
+	OWD=$PWD
+	cd sar || exit
 	# TODO: print date of sar file to each output line
 	#	either by adding date from sar-fiel header,
 	#	or by grep-ing the alreday known maxima out of the files
@@ -678,7 +728,7 @@ function chk_sysload() {
 	# TODO: network errors?
 	# TODO: NFS client and server reports?
 
-	cd $OLDPWD
+	cd $OWD 
 	echo
 }
 
@@ -749,7 +799,8 @@ case $1 in
 		chk_storage
 		#chk_filesys
 		chk_network
-		chk_timeset
+		chk_nameres
+		chk_timeres
 		chk_software
 		chk_updates
 		chk_services
@@ -781,7 +832,7 @@ case $1 in
 		#chk_hardware
 		#chk_storage
 		#chk_multipath
-		chk_modules
+		#chk_modules
 		#chk_filesys
 		#chk_cluster
 		

@@ -123,6 +123,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 #/usr/sbin/test_udpmcast
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
+/usr/lib/supportconfig/plugins
 %doc /usr/share/man/man5/*.gz
 %doc /usr/share/man/man7/*.gz
 %doc /usr/share/man/man8/*.gz

@@ -1,0 +1,24 @@
+#
+# The cluster does not try any restart or failover if storage
+# or application resources are failing.
+# Default cluster behaviour is to set resources to FAILED/unmanaged
+# if any operation fails. Only exceptions are SBD-STONITH and IPaddr2.
+# This configuration is aimed to be close to what many customer are
+# used to have with HP ServiceGuard.
+# 
+configure property \
+	\$id=$UUID \
+	stonith-enabled=$STONITH_ENABLED \
+	stonith-action=$STONITH_ACTION \
+	stonith-timeout="150s" \
+	default-action-timeout="$DEFAULT_ACTION_TIMEOUT" \
+	no-quorum-policy=$NO_QUORUM_POLICY \
+	dc-deadtime="20s" \
+	default-resource-stickiness="1000" 
+configure rsc_defaults \
+	\$id=$UUID2 \
+	migration-threshold="$DEFAULT_MIGRATION_THRESHOLD" \
+	failure-timeout="86400"
+configure op_defaults \
+	\$id=$UUID3 \
+	on-fail="block" timeout="300s"

@@ -1,0 +1,4 @@
+configure primitive $UUID ocf:heartbeat:$IPagent \
+params  ip="$IP" \
+op monitor interval=10s timeout=20s on_fail="restart" \
+op start on_fail="restart"

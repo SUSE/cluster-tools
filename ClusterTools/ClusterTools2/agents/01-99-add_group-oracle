@@ -37,7 +37,7 @@ do
 	fi
 done <<< "$FS_FILESYSTEMS"
 #
-# ip
+# IP - always has to be after storage resources
 #
 if [ -z "$IPagent" ]; then
 	IPagent=$DEFAULT_IPagent

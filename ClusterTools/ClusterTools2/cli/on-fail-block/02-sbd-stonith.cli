@@ -1,0 +1,5 @@
+configure primitive $UUID stonith::external/sbd	\
+	params SBD_DEVICE=$SBD_DEVICE \
+	op monitor interval=30 timeout=60 on_fail="restart" \
+	op start on_fail="restart"
+configure clone cln_$UUID $UUID

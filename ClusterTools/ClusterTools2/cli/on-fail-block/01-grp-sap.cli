@@ -1,0 +1,4 @@
+# ip always has to be after storage
+configure group $UUID \
+$GROUP_MEMBERS \
+meta target-role=stopped	

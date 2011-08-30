@@ -1,0 +1,2 @@
+configure primitive $UUID ocf:heartbeat:LVM \
+ params volgrpname="$VOLUMEGROUP"

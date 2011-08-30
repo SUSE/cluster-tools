@@ -1,0 +1,5 @@
+configure primitive $UUID ocf:heartbeat:Filesystem \
+params device="$DEVICE" \
+directory="$MOUNTPOINT" \
+fstype="$FSTYPE" \
+options="$MOPTIONS"

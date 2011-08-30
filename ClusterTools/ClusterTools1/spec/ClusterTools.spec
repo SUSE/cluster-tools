@@ -1,6 +1,7 @@
 #
 # spec file for package ClusterTools
 #
+# Copyright (c) 2010-2011 SUSE LINUX Products GmbH, Nuernberg, Germany.
 # Copyright (c) 2008-2009 SUSE LINUX GmbH, Frankfurt, Germany.
 # Copyright (c) 2009 SUSE LINUX GmbH, Nuernberg, Germany.
 # This file and all modifications and additions to the pristine
@@ -15,7 +16,7 @@ Group:        System/Cluster
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      1.0.0
-Release:      1
+Release:      2
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:      noarch
@@ -119,6 +120,7 @@ chmod a+x 	%{buildroot}/usr/sbin/*
 /usr/share/wow
 /usr/lib/supportconfig/plugins
 %doc /usr/share/doc/packages/wow
+%doc /usr/share/man/man5/*
 %doc /usr/share/man/man7/*
 %doc /usr/share/man/man8/*
 %config /etc/ClusterTools

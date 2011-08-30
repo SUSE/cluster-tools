@@ -1,4 +1,4 @@
-
+# 
 
 PKT=ClusterTools2
 
@@ -22,7 +22,7 @@ test:
 	
 
 tar:	
-	tar -cvzf ${PKT}-${VERS}.tgz man? share sbin spec agents lib scripts samples cli etc
+	tar -cvzf ${PKT}-${VERS}.tgz man? share sbin spec agents lib scripts samples cli etc plugins
 
 rpm:	tar
 	mv ${PKT}-${VERS}.tgz /usr/src/packages/SOURCES

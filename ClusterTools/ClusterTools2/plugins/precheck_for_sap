@@ -1,0 +1,5 @@
+#!/bin/bash
+# /usr/lib/supportconfig/plugins/precheck_for_sap
+grep "^precheck_for_sap$" /etc/ClusterTools2/supportconfig_plugins || exit
+/usr/sbin/precheck_for_sap -g 2>&1
+#

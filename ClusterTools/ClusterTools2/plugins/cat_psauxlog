@@ -1,0 +1,6 @@
+#!/bin/bash
+# /usr/lib/supportconfig/plugins/cat_psauxlog
+grep "^cat_psauxlog$" /etc/ClusterTools2/supportconfig_plugins || exit
+LOG="/var/log/psaux.log"
+test -r $LOG && cat $LOG
+#

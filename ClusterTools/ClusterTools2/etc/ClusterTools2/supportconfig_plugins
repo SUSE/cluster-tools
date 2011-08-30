@@ -1,0 +1,9 @@
+# /etc/ClusterTools2/supportconfig_plugins
+# For SLES11.
+#
+cat_messages
+cat_psauxlog
+sum_base_config
+grep_error_patterns
+# precehck_for_sap
+#

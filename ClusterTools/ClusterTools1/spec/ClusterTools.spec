@@ -53,14 +53,17 @@ mkdir -p %{buildroot}/usr/share/doc/packages/wow
 mkdir -p %{buildroot}/usr/share/doc/packages/wow/samples
 mkdir -p %{buildroot}/usr/share/wow
 mkdir -p %{buildroot}/usr/share/wow/xml
+mkdir -p %{buildroot}/usr/share/man/man5
 mkdir -p %{buildroot}/usr/share/man/man7
 mkdir -p %{buildroot}/usr/share/man/man8
+mkdir -p %{buildroot}/usr/lib/supportconfig/plugins
 
 #
 # binaries
 #
 cp -a sbin/*    %{buildroot}/usr/sbin
 cp -a agents/* %{buildroot}/usr/lib/wow/agents
+cp -a plugins/* %{buildroot}/usr/lib/supportconfig/plugins
 #
 # libs
 #
@@ -76,8 +79,10 @@ cp -a xml/*    %{buildroot}/usr/share/wow/xml
 #
 cp -va doc/*        %{buildroot}/usr/share/doc/packages/wow
 cp -va samples/*    %{buildroot}/usr/share/doc/packages/wow/samples
+gzip man/*.5
 gzip man/*.7
 gzip man/*.8
+cp -va man/*.5.gz       %{buildroot}/usr/share/man/man5
 cp -va man/*.7.gz       %{buildroot}/usr/share/man/man7
 cp -va man/*.8.gz       %{buildroot}/usr/share/man/man8
 
@@ -112,12 +117,15 @@ chmod a+x 	%{buildroot}/usr/sbin/*
 /usr/lib/wow
 /usr/lib/perl5/site_perl/XML/Simple.pm
 /usr/share/wow
+/usr/lib/supportconfig/plugins
 %doc /usr/share/doc/packages/wow
 %doc /usr/share/man/man7/*
 %doc /usr/share/man/man8/*
 %config /etc/ClusterTools
 
 %changelog -n ClusterTools
+* Tue Aug 30 2011 - lars.pinne@novell.com
+  added supportconfig plugins
 * Tue Jul 05 2011 - fabian.herschel@novell.com, lars.pinne@novell.com
   1.0.0 added backported scripts from ClusterTools2
 * Mon Feb 15 2010 - fabian.herschel@novell.com

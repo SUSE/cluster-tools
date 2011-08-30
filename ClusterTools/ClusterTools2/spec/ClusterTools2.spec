@@ -60,11 +60,13 @@ mkdir -p %{buildroot}/usr/lib/ClusterTools2/scripts
 mkdir -p %{buildroot}/usr/share/man/man5
 mkdir -p %{buildroot}/usr/share/man/man7
 mkdir -p %{buildroot}/usr/share/man/man8
+mkdir -p %{buildroot}/usr/lib/supportconfig/plugins
 
 #
 # "binaries"
 #
 cp -va sbin/* %{buildroot}/usr/sbin/
+cp -va plugins/* %{buildroot}/usr/lib/supportconfig/plugins
 #
 # etc
 #
@@ -127,6 +129,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config(noreplace) /etc/ClusterTools2
 
 %changelog -n ClusterTools
+* Tue Aug 30 2011 - lars.pinne@novell.com
+  added wow on-fail-block, added supportconfig plugins
 * Fri Aug 26 2011 - fabian.herschel@suse.com
   2.2.9 package version
 * Tue Jul 18 2011 - lars.pinne@novell.com

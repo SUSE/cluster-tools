@@ -1,10 +1,10 @@
 # /etc/ClusterTools2/supportconfig_plugins
 # For SLES11.
 # one entry per line "^plugin$"
-cat_messages
-cat_psauxlog
-sum_base_config
-grep_error_patterns
-# hb_report
-# precheck_for_sap
+#cat_messages
+#cat_psauxlog
+#sum_base_config
+#grep_error_patterns
+#hb_report
+#precheck_for_sap
 #

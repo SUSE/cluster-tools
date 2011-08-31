@@ -68,10 +68,15 @@ for s in $SBD; do
 	sbd -d ${s} list
 done
 
-# TODO no grep-grep
+# TODO FS
+
 echo
+# TODO no grep-grep
 cat /proc/mdstat | grep -v "Personalities.:" | grep -v "bitmap.*chunk$" |\
 	 tr -s "\n" 
+echo
+vgs
+# TODO FS
 }
 
 

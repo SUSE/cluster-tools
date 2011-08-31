@@ -82,7 +82,8 @@ function make_sbd_devices() {
 
 function dump_sbd_devices() {
 	CFI=${SBD_CONF}
-
+	
+	# TODO check for really used SBD devices in CIB
 	RC=0
 	awk -F"=" '$1=="SBD_DEVICE" {print $2}' $CFI |tr -d "\""|tr ";" "\n"|\
 	while read; do

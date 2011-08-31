@@ -68,7 +68,7 @@ for s in $SBD; do
 	sbd -d ${s} list
 done
 
-# TODO FS
+# TODO multipath, because md always stays even if pathes down 
 
 echo
 # TODO no grep-grep
@@ -76,7 +76,7 @@ cat /proc/mdstat | grep -v "Personalities.:" | grep -v "bitmap.*chunk$" |\
 	 tr -s "\n" 
 echo
 vgs
-# TODO FS
+# TODO FS: cat /proc/mount wg. ro-FS
 }
 
 

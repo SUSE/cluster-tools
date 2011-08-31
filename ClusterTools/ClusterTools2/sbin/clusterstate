@@ -46,18 +46,18 @@ crm_mon -r1 | awk '$3=="Started"{print $0}' | wc -l
 
 echo
 echo "Ring:"
-corosync-cfgtool -s | grep -B1 "status.*ring" | grep -v - "--"
+corosync-cfgtool -s | grep -B1 "status.*=" | grep -v "^--$"
 
 echo
 for i in $ETH; do
 	ip -o a s $i | awk '$0~/state/{print $2,$3}'
 	case $i in
 	bond?)
-		cat /proc/net/bonding/$i | grep -B1 "MII.Status" | grep -v - "--"
+		cat /proc/net/bonding/$i | grep -B1 "MII.Status" | grep -v "^--$"
 	 	# TODO ethtool
 	;;
 	eth?)
-		# TODO ethtool
+		#ethtool $ETH | grep "Link detected:"
 	;;
 	esac
 done

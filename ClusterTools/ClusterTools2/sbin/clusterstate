@@ -72,8 +72,16 @@ done
 
 echo
 # TODO no grep-grep
-cat /proc/mdstat | grep -v "Personalities.:" | grep -v "bitmap.*chunk$" |\
-	 tr -s "\n" 
+#grep -v "Personalities.:" /proc/mdstat | grep -v "bitmap.*chunk$" | tr -s "\n" 
+echo -n "mirrors total: "
+grep -c "^md[1-9].*:" /proc/mdstat
+echo -n "mirrors complete: "
+grep -c "\[UU\]" /proc/mdstat
+# TODO mirrors syncing
+#echo -n "mirrors syncing: "
+#grep -c <TODO> /proc/mdstat
+echo -n "mirrors split: "
+grep -c "\[U_|_U\]" /proc/mdstat
 echo
 vgs
 # TODO FS: cat /proc/mount wg. ro-FS

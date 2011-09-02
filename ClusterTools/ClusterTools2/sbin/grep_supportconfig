@@ -346,6 +346,9 @@ function chk_timeres() {
 	split_file $FIL 
 	f=$(grep -l "^# /etc/ntp.conf$" ${TMP}/${FIL}/xx*)
         grep -v "^#" $f | tr -s "\n"
+	f=$(grep -l "^NTPD_FORCE_SYNC_ON_STARTUP=" ${TMP}/${FIL}/xx*)
+        grep -v "^#" $f | tr -s "\n"
+
         rm -rf ${TMP}/${FIL}
 	echo
 

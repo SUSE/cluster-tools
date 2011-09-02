@@ -71,7 +71,6 @@ echo
 
 # TODO check for WWIDs 3600...=SAN/SCSI, 1494...=iSCSI 
 # TODO configurable pattern for SAN LUNs (f.e "HP,OPEN-V", "HP,HSV"), local LUNs (f.e. "HP,LOGICAL.VOLUME"), iSCSI LUNs (f.e. "IET,VIRTUAL-DISK")
-
 # TODO call multipath only once and put ouput in variable
 # echo -n "total LUNs: "
 #	 multipath -l | grep -c "^[0-9].*dm-[0-9]"
@@ -93,6 +92,7 @@ echo -n "MDs complete: "
 echo -n "MDs split: "
 	grep -c "U_\|_U" /proc/mdstat
 echo
+
 vgs
 # TODO FS: cat /proc/mount wg. ro-FS
 }
@@ -111,6 +111,7 @@ case $1 in
 		exit
 	;;
 	*)
+	# TODO separate functions overview, cluster, network, storage, processes
 		get_state
 		exit
 	;;

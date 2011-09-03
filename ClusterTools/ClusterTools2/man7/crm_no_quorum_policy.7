@@ -1,0 +1,75 @@
+.TH crm_no_quorum_policy 7 "03 Sep 2011" "" "ClusterTools2"
+.\"
+.SH NAME
+crm_no_quorum_policy \- TODO 
+.\"
+.SH DESCRIPTION
+The \fBnoquorum_policy\fP TODO.
+
+A cluster is said to have quorum when more than half the known or expected
+nodes are online, or for the mathematically inclined, whenever the following
+equation is true: total_nodes < 2 * active_nodes
+Therefore a two-node cluster only has quorum when both nodes are running,
+which is no longer the case for our cluster. This would normally make the
+creation of a two-node cluster pointless, however it is possible to
+control how Pacemaker behaves when quorum is lost. In particular, we can
+tell the cluster to simply ignore quorum altogether. 
+.br
+Pacemaker’s default behavior is to stop all resources if the cluster does not have
+quorum (no_quorum_policy = stop). 
+
+.B no_quorum_policy = stop
+.br
+node wont shoot anyone when it doesn't have quorum.
+cluster will stop resources and will not be able to start it's existing
+resources.
+
+.B no_quorum_policy = ignore
+.br
+node will shoot anyone it can't see
+cluster will not be able to add and start new resources.
+
+.B no_quorum_policy = freeze
+.br
+wont shoot anyone when it doesn't have quorum.
+cluster will not be able to add and start new resources.
+
+.B no_quorum_policy = suicide
+.br
+node will only shoot itself and any other nodes in its current partition.
+it wont try to shoot the nodes it can't see.
+.\"
+.SH FILES
+.TP
+/usr/share/ClusterTools2/samples/
+        samples of config files and scripts.
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBcrm\fP(8), \fBprepare_crm_basics\fP(8), \fBstonith\fP(8), \fBsbd\fP(7),
+\fBcrm_simulate\fP(8), \fBcorosync-cfgtool\fP(8), \fBcorosync.conf\fP(7),
+\fBClusterTools2\fP(7),
+.br
+http://www.novell.com/documentation/sle_ha/ ,
+.br
+http://www.mail-archive.com/pacemaker@oss.clusterlabs.org/msg00106.html ,
+.br
+http://www.clusterlabs.org/doc/en-US/Pacemaker/1.1/html/Clusters_from_Scratch/ch05s03.html ,
+.br
+http://www.gossamer-threads.com/lists/linuxha/pacemaker/72609?do=post_view_threaded
+.\"
+.SH AUTHORS
+The content of this manual page was mostly derived from online documentation
+mentioned above.
+.\"
+.SH COPYRIGHT
+(c) 2011 SUSE Linux GmbH, Germany.
+ClusterTools2 comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

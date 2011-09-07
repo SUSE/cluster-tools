@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: L.Pinne
 #
-# Version: 0.01 2011-08-25 09:45
+# Version: 0.01 2011-09-06 10:45
 #
 #set -x
 
@@ -74,7 +74,9 @@ function list_other_restart() {
 
 	echo "loaded watchdog modules:"
 	for m in $OTHMOD; do
-		lsmod $m 2>/dev/null
+		# TODO awk
+		lsmod | grep $(basename $m .ko) | sort -u
+		#modinfo -F filename $(basename $m .ko) 2>/dev/null
 	done
 
 	echo "installed reboot daemon:"

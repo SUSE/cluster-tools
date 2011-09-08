@@ -34,6 +34,7 @@ case $1 in
 		exit
 	;;
 	-f|--force)
+		# TODO run also, if rcopenais is not running
 		rcopenais stop || exit
 
 		mv /var/lib/heartbeat/crm/cib.xml $BAK 

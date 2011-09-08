@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-09-02
+# Version: 0.1 2011-09-07
 #
 
 EXE="$0"
@@ -29,11 +29,14 @@ function help() {
 	echo "usage:    $(basename $0) [OPTION]"
 	echo
 	echo " --help           show help."
-	echo " --version        show version."
+	echo " --all        show all info."
+	echo " --basics        show basic info."
+	echo " --network        show network info."
+	echo " --storage        show storage info."
 }
 
 
-function get_state() {
+function get_basics() {
 echo "### $HST - $DAT ###"
 echo
 crm_mon -r1 |\
@@ -47,7 +50,33 @@ crm_mon -r1 | awk '$3=="Started"{print $0}' | wc -l
 echo
 echo "Ring:"
 corosync-cfgtool -s | grep -B1 "status.*=" | grep -v "^--$"
+echo
+echo "SBD:"
+for s in $SBD; do
+	echo ${s}
+	sbd -d ${s} list
+done
+echo
 
+PSAUX=$(ps aux | awk '{print $11}' )
+CLPROC="
+stonithd
+cib
+attrd
+pengine
+crmd
+mgmtd
+corosync
+ha_logd
+sbd
+"
+# TODO
+#for f in $CLPROC; do
+#	( echo $CLPROC | grep $f ) #&& echo $f 
+#done
+}
+
+function get_network() {
 echo
 for i in $ETH; do
 	ip -o a s $i | awk '$0~/state/{print $2,$3}'
@@ -61,14 +90,15 @@ for i in $ETH; do
 	;;
 	esac
 done
-
 echo
-for s in $SBD; do
-	echo ${s}
-	sbd -d ${s} list
-done
+# TODO network
+#ip a s | grep "^[0-9].*:.\<.*\>"
+echo -n "IPs: "
+	ip a s | grep -c "inet.*[0-9]\..*\..*\..*[0-9]\/"
 echo
+}
 
+function get_storage() {
 # TODO check for WWIDs 3600...=SAN/SCSI, 1494...=iSCSI 
 # TODO configurable pattern for SAN LUNs (f.e "HP,OPEN-V", "HP,HSV"), local LUNs (f.e. "HP,LOGICAL.VOLUME"), iSCSI LUNs (f.e. "IET,VIRTUAL-DISK")
 # TODO call multipath only once and put ouput in variable
@@ -98,10 +128,7 @@ echo
 echo -n "Filesystems rw: "
 	cat /proc/mounts | grep -c "^/dev/.*rw"
 echo
-# TODO network
-#ip a s | grep "^[0-9].*:.\<.*\>"
-echo -n "IPs: "
-	ip a s | grep -c "inet.*[0-9]\..*\..*\..*[0-9]\/"
+
 }
 
 
@@ -117,10 +144,24 @@ case $1 in
 		help
 		exit
 	;;
-	*)
+	-s|--storage)
+		get_storage
+		exit
+	;;	
+	-n|--network)
+		get_network
+		exit
+	;;	
+	-a|--all)
 	# TODO separate functions overview, cluster, network, storage, processes
-		get_state
+		get_basics
+		get_network
+		get_storage
 		exit
 	;;
+	-b|--basics|*)
+		get_basics
+		exit
+	;;	
 esac
 #

@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2011-08-29
+# Version: 0.01 2011-09-08
 #
 # For SLES11.
 # For Supportconfig Script Version: 2.25-237
@@ -125,7 +125,7 @@ function chk_modules() {
 
 	# tainted
 	#FIL="basic-health-check.txt"
-	#csplit $FIL ""
+	#TODO split
 
 	FIL="boot.txt"
 	grep "^\[.*AppArmor:.*initialized" $FIL
@@ -177,7 +177,8 @@ softdog.ko
 	FIL="modules.txt"
 	split_file $FIL
 	f=$(grep -l "^# /sbin/lsmod$" ${TMP}/${FIL}/xx*)
-	grep -v "^#==..Co.*==#" $f
+	test -z "$f" ||\
+		grep -v "^#==..Co.*==#" $f
 	rm -rf ${TMP}/${FIL}
 }
 
@@ -306,19 +307,23 @@ function chk_nameres() {
 
 	echo "# /etc/hosts:"
 	f=$(grep -l "^# /etc/hosts$" ${TMP}/${FIL}/xx*)
-        grep -v "^#" $f | tr -s "\n"
+        test -z "$f" ||\
+        	grep -v "^#" $f | tr -s "\n"
 	echo
 	echo "# /etc/resolv.conf:"
 	f=$(grep -l "^# /etc/resolv.conf$" ${TMP}/${FIL}/xx*)
-        grep -v "^#" $f | tr -s "\n"
+        test -z "$f" ||\
+        	grep -v "^#" $f | tr -s "\n"
 	echo
 #	echo "# /etc/nsswitch.conf:"
 #	f=$(grep -l "^# /etc/nsswitch.conf$" ${TMP}/${FIL}/xx*)
-#       grep -v "^#" $f | tr -s "\n"
+#	test -z "$f" ||\
+#       	grep -v "^#" $f | tr -s "\n"
 #	echo
 	echo "# /etc/host.conf:"
 	f=$(grep -l "^# /etc/host.conf$" ${TMP}/${FIL}/xx*)
-        grep -v "^#" $f | tr -s "\n"
+        test -z "$f" ||\
+        	grep -v "^#" $f | tr -s "\n"
 
         rm -rf ${TMP}/${FIL}
 	echo
@@ -340,14 +345,16 @@ function chk_timeres() {
 	echo "service:"
 	grep -A1 "^# /sbin/chkconfig" $FIL
 	grep -A5 "# /usr/sbin/ntpq -p" $FIL | grep -v "====="
-	echo
+
 	echo "config:"
 	echo "# /etc/ntp.conf:"
 	split_file $FIL 
 	f=$(grep -l "^# /etc/ntp.conf$" ${TMP}/${FIL}/xx*)
-        grep -v "^#" $f | tr -s "\n"
+        test -z "$f" ||\
+		grep -v "^#" $f | tr -s "\n"
 	f=$(grep -l "^NTPD_FORCE_SYNC_ON_STARTUP=" ${TMP}/${FIL}/xx*)
-        grep -v "^#" $f | tr -s "\n"
+        test -z "$f" ||\
+		grep -v "^#" $f | tr -s "\n"
 
         rm -rf ${TMP}/${FIL}
 	echo

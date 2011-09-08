@@ -37,7 +37,6 @@ function help() {
 
 
 function get_basics() {
-echo "### $HST - $DAT ###"
 echo
 crm_mon -r1 |\
  awk '$1=="Current"||$1=="Online:"||$1=="OFFLINE:"||$3=="UNCLEAN"{print $0}'
@@ -46,17 +45,6 @@ echo -n "Stopped/FAILED resources: "
 crm_mon -r1 | awk '$3=="Stopped"||$0~/FAILED/{print $0}' | wc -l
 echo -n "Started resources: "
 crm_mon -r1 | awk '$3=="Started"{print $0}' | wc -l
-
-echo
-echo "Ring:"
-corosync-cfgtool -s | grep -B1 "status.*=" | grep -v "^--$"
-echo
-echo "SBD:"
-for s in $SBD; do
-	echo ${s}
-	sbd -d ${s} list
-done
-echo
 
 PSAUX=$(ps aux | awk '{print $11}' )
 CLPROC="
@@ -70,11 +58,23 @@ corosync
 ha_logd
 sbd
 "
-# TODO
-#for f in $CLPROC; do
-#	( echo $CLPROC | grep $f ) #&& echo $f 
-#done
+echo -n "HA processes: "
+for f in $CLPROC; do
+	echo $PSAUX | grep -c $f >/dev/null && echo $f
+done | wc -l
+echo
+
+echo "TOTEM: "
+corosync-cfgtool -s | grep -B1 "status.*=" | grep -v "^--$"
+echo
+echo "SBD:"
+for s in $SBD; do
+	echo ${s}
+	sbd -d ${s} list
+done
+echo
 }
+
 
 function get_network() {
 echo
@@ -104,10 +104,11 @@ function get_storage() {
 # TODO call multipath only once and put ouput in variable
 # echo -n "total LUNs: "
 #	 multipath -l | grep -c "^[0-9].*dm-[0-9]"
+echo
 echo -n "SCSI LUNs: "
-	multipath -l | grep -c "^3600.*dm-"
+	multipath -l | grep -Ec "[\^(]3600.*dm-"
 echo -n "iSCSI LUNs: "
-	multipath -l | grep -c "^1494.*dm-"
+	multipath -l | grep -Ec "[\^(]1494.*dm-"
 echo
 
 # TODO no grep-grep
@@ -145,21 +146,25 @@ case $1 in
 		exit
 	;;
 	-s|--storage)
+		echo "### $HST - $DAT ###"
 		get_storage
 		exit
 	;;	
 	-n|--network)
+		echo "### $HST - $DAT ###"
 		get_network
 		exit
 	;;	
 	-a|--all)
 	# TODO separate functions overview, cluster, network, storage, processes
+		echo "### $HST - $DAT ###"
 		get_basics
 		get_network
 		get_storage
 		exit
 	;;
 	-b|--basics|*)
+		echo "### $HST - $DAT ###"
 		get_basics
 		exit
 	;;	

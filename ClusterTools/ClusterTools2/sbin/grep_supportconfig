@@ -78,7 +78,7 @@ function chk_hardware() {
 	FIL="hardware.txt"
 	grep "pci.product.=" $FIL |\
 		 grep -v "USB.*HCI.*ontroller" | grep -v "PCI.*Port" |\
-		 grep -v "I/O Hub" | sort -u
+		 grep -v "I/O Hub" | grep -v "Integrated.Memory.Controller" | sort -u
 	grep "scsi.vendor.=" $FIL | sort -u
 	echo
 

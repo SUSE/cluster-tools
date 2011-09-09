@@ -105,6 +105,8 @@ function get_storage() {
 # TODO call multipath only once and put ouput in variable
 # echo -n "total LUNs: "
 #	 multipath -l | grep -c "^[0-9].*dm-[0-9]"
+# TODO check for un-matched userfreindly names (mpath[a-z])
+
 echo
 echo -n "SCSI LUNs: "
 	multipath -l | grep -Ec "[\^(]3600.*dm-"

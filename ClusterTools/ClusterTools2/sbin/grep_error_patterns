@@ -73,6 +73,7 @@ test -z "${ERROR_PATTERN}" &&\
 "exits.with.status.*[1-9]"
 "Failed.services.*runlevel"
 "
+# TODO check for un-matched userfreindly names (mpath[a-z])
 # TODO: pattern for failed module (could not load)
 # TODO: async IO from grep kio /proc/slabinof ?
 # TODO: verify cluster log msgs. maybe more generic possible ?

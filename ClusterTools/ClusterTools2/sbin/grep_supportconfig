@@ -518,7 +518,7 @@ function chk_multipath() {
 	# TODO: by-id
 	# TODO: dmsetup
 	# TODO: multipath.conf
-
+	# TODO check for un-matched userfreindly names (mpath[a-z])
 	for p in "loading.*prioritizer" "path.checker.=" "prio.="; do
 		grep ${p} $FIL
 	done | awk '{print $6,$7,$8}' | sort -u

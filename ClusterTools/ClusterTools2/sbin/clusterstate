@@ -40,6 +40,7 @@ function get_basics() {
 echo
 crm_mon -r1 |\
  awk '$1=="Current"||$1=="Online:"||$1=="OFFLINE:"||$3=="UNCLEAN"{print $0}'
+# TODO: show [standby] as well
 # TODO: efficient awk
 echo -n "Stopped/FAILED resources: "
 crm_mon -r1 | awk '$3=="Stopped"||$0~/FAILED/{print $0}' | wc -l

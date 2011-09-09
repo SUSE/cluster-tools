@@ -75,6 +75,7 @@ test -z "${CONF_FILES}" &&\
 "
 # TODO: /boot/initrd, boot/vmlinuz
 # TODO: exact grep patterns
+# TODO: gunzip initrd | cpio -... | awk $? (without timestamp)
 test -z "${CONF_CALLS}" &&\
 	 CONF_CALLS="
 '/usr/sbin/dmidecode -t system | /usr/bin/grep -v "UUID:" | /usr/bin/grep -v "Serial.Number:"'
@@ -116,7 +117,7 @@ function help() {
 
 
 # TODO: function to collect relevant files and output
-
+# TODO: find reason for error on repos.d/ (line 136 ?)
 
 function sum_config() {
 	S="NA"

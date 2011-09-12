@@ -49,8 +49,11 @@ DONE: - enhance make_corosync_conf, f.e. config file
 DONE: - /usr/lib/supportconfig/plugins/ all-messages grep_error_patterns sum_base_config
 TODO - man page supportconfig_plugins.7
 TODO - man page crm_on-fail-block.7
-TODO: dmesg iTCO_wdt: No card detected
-TODO  dmesg eurwdt: can't misc_register on minor=130
-TODO smsc37b787_wdt: Unable to register miscdev on minor 130
-TODO advantechwdt: Unexpected close, not stopping watchdog!
+TODO dmesg iTCO_wdt: No card detected
+TODO dmesg eurwdt: can't misc_register on minor=130
+TODO dmesg smsc37b787_wdt: Unable to register miscdev on minor 130
+TODO dmesg advantechwdt: Unexpected close, not stopping watchdog!
+TODO add_softdog_to_initrd: "-s" should show MODULES_LOADED_On_BOOT as well
+TODO clusterstate -n: show IPs
+
 

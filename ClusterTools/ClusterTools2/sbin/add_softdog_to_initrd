@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 # 
-# Version: 0.02 2011-08-25 09:45
+# Version: 0.02 2011-09-12 10:45
 #
 
 EXE="$0"
@@ -36,15 +36,15 @@ function version(){
 function show_mod(){
 	V=$(uname -a | awk '{print $3}')
 	OTHMOD=$(ls /lib/modules/${V}/kernel/drivers/watchdog/)
+	RUNMOD=$(lsmod)
 
-# TODO
-#	echo "active watchdog module:"
-#	fuser -f /dev/watchdog
-#	lsof ?
+# TODO 	echo "active watchdog module:" ??
+# TODO	lsof | grep watchdog
 
 	echo "loaded watchdog modules:"
 	for m in $OTHMOD; do
-		lsmod $m 2>/dev/null
+		MDL=$(basename $m .ko)
+		echo "$RUNMOD" | awk '$1=="'$MDL' {print $1}" | sort -u 
 	done
 
 	echo "configured watchdog module:"

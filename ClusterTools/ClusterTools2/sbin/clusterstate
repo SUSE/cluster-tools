@@ -69,6 +69,7 @@ echo "TOTEM: "
 corosync-cfgtool -s | grep -B1 "status.*=" | grep -v "^--$"
 echo
 echo "SBD:"
+# TODO crm_mon -r -1 | grep "stonith:external/sbd.:.Started"
 for s in $SBD; do
 	echo ${s}
 	sbd -d ${s} list

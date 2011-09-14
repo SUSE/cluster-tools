@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 # 
-# Version: 0.02 2011-09-12 10:45
+# Version: 0.02 2011-09-14 11:45
 #
 
 EXE="$0"
@@ -22,7 +22,7 @@ function help(){
 	echo "OPTION:"
 	echo " --help		show help."
 	echo " --version	show version."
-	echo " --show 	show available wathdog modules and initrd line."
+	echo " --show 	show available and used wathdog modules."
 	echo
 }
 
@@ -36,27 +36,38 @@ function version(){
 function show_mod(){
 	V=$(uname -a | awk '{print $3}')
 	OTHMOD=$(ls /lib/modules/${V}/kernel/drivers/watchdog/)
-	RUNMOD=$(lsmod)
-
+	RUNMOD=$(lsmod | awk '{print $1}' | sort -u)
+ 
 # TODO 	echo "active watchdog module:" ??
 # TODO	lsof | grep watchdog
 
-	echo "loaded watchdog modules:"
+	echo "=== loaded watchdog modules:"
 	for m in $OTHMOD; do
 		MDL=$(basename $m .ko)
-		echo "$RUNMOD" | awk '$1=="'$MDL' {print $1}" | sort -u 
+		echo "$RUNMOD" | awk '$1=="'$MDL'" {print $1}'
+		dmesg | grep $MDL
 	done
-
-	echo "configured watchdog module:"
-	grep -v "#.*INITRD_MODULES" $FIL | grep "^INITRD_MODULES=.*$MOD"
-	grep -v "#.*MODULES_LOADED_ON_BOOT" $FIL | grep "^MODULES_LOADED_ON_BOOT=.*$MOD"
-	
-	echo "initrd watchdog module:"
+	echo
+	echo "=== configured watchdog modules:"
+	FIL="/etc/sysconfig/kernel"
+	echo "$FIL"
+	grep "^INITRD_MODULES=" $FIL
+	grep "^MODULES_LOADED_ON_BOOT=" $FIL
+	echo "/etc/modprobe.*"
+	for m in $OTHMOD; do
+                MDL=$(basename $m .ko)
+		grep $MDL /etc/modprobe.conf*
+		grep $MDL /etc/modprobe.d/*
+	done
+	echo
+	echo "=== initrd watchdog modules:"
 	/bin/zcat /boot/initrd | cpio -itv 2>/dev/null |\
-               	grep "lib/modules/*/kernel/drivers/watchdog/.*ko$"
-
-	echo "available watchdog modules:"
+               	grep "lib/modules/*/kernel/drivers/watchdog/.*ko$" |\
+		awk '{print $9}'
+	echo
+	echo "=== available watchdog modules:"
 	echo $OTHMOD
+	echo
 }
 
 

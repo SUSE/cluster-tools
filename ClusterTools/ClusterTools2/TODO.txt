@@ -39,7 +39,6 @@ DONE: - /usr/share/man/man8/attrd_updater.8.gz
 DONE: - /usr/share/man/man8/crm_simulate.8.gz
 DONE: - /usr/share/man/man8/ptest.8.gz
 DONE: - update man sbd.7, sbd.8 for triple sbd
-
 DONE: - whbsaprecheck: /etc/corosync/authkey (ohne s)
 TODO - precheck_for_sap: mount option barrier= wird nicht gezeigt
 TODO - precheck_for_sap: soll laufen, auch wenn parameter in wow file nicht gesetzt
@@ -53,7 +52,7 @@ TODO dmesg iTCO_wdt: No card detected
 TODO dmesg eurwdt: can't misc_register on minor=130
 TODO dmesg smsc37b787_wdt: Unable to register miscdev on minor 130
 TODO dmesg advantechwdt: Unexpected close, not stopping watchdog!
-TODO add_softdog_to_initrd: "-s" should show MODULES_LOADED_On_BOOT as well
+DONE add_softdog_to_initrd: "-s" should show MODULES_LOADED_On_BOOT as well
 TODO clusterstate -n: show IPs
-
+TODO make disabled supportconfig plugins return "Skipped" instead of "Error"
 

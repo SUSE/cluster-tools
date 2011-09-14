@@ -7,18 +7,18 @@ supportconfig_plugins \- configuration for supportconfig plugins from ClusterToo
 \fBsupportconfig_plugins\fP contains configuration for supportconfig plugins from ClusterTools2. 
 .\"
 .SH SYNTAX
-The resource file contains one line per plugin. Each active line is formed as:
+The file contains one line per plugin. Each active line is formed as:
 .br
 .B ^plugin-name$ 
 
-Each plugin checks for a line containing only its name. If this line is not found, the pluging exits without further actions.
+Each plugin checks for a line containing only its name. If this line is not found, the pluging exits without further action.
 
 Implicitely a hash "#" as the first character of a line marks it as comment and makes it to be ignored. 
 .\"
 .SH FILES
 .TP
 /usr/lib/supportconfig/plugins/
-	the plugins directory.
+	the plugin directory.
 .TP
 /etc/ClusterTools2/supportconfig_plugins
 	the plugin configuration files.

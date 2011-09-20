@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-09-07
+# Version: 0.1 2011-09-22
 #
 
 EXE="$0"
@@ -68,7 +68,7 @@ echo
 echo "TOTEM: "
 corosync-cfgtool -s | grep -B1 "status.*=" | grep -v "^--$"
 echo
-echo "SBD:"
+echo "SBDs:"
 # TODO crm_mon -r -1 | grep "stonith:external/sbd.:.Started"
 for s in $SBD; do
 	echo ${s}
@@ -88,7 +88,7 @@ for i in $ETH; do
 	 	# TODO ethtool
 	;;
 	eth?)
-		#ethtool $ETH | grep "Link detected:"
+		# TODO ethtool
 	;;
 	esac
 done
@@ -96,7 +96,9 @@ echo
 # TODO network
 #ip a s | grep "^[0-9].*:.\<.*\>"
 echo -n "IPs: "
+	# TODO only one "ip a s"
 	ip a s | grep -c "inet.*[0-9]\..*\..*\..*[0-9]\/"
+	ip a s | awk '$0~/inet.*[0-9]\..*\..*\..*[0-9]\// {print "    ",$2,$NF}'
 echo
 }
 
@@ -106,7 +108,7 @@ function get_storage() {
 # TODO call multipath only once and put ouput in variable
 # echo -n "total LUNs: "
 #	 multipath -l | grep -c "^[0-9].*dm-[0-9]"
-# TODO check for un-matched userfreindly names (mpath[a-z])
+# TODO check for un-matched userfriendly names (mpath[a-z])
 
 echo
 echo -n "SCSI LUNs: "
@@ -118,9 +120,9 @@ echo
 # TODO no grep-grep
 #grep -v "Personalities.:" /proc/mdstat | grep -v "bitmap.*chunk$" | tr -s "\n" 
 echo -n "MDs total: "
-	grep -c "^md[1-9].*:" /proc/mdstat
+	grep -c "^md[0-9].*:" /proc/mdstat
 echo -n "MDs complete: "
-	grep -c "\[UU\]" /proc/mdstat
+	grep -c -e "\[UU\]$" -e "\[U\]$" /proc/mdstat
 # TODO MDs syncing / in-sync
 #echo -n "MDs syncing: "
 #	grep -c <TODO> /proc/mdstat
@@ -131,9 +133,8 @@ echo
 vgs
 echo
 echo -n "Filesystems rw: "
-	cat /proc/mounts | grep -c "^/dev/.*rw"
+	grep -c "^/dev/.*rw" /proc/mounts
 echo
-
 }
 
 

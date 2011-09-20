@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2011-09-08
+# Version: 0.01 2011-09-22
 #
 # For SLES11.
 # For Supportconfig Script Version: 2.25-237
@@ -71,7 +71,7 @@ function chk_hardware() {
 # TODO: more specific patterns
 #	FIL="hardware.txt"
 #	for f in "iLO" "IPMI" "DRAC" "Emulex" "Brocade" "QLogic" "Broadcom" "MPT"; do
-#		grep ${f} $FIL | grep "pci.product.=" | sort -u
+#		grep -e ${f} -e "pci.product.=" $FIL | sort -u
 #	done
 
 	echo "boards:"
@@ -94,12 +94,12 @@ function chk_hardware() {
 	FIL="hardware.txt"
 	for f in "supports.DPO.and.FUA" "support.DPO.or.FUA"; do
 		echo -n "${f} : "
-		grep -c ${f}  $FIL
+		grep -c ${f} $FIL
 	done
 	FIL="messages.txt"
 	for f in "disabling.barriers"; do
 		echo -n "${f} : "
-		grep -c ${f}  $FIL
+		grep -c ${f} $FIL
 	done
 	echo
 

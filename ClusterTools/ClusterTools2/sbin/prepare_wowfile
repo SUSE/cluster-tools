@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2011-07-21
+# Version: 0.01 2011-09-22
 #
 
 EXE=$(basename $0)
@@ -82,7 +82,8 @@ function get_network() {
 	echo "ALLNODES=\"$HOSTNAME\""
 	echo
 	echo -n "IP_LABELS=\""
-	host $SVCNAM | awk '$1~/'"$SVCNAM"'/ {print "'"$SVCNAM"',"$4"\""}'
+	host $SVCNAM | awk '$1~/'"$SVCNAM"'/ {print "'"$SVCNAM"',"$4"\""}' &&\
+	awk '$3=="$SVCNAM"{print $1}' /etc/hosts
 }
 
 

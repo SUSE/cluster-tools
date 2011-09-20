@@ -37,6 +37,7 @@ test -z "${ERROR_PATTERN}" &&\
 "qla.*err"
 "qlge.*error"
 "NMI.received"
+"NMI.*error"
 "target.failure"
 "reservation.conflict"
 "SCSI.*reset"

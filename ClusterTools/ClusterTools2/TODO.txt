@@ -55,4 +55,4 @@ TODO dmesg advantechwdt: Unexpected close, not stopping watchdog!
 DONE add_softdog_to_initrd: "-s" should show MODULES_LOADED_On_BOOT as well
 TODO clusterstate -n: show IPs
 TODO make disabled supportconfig plugins return "Skipped" instead of "Error"
-
+TODO wow master-slave ERS

@@ -81,17 +81,22 @@ function get_network() {
 	echo
 	echo "ALLNODES=\"$HOSTNAME\""
 	echo
-	echo -n "IP_LABELS=\""
-	host $SVCNAM | awk '$1~/'"$SVCNAM"'/ {print "'"$SVCNAM"',"$4"\""}' &&\
-	awk '$3=="$SVCNAM"{print $1}' /etc/hosts
+	IP_LABELS=$(host $SVCNAM |\
+		 awk '$1~/'"$SVCNAM"'/ {print "'"$SVCNAM"',"$4"\""}')
+	test -z "${IP_LABELS}" &&\
+	IP_LABELS=$(awk '$3=="'$SVCNAM'" {print "'"$SVCNAM"',"$1"\""}' /etc/hosts)
+	echo -n "IP_LABELS=\"${IP_LABELS}"
 }
 
 
 function get_sys_sap() {
 	echo
 	echo "SAPSID=\"$SID\""
-	echo "DBTYPE=ORA"
-	echo "GRPID=grp_sap_$SID"
+	# TODO
+	#SAPsid=$(echo $SAPSID | tr [:upper:] [:lower:])
+	#echo "SAPsid=\"$SAPsid\""
+	echo "DBTYPE=\"ORA\""
+	echo "GRPID=\"grp_sap_$SID\""
 	echo "SAP_SCORES=\"1000 0\""
 	echo
 }
@@ -130,8 +135,8 @@ case $1 in
 	-s|--sap)
 		shift
 		SID=${1:-"ZSAdb"}
-		SVCNAM=${2}
-		test -z "$SVCNAM" && SVCNAM=$(echo $SID|tr [:upper:] [:lower:])
+		SVCNAM=$(echo ${2} | tr [:upper:] [:lower:])
+		test -z "$SVCNAM" && SVCNAM=$(echo $SID | tr [:upper:] [:lower:])
 		RAID_CFG=${3:-"/clusterconf/${SID}/mdadm.conf"}
 
 		get_header "${*}"

@@ -39,6 +39,7 @@ DONE: - /usr/share/man/man8/attrd_updater.8.gz
 DONE: - /usr/share/man/man8/crm_simulate.8.gz
 DONE: - /usr/share/man/man8/ptest.8.gz
 DONE: - update man sbd.7, sbd.8 for triple sbd
+TODO update man sbd.7, sbd.8 for timing dependencies. T.e. "sbd create: -1 30 -3 2 -4 130", "/etc/sysconfig/sbd: -W -t 20", "crm stonith-timeout=150"
 DONE: - whbsaprecheck: /etc/corosync/authkey (ohne s)
 TODO - precheck_for_sap: mount option barrier= wird nicht gezeigt
 TODO - precheck_for_sap: soll laufen, auch wenn parameter in wow file nicht gesetzt

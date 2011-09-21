@@ -1,10 +1,10 @@
 # /etc/ClusterTools2/make_corosync_conf
 # For SLES11.
 #
-SBD_INIT_OPTS="-4 130 -1 30"
+SBD_INIT_OPTS="-4 130 -3 2 -1 30"
 #
 SBD_GUESS="/usr/lib/ClusterTools2/guess_sbd_devices"
 # SBD_DEVICE="/dev/xvdb1"
-SBD_OPTS="-W"
+SBD_OPTS="-W -t 10"
 SBD_CONF="/etc/sysconfig/sbd"
 #

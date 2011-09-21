@@ -25,8 +25,8 @@ test -z "${CLUSTER_LOG}" &&\
 		 tr -d "    " | cut -d":" -f2)
 
 test -z "${ZIPPED_LOG}" &&\
-	ZIPPED_LOG="/var/log/messages.*bz2"
-	ZIPPED_LOG="${ZIPPED_LOG} ${CLUSTER_LOG}.*bz2"
+	ZIPPED_LOG="/var/log/messages*bz2"
+	ZIPPED_LOG="${ZIPPED_LOG} ${CLUSTER_LOG}*bz2"
 
 test -z "${ERROR_PATTERN}" &&\
 	 ERROR_PATTERN="

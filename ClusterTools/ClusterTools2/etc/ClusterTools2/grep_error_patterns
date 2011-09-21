@@ -65,5 +65,5 @@ CLUSTER_LOG="/var/log/corosync.log"
 #
 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0"
 #
-ZIPPED_LOG="/var/log/messages.*bz2"
+ZIPPED_LOG="/var/log/messages*bz2"
 #

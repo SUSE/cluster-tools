@@ -5,6 +5,8 @@
 ERRCFG="/etc/ClusterTools2/grep_error_patterns"
 #
 HARDW_MOD="
+be2net.ko
+nx_nic.ko
 bfa.ko
 lpfc.ko
 qlge.ko

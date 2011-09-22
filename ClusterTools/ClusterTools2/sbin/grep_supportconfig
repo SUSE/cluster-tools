@@ -131,8 +131,11 @@ function chk_modules() {
 	grep "^\[.*AppArmor:.*initialized" $FIL
 
 	# TODO: add Cisco HBA
+	# TODO: test HP eth  nx_nic, be2net
 	test -z "${HARDW_MOD}" &&\
 	HARDW_MOD="
+nx_nic.ko
+be2net.ko
 bfa.ko
 lpfc.ko
 qlge.ko

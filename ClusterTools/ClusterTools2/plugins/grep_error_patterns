@@ -1,5 +1,5 @@
 #!/bin/bash
 # /usr/lib/supportconfig/plugins/grep_error_patterns
-grep "^grep_error_patterns$" /etc/ClusterTools2/supportconfig_plugins || exit
+grep "^grep_error_patterns$" /etc/ClusterTools2/supportconfig_plugins || exit 0
 /usr/sbin/grep_error_patterns 2>&1
 #

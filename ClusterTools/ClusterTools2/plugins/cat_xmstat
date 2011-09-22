@@ -1,0 +1,7 @@
+#!/bin/bash
+# /usr/lib/supportconfig/plugins/cat_xmstat
+grep "^cat_xmstat$" /etc/ClusterTools2/supportconfig_plugins || exit 0
+# TODO get zipped logs as well
+LOG="/var/log/xmstat.log"
+test -r $LOG && cat $LOG
+#

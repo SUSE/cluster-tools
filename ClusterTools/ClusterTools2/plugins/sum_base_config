@@ -1,5 +1,5 @@
 #!/bin/bash
 # /usr/lib/supportconfig/plugins/sum_base_config
-grep "^sum_base_config$" /etc/ClusterTools2/supportconfig_plugins || exit
+grep "^sum_base_config$" /etc/ClusterTools2/supportconfig_plugins || exit 0
 /usr/sbin/sum_base_config 2>&1
 #

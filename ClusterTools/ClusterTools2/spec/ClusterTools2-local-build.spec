@@ -16,7 +16,7 @@ Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.2.9
-Release:      9 
+Release:      10 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
@@ -50,6 +50,8 @@ test "$RPM_BUILD_ROOT" != "/" && rm -rf $RPM_BUILD_ROOT
 
 %install
 mkdir -p %{buildroot}/etc/ClusterTools2
+mkdir -p %{buildroot}/etc/cron.d
+mkdir -p %{buildroot}/etc/logrotate.d
 mkdir -p %{buildroot}/usr/sbin
 mkdir -p %{buildroot}/usr/share/ClusterTools2
 mkdir -p %{buildroot}/usr/share/ClusterTools2/cli
@@ -71,6 +73,8 @@ cp -va plugins/* %{buildroot}/usr/lib/supportconfig/plugins
 # etc
 #
 cp -va etc/ClusterTools2/*  %{buildroot}/etc/ClusterTools2/
+cp -va etc/cron.d/*  %{buildroot}/etc/cron.d/
+cp -va etc/logrotate.d/*  %{buildroot}/etc/logrotate.d/
 #
 # share 
 #
@@ -120,6 +124,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/show_scores
 /usr/sbin/showscores
 /usr/sbin/sum_base_config
+/usr/sbin/xmstat
 #/usr/sbin/test_udpmcast
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
@@ -128,8 +133,12 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %doc /usr/share/man/man7/*.gz
 %doc /usr/share/man/man8/*.gz
 %config(noreplace) /etc/ClusterTools2
+%config(noreplace) /etc/cron.d
+%config(noreplace) /etc/logrotate.d
 
 %changelog -n ClusterTools
+* Thu Sep 22 2011 - lars.pinne@novell.com
+  added xmstat, various fixes and updates
 * Tue Aug 30 2011 - lars.pinne@novell.com
   added wow on-fail-block, added supportconfig plugins
 * Fri Aug 26 2011 - fabian.herschel@suse.com

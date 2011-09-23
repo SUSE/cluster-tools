@@ -1,5 +1,11 @@
 #!/bin/bash
 # /usr/lib/supportconfig/plugins/grep_error_patterns
-grep "^grep_error_patterns$" /etc/ClusterTools2/supportconfig_plugins || exit 0
-/usr/sbin/grep_error_patterns 2>&1
+
+PLUG="grep_error_patterns"
+CONF="/etc/ClusterTools2/supportconfig_plugins"
+
+grep "^${PLUG}$" $CONF >/dev/null || exit 0 
+
+# TODO make -z an option in $CONF
+/usr/sbin/grep_error_patterns -z 2>&1
 #

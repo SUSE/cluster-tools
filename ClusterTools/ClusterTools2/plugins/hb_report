@@ -1,5 +1,10 @@
 #!/bin/bash
 # /usr/lib/supportconfig/plugins/hb_report
-grep "^hb_report$" /etc/ClusterTools2/supportconfig_plugins || exit 0
+
+PLUG="hb_report"
+CONF="/etc/ClusterTools2/supportconfig_plugins"
+
+grep "^${PLUG}$" $CONF >/dev/null || exit 0
+
 /usr/sbin/hb_report -S -f 00:00 2>&1
 #

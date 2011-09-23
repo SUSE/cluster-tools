@@ -1,12 +1,12 @@
 #!/bin/bash
 # /usr/lib/supportconfig/plugins/cat_xmstat
 
-CONF="/etc/ClusterTools2/supportconfig_plugins"
 PLUG="cat_xmstat"
+CONF="/etc/ClusterTools2/supportconfig_plugins"
 LOGF="/var/log/xmstat.log"
 ZLOG="/var/log/xmstat.log*bz2"
 
-grep "^${PLUG}$" $CONF >/dev/null || (echo "Skipping..."; exit) 
+grep "^${PLUG}$" $CONF >/dev/null || exit 0 
 
 echo "### $LOGF ###"
 test -r $LOGF && cat $LOGF

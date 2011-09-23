@@ -1,6 +1,17 @@
 #!/bin/bash
 # /usr/lib/supportconfig/plugins/cat_psauxlog
-grep "^cat_psauxlog$" /etc/ClusterTools2/supportconfig_plugins || exit 0
-LOG="/var/log/psaux.log"
-test -r $LOG && cat $LOG
+
+CONF="/etc/ClusterTools2/supportconfig_plugins"
+PLUG="cat_psauxlog"
+LOGF="/var/log/psaux.log"
+ZLOG="/var/log/psaux.log*bz2"
+
+grep "^${PLUG}$" $CONF >/dev/null || (echo "Skipping..."; exit) 
+
+echo "### $LOGF ###"
+test -r $LOGF && cat $LOGF
+for f in $ZLOG; do
+	echo "### $f ###"
+	test -r $f && bzcat $f
+done
 #

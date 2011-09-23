@@ -45,6 +45,7 @@ ERROR_PATTERN="
 "Failed.to.read"
 "exits.with.status.*[1-9]"
 "Failed.services.*runlevel"
+"shutdown.*shutting.down"
 "
 #
 CLUERR_PATTERN="

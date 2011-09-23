@@ -1,7 +1,17 @@
 #!/bin/bash
 # /usr/lib/supportconfig/plugins/cat_xmstat
-grep "^cat_xmstat$" /etc/ClusterTools2/supportconfig_plugins || exit 0
-# TODO get zipped logs as well
-LOG="/var/log/xmstat.log"
-test -r $LOG && cat $LOG
+
+CONF="/etc/ClusterTools2/supportconfig_plugins"
+PLUG="cat_xmstat"
+LOGF="/var/log/xmstat.log"
+ZLOG="/var/log/xmstat.log*bz2"
+
+grep "^${PLUG}$" $CONF >/dev/null || (echo "Skipping..."; exit) 
+
+echo "### $LOGF ###"
+test -r $LOGF && cat $LOGF
+for f in $ZLOG; do
+	echo "### $f ###"
+	test -r $f && bzcat $f
+done
 #

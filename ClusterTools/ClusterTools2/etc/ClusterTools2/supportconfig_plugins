@@ -4,6 +4,7 @@
 cat_messages
 grep_error_patterns
 #sum_base_config
+#cat_xmstat
 #cat_psauxlog
 #hb_report
 #precheck_for_sap

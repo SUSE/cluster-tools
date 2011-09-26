@@ -1,4 +1,4 @@
-.TH sbd 8 "16 May 2011" "" "cluster-glue"
+.TH sbd 8 "26 Sep 2011" "" "cluster-glue"
 .\"
 .SH NAME
 sbd \- Split Brain Detector daemon
@@ -35,7 +35,7 @@ option multiple times
 .TP
 \fB-t\fR <N>
  	Set timeout to <N> seconds before automatic recover of failed SBD device
-(optional) (default is 3600, set to 0 to disable)
+(optional) (default is 3600, set to 0 to disable) (watch only)
 .TP
 \fB-v\fR
 	Enable some verbose debug logging (optional)
@@ -44,11 +44,10 @@ option multiple times
 	Set watchdog timeout to N seconds (optional) (create only)
 .TP
 \fB-2\fR <N>
-	Set slot allocation timeout to N seconds (optional) (create only
-)
+	Set slot allocation timeout to N seconds (optional) (create only)
 .TP
 \fB-3\fR <N>
-	Set daemon loop timeout to N seconds (optional) (create only).
+	Set daemon loop timeout to N seconds (optional) (create only)
 .TP
 \fB-4\fR <N>
 	Set msgwait timeout to N seconds (optional) (create only)
@@ -144,9 +143,9 @@ it has not updated the watchdog timer fast enough; the watchdog timeout
 must be shorter than the msgwait timeout - half the value is a good
 estimate. This can be specified when the SBD device is initialized:
 
-# \fB/usr/sbin/sbd -d /dev/<SBD> -4 $msgwait -1 $watchdogtimeout create\fR
+# \fB/usr/sbin/sbd -d /dev/<SBD> -4 $msgwait -3 $looptimeout -1 $watchdogtimeout create\fR
 
-(All timeouts are in seconds.)
+(All timeouts are in seconds. See also sbd(7) for information on timings.)
 
 If your single sbd device resides on a multipath group, you may need to
 adjust the timeouts sbd uses, as MPIO's path down detection can cause
@@ -193,13 +192,13 @@ following to /etc/sysconfig/sbd:
 
 ===
 .br
-# The next line points to three devices:
+# The next line points to three devices (no trailing ";"):
 .br
 SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
-# The next line enables the watchdog support:
+# The next line enables watchdog support, re-discover time 300 seconds:
 .br
-SBD_OPTS="-W"
+SBD_OPTS="-W -t 300"
 .br
 === 
 
@@ -256,17 +255,17 @@ configure
 .br
 property stonith-enabled="true"
 .br
-property stonith-timeout="30s"
+property stonith-timeout="90s"
 .br
-primitive stonith:external/sbd params sbd_device="/dev/<SBD>"
+primitive stonith_sbd stonith:external/sbd
 .br
 commit
 .br
 quit
 \fR
 
-Note that since node slots are allocated automatically, no manual
-hostlist needs to be defined.
+Note that since node slots are allocated automatically, no manual hostlist needs
+to be defined. Also, there is no need to define the SBD devices.
 
 Once the resource has started, your cluster is now successfully
 configured for shared-storage fencing, and will utilize this method in

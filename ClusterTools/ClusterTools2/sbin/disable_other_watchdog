@@ -6,9 +6,8 @@
 # GNU Public License. No warranty.
 # Author: L.Pinne
 #
-# Version: 0.01 2011-09-06 10:45
+# Version: 0.01 2011-09-26 19:45
 #
-#set -x
 
 EXE="$0"
 TMP="/tmp/cltl.$RANDOM"
@@ -92,7 +91,7 @@ function list_other_restart() {
 
 	echo "initrd watchdog module:"
 	/bin/zcat /boot/initrd | cpio -itv 2>/dev/null |\
-		grep "lib/modules/*/kernel/drivers/watchdog/.*ko$"
+		grep "lib/modules/.*/kernel/drivers/watchdog/.*ko$"
 }
 
 

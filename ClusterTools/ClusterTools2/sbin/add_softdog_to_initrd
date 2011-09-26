@@ -6,23 +6,23 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 # 
-# Version: 0.02 2011-09-14 11:45
+# Version: 0.02 2011-09-26 19:00
 #
 
 EXE="$0"
-MOD=${1:-"softdog"}
 FIL="/etc/sysconfig/kernel"
 BAK=${FIL}.bak
 
 
 function help(){
-	echo "usage: $(basename $0) [<MODULE>]"
+	echo "usage: $(basename $0) --create [<MODULE>]"
 	echo "usage: $(basename $0) [OPTION]"
 	echo
 	echo "OPTION:"
 	echo " --help		show help."
 	echo " --version	show version."
 	echo " --show 	show available and used wathdog modules."
+	echo " --create	create new initrd."
 	echo
 }
 
@@ -62,7 +62,7 @@ function show_mod(){
 	echo
 	echo "=== initrd watchdog modules:"
 	/bin/zcat /boot/initrd | cpio -itv 2>/dev/null |\
-               	grep "lib/modules/*/kernel/drivers/watchdog/.*ko$" |\
+               	grep "lib/modules/.*/kernel/drivers/watchdog/.*ko$" |\
 		awk '{print $9}'
 	echo
 	echo "=== available watchdog modules:"
@@ -114,10 +114,26 @@ case $1 in
 		echo "INFO: normal_end $EXE"
 		exit
 	;;
-	*)
+	-c|--create)
 		echo "INFO: start $EXE"
-		for w in hpwdt ibmasr iTCO_wdt; do
-			rmmod $w 2>/dev/null
+		shift
+		MOD=${1:-"softdog"}
+		for m in $OTHMOD; do
+			MDL=$(basename $m .ko)
+			rmmod $m 2>/dev/null
+		done
+		add_mod
+		load_mod
+		echo "INFO: normal_end $EXE"
+		exit
+	;;
+	*)
+		# *) obsolete, for backward compatability only.
+		echo "INFO: start $EXE"
+		MOD=${1:-"softdog"}
+		for m in $OTHMOD; do
+			MDL=$(basename $m .ko)
+			rmmod $m 2>/dev/null
 		done
 		add_mod
 		load_mod

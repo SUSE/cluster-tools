@@ -67,7 +67,7 @@ terminate anyway if the storage connectivity was lost.)
 SBD supports one, two, or three devices. This affects the operation
 of SBD as follows:
 
-.B One device
+.B ** One device
 
 In its most simple implementation, you use one device only. (Older
 versions of SBD did not support more.) This is appropriate for clusters
@@ -75,20 +75,10 @@ where all your data is on the same shared storage (with internal redundancy)
 anyway; the SBD device does not introduce an additional single point of
 failure then.
 
-.B Three devices
+If the SBD device is not accessible, the daemon will fail to start and
+inhibit openais startup. 
 
-In this most reliable configuration, SBD will only commit suicide if more
-than one device is lost; hence, this configuration is resilient against
-one device outages (be it due to failures or maintenance). Fencing
-messages can be successfully relayed if at least two devices remain up.
-
-This configuration is appropriate for more complex scenarios where storage
-is not confined to a single array.
-
-Host-based mirroring solutions could have one SBD per mirror leg (not
-mirrored itself), and an additional tie-breaker on iSCSI. 
-
-.B Two devices
+.B ** Two devices
 
 This configuration is a trade-off, primarily aimed at environments where
 host-based mirroring is used, but no third storage device is available.
@@ -101,6 +91,25 @@ available, since it does not have enough knowledge to detect an asymmetric
 split of the storage. So it will not be able to automatically tolerate a
 second failure while one of the storage arrays is down. (Though you
 can use the appropriate crm command to acknowledge the fence manually.)
+
+.B ** Three devices
+
+In this most reliable configuration, SBD will only commit suicide if more
+than one device is lost; hence, this configuration is resilient against
+one device outages (be it due to failures or maintenance). Fencing
+messages can be successfully relayed if at least two devices remain up.
+
+If one device out of three is completely missing at cluster start, the cluster
+will start. If one device out of three is available, but mis-configured, the
+cluster will not start. If two devices are completely missing, the cluster
+will also not start.
+
+This configuration is appropriate for more complex scenarios where storage
+is not confined to a single array.
+
+Host-based mirroring solutions could have one SBD per mirror leg (not
+mirrored itself), and an additional tie-breaker on iSCSI. 
+
 .\"
 .P
 \fB* Pre-Requisites\fR
@@ -154,16 +163,15 @@ following to /etc/sysconfig/sbd:
 .br
 #/etc/sysconfig/sbd
 .br
+# SBD devices (no trailing ";"):
+.br
 SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
-# The next line enables the watchdog support:
+# Watchdog support:
 .br
 SBD_OPTS="-W"
 .br
 === 
-
-If the SBD device is not accessible, the daemon will fail to start and
-inhibit openais startup.
 
 Note: If the SBD device becomes inaccessible from a node, this could
 cause the node to enter an infinite reboot cycle. That is technically
@@ -206,10 +214,48 @@ of choices.
 
 No other software must access the watchdog timer. Some hardware vendors
 ship systems management software that use the watchdog for system resets
-(f.e. HP ASR daemon). Such software has to be disbaled if the watchdog is
-used by SBD.  
+(f.e. HP ASR daemon). Such software has to be disabled if the watchdog is
+used by SBD.
 
 SBD can be configured in /etc/sysconfig/sbd to use the systems's watchdog.
+.\"
+.P
+\fB* Timeout Settings\fR
+
+If your SBD device resides on a multipath group, you may need to adjust
+the timeouts sbd uses, as MPIO's path down detection can cause some
+latency: after the msgwait timeout, the message is assumed to have been
+delivered to the node. For multipath, this should be the time required
+for MPIO to detect a path failure and switch to the next path. You may
+have to test this in your environment. The node will perform suicide if
+it has not updated the watchdog timer fast enough; the watchdog timeout
+must be shorter than the msgwait timeout - half the value is a good
+estimate. This can be specified when the SBD device is initialized.
+
+If you want to avoid MD mirror splitting in case of IO errors, the watchdog
+timeout has to be shorter than the total MPIO failure timeout. Thus, a node
+is fenced before the MD mirror is splitted. On the other hand, the time
+the cluster waits for SAN and storage to recover is shortened. 
+
+In any case, the watchdog timeout must be shorter than sbd message wait timeout.
+The sbd message wait timeout must be shorter than the cluster stonith-timeout.
+
+If the sbd device recovers from IO errors within the watchdog timeout, the sbd
+daemon could reset the watchdog timer and save the node from being fenced.
+To allow re-discovery of a failed sbd device, at least the primary sbd retry
+cycle should be shorter than the watchdog timeout. Since this cycle is currently
+hardcoded as ten time the loop timeout, it has to be set by choosing an
+apropriate loop timeout.
+
+Putting it all together:
+.br
+- How long a cluster survives a storage outage depends on the wathdog
+  timeout and the sbd retry cycle. All other timeouts should be aligned with that
+  settings. That means they have to be longer.
+.br
+- Storage resources - as Raid1, LVM, Filesysystem - have operation timeouts.
+  Those should be aligned with the MPIO settings. This avoids non-needed failure
+  actions, but does not define how long the cluster will survive a storage outage.
 .\"
 .SH FILES
 .TP
@@ -240,7 +286,7 @@ To report bugs for a SUSE or Novell product component, please use
 .\"
 .SH SEE ALSO
 
-\fBsbd\fP(8),
+\fBsbd\fP(8), \fBadd_watchdog_to_initrd\fP(8), \fBdisable_other_watchdog\fP(8),
 http://www.linux-ha.org/wiki/SBD_Fencing ,
 http://www.mail-archive.com/pacemaker@oss.clusterlabs.org/msg03849.html ,
 http://www.novell.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/book_sleha/data/part_config.html ,

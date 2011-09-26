@@ -43,7 +43,7 @@ case $1 in
 		exit
 	;;
 	-o|--offline)
-		rcopenais status
+		rcopenais status 2>/dev/null
 		test $? -eq  "7" || exit
 
 		mv /var/lib/heartbeat/crm/cib.xml $BAK 

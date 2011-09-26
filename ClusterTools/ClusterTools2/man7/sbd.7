@@ -1,7 +1,7 @@
-.TH sbd 7 "16 May 2011" "" "cluster-glue"
+.TH sbd 7 "26 Sep 2011" "" "cluster-glue"
 .\"
 .SH NAME
-sbd \- Split Brain Detector 
+sbd \- Stonith Block Device
 .\"
 .SH DESCRIPTION
 .br
@@ -249,13 +249,14 @@ apropriate loop timeout.
 
 Putting it all together:
 .br
-- How long a cluster survives a storage outage depends on the wathdog
-  timeout and the sbd retry cycle. All other timeouts should be aligned with that
-  settings. That means they have to be longer.
+- How long a cluster survives a storage outage depends on the watchdog
+  timeout and the sbd retry cycle. All other timeouts should be aligned with
+  that settings. That means they have to be longer.
 .br
-- Storage resources - as Raid1, LVM, Filesysystem - have operation timeouts.
+- Storage resources - as Raid1, LVM, Filesystem - have operation timeouts.
   Those should be aligned with the MPIO settings. This avoids non-needed failure
-  actions, but does not define how long the cluster will survive a storage outage.
+  actions, but does not define how long the cluster will survive a storage
+  outage.
 .\"
 .SH FILES
 .TP

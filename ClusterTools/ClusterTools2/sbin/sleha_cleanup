@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.2 2011-04-12
+# Version: 0.2 2011-09-26
 #
 
 EXE="$0"
@@ -34,8 +34,17 @@ case $1 in
 		exit
 	;;
 	-f|--force)
-		# TODO run also, if rcopenais is not running
 		rcopenais stop || exit
+
+		mv /var/lib/heartbeat/crm/cib.xml $BAK 
+		for f in $FIL; do
+			rm -f $f
+		done
+		exit
+	;;
+	-o|--offline)
+		rcopenais status
+		test $? -eq  "7" || exit
 
 		mv /var/lib/heartbeat/crm/cib.xml $BAK 
 		for f in $FIL; do
@@ -46,6 +55,7 @@ case $1 in
 	*)
 		echo "usage: $(basename $0) [OPTION]"
 		echo
+		echo " --offline	remove CIB and PE logs."
 		echo " --force	stop cluster service and resources, remove CIB and PE logs."
 		echo " --help		show help."
 		echo " --version	show version."

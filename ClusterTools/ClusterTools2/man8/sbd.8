@@ -1,7 +1,7 @@
 .TH sbd 8 "26 Sep 2011" "" "cluster-glue"
 .\"
 .SH NAME
-sbd \- Split Brain Detector daemon
+sbd \- Stonith Block Device daemon
 .\"
 .SH SYNOPSIS
 .B sbd
@@ -106,6 +106,8 @@ In the rest of this text, this is referred to as "/dev/<SBD>" or "/dev/<SBD_n>",
 please substitute your actual pathname (ie, "/dev/sdc1") for this below.
 
 If a watchdog is used together with the sbd, the watchdog is activated at initial start of the sbd daemon. Afterwards the watchdog timer is reset by the inquisitor process after each successful read loop of each watcher process.
+
+STONITH is an acronym for Shoot The Other Node in The Head. 
 .\"
 .SH EXAMPLES
 
@@ -202,8 +204,8 @@ SBD_OPTS="-W -t 300"
 .br
 === 
 
-Before proceeding, ensure that SBD has indeed started on all nodes
-through
+Before proceeding, ensure that SBD has indeed started on all nodes through
+
 # \fBrcopenais restart\fR
 
 

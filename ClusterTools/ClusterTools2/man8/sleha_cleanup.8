@@ -1,4 +1,4 @@
-.TH sleha_cleanup 8 "27 Jan 2011" "" "ClusterTools2"
+.TH sleha_cleanup 8 "26 Sep 2011" "" "ClusterTools2"
 .\"
 .SH NAME
 sleha_cleanup \- remove cluster information base from cluster node
@@ -18,14 +18,17 @@ cluster history.
 .\"
 .SH OPTIONS
 .HP
+\fB --offline\fR
+	remove CIB and PE logs.
+.HP
 \fB --force\fR
-        stop cluster service and resources, remove CIB and PE logs.
+	stop cluster service and resources, remove CIB and PE logs.
 .HP
 \fB --help\fR
-        show help.
+	show help.
 .HP
 \fB --version\fR
-        show version.
+	show version.
 .\"
 .SH EXIT STATUS
 .B 0

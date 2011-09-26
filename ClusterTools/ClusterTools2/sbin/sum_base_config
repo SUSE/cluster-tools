@@ -19,10 +19,11 @@ test -z "${CONF_FILES}" &&\
 	 CONF_FILES="
 /etc/SuSE-release
 /etc/zypp/zypp.conf
+/etc/zypp/zypper.conf
 /etc/zypp/repos.d/*.repo
 /etc/products.d/*.prod
-/boot/initrd-2.6*default
 /boot/vmlinuz-2.6*default
+/boot/vmlinuz-2.6*xen
 /proc/cmdline
 /proc/sys/kernel/tainted
 /etc/ld.so.conf
@@ -41,9 +42,10 @@ test -z "${CONF_FILES}" &&\
 /etc/drbd.d/*
 /etc/lvm/lvm.conf
 /etc/multipath.conf
-/etc/multipath.bind
-/etc/mdadm.conf
-/clusterconf/*/mdadm.*.conf
+/etc/multipath.bind*
+/etc/mdadm.conf*
+/clusterconf/*/mdadm.conf
+/clusterconf/mdadm.*.conf
 /etc/iscsi/iscsid.conf
 /etc/iscsi/initiatorname.iscsi
 /etc/sysconfig/kernel
@@ -65,7 +67,7 @@ test -z "${CONF_FILES}" &&\
 /etc/pam.d/sapstartsrv
 /etc/sysctl.conf
 /etc/modprobe.conf.local
-/etc/modprobe.d/blacklist
+/etc/modprobe.d/*
 /etc/logrotate.d/corosync
 /etc/corosync/corosync.conf
 /etc/corosync/logd.cf
@@ -73,9 +75,8 @@ test -z "${CONF_FILES}" &&\
 /etc/xen/xend-config.sxp
 /etc/xen/vm/*.xml
 "
-# TODO: /boot/initrd, boot/vmlinuz
 # TODO: exact grep patterns
-# TODO: gunzip initrd | cpio -... | awk $? (without timestamp)
+# TODO: real diff instead of  /sbin/hwclock -r --utc | /usr/bin/cut -b1-18
 test -z "${CONF_CALLS}" &&\
 	 CONF_CALLS="
 '/usr/sbin/dmidecode -t system | /usr/bin/grep -v "UUID:" | /usr/bin/grep -v "Serial.Number:"'
@@ -85,12 +86,17 @@ test -z "${CONF_CALLS}" &&\
 '/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
 '/bin/lsmod'
-'/sbin/hwclock -r --utc | /usr/bin/cut -b1-18'
+'ls -l /boot/vmlinuz | colrm 27 39'
+'ls -l /boot/initrd | colrm 27 39'
+'ls -l /boot/vmlinuz-xen | colrm 27 39'
+'ls -l /boot/initrd-xen | colrm 27 39'
+'zcat /boot/initrd | cpio -itv 2>/dev/null | colrm 43 54'
 '/bin/rpm -qa'
 '/bin/rpm -Va'
 '/usr/bin/zypper lr'
-'/usr/bin/zypper lu'
+'/usr/bin/zypper -n lu'
 '/bin/cat /proc/mounts'
+'grep -r deadline /sys/devices/*/*/block/*/queue/scheduler'
 '/sbin/multipath -ll'
 '/sbin/dmsetup table | sort'
 '/sbin/chkconfig -A'

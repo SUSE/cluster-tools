@@ -8,7 +8,9 @@ CONF_FILES="
 /etc/zypp/repos.d/*.repo
 /etc/products.d/*.prod
 /boot/vmlinuz-2.6*default
+/boot/initrd-2.6*default
 /boot/vmlinuz-2.6*xen
+/boot/initrd-2.6*xen
 /proc/cmdline
 /proc/sys/kernel/tainted
 /etc/ld.so.conf
@@ -34,6 +36,7 @@ CONF_FILES="
 /etc/iscsi/iscsid.conf
 /etc/iscsi/initiatorname.iscsi
 /etc/sysconfig/kernel
+/etc/sysconfig/bootloader
 /etc/sysconfig/sbd
 /etc/sysconfig/oracle
 /etc/sysconfig/sapconf

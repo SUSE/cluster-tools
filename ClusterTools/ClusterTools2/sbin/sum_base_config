@@ -23,7 +23,9 @@ test -z "${CONF_FILES}" &&\
 /etc/zypp/repos.d/*.repo
 /etc/products.d/*.prod
 /boot/vmlinuz-2.6*default
+/boot/initrd-2.6*default
 /boot/vmlinuz-2.6*xen
+/boot/initrd-2.6*xen
 /proc/cmdline
 /proc/sys/kernel/tainted
 /etc/ld.so.conf
@@ -49,6 +51,7 @@ test -z "${CONF_FILES}" &&\
 /etc/iscsi/iscsid.conf
 /etc/iscsi/initiatorname.iscsi
 /etc/sysconfig/kernel
+/etc/sysconfig/bootloader
 /etc/sysconfig/sbd
 /etc/sysconfig/oracle
 /etc/sysconfig/sapconf
@@ -76,7 +79,6 @@ test -z "${CONF_FILES}" &&\
 /etc/xen/vm/*.xml
 "
 # TODO: exact grep patterns
-# TODO: real diff instead of  /sbin/hwclock -r --utc | /usr/bin/cut -b1-18
 test -z "${CONF_CALLS}" &&\
 	 CONF_CALLS="
 '/usr/sbin/dmidecode -t system | /usr/bin/grep -v "UUID:" | /usr/bin/grep -v "Serial.Number:"'

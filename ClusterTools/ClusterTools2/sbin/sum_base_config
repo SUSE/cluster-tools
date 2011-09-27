@@ -93,6 +93,8 @@ test -z "${CONF_CALLS}" &&\
 'ls -l /boot/vmlinuz-xen | colrm 27 39'
 'ls -l /boot/initrd-xen | colrm 27 39'
 'zcat /boot/initrd | cpio -itv 2>/dev/null | colrm 43 54'
+'fuser -u /dev/watchdog'
+'make_sbd_devices -d'
 '/bin/rpm -qa'
 '/bin/rpm -Va'
 '/usr/bin/zypper lr'

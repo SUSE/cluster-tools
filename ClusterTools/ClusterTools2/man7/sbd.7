@@ -92,6 +92,8 @@ split of the storage. So it will not be able to automatically tolerate a
 second failure while one of the storage arrays is down. (Though you
 can use the appropriate crm command to acknowledge the fence manually.)
 
+If devices are configured different, the cluster will not start.
+
 .B ** Three devices
 
 In this most reliable configuration, SBD will only commit suicide if more

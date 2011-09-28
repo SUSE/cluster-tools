@@ -62,3 +62,7 @@ TODO grep_cluster_patterns   for analysing cluster behaviour
 TODO supportconfig_plugin for all files needed by grep_error_patterns
 
 TODO get & test http://hg.clusterlabs.org/pacemaker/stable-1.0/file/tip/cts/cluster_test
+
+TODO sum_base_config /etc/auto.master auto.*
+TODO grep_suppoertconfig: HBA auch bei chk_hardware
+TODO grep_error_patterns synchronized.to.LOCAL finds 0 , plugin-grep_error_patterns finds 10, grep -c /var/log/ntp finds 28 

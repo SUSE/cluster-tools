@@ -15,7 +15,6 @@ BAK=${FIL}.bak
 
 
 function help(){
-	echo "usage: $(basename $0) --create [<MODULE>]"
 	echo "usage: $(basename $0) [OPTION]"
 	echo
 	echo "OPTION:"

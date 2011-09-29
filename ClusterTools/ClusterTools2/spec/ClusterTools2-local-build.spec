@@ -16,7 +16,7 @@ Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.2.9
-Release:      12 
+Release:      2.1.1 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
@@ -97,11 +97,13 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %defattr(-,root,root)
 /usr/sbin/ClusterService
 /usr/sbin/add_softdog_to_initrd
+/usr/sbin/add_watchdog_to_initrd
 /usr/sbin/clusterstate
 #/usr/sbin/cluster_actions
 /usr/sbin/disable_other_watchdog
 /usr/sbin/find_appconf
 /usr/sbin/fhcrmedit
+/usr/sbin/grep_cluster_patterns
 /usr/sbin/grep_error_patterns
 /usr/sbin/grep_supportconfig
 #/usr/sbin/linkstate
@@ -114,7 +116,6 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/reset_failcounts
 /usr/sbin/whbsaprecheck
 /usr/sbin/wow*
-/usr/sbin/menueng2
 /usr/sbin/prepare_wowfile
 /usr/sbin/prepare_crm_basics
 /usr/sbin/precheck_for_sap

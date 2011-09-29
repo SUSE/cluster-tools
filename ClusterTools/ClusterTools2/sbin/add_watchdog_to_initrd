@@ -128,18 +128,5 @@ case $1 in
 		echo "INFO: normal_end $EXE"
 		exit
 	;;
-	*)
-		# *) obsolete, for backward compatability only.
-		echo "INFO: start $EXE"
-		MOD=${1:-"softdog"}
-		for m in $OTHMOD; do
-			MDL=$(basename $m .ko)
-			rmmod $m 2>/dev/null
-		done
-		add_mod
-		load_mod
-		echo "INFO: normal_end $EXE"
-		exit
-	;;
 esac
 #

@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-# add_mod_to_initrd
+# add_softdog_to_initrd
 #
 # (c) 2011 SUSE Linux GmbH, Germany.
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 # 
-# Version: 0.02 2011-09-26 19:00
+# Version: 0.02 2011-09-29 19:00
 #
 
 EXE="$0"
@@ -22,7 +22,8 @@ function help(){
 	echo " --help		show help."
 	echo " --version	show version."
 	echo " --show 	show available and used wathdog modules."
-	echo " --create	create new initrd."
+	echo
+	echo "$(basename $0) is obsolete, please use add_watchdog_to_initrd."
 	echo
 }
 
@@ -112,19 +113,6 @@ case $1 in
 	-s|--show)
 		echo "INFO: start $EXE"
 		show_mod
-		echo "INFO: normal_end $EXE"
-		exit
-	;;
-	-c|--create)
-		echo "INFO: start $EXE"
-		shift
-		MOD=${1:-"softdog"}
-		for m in $OTHMOD; do
-			MDL=$(basename $m .ko)
-			rmmod $m 2>/dev/null
-		done
-		add_mod
-		load_mod
 		echo "INFO: normal_end $EXE"
 		exit
 	;;

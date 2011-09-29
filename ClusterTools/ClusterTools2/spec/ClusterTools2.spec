@@ -137,10 +137,12 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config(noreplace) /etc/logrotate.d
 
 %changelog -n ClusterTools
+* Thu Sep 29 2011 - lars.pinne@novell.com
+  - moved add_softdog_to_initrd to add_watchdog_to_initrd, added grep_cluster_patterns, various fixes and updates
 * Thu Sep 22 2011 - lars.pinne@novell.com
-  added xmstat, various fixes and updates
+  - added xmstat, various fixes and updates
 * Tue Aug 30 2011 - lars.pinne@novell.com
-  added wow on-fail-block, added supportconfig plugins
+  - added wow on-fail-block, added supportconfig plugins
 * Fri Aug 26 2011 - fabian.herschel@suse.com
   2.2.9 package version
 * Tue Jul 18 2011 - lars.pinne@novell.com

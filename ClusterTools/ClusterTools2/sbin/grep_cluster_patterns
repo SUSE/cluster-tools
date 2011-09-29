@@ -1,0 +1,126 @@
+#!/bin/bash
+#
+# grep_cluster_patterns
+#
+# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version: 0.1 2011-09-29
+#
+
+EXE="$0"
+
+CFG="/etc/ClusterTools2/grep_cluster_patterns"
+test -s $CFG && source $CFG
+
+test -z "/etc/corosync/corosync.conf" &&\
+test -z "${CLUSTER_LOG}" &&\
+	 CLUSTER_LOG=$(grep "logfile:.*/" /etc/corosync/corosync.conf |\
+		 tr -d "    " | cut -d":" -f2)
+test -z "${CLUSTER_LOG}" &&\
+	 CLUSTER_LOG="/var/log/messages"
+
+ZIPPED_LOG="${CLUSTER_LOG}*bz2"
+
+
+# TODO: what error msgs. make sense ?
+test -z "${OSERR_PATTERN}" &&\
+	 OSERR_PATTERN="
+"NMI.received"
+"NMI.*error"
+"ocfs2.*ERR"
+"ocfs2.*not.unmounted.cleanly"
+"fsck.*recommended"
+"EXT.-fs.error"
+"shutdown.*shutting.down"
+"
+# TODO: verify cluster log msgs. maybe more generic possible ?
+test -z "${CLUSTR_PATTERN}" &&\
+	 CLUSTR_PATTERN="
+"TOTEM.*FAILED.*RECEIVE"
+"TOTEM.*processor.failed"
+"TOTEM.*Incrementing.problem"
+"quorum.lost"
+"un-expectedly.down"
+"Node.*unclean"
+"pengine.*fenced.*resource.failure"
+"crm_resource.*Error"
+"crmd.*ERROR:"
+"crmd.*Updating.failcount.*stop"
+"crmd.*Updating.failcount.*start"
+"lrmd.*RA.output.*failed"
+"lrmd.*RA.output.*error"
+"
+
+test -z "${RESRC_PATTERN}" &&\
+	 RESRC_PATTERN="
+"Volume.group.*error"
+"LVM.*not.*correctly"
+"CTDB.*not.start"
+"Timeout.*CTDB"
+"not.in.Secondary.mode"
+"demote.*still.primary"
+"Clone.options.misconfigured"
+"eDirectory.*failed.*stop"
+"eDirectory.*not.*configured"
+"eDir.configuration.error"
+"ndsd.*no.*socket"
+"eDirectory.isn.*running"
+"eDirectory.configuration.not"
+"Couldn.*find.device"
+"Couldn.*fsck"
+"Couldn.*mount"
+"DANGER.*NOT.cluster-aware"
+"
+
+function help() {
+                echo "usage:	$(basename $0)"
+                echo "	$(basename $0) [OPTION]"
+                echo
+                echo " --help		show help."
+                echo " --version	show version."
+                echo " --zip		search compressed logs, too."
+}
+
+
+function run_grep() {
+	echo "logs: $LOG" >/dev/stderr
+
+        # TODO: more efficient loop
+	for e in ${OSERR_PATTERN} ${CLUSTR_PATTERN} ${RESRC_PATTERN}; do
+        	echo -n "$e = "
+		for f in ${LOG}; do
+			test -r $f && cat $f
+		done | zgrep -ic $e
+	done
+	# TODO: sort by timestamp
+}
+
+
+# main()
+
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+        	head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-h|--help)
+		help
+		exit
+	;;
+	-z|--zip)
+		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		for z in ${ZIPPED_LOG}; do
+			test -s $z && LOG="${LOG} ${z}"
+		done
+		run_grep
+		exit
+	;;
+	*)
+		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		run_grep
+		exit		
+	;;
+esac
+#

@@ -36,23 +36,43 @@ test -z "${OSERR_PATTERN}" &&\
 "
 
 # TODO: verify cluster log msgs. maybe more generic possible ?
+# TODO:  unmanaged FAILED
+# TODO: event start, event end
+# TODO: update config file from built-in pattern list
 test -z "${CLUSTR_PATTERN}" &&\
 	 CLUSTR_PATTERN="
 "TOTEM.*FAILED.*RECEIVE"
 "TOTEM.*processor.failed"
 "TOTEM.*Incrementing.problem"
+"pcmk.*Sending.message.*failed"
 "quorum.lost"
-"un-expectedly.down"
-"stonith.*Device.*not.fond"
-"Node.*unclean"
-"pcmk.*message.*local.cib.failed"
+"stonith.*Device.*not.found"
+"stonith.*Found.[01].matching.devices"
+"stonith:.*failed"
+"pengine.fenced.because.*.un-expectedly.down"
+"pengine.*Node.*unclean"
 "pengine.*fenced.*resource.failure"
 "pengine.*Forcing.*away.*failures"
-"pengine.*LogAction.*Start"
-"pengine.*LogAction.*Stop"
-"pengine.*LogAction.*Leave"
-"pengine.*LogAction.*Move"
+"pengine.*LogActions:.Start"
+"pengine.*LogActions:.Stop"
+"pengine.*LogActions:.Recover"
+"pengine.*LogActions:.Restart"
+"pengine.*LogActions:.Monitor"
+"pengine.*LogActions:.Move"
+"pengine.*LogActions:.Leave.*\(Started\)"
+"pengine.*LogActions:.Leave.*\(Stopped\)"
+"pengine.*LogActions:.Leave.*\(Started.unmanaged\)"
+"pengine.*LogActions:.Leave.*\(Stopped.unmanaged\)"
 "crm_resource.*Error"
+"crmd.*State.transition.S_IDLE"
+"crmd.*State.transition.S_POLICY_ENGINE"
+"crmd.*State.transition.S_TRANSITION_ENGINE"
+"crmd.*State.transition.S_STARTING"
+"crmd.*State.transition.S_PENDING"
+"crmd.*State.transition.S_ELECTION"
+"crmd.*State.transition.S_INTEGRATION"
+"crmd.*State.transition.S_FINALIZE_JOIN"
+"crmd.*State.transition.S_NOT_DC"
 "crmd.*ERROR:"
 "crmd.*Updating.failcount.*stop"
 "crmd.*Updating.failcount.*start"
@@ -93,10 +113,15 @@ test -z "${RESRC_PATTERN}" &&\
 
 function help() {
 	echo "usage:	$(basename $0)"
-	echo "	$(basename $0) [OPTION]"
+	echo "	$(basename $0) OPTION"
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
+	echo " --show		show all."
+	echo " --transition	show transition."
+	echo " --fencing	show fencing."
+	echo " --migration	show migration."
+	echo
 	echo " --count	count total for each pattern."
 	echo " --zip		count from compressed logs, too."
 }
@@ -109,7 +134,7 @@ function run_grep_show() {
 	for e in ${CLUSTR_PATTERN}; do
 		for f in ${LOG}; do
 			test -r $f && cat $f
-		done | zgrep -i $e
+		done | grep -i $e
 	done | sort -M
 	# TODO: sort by timestamp "Sep 27 17:04:11 "
 }
@@ -118,13 +143,47 @@ function run_grep_show() {
 function run_grep_count() {
 	echo "logs: $LOG" >/dev/stderr
 
-        # TODO: more efficient loop
+	# TODO: more efficient loop
 	for e in ${OSERR_PATTERN} ${CLUSTR_PATTERN} ${RESRC_PATTERN}; do
         	echo -n "$e = "
 		for f in ${LOG}; do
 			test -r $f && cat $f
-		done | zgrep -ic $e
+		done | bzgrep -ic $e
 	done
+}
+
+
+# TODO: better awk
+function awk_transition() {
+	echo "logs: $LOG" >/dev/stderr
+	for f in ${LOG}; do
+		test -r $f && cat $f
+	done | sort -M |\
+	awk '$0~/crmd.*State.transition/ {print $1,$2,$3,$4,$11,"->",$13}' |\
+	awk '$7=="S_IDLE"{print $0,"\n"}; $7!="S_IDLE"{print $0}' 
+}
+
+
+# TODO: resources move success, fail
+#Sep 26 16:57:22 ext2300s pengine: [1079]: notice: LogActions: Move    rsc_fs_NFS_host     (Started ext2301s -> ext2300s)
+function awk_migration() {
+	echo "logs: $LOG" >/dev/stderr
+	for f in ${LOG}; do
+		test -r $f && cat $f
+	done | sort -M |\
+	awk '$0~/pengine.*LogActions:.Move/ {print}' 
+}
+
+
+# TODO: nodes fence, leave, join
+#Sep 27 16:07:14 ext2300s pengine: [1079]: WARN: pe_fence_node: Node ext2301s will be fenced because it is un-expectedly down
+#Sep 27 16:08:15 ext2300s stonith: [18720]: CRIT: external_run_cmd: Calling '/usr/lib64/stonith/plugins/external/sbd reset ext2301s' returned 
+function awk_fencing() {
+	echo "logs: $LOG" >/dev/stderr
+	for f in ${LOG}; do
+		test -r $f && cat $f
+	done | sort -M |\
+	grep -e "pengine:.*Node.*fenced" -e "stonith:.*sbd.reset.*returned"
 }
 
 
@@ -136,15 +195,13 @@ case $1 in
         	head -11 $EXE | grep "^# Version: "
 		exit
 	;;
-	-h|--help)
-		help
-		exit
-	;;
 	-z|--zip)
-		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		LOG=""
 		for z in ${ZIPPED_LOG}; do
 			test -s $z && LOG="${LOG} ${z}"
 		done
+		# unzipped log has to be last in loop :-/
+		test -s ${CLUSTER_LOG} && LOG="${LOG} ${CLUSTER_LOG}"
 		run_grep_count
 		exit
 	;;
@@ -153,10 +210,29 @@ case $1 in
 		run_grep_count
 		exit		
 	;;
-	*)
+	-t|--transition)
+		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		awk_transition
+		exit
+	;;
+	-f|--fencing)
+		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		awk_fencing
+		exit
+	;;
+	-m|--migration)
+		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		awk_migration
+		exit
+	;;
+	-s|show)
 		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
 		run_grep_show
 		exit		
+	;;
+	*)
+		help
+		exit
 	;;
 esac
 #

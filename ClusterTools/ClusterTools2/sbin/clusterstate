@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-09-22
+# Version: 0.1 2011-09-29
 #
 
 EXE="$0"
@@ -72,7 +72,7 @@ echo "SBDs:"
 # TODO crm_mon -r -1 | grep "stonith:external/sbd.:.Started"
 for s in $SBD; do
 	echo ${s}
-	sbd -d ${s} list
+	sbd -d ${s} list 2>/dev/null
 done
 echo
 }
@@ -161,7 +161,7 @@ case $1 in
 		exit
 	;;	
 	-a|--all)
-	# TODO separate functions overview, cluster, network, storage, processes
+	# TODO get_processes (number, ram, load), get_groups ?
 		echo "### $HST - $DAT ###"
 		get_basics
 		get_network

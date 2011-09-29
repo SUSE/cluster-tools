@@ -35,6 +35,7 @@ test -z "${ERROR_PATTERN}" &&\
 "bfa.*err"
 "lpfc.*err"
 "qla.*err"
+"qla.*failed"
 "qlge.*error"
 "NMI.received"
 "NMI.*error"
@@ -78,9 +79,11 @@ test -z "${ERROR_PATTERN}" &&\
 "Failed.services.*runlevel"
 "shutdown.*shutting.down"
 "
-# TODO check for un-matched userfreindly names (mpath[a-z])
+# TODO: raid.set.*active.with.2.out.of.2.mirrors ?
+# TODO: check for un-matched userfreindly names (mpath[a-z])
 # TODO: pattern for failed module (could not load)
-# TODO: async IO from grep kio /proc/slabinof ?
+# TODO: async IO from grep kio /proc/slabinfo ?
+# TODO: direct IO from grep ...,DIR, /proc/slabinfo ?
 # TODO: verify cluster log msgs. maybe more generic possible ?
 
 test -z "${CLUERR_PATTERN}" &&\
@@ -89,10 +92,9 @@ test -z "${CLUERR_PATTERN}" &&\
 "TOTEM.*processor.failed"
 "TOTEM.*Incrementing.problem"
 "quorum.lost"
-"un-expectedly.down"
+"fenced.because.*.un-expectedly.down"
 "stonith.*Device.*not.fond"
 "Node.*unclean"
-"pcmk.*message.*local.cib.failed"
 "pengine.*fenced.*resource.failure"
 "pengine.*Forcing.*away.*failures"
 "crm_resource.*Error"
@@ -100,6 +102,7 @@ test -z "${CLUERR_PATTERN}" &&\
 "crmd.*Updating.failcount.*stop"
 "crmd.*Updating.failcount.*start"
 "sbd.*mbox.read.failed"
+"sbd.*Latency"
 "
 
 

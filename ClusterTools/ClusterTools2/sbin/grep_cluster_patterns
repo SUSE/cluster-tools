@@ -33,6 +33,8 @@ test -z "${OSERR_PATTERN}" &&\
 "fsck.*recommended"
 "EXT.-fs.error"
 "shutdown.*shutting.down"
+"syslog-ng.shutting.down"
+"syslog-ng.starting.up"
 "
 
 # TODO: verify cluster log msgs. maybe more generic possible ?

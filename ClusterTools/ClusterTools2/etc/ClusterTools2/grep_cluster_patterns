@@ -9,6 +9,8 @@ OSERR_PATTERN="
 "fsck.*recommended"
 "EXT.-fs.error"
 "shutdown.*shutting.down"
+"syslog-ng.shutting.down"
+"syslog-ng.starting.up"
 "
 #
 CLUSTR_PATTERN="

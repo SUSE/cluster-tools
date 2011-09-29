@@ -1,16 +1,16 @@
-.TH add_softdog_to_initrd 8 "26 Sep 2011" "" "ClusterTools2"
+.TH add_watchdog_to_initrd 8 "29 Sep 2011" "" "ClusterTools2"
 .\"
 .SH NAME
-add_softdog_to_initrd \- add kernel module to initrd 
+add_watchdog_to_initrd \- add kernel module to initrd 
 .\"
 .SH SYNOPSIS
 .P
-.B add_softdog_to_initrd \fIOPTION\fR
+.B add_watchdog_to_initrd \fIOPTION\fR
 .P
-.B add_softdog_to_initrd --create \fR[\fI<MODULE>\fR]
+.B add_watchdog_to_initrd --create \fR[\fI<MODULE>\fR]
 .\"
 .SH DESCRIPTION
-\fBadd_softdog_to_initrd\fP adds one kernel module to the sysconfig kernel
+\fBadd_watchdog_to_initrd\fP adds one kernel module to the sysconfig kernel
 section and to the default initrd. The successfully added module is also loaded
 into the running kernel.
 .br
@@ -34,11 +34,11 @@ into the running kernel.
 .TP
 * Add watchdog to sysconfig kernel section and build new initrd, use built-in default.
 .br
-# add_softdog_to_initrd -c
+# add_watchdog_to_initrd -c
 .TP
 * Add hpwdt.ko watchdog module to sysconfig kernel section and build new initrd.
 .br
-# add_softdog_to_initrd --create hpwdt
+# add_watchdog_to_initrd --create hpwdt
 .\"
 .SH EXIT STATUS
 .B 0
@@ -49,7 +49,7 @@ Usage, syntax or execution errors.
 .\"
 .SH FILES
 .TP
-/usr/sbin/add_softdog_to_initrd
+/usr/sbin/add_watchdog_to_initrd
 	the program itself.
 .TP
 /etc/sysconfig/kernel
@@ -70,7 +70,7 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 .SH COPYRIGHT
 (c) 2011 L.Pinne, Germany.
 .br
-add_softdog_to_initrd comes with ABSOLUTELY NO WARRANTY.
+add_watchdog_to_initrd comes with ABSOLUTELY NO WARRANTY.
 .br
 For details see the GNU General Public License at
 http://www.gnu.org/licenses/gpl.html

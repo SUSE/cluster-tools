@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-# add_mod_to_initrd
+# add_watchdog_to_initrd
 #
 # (c) 2011 SUSE Linux GmbH, Germany.
 # GNU Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 # 
-# Version: 0.02 2011-09-26 19:00
+# Version: 0.02 2011-09-29 19:00
 #
 
 EXE="$0"

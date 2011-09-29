@@ -7,6 +7,7 @@
 #
 # Version: 0.1 2011-09-29
 #
+#set -x
 
 EXE="$0"
 
@@ -21,7 +22,6 @@ test -z "${CLUSTER_LOG}" &&\
 	 CLUSTER_LOG="/var/log/messages"
 
 ZIPPED_LOG="${CLUSTER_LOG}*bz2"
-
 
 # TODO: what error msgs. make sense ?
 test -z "${OSERR_PATTERN}" &&\
@@ -74,16 +74,30 @@ test -z "${RESRC_PATTERN}" &&\
 "
 
 function help() {
-                echo "usage:	$(basename $0)"
-                echo "	$(basename $0) [OPTION]"
-                echo
-                echo " --help		show help."
-                echo " --version	show version."
-                echo " --zip		search compressed logs, too."
+	echo "usage:	$(basename $0)"
+	echo "	$(basename $0) [OPTION]"
+	echo
+	echo " --help		show help."
+	echo " --version	show version."
+	echo " --count	count total for each pattern."
+	echo " --zip		count from compressed logs, too."
 }
 
 
-function run_grep() {
+function run_grep_show() {
+	echo "logs: $LOG" >/dev/stderr
+
+        # TODO: more efficient loop
+	for e in ${CLUSTR_PATTERN}; do
+		for f in ${LOG}; do
+			test -r $f && cat $f
+		done | zgrep -i $e
+	done | sort -M
+	# TODO: sort by timestamp "Sep 27 17:04:11 "
+}
+
+
+function run_grep_count() {
 	echo "logs: $LOG" >/dev/stderr
 
         # TODO: more efficient loop
@@ -93,7 +107,6 @@ function run_grep() {
 			test -r $f && cat $f
 		done | zgrep -ic $e
 	done
-	# TODO: sort by timestamp
 }
 
 
@@ -114,12 +127,17 @@ case $1 in
 		for z in ${ZIPPED_LOG}; do
 			test -s $z && LOG="${LOG} ${z}"
 		done
-		run_grep
+		run_grep_count
 		exit
+	;;
+	-c|--count)
+		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		run_grep_count
+		exit		
 	;;
 	*)
 		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
-		run_grep
+		run_grep_show
 		exit		
 	;;
 esac

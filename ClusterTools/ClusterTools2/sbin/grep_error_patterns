@@ -50,6 +50,7 @@ test -z "${ERROR_PATTERN}" &&\
 "multipathd.*reinstated"
 "[Ff]ail.*/dev/md"
 "U_\|_U"
+"found.0.matching.devices"
 "/dev/md.*failed"
 "duplicate.VG"
 "duplicate.PV"
@@ -116,12 +117,12 @@ test -z "${CLUERR_PATTERN}" &&\
 #"DANGER.*NOT.cluster-aware"
 
 function help() {
-                echo "usage:	$(basename $0)"
-                echo "	$(basename $0) [OPTION]"
-                echo
-                echo " --help		show help."
-                echo " --version	show version."
-                echo " --zip		search compressed logs, too."
+	echo "usage:	$(basename $0)"
+	echo "	$(basename $0) [OPTION]"
+	echo
+	echo " --help		show help."
+	echo " --version	show version."
+	echo " --zip		search compressed logs, too."
 }
 
 
@@ -130,7 +131,7 @@ function run_grep() {
 
 	dmesg >$DMSG
 
-        # TODO: more efficient loop
+	# TODO: more efficient loop
 	for e in ${ERROR_PATTERN} ${CLUERR_PATTERN}; do
         	echo -n "$e = "
 		for f in ${LOG}; do

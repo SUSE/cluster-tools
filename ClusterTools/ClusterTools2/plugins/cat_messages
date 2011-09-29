@@ -1,15 +1,17 @@
 #!/bin/bash
-# /usr/lib/supportconfig/plugins/messages
+# /usr/lib/supportconfig/plugins/cat_messages
 
-PLUG="cat_mesasges"
+PLUG="cat_messages"
 CONF="/etc/ClusterTools2/supportconfig_plugins"
-LOGF="/var/log/messages"
-ZLOG="/var/log/messages*bz2"
+LOGF="/var/log/messages /var/log/ntp"
+ZLOG="/var/log/messages*bz2 /var/log/ntp*bz2"
 
 grep "^${PLUG}$" $CONF >/dev/null || exit 0 
 
-echo "### $LOGF ###"
-test -r $LOGF && cat $LOGF
+for f in $LOGF; do
+	echo "### $f ###"
+	test -r $f && cat $f
+done
 for f in $ZLOG; do
 	echo "### $f ###"
 	test -r $f && bzcat $f

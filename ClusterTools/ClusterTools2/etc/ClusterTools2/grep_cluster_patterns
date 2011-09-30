@@ -84,5 +84,4 @@ RESRC_PATTERN="
 #
 # calculated, if empty:
 # CLUSTER_LOG="/var/log/messages"
-CLUSTER_LOG="/srv/pinne/work/hp/sle11-ha-sap/technical/from_hp/20110928/ext2300s/var/log/messages"
 #

@@ -114,7 +114,6 @@ test -z "${RESRC_PATTERN}" &&\
 "
 
 function help() {
-	echo "usage:	$(basename $0)"
 	echo "	$(basename $0) OPTION"
 	echo
 	echo " --help		show help."

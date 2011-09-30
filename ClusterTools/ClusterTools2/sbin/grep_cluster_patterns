@@ -47,7 +47,8 @@ test -z "${CLUSTR_PATTERN}" &&\
 "TOTEM.*processor.failed"
 "TOTEM.*Incrementing.problem"
 "pcmk.*Sending.message.*failed"
-"quorum.lost"
+"crmd.*quorum.lost"
+"crmd.*our.DC.is.dead"
 "stonith.*Device.*not.found"
 "stonith.*Found.[01].matching.devices"
 "stonith:.*failed"
@@ -92,6 +93,7 @@ test -z "${CLUSTR_PATTERN}" &&\
 "sbd.*Latency"
 "
 
+# TODO: SAPInstace, SAPDatabase patterns, See /etc/ClusterTools2/grep_cluster_patterns
 test -z "${RESRC_PATTERN}" &&\
 	 RESRC_PATTERN="
 "Volume.group.*error"
@@ -137,7 +139,8 @@ function run_grep_show() {
 			test -r $f && cat $f
 		done | grep -i $e
 	done | sort -M
-	# TODO: sort by timestamp "Sep 27 17:04:11 "
+	# TODO: sort by timestamp OK ? "Sep 27 17:04:11 "
+	# TODO: sort error msgs.?
 }
 
 
@@ -179,12 +182,13 @@ function awk_migration() {
 # TODO: nodes fence, leave, join
 #Sep 27 16:07:14 ext2300s pengine: [1079]: WARN: pe_fence_node: Node ext2301s will be fenced because it is un-expectedly down
 #Sep 27 16:08:15 ext2300s stonith: [18720]: CRIT: external_run_cmd: Calling '/usr/lib64/stonith/plugins/external/sbd reset ext2301s' returned 
+# TODO: evtl. "stonith-ng:.*succe"
 function awk_fencing() {
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
 		test -r $f && cat $f
 	done | sort -M |\
-	grep -e "pengine:.*Node.*fenced" -e "stonith:.*sbd.reset.*returned"
+	grep -e "pengine:.*Node.*fenced" -e "sbd:.*reset"
 }
 
 

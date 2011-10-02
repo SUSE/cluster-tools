@@ -9,52 +9,27 @@ TODO configure / update mode:
 
 TODO help for top level menueng2
 
-DONE: batch mode for menueng2
-
-DONE: rpm -qi replace xml by crm
-
 TODO wow output crm instead of cli ?
-
-DONE: - man page menueng2
 
 TODO man page wow2
 
-DONE: - man page sleha_cleanup: Hinweis auf Wow ist falsch
-
 TODO make_hb_backup update
 
-DONE: - add check to sleha_cleanup
 TODO naming sleha_cleanup : naming geschickt? Kann mit cleanup verwechselt werden.
 
 TODO - whbsaprecheck : tests seem to be to static we need to test at least equal and newer...
-
-DONE: - external pattern file for grep-error-patterns
-DONE: - man grep-error-patterns.8
 
 TODO man watchdog.7
 
 TODO linkstate
 
-DONE: - /usr/share/man/man8/attrd_updater.8.gz
-DONE: - /usr/share/man/man8/crm_simulate.8.gz
-DONE: - /usr/share/man/man8/ptest.8.gz
-DONE: - update man sbd.7, sbd.8 for triple sbd
-DONE update man sbd.7, sbd.8 for timing dependencies. T.e. "sbd create: -1 30 -3 2 -4 130", "/etc/sysconfig/sbd: -W -t 20", "crm stonith-timeout=150"
-DONE: - whbsaprecheck: /etc/corosync/authkey (ohne s)
-TODO - precheck_for_sap: mount option barrier= wird nicht gezeigt
 TODO - precheck_for_sap: soll laufen, auch wenn parameter in wow file nicht gesetzt
 TODO - precheck_for_sap, modular checks aligned with sap-notes, f.e. a subdir with one module per sap-note
 TODO - find_appconf better
-DONE: - enhance make_corosync_conf, f.e. config file
-DONE: - /usr/lib/supportconfig/plugins/ all-messages grep_error_patterns sum_base_config
-DONE - man page supportconfig_plugins.5
-TODO - man page crm_on-fail-block.7
 TODO dmesg iTCO_wdt: No card detected
 TODO dmesg eurwdt: can't misc_register on minor=130
 TODO dmesg smsc37b787_wdt: Unable to register miscdev on minor 130
 TODO dmesg advantechwdt: Unexpected close, not stopping watchdog!
-DONE add_softdog_to_initrd: "-s" should show MODULES_LOADED_On_BOOT as well
-DONE clusterstate -n: show IPs
 TODO make disabled supportconfig plugins return "Skipped" instead of "Error"
 TODO wow master-slave ERS
 TODO grep_error_patterns -d <directory>   for off-site analysis of logs

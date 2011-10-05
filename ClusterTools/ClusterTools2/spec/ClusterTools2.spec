@@ -104,6 +104,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/find_appconf
 /usr/sbin/fhcrmedit
 /usr/sbin/grep_cluster_patterns
+/usr/sbin/grep_cluster_transition
 /usr/sbin/grep_error_patterns
 /usr/sbin/grep_supportconfig
 #/usr/sbin/linkstate

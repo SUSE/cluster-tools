@@ -7,7 +7,6 @@
 #
 # Version: 0.1 2011-10-05
 #
-#set -x
 
 EXE="$0"
 
@@ -25,59 +24,58 @@ ZIPPED_LOG="${CLUSTER_LOG}*bz2"
 
 # TODO: verify cluster log msgs. maybe more generic possible ?
 # TODO: update config file from built-in pattern list
-# TODO: current DC
 test -z "${TRANST_PATTERN}" &&\
 	 TRANST_PATTERN="
-"NMI.received"
-"syslog-ng.shutting.down"
-"syslog-ng.starting.up"
-"crmd.*quorum.lost"
-"stonith:.*failed"
-"pengine.fenced.because.*.un-expectedly.down"
-"pengine.*fenced.*resource.failure"
-"sbd.*Writing.*to"
-"sbd.*successfully.delivered"
-"sbd.*Received.command"
+"crmd.*State.transition.S_IDLE"
+"crmd.*State.transition.S_POLICY_ENGINE"
+"crmd.*State.transition.S_TRANSITION_ENGINE"
+"crmd.*State.transition.S_STARTING"
+"crmd.*State.transition.S_PENDING"
+"crmd.*State.transition.S_ELECTION"
+"crmd.*State.transition.S_INTEGRATION"
+"crmd.*State.transition.S_FINALIZE_JOIN"
+"crmd.*State.transition.S_NOT_DC"
 "
-
-#"crmd.*State.transition.S_IDLE"
-#"crmd.*State.transition.S_POLICY_ENGINE"
-#"crmd.*State.transition.S_TRANSITION_ENGINE"
-#"crmd.*State.transition.S_STARTING"
-#"crmd.*State.transition.S_PENDING"
-#"crmd.*State.transition.S_ELECTION"
-#"crmd.*State.transition.S_INTEGRATION"
-#"crmd.*State.transition.S_FINALIZE_JOIN"
-#"crmd.*State.transition.S_NOT_DC"
 
 
 function help() {
-	echo "	$(basename $0) [OPTION]"
+	echo "	$(basename $0)"
+	echo "	$(basename $0) OPTION"
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
-	echo " --zip		search compressed logs, too."
+	echo " --zip		show transitions from compressed logs, too."
+	echo " --error		show errors."
 }
 
 
+# TODO: sort: As LC_TIME differs from LC_CTYPE, the results may be strange.
 # TODO: better awk
 function awk_transition() {
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
 		test -r $f && cat $f
-	done | sort -M |\
-	awk '$0~/crmd.*State.transition/ {print $1,$2,$3,$4,$11,"->",$13}' |\
-	awk '$7=="S_IDLE"{print $0,"\n"}; $7!="S_IDLE"{print $0}' 
+	done | sort -M --key=1,3 |\
+	awk '	$0~/crmd.*State.transition/ {print $1,$2,$3,$4,$11,"->",$13}
+		#	
+		#$0~/crmd.*abort_transition_graph/ {print $1,$2,$3,$4,$8}
+		#$0~/crmd.*do_dc_join_finalize/	   {print $1,$2,$3,$4,$8,$14}
+		#$0~/crmd.*notice..crmd_peer_update/   {print $1,$2,$3,$4,$9,$12,$16}
+		#
+		$0~/crmd.*cluster.nodes.*eligible/ {print $1,$2,$3,$4,$10,$11,$12,$14}
+		$0~/crmd.*status.\[o.*line\]/   {print $1,$2,$3,$4,$9,$12,$16}
+		$0~/crmd.*update_dc.*Unset.DC/ 	   {print $1,$2,$3,$4,$9,$10,$11}
+		$0~/crmd.*update_dc.*Set.DC.to/    {print $1,$2,$3,$4,$9,$10,$11,$12}' |\
+	awk '$7=="S_IDLE"{print $0,"\n"}; $7!="S_IDLE"{print $0}'
 }
 
 
-# TODO: nodes fence, leave, join
-function awk_fencing() {
+function awk_crmd-error() {
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
 		test -r $f && cat $f
 	done | sort -M |\
-	grep -e "pengine:.*Node.*fenced" -e "sbd:.*reset"
+	grep -e "crmd:.*ERROR"
 }
 
 
@@ -100,7 +98,13 @@ case $1 in
 		done
 		# unzipped log has to be last in loop :-/
 		test -s ${CLUSTER_LOG} && LOG="${LOG} ${CLUSTER_LOG}"
-		awk_transition	
+		#awk_transition
+		echo noop	
+		exit
+	;;
+	-e|--error)
+		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		awk_crmd-error
 		exit
 	;;
 	*)

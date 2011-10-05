@@ -1,32 +1,6 @@
 #/etc/ClusterTools2/grep_cluster_transition
 # For SLES11.
 #
-TRANST_PATTERN="
-"NMI.received"
-"syslog-ng.shutting.down"
-"syslog-ng.starting.up"
-"crmd.*quorum.lost"
-"crmd.*our.DC.is.dead"
-"pengine.fenced.because.*.un-expectedly.down"
-"pengine.*fenced.*resource.failure"
-"sbd.*Writing.*to"
-"sbd.*successfully.delivered"
-"sbd.*Received.command"
-"
-#"crmd.*State.transition.S_IDLE"
-#"crmd.*State.transition.S_POLICY_ENGINE"
-#"crmd.*State.transition.S_TRANSITION_ENGINE"
-#"crmd.*State.transition.S_STARTING"
-#"crmd.*State.transition.S_PENDING"
-#"crmd.*State.transition.S_ELECTION"
-#"crmd.*State.transition.S_INTEGRATION"
-#"crmd.*State.transition.S_FINALIZE_JOIN"
-#"crmd.*State.transition.S_NOT_DC"
-#"sbd.*Writing.*to"
-#"sbd.*successfully.delivered"
-#"sbd.*Received.command"
-#"
-#
 # calculated, if empty:
 # CLUSTER_LOG="/var/log/messages"
 #

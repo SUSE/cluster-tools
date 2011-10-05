@@ -121,7 +121,6 @@ function help() {
 	echo " --help		show help."
 	echo " --version	show version."
 	echo " --show		show all."
-	echo " --transition	show transition."
 	echo " --fencing	show fencing."
 	echo " --migration	show migration."
 	echo
@@ -154,17 +153,6 @@ function run_grep_count() {
 			test -r $f && cat $f
 		done | bzgrep -ic $e
 	done
-}
-
-
-# TODO: better awk
-function awk_transition() {
-	echo "logs: $LOG" >/dev/stderr
-	for f in ${LOG}; do
-		test -r $f && cat $f
-	done | sort -M |\
-	awk '$0~/crmd.*State.transition/ {print $1,$2,$3,$4,$11,"->",$13}' |\
-	awk '$7=="S_IDLE"{print $0,"\n"}; $7!="S_IDLE"{print $0}' 
 }
 
 
@@ -214,11 +202,6 @@ case $1 in
 		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
 		run_grep_count
 		exit		
-	;;
-	-t|--transition)
-		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
-		awk_transition
-		exit
 	;;
 	-f|--fencing)
 		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"

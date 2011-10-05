@@ -5,9 +5,8 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-09-29
+# Version: 0.1 2011-10-05
 #
-#set -x
 
 EXE="$0"
 
@@ -137,7 +136,7 @@ function run_grep_show() {
 		for f in ${LOG}; do
 			test -r $f && cat $f
 		done | grep -i $e
-	done | sort -M
+	done | sort -M -k1,3
 	# TODO: sort by timestamp OK ? "Sep 27 17:04:11 "
 	# TODO: sort error msgs.?
 }
@@ -162,7 +161,7 @@ function awk_migration() {
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
 		test -r $f && cat $f
-	done | sort -M |\
+	done | sort -M -k1,3 |\
 	awk '$0~/pengine.*LogActions:.Move/ {print}' 
 }
 
@@ -175,10 +174,11 @@ function awk_fencing() {
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
 		test -r $f && cat $f
-	done | sort -M |\
+	done | sort -M -k1,3 |\
 	grep -e "pengine:.*Node.*fenced" -e "sbd:.*reset"
 }
 
+# TODO: reading from pipe
 
 # main()
 

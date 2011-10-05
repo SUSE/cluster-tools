@@ -16,7 +16,7 @@ Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.2.9
-Release:      2.1.1 
+Release:      12 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
@@ -138,6 +138,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config(noreplace) /etc/logrotate.d
 
 %changelog -n ClusterTools
+* Thu Oct 05 2011 - lars.pinne@novell.com
+  - added grep_cluster_transition
 * Thu Sep 29 2011 - lars.pinne@novell.com
   - moved add_softdog_to_initrd to add_watchdog_to_initrd, added grep_cluster_patterns, various fixes and updates
 * Thu Sep 22 2011 - lars.pinne@novell.com

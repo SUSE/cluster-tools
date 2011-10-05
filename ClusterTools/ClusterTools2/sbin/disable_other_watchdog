@@ -102,8 +102,20 @@ function guess_other_restart() {
 	# TODO: search process list for process that has /dev/watchdog
 
 	fuser -f /dev/watchdog
-	# TODO: lsof ?
-	#echo noop
+	lsof | grep "/dev/watchdog"
+	# TODO: define METHOD_LISTONLY
+	for f in hp-asrd oprocd; do
+		ps aux | grep $f
+	done
+	# TODO
+	for f in VRTS ; do
+		find /var -name "*${f}*"
+	done
+	for f in vxfen ; do
+		find /etc -name "*${f}*"
+	done
+
+
 	echo "INFO: end $EXE $FUNCNAME"
 }
 

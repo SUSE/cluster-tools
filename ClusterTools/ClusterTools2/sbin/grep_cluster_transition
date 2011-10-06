@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-10-05
+# Version: 0.1 2011-10-06
 #
 
 EXE="$0"
@@ -22,9 +22,6 @@ test -z "${CLUSTER_LOG}" &&\
 
 ZIPPED_LOG="${CLUSTER_LOG}*bz2"
 
-# TODO: verify cluster log msgs. maybe more generic possible ?
-# TODO: update config file from built-in pattern list
-#test -z "${TRANST_PATTERN}" &&\
 #	 TRANST_PATTERN="
 #"crmd.*State.transition.S_IDLE"
 #"crmd.*State.transition.S_POLICY_ENGINE"
@@ -37,14 +34,13 @@ ZIPPED_LOG="${CLUSTER_LOG}*bz2"
 #"crmd.*State.transition.S_NOT_DC"
 #"
 
-
 function help() {
 	echo "	$(basename $0)"
 	echo "	$(basename $0) OPTION"
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
-	echo " --zip		show transitions from compressed logs, too."
+#	echo " --zip		show transitions from compressed logs, too."
 	echo " --error		show errors."
 }
 
@@ -62,6 +58,7 @@ function awk_transition() {
 		#$0~/crmd.*do_dc_join_finalize/	   {print $1,$2,$3,$4,$8,$14}
 		#$0~/crmd.*notice..crmd_peer_update/   {print $1,$2,$3,$4,$9,$12,$16}
 		#
+		$0~/syslog-ng.s...ting.[du][po]/ {print $1,$2,$3,$4,$6,$7,$8}
 		$0~/crmd.*cluster.nodes.*eligible/ {print $1,$2,$3,$4,$10,$11,$12,$14}
 		$0~/crmd.*status.\[o.*line\]/   {print $1,$2,$3,$4,$9,$12,$16}
 		$0~/crmd.*update_dc.*Unset.DC/ 	   {print $1,$2,$3,$4,$9,$10,$11}

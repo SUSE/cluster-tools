@@ -8,22 +8,45 @@ grep_cluster_transition \- search log files for cluster transition patterns
 .\"
 .SH DESCRIPTION
 \fBgrep_cluster_transition\fP searches log files for crmd cluster transition
-patterns. Please note that crmd logs on the DC node only.
+patterns. Please note that crmd writes to log on the DC node only.
+
+All cluster state transitions are triggered by an event. Any change of the
+cluster state is an event. The cluster also generates events on a regular base,
+f.e. every 900 seconds. Normal state of the cluster is IDLE.
+
+Currrently known states are:
 .br
+ S_IDLE
+.br
+ S_POLICY_ENGINE
+.br
+ S_TRANSITION_ENGINE
+.br
+ S_STARTING
+.br
+ S_PENDING
+.br
+ S_ELECTION
+.br
+ S_INTEGRATION
+.br
+ S_FINALIZE_JOIN
+.br
+ S_NOT_DC
 .\"
 .SH OPTIONS
 .HP
 \fB --help\fR
-        show help.
+	show help.
 .HP
 \fB --version\fR
-        show version.
+	show version.
 .\" .HP
 .\" \fB --zip\fR
-.\"        show transitions compressed logs, too. This could take some time.
+.\"	show transitions compressed logs, too. This could take some time.
 .HP
 \fB --error\fR
-        show only crmd errors.
+	show crmd errors.
 .\"
 .SH EXAMPLES
 .HP
@@ -58,8 +81,11 @@ Feedback is welcome, please use the project page at
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
 .\"
 .SH SEE ALSO
-\fBgrep_error_patterns\fP(8), \fBgrep_cluster_patterns\fP(8), \fBgrep\fP(1),
-\fBsyslog\fP(8), \fBlogrotate\fP(8), \fBClusterTools2\fP(7)
+\fBgrep_error_patterns\fP(8), \fBgrep_cluster_patterns\fP(8), \fBptest\fP(8),
+\fBcrm_attribute\fP(8),
+\fBgrep\fP(1), \fBsyslog\fP(8), \fBlogrotate\fP(8), \fBClusterTools2\fP(7),
+.br
+http://www.clusterlabs.org/man/
 .\"
 .\"
 .SH COPYRIGHT

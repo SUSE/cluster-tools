@@ -48,7 +48,9 @@ function chk_hardware() {
 	FIL="hardware.txt"
 	grep "system.hardware.*=" $FIL | grep -v "system.*video"
 	grep "system.firmware.*=" $FIL
-	grep -A4 "^# Virtualisation" $FIL
+	grep -e "str3:.\"../../....\"" -e "str5:.\"[A-Za-z]" $FIL
+	grep -e "Manufacturer:.\"[A-Za-z]" -e "Product:.\"" -e "Serial:.\"" $FIL
+	grep -A4 "^# Virtuali.ation" $FIL
 	echo
 	
 	echo "processor:"

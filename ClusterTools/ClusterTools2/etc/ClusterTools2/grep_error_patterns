@@ -52,6 +52,7 @@ ERROR_PATTERN="
 "Failed.services.*runlevel"
 "shutdown.*shutting.down"
 "syslog-ng.shutting.down"
+"syslog-ng.starting.up"
 "
 #
 CLUERR_PATTERN="

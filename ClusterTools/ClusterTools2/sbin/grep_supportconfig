@@ -234,6 +234,29 @@ slpd
 smartd
 sapinit
 uuidd
+qlremote
+boot.vxfs
+amf
+isisd
+gab
+llt
+mcelog
+vcs
+vras-vradmind.sh
+vxatd
+vxdbdctrl
+vxdcli
+vxfen
+vxnm-vxnetd
+vxodm
+vxpbx_exchanged
+vxrsyncd.sh
+vxvm-boot
+vxvm-reconfig
+vxvm-recover
+sfmh-discovery
+xprtld
+eccmad
 "
 	for s in $SVC_YES; do
 		grep "${s}:..on" $FIL

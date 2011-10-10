@@ -72,6 +72,7 @@ test -z "${ERROR_PATTERN}" &&\
 "link.failure"
 "ntpd.*failed"
 "ntpd.*time.reset"
+"failed.to.bind.to.LDAP"
 "refused.mount.request"
 "logrotate.*error"
 "Failed.to.read"

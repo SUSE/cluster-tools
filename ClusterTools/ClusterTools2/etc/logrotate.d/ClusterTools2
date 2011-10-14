@@ -5,7 +5,7 @@
     dateext
     maxage 365
     rotate 99
-    size=+2048k
+    size +8M
     notifempty
     missingok
     copytruncate
@@ -16,7 +16,7 @@
     dateext
     maxage 365
     rotate 99
-    size=+2048k
+    size +4M
     notifempty
     missingok
     copytruncate
@@ -27,7 +27,7 @@
     dateext
     maxage 365
     rotate 99
-    size=+2048k
+    size +2M
     notifempty
     missingok
     copytruncate

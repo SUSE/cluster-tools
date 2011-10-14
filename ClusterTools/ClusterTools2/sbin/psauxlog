@@ -5,7 +5,7 @@
 # Version: 0.1 2011-04-29
 #
 
-D=$(date +"%F %T");
+D=$(date +"%F %T")
 L=${1:-"/var/log/psaux.log"}
 
 ps aux | while read; do

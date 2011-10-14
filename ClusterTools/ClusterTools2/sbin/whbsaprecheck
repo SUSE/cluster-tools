@@ -196,7 +196,7 @@ function chk_gen_storag ()
 	echo "--- node $HOSTNAME gives:"
 	grep "\[deadline\]" /sys/block/*/queue/scheduler 
 	echo -n "number of not [deadline]: "
-	grep -v "\[deadline\]" /sys/block/*/queue/scheduler | wc -l
+	grep -v "\[deadline\]" /sys/block/*/queue/scheduler | grep -v ":none$" | wc -l
 	
  	# TODO: grep only one time, give list of patterns 
 	# zgrep "multipathd.*down" /var/log/messages* 2>>$ERR | awk '{print $1,$2,$3,$6}'

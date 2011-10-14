@@ -25,9 +25,12 @@ SW_NOT="apparmor orarun ulimit"
 RUNLVL=3
 SRV_RUN="boot.multipath multipathd ntp boot.sapconf boot.sysstat boot.clock"
 SRV_NOT="boot.md boot.apparmor boot.dmraid slpd alsasound openais SuSEfirewall2_init SuSEfirewall2_setup ocfs2 o2cb open-iscsi sapinit uuidd"
-
+#
 PWDENC="des"
-
+#
+# Were to look for log files.
+ERROR_CFG="/etc/ClusterTools2/grep_error_patterns"
+#
 # Oracle
 #DBUSER="oracle"
 #DBGROUP="dba oinstall"

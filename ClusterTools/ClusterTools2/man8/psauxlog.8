@@ -4,7 +4,7 @@
 psauxlog \- log the process list with timestamp
 .\"
 .SH SYNOPSIS
-.B psauxlog \fIlogfile\fR
+.B psauxlog \fI[ logfile ]\fR
 .\"
 .SH DESCRIPTION
 \fBpsauxlog\fP logs the process list with timestamp.
@@ -14,11 +14,11 @@ choice.
 .\"
 .SH EXAMPLES
 .TP
-To run psauxlog every 10 minutes, the crontab entry /etc/cron.d/psauxlog could look like this:
+To run psauxlog every 10 minutes, the crontab entry could look like this:
 .br
 -04-59/10 * * * * root /usr/sbin/psauxlog /var/log/psaux.log
 .TP
-To rotate and compress the log from time to time, the logrotate entry /etc/logrotate.d/psauxlog could look like this:
+To rotate and compress the log from time to time, the logrotate entry could look like this:
 .br
 /var/log/psaux.log {
     compress
@@ -47,10 +47,10 @@ Usage, syntax or execution errors.
 /var/log/psaux.log
 	the default logfile.
 .TP
-/etc/cron.d/psauxlog
+/etc/cron.d/ClusterTools2
 	the cron entry.
 .TP
-/etc/logrotate.d/psauxlog
+/etc/logrotate.d/ClusterTools2
 	the logrotate entry.
 .\"
 .SH BUGS

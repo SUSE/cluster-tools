@@ -110,6 +110,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/grep_supportconfig
 #/usr/sbin/linkstate
 /usr/sbin/list_failcounts
+/usr/sbin/lsoflog
 #/usr/sbin/make_hb_backup
 /usr/sbin/make_corosync_conf
 /usr/sbin/make_iscsi_conf
@@ -140,6 +141,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config(noreplace) /etc/logrotate.d
 
 %changelog -n ClusterTools
+* Fri Oct 14 2011 - lars.pinne@novell.com
+  - added lsoflog, merged separate crontab and logrotate to one ClusterTools2
 * Thu Oct 05 2011 - lars.pinne@novell.com
   - added grep_cluster_transition
 * Thu Sep 29 2011 - lars.pinne@novell.com

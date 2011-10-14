@@ -3,9 +3,10 @@
 # one entry per line "^plugin$"
 cat_messages
 grep_error_patterns
-#sum_base_config
-#cat_xmstat
 #cat_psauxlog
+#cat_lsoflog
+#cat_xmstat
+#sum_base_config
 #hb_report
 #precheck_for_sap
 #

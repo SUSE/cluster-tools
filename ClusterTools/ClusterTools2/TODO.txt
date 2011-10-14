@@ -1,7 +1,8 @@
 TODO disable_other_ Sybase ASE
 TODO precheck_for_sap: LC_ALL=POSIX
 TODO precheck_for_sap: grep 2.6.3 (http://drjohnstechtalk.com/blog/2011/06/grep-is-slow-as-a-snail-in-sles-11)
-TODO precheck_for_sap: number of not [deadline]: 103 (but 103 [deadline] are found. 
+TODO precheck_for_sap: number of not [deadline]: 103 (but 103 [deadline] are found.
+TODO grep_error_patterns 3rd party patterns (Veritas: "GAB.*failure", "Symantec Technical Support" ,...) 
 
 TODO: sum_base_config  awk: cmd. line:1: fatal: cannot open file `/etc/sysconfig/sbd' for reading (No such file or directory)
 

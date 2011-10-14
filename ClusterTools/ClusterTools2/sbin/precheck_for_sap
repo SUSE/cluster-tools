@@ -99,6 +99,8 @@ function chk_gen_runlvl() {
 		echo "/etc/init.d/$s stop"
 	done
 	echo
+	echo "-rwsr-sr-x uuidd:uuidd /usr/sbin/uuidd"
+	echo
 
 	echo "--- node $HOSTNAME gives:"
 	(echo -n "runlevel "; runlevel) |awk '{print $1,$3}'
@@ -114,6 +116,9 @@ function chk_gen_runlvl() {
 	done
 	echo
 	echo -n "chkconfig services: "; chkconfig | wc -l
+	echo
+
+	ls -l /usr/sbin/uuidd | awk '{print $1,$3,$4,$8}'
 	echo
 }
 
@@ -169,18 +174,48 @@ function chk_gen_storag() {
 	echo "--- node $HOSTNAME gives:"
 	grep "\[deadline\]" /sys/block/*/queue/scheduler 
 	echo -n "number of not [deadline]: "
-	grep -v "\[deadline\]" /sys/block/*/queue/scheduler | wc -l
-	
- 	# TODO: grep only one time, give list of patterns 
-	# zgrep "multipathd.*down" /var/log/messages* 2>>$ERR | awk '{print $1,$2,$3,$6}'
-	SERR=$(zgrep "multipathd.*down" /var/log/messages* 2>>$ERR | wc -l)
-	echo "path down               : $SERR"
-	SERR=$(zgrep "reservation.conflict" /var/log/messages* 2>>$ERR | wc -l)
-	echo "scsi reserv. conflict   : $SERR"
-	SERR=$(zgrep "duplicate.PV" /var/log/messages* 2>>$ERR | wc -l)
-	echo "duplicate PV            : $SERR"
-	SERR=$(zgrep "heartbeat.*lost.packet" /var/log/messages* 2>>$ERR | wc -l)
-	echo "heartbeat lost packet   : $SERR"
+	grep -v "\[deadline\]" /sys/block/*/queue/scheduler | grep -v ":none$" | wc -l
+
+	export ERROR_PATTERN="
+"no.device.*found"
+"bfa.*err"
+"lpfc.*err"
+"qla.*err"
+"qla.*failed"
+"qlge.*error"
+"target.failure"
+"reservation.conflict"
+"SCSI.*reset"
+"LUN.larger"
+"I/O.error"
+"disabling.*barrier"
+"doesn.*support.*DPO.*FUA"
+"Unable.*SMART.enabled"
+"multipathd.*timed.out"
+"multipathd:.mpath.*unable"
+"multi.*path.*down"
+"multipathd.*reinstated"
+"[Ff]ail.*/dev/md"
+"U_\|_U"
+"found.0.matching.devices"
+"/dev/md.*failed"
+"duplicate.VG"
+"duplicate.PV"
+"not.found"
+"ocfs2.*ERR"
+"ocfs2.*not.unmounted.cleanly"
+"fsck.*recommended"
+"EXT.-fs.error"
+"iSCSI.connection.*error"
+"refused.mount.request"
+"Failed.to.read"
+"
+	export CLUERR_PATTERN="
+"sbd.*mbox.read.failed"
+"sbd.*Latency"
+"
+	echo "errors:"
+	/usr/sbin/grep_error_patterns
 	echo
 }
 

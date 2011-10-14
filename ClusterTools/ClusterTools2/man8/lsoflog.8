@@ -19,7 +19,7 @@ Default timeout is 42 seconds.
 .TP
 To run lsoflog every 10 minutes, the crontab entry could look like this:
 .br
--02-57/10 * * * * root /usr/sbin/lsoflog /var/log/lsof.log
+-02-57/10 * * * * root /usr/sbin/lsoflog /var/log/lsof.log "+D/db2/data"
 .TP
 To rotate and compress the log from time to time, the logrotate entry could look like this:
 .br
@@ -37,8 +37,11 @@ To rotate and compress the log from time to time, the logrotate entry could look
 .TP
 To find all IO to /ora/data that was not done with O_DIRECT just do:
 .br
-awk '$11=="/ora/data" && $8 !~/DIR/ {print $1,$2,$3,$8,$11}' /var/log/lsof.log
+awk '$11=="/ora/data" && $8 !~/DIR/ {print $1,$2,$3,$5,$8,$11}' /var/log/lsof.log
+.TP
+To see which processes have done ASYNC IO to /ora/data just do:
 .br
+awk '$11=="/ora/data" && $8 ~/AIO/ {print $1,$2,$3,$8,$11}' /var/log/lsof.log
 .\" #lsof -b +fg -d "^/var/,^/tmp/,^/dev/,^/root/,^/opt/"  2>/dev/null |\
 .\" awk '($3=="root" && $6 !~/AIO/)||($3=="root" && $6 !~/DIR/){print $1,$3,$6,$10}' |\
 .\"  sort -u

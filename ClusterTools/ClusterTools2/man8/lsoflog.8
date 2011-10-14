@@ -10,9 +10,10 @@ lsoflog \- log the open file list with timestamp
 \fBlsoflog\fP logs the open file list with timestamp.
 Basically the script puts the output of "date +%F %T" in front of each line for the output of "lsof -n -P -X -w -S 42 +fg +x +D ...". 
 
-Default path list is
-"+D/opt/oracle +D/ora +D/oracle +D/db2 +D/sdb"
-A proper path list keeps the logfile reasonably small. 
+Default path list is "+D/opt +D/srv +D/home".
+A proper path list keeps the logfile reasonably small.
+Non-existing directories cause lsoflog to fail.
+Default timeout is 42 seconds.
 .\"
 .SH EXAMPLES
 .TP

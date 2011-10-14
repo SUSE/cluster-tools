@@ -8,7 +8,7 @@
 D=$(date +"%F %T")
 E="/dev/null"
 L=${1:-"/var/log/lsof.log"}
-P=${2:-"+D/opt/oracle +D/ora +D/oracle +D/db2 +D/sdb"}
+P=${2:-"+D/opt +D/srv +D/home"}
 T=${3:-"42"}
 
 lsof -n -P -X -w -S $T +fg +x ${P} 2>$E | sort -u | while read; do

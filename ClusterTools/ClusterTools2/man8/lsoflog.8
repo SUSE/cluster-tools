@@ -4,20 +4,21 @@
 lsoflog \- log the open file list with timestamp
 .\"
 .SH SYNOPSIS
-.B lsoflog \fI[[ logfile ] excludes ]\fR
+.B lsoflog \fI[[[ logfile ] pathlist ] timeout ]\fR
 .\"
 .SH DESCRIPTION
 \fBlsoflog\fP logs the open file list with timestamp.
-Basically the script puts the output of "date +%F %T" in front of each line for the output of "lsof +fg -b -d". 
+Basically the script puts the output of "date +%F %T" in front of each line for the output of "lsof -n -P -X -w -S 42 +fg +x +D ...". 
 
-Default exclude list is
-"^/bin, ^/boot, ^/dev, ^/etc, ^/lib, ^/lib64, ^/media, ^/mnt, ^/proc, ^/root, ^/sbin, ^/sys, ^/tmp, ^/usr, ^/var" .
+Default path list is
+"+D/opt/oracle +D/ora +D/oracle +D/db2 +D/sdb"
+A proper path list keeps the logfile reasonably small. 
 .\"
 .SH EXAMPLES
 .TP
 To run lsoflog every 10 minutes, the crontab entry could look like this:
 .br
--04-59/10 * * * * root /usr/sbin/lsoflog /var/log/lsof.log
+-02-57/10 * * * * root /usr/sbin/lsoflog /var/log/lsof.log
 .TP
 To rotate and compress the log from time to time, the logrotate entry could look like this:
 .br
@@ -26,12 +27,17 @@ To rotate and compress the log from time to time, the logrotate entry could look
     dateext
     maxage 365
     rotate 99
-    size +8M
+    size +20M
     notifempty
     missingok
     copytruncate
 .br
 }
+.TP
+To find all IO to /ora/data that was not done with O_DIRECT just do:
+.br
+awk '$11=="/ora/data" && $8 !~/DIR/ {print $1,$2,$3,$8,$11}' /var/log/lsof.log
+.br
 .\" #lsof -b +fg -d "^/var/,^/tmp/,^/dev/,^/root/,^/opt/"  2>/dev/null |\
 .\" awk '($3=="root" && $6 !~/AIO/)||($3=="root" && $6 !~/DIR/){print $1,$3,$6,$10}' |\
 .\"  sort -u

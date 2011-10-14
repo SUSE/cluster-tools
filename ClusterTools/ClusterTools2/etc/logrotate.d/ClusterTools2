@@ -5,7 +5,7 @@
     dateext
     maxage 365
     rotate 99
-    size +8M
+    size +20M
     notifempty
     missingok
     copytruncate

@@ -1,8 +1,8 @@
 # /etc/cron.d/ClusterTools2
 #
-## -02-57/5 * * * * root /usr/sbin/lsoflog /var/log/lsof.log "^/bin,^/boot,^/dev,^/etc,^/lib,^/lib64,^/media,^/mnt,^/proc,^/root,^/sbin,^/sys,^/tmp,^/usr,^/var"
+## -02-57/10 * * * * root /usr/sbin/lsoflog /var/log/lsof.log "+D/opt/oracle +D/ora +D/oracle +D/db2 +D/sdb" 
 #
-## -03-58/5 * * * * root /usr/sbin/psauxlog /var/log/psaux.log
+## -03-58/10 * * * * root /usr/sbin/psauxlog /var/log/psaux.log
 #
-## -04-59/5 * * * * root /usr/sbin/xmstat /var/log/xmstat.log
+## -04-59/10 * * * * root /usr/sbin/xmstat /var/log/xmstat.log
 #

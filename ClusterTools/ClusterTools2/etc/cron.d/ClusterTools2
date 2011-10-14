@@ -1,5 +1,5 @@
-# crontab for ClusterTools2 
-## -02-57/5 * * * * root /usr/sbin/lsoflog /var/log/lsof.log ""
+# ClusterTools2 crontab 
+## -02-57/5 * * * * root /usr/sbin/lsoflog /var/log/lsof.log "^/bin,^/boot,^/dev,^/etc,^/lib,^/lib64,^/media,^/mnt,^/proc,^/root,^/sbin,^/sys,^/tmp,^/usr,^/var"
 #
 ## -03-58/5 * * * * root /usr/sbin/psauxlog /var/log/psaux.log
 #

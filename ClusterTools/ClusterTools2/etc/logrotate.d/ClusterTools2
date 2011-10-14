@@ -1,3 +1,4 @@
+# ClusterTools2 logrotate
 #
 /var/log/lsof.log {
     compress

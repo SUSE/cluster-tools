@@ -4,15 +4,17 @@
 lsoflog \- log the open file list with timestamp
 .\"
 .SH SYNOPSIS
-.B lsoflog \fI[[[ logfile ] pathlist ] timeout ]\fR
+.B lsoflog \fI[ logfile [ pathlist [ timeout ]]]\fR
 .\"
 .SH DESCRIPTION
 \fBlsoflog\fP logs the open file list with timestamp.
-Basically the script puts the output of "date +%F %T" in front of each line for the output of "lsof -n -P -X -w -S 42 +fg +x +D ...". 
+Basically the script puts the output of "date +%F %T" in front of each line for the output of "lsof -n -P -X -w -S42 +fg +x +D...". 
 
-Default path list is "+D/opt +D/srv +D/home".
-A proper path list keeps the logfile reasonably small.
+Default pathlist is "+D/opt +D/srv".
+A proper pathlist keeps the logfile reasonably small.
 Non-existing directories cause lsoflog to fail.
+lsof consumes a noticeable amount of CPU cycles. It should only be activated
+when needed.
 Default timeout is 42 seconds.
 .\"
 .SH EXAMPLES
@@ -37,11 +39,11 @@ To rotate and compress the log from time to time, the logrotate entry could look
 .TP
 To find all IO to /ora/data that was not done with O_DIRECT just do:
 .br
-awk '$11=="/ora/data" && $8 !~/DIR/ {print $1,$2,$3,$5,$8,$11}' /var/log/lsof.log
+awk '$11~/\\/ora\\/data/ && $8 !~/DIR/ {print $1,$2,$3,$8,$11}' /var/log/lsof.log | sort -u
 .TP
 To see which processes have done ASYNC IO to /ora/data just do:
 .br
-awk '$11=="/ora/data" && $8 ~/AIO/ {print $1,$2,$3,$8,$11}' /var/log/lsof.log
+awk '$11~/\\/ora\\/data/ && $8 ~/AIO/ {print $1,$2,$3,$8,$11}' /var/log/lsof.log | sort -u
 .\" #lsof -b +fg -d "^/var/,^/tmp/,^/dev/,^/root/,^/opt/"  2>/dev/null |\
 .\" awk '($3=="root" && $6 !~/AIO/)||($3=="root" && $6 !~/DIR/){print $1,$3,$6,$10}' |\
 .\"  sort -u
@@ -68,12 +70,15 @@ Usage, syntax or execution errors.
 	the logrotate entry.
 .\"
 .SH BUGS
+Non-existing directories cause lsoflog to fail.
+.br
 Feedback is welcome, please use the project page at
 .br
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
 .\"
 .SH SEE ALSO
-\fBlsof\fP(1), \fBcrontab\fP(5), \fBlogrotate\fP(8), \fBClusterTools2\fP(7)
+\fBlsof\fP(1), \fBcrontab\fP(5), \fBlogrotate\fP(8), \fBopen\fP(2),
+\fBfcntl\fP(2), \fBClusterTools2\fP(7)
 .\"
 .\"
 .SH COPYRIGHT

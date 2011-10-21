@@ -185,9 +185,9 @@ softdog.ko
 	test -z "$f" ||\
 		grep -v "^#==..Co.*==#" $f
 	rm -rf ${TMP}/${FIL}
-	echo
+	
 	echo -n "process on watchdog : "
-	grep "/dev/watchdog" open-files.txt
+        awk '$9=="/dev/watchdog" {print $1,$9}' open-files.txt
 	echo
 }
 
@@ -479,7 +479,7 @@ function chk_cluster() {
 	# TODO: check ???, see sum_base_config, whbsaprecheck
 	echo
         echo -n "process on watchdog : "
-        grep "/dev/watchdog" open-files.txt
+        awk '$9=="/dev/watchdog" {print $1,$9}' open-files.txt
         echo
 
 }
@@ -490,7 +490,7 @@ function chk_sap() {
 	echo_msgsep $FUNCNAME
 
 	# TODO: check /etc/sysconfig/sapconf
-	# TODO: check ???, see sum_base_config, whbsaprecheck
+	# TODO: check ???, see sum_base_config, precheck_for_sap
 	echo
 }
 
@@ -757,6 +757,8 @@ function chk_overview() {
 	FIL="network.txt"
 	echo -n "Hostname: "
 	grep -A1 "#./etc/HOSTNAME" $FIL | tail -1
+	FIL="supportconfig.txt"
+	grep "Script.Version:" $FIL
 	FIL="basic-health-report.txt"
 	echo "Supportconfig: " $DIR
 	for p in "^Date.Checked:" "^Status:" "\[...Red...\]" "\[.Yellow..\]"; do

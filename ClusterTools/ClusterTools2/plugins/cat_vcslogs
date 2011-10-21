@@ -1,0 +1,14 @@
+#!/bin/bash
+# /usr/lib/supportconfig/plugins/cat_vcslog
+
+PLUG="cat_vcsflog"
+CONF="/etc/ClusterTools2/supportconfig_plugins"
+LOGF="/var/VRTSvcs/log/engine_A.log"
+CORF="/var/VRTSvcs/diag/"
+
+grep "^${PLUG}$" $CONF >/dev/null || exit 0 
+echo "### $LOGF ###"
+test -r $LOGF && cat $LOGF
+echo "### core files ###"
+find $CORF -exec ls -l {} \;
+#

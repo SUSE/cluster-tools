@@ -6,6 +6,7 @@ grep_error_patterns
 #cat_psauxlog
 #cat_lsoflog
 #cat_xmstat
+#cat_vcslogs
 #sum_base_config
 #hb_report
 #precheck_for_sap

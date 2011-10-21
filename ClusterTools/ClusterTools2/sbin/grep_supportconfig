@@ -508,6 +508,7 @@ function chk_sap() {
 
 	# TODO: check /etc/sysconfig/sapconf
 	# TODO: check ???, see sum_base_config, precheck_for_sap
+	grep -e "^@sapsys" -e "^@sdba" crash.txt
 	echo
 }
 
@@ -522,6 +523,7 @@ function chk_oracle() {
 	echo -n "sysconfig found :"
 	grep -e "/etc/sysconfig/oracle" etc.txt
 	# TODO show config settings of that file
+	grep -e "^oracle" -e "^@dba" crash.txt
 	echo
 	grep "^tmpfs" basic-health-check.txt	
 	grep "^vm.nr_hugepages.=" env.txt	

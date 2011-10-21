@@ -115,6 +115,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/make_corosync_conf
 /usr/sbin/make_iscsi_conf
 /usr/sbin/make_sbd_devices
+/usr/sbin/meminfolog
 /usr/sbin/menueng2
 /usr/sbin/reset_failcounts
 /usr/sbin/whbsaprecheck

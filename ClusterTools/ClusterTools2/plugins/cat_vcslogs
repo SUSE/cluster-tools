@@ -1,5 +1,5 @@
 #!/bin/bash
-# /usr/lib/supportconfig/plugins/cat_vcslog
+# /usr/lib/supportconfig/plugins/cat_vcslogs
 
 PLUG="cat_vcsflog"
 CONF="/etc/ClusterTools2/supportconfig_plugins"

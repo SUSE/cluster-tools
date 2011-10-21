@@ -501,8 +501,8 @@ function chk_oracle() {
 	# TODO: check ???, see sum_base_config, whbsaprecheck
 	
 	FIL="rpm.txt"
-        test -z "${ORASFT_PTRN}" &&\
-        ORASFT_PTRN="
+        test -z "${ORA_SFT_PTRN}" &&\
+        ORA_SFT_PTRN="
 orarun
 oracleasmlib oracleasm-support
 cups-client cups-drivers cups-libs cups-libs-32bit cups cups-autoconfig
@@ -517,18 +517,18 @@ multipath-tools mdadm device-mapper device-mapper-32bit libext2fs2
 ClusterTools2
 "
 	echo "RPM needed :"
-        for p in $ORASFT_PTRN; do
+        for p in $ORA_SFT_PTRN; do
                 echo ${p}
         done
 	echo
 	echo "RPM found :"
-        for p in $ORASFT_PTRN; do
+        for p in $ORA_SFT_PTRN; do
                 awk '$1=="'${p}'" {print $0}' $FIL
         done
         echo
 # TODO
-	test -z "${ORASVC_YES}" &&\
-	ORASVC_YES="
+	test -z "${ORA_SVC_YES}" &&\
+	ORA_SVC_YES="
 boot.clock
 boot.dmraid
 boot.md
@@ -542,8 +542,8 @@ mdadmd
 ntp
 oracle
 "
-	test -z "${ORASVC_OFF}" &&\
-	ORASVC_OFF="
+	test -z "${ORA_SVC_OFF}" &&\
+	ORA_SVC_OFF="
 boot.sapconf
 alsasound
 ipmi
@@ -555,12 +555,12 @@ sapinit
 "
 	FIL="chkconfig.txt"
 	echo "service needed :"
-	for s in $ORASVC_YES; do
+	for s in $ORA_SVC_YES; do
 		echo $s
 	done
 	echo
 	echo "service found :"
-	for s in $ORASVC_YES; do
+	for s in $ORA_SVC_YES; do
 		grep "${s}:..on" $FIL
 		grep "${s}:..off" $FIL
 		grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
@@ -568,7 +568,7 @@ sapinit
 	done
 	echo
 	echo "service should be off :"
-	for s in $ORASVC_OFF; do
+	for s in $ORA_SVC_OFF; do
 		grep "${s}:..off" $FIL
 		grep "${s}:..on" $FIL
 		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."

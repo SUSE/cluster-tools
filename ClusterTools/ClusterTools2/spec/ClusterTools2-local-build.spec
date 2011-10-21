@@ -16,8 +16,8 @@ Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.2.9
-Release:      14 
 #Release:      2.1.1 
+Release:      15 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
@@ -141,8 +141,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config(noreplace) /etc/logrotate.d
 
 %changelog -n ClusterTools
-* Fri Oct 14 2011 - lars.pinne@novell.com
-  - added lsoflog, merged separate crontab and logrotate to one ClusterTools2
+* Fri Oct 21 2011 - lars.pinne@novell.com
+  - added lsoflog, merged separate crontab and logrotate to one ClusterTools2, fixed grep_supportconfig
 * Thu Oct 05 2011 - lars.pinne@novell.com
   - added grep_cluster_transition
 * Thu Sep 29 2011 - lars.pinne@novell.com

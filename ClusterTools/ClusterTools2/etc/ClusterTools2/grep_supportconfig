@@ -32,7 +32,6 @@ NIC_PTRN="
 Model:
 Device.File:
 "
-
 #
 SVC_YES="
 boot.clock
@@ -137,5 +136,80 @@ ext2
 ext3
 ocfs2
 xfs
+"
+#
+ORA_SFT_PTRN="
+orarun
+oracleasmlib oracleasm-support
+cups-client cups-drivers cups-libs cups-libs-32bit cups cups-autoconfig
+xorg-x11-libs xorg-x11
+nfs-client
+glibc glibc-32bit glibc-locale glibc-locale-32bit glibc-devel
+kernel-default linux-kernel-headers
+binutils gcc gcc-32bit gcc43 gcc-locale gcc-locale libgcc43 libgcc43-32bit
+libaio libaio-devel
+sysstat supportutils suse-sam
+multipath-tools mdadm device-mapper device-mapper-32bit libext2fs2
+ClusterTools2
+"
+#
+ORA_SVC_YES="
+boot.clock
+boot.dmraid
+boot.md
+boot.devicemapper
+boot.lvm
+boot.multipath
+boot.sysstat
+boot.sysctl
+multipathd
+mdadmd
+ntp
+oracle
+"
+#
+ORA_SVC_OFF="
+boot.sapconf
+alsasound
+ipmi
+openais
+powerd
+slpd
+smartd
+sapinit
+"
+#
+VRT_SVC_YES="
+boot.vxfs
+qlremote
+amf
+isisd
+gab
+llt
+mcelog
+vcs
+vras-vradmind.sh
+vxatd
+vxdbdctrl
+vxdcli
+vxfen
+vxnm-vxnetd
+vxodm
+vxpbx_exchanged
+vxrsyncd.sh
+vxvm-boot
+vxvm-reconfig
+vxvm-recover
+sfmh-discovery
+xprtld
+eccmad
+"
+#
+VRT_ERR_PTRN="
+"GAB.*failure"
+"Symantec.Technical.Support"
+"error.*VRT"
+"VCS.CRITICAL"
+"vxvm.*volume.*not"
 "
 #

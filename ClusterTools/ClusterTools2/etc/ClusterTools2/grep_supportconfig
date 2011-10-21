@@ -60,9 +60,9 @@ slpd
 smartd
 sapinit
 uuidd
+boot.vxfs
 qlremote
 amf
-boot.vxfs
 gab
 isisd
 llt

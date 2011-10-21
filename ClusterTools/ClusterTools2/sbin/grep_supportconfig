@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2011-09-22
+# Version: 0.01 2011-10-21
 #
 # For SLES11.
 # For Supportconfig Script Version: 2.25-237
@@ -126,8 +126,8 @@ function chk_modules() {
 	echo_msgsep $FUNCNAME
 
 	# tainted
-	#FIL="basic-health-check.txt"
-	#TODO split
+	grep "Modules.linked.in:" boot.txt 
+	echo
 
 	FIL="boot.txt"
 	grep "^\[.*AppArmor:.*initialized" $FIL
@@ -234,8 +234,39 @@ slpd
 smartd
 sapinit
 uuidd
-qlremote
+"
+	echo "service should be on:"
+	for s in $SVC_YES; do
+		grep "${s}:..on" $FIL
+		grep "${s}:..off" $FIL
+		grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
+		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+	done
+	echo
+	echo "service should be off:"
+	for s in $SVC_OFF; do
+		grep "${s}:..off" $FIL
+		grep "${s}:..on" $FIL
+		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+		grep "^${s}.*0.*3:on" $FIL | grep -v "boot\."
+	done
+	echo
+}
+
+
+function chk_veritas() {
+
+	echo_msgsep $FUNCNAME
+
+	echo "Veritas Storage Foundation and Veritas Cluster Services"
+	echo
+	grep "Modules.linked.in:" boot.txt
+	echo
+
+	test -z "${VRT_SVC_YES}" &&\
+	VRT_SVC_YES="
 boot.vxfs
+qlremote
 amf
 isisd
 gab
@@ -258,18 +289,29 @@ sfmh-discovery
 xprtld
 eccmad
 "
-	for s in $SVC_YES; do
+	FIL="chkconfig.txt"
+	for s in $VRT_SVC_YES; do
 		grep "${s}:..on" $FIL
 		grep "${s}:..off" $FIL
 		grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
 		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
 	done
 	echo
-	for s in $SVC_OFF; do
-		grep "${s}:..off" $FIL
-		grep "${s}:..on" $FIL
-		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
-		grep "^${s}.*0.*3:on" $FIL | grep -v "boot\."
+
+	test -z "${VRT_ERR_PTRN}" &&\
+	VRT_ERR_PTRN="
+"GAB.*failure"
+"Symantec.Technical.Support"
+"error.*VRT"
+"VCS.CRITICAL"
+"vxvm.*volume.*not"
+"
+	LOG="boot.txt messages.txt"
+	for e in ${VRT_ERR_PTRN}; do
+		echo -n "${e} : "
+		for f in ${LOG}; do
+			cat $f
+		done | grep -ic ${e} 
 	done
 	echo
 }
@@ -422,7 +464,7 @@ DEFAULT_TIMEZONE
 }
 
 
-function  chk_cluster() {
+function chk_cluster() {
 
 	echo_msgsep $FUNCNAME
 
@@ -432,23 +474,107 @@ function  chk_cluster() {
 }
 
 
-function  chk_oracle() {
-
-	echo_msgsep $FUNCNAME
-
-	# TODO: check /etc/sysconfig/oracle
-	# TODO: check ???, see sum_base_config, whbsaprecheck
-	echo
-}
-
-
-function  chk_sap() {
+function chk_sap() {
 
 	echo_msgsep $FUNCNAME
 
 	# TODO: check /etc/sysconfig/sapconf
 	# TODO: check ???, see sum_base_config, whbsaprecheck
 	echo
+}
+
+
+function chk_oracle() {
+
+	echo_msgsep $FUNCNAME
+
+	echo "standalone Oracle installation"
+	echo
+	# TODO
+	echo -n "sysconfig found :"
+	grep -e "/etc/sysconfig/oracle" etc.txt
+	# TODO show config settings of that file
+	echo
+	grep "^tmpfs" basic-health-check.txt	
+	grep "^vm.nr_hugepages.=" env.txt	
+	echo
+	# TODO: check ???, see sum_base_config, whbsaprecheck
+	
+	FIL="rpm.txt"
+        test -z "${ORASFT_PTRN}" &&\
+        ORASFT_PTRN="
+orarun
+oracleasmlib oracleasm-support
+cups-client cups-drivers cups-libs cups-libs-32bit cups cups-autoconfig
+xorg-x11-libs xorg-x11
+nfs-client
+glibc glibc-32bit glibc-locale glibc-locale-32bit glibc-devel
+kernel-default linux-kernel-headers
+binutils gcc gcc-32bit gcc43 gcc-locale gcc-locale libgcc43 libgcc43-32bit
+libaio libaio-devel
+sysstat supportutils suse-sam
+multipath-tools mdadm device-mapper device-mapper-32bit libext2fs2
+ClusterTools2
+"
+	echo "RPM needed :"
+        for p in $ORASFT_PTRN; do
+                echo ${p}
+        done
+	echo
+	echo "RPM found :"
+        for p in $ORASFT_PTRN; do
+                awk '$1=="'${p}'" {print $0}' $FIL
+        done
+        echo
+# TODO
+	test -z "${ORASVC_YES}" &&\
+	ORASVC_YES="
+boot.clock
+boot.dmraid
+boot.md
+boot.devicemapper
+boot.lvm
+boot.multipath
+boot.sysstat
+boot.sysctl
+multipathd
+mdadmd
+ntp
+oracle
+"
+	test -z "${ORASVC_OFF}" &&\
+	ORASVC_OFF="
+boot.sapconf
+alsasound
+ipmi
+openais
+powerd
+slpd
+smartd
+sapinit
+"
+	FIL="chkconfig.txt"
+	echo "service needed :"
+	for s in $ORASVC_YES; do
+		echo $s
+	done
+	echo
+	echo "service found :"
+	for s in $ORASVC_YES; do
+		grep "${s}:..on" $FIL
+		grep "${s}:..off" $FIL
+		grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
+		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+	done
+	echo
+	echo "service should be off :"
+	for s in $ORASVC_OFF; do
+		grep "${s}:..off" $FIL
+		grep "${s}:..on" $FIL
+		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+		grep "^${s}.*0.*3:on" $FIL | grep -v "boot\."
+	done
+        echo
 }
 
 
@@ -463,7 +589,7 @@ function chk_kernel() {
 	grep "^\[.*Booting paravirtualized kernel on bare hardware" $FIL
 
 	echo -n "kernel.tainted : "
-	grep -c "^kernel.tainted" env.txt
+	grep "^kernel.tainted.=" env.txt
 	echo
 }
 
@@ -782,7 +908,7 @@ function chk_errors() {
  
 	# TODO: taint.flag ??
 	echo -n "kernel.tainted : "
-	grep -c "^kernel.tainted" env.txt
+	grep "^kernel.tainted.=" env.txt
 
 	# TODO: add plugin-messages.txt, man supportconfig for plugin
 	# TODO: find start and end time for each log files
@@ -856,7 +982,8 @@ case $1 in
 		shift
 		if [ $# -gt 1 ]; then	
 			for f in $*; do
-				grep "^function ${f}()..$" ${OWD}/$EXE && $f
+				EXE=$(type -p $0)
+				grep "^function ${f}()..$" $EXE && $f
 				shift
 			done
 		else $FUN
@@ -869,13 +996,11 @@ case $1 in
 		cd $DIR
 		#set -x
 		#split_file modules.txt
-		#chk_hardware
-		#chk_storage
-		#chk_multipath
-		#chk_modules
-		#chk_filesys
-		#chk_cluster
-		
+		chk_oracle
+		# chk_veritas
+		# chk_filesys	
+		# chk_cluster	
+
 		rm -rf $TMP
 		exit
 	;;

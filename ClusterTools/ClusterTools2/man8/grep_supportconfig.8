@@ -39,6 +39,14 @@ Successful program execution.
 .B >0 
 Usage, syntax or execution errors.
 .\"
+.SH EXAMPLES
+.TP
+# grep_supportconfig -g nts_node0_111010_1101
+show all generic infos for extracted supportconfig archive nts_node0_111010_1101
+.TP
+# grep_supportconfig -f nts_node0_111010_1101 chk_overview chk_veritas
+show overview info, than search for Veritas Cluster Services
+.\"
 .SH FILES
 .TP
 /usr/sbin/grep_supportconfig

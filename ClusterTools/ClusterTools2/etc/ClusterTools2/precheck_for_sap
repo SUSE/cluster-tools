@@ -13,16 +13,18 @@ nfs-client
 java-1_4_2-ibm-sap java-1_4_2-ibm-sap-devel
 glibc glibc-32bit glibc-locale glibc-locale-32bit glibc-devel
 kernel-default linux-kernel-headers
-binutils gcc gcc-32bit gcc43 gcc-locale gcc-locale libgcc43 libgcc43-32bit libaio_devel
+binutils gcc gcc-32bit gcc43 gcc-locale gcc-locale libgcc43 libgcc43-32bit
+libaio libaio-devel
 sysstat supportutils suse-sam
 openais libopenais3 corosync libcorosync4 pacemaker pacemaker-mgmt libpacemaker3 cluster-glue cluster-network-kmp-default libglue2 resource-agents 
 yast2-cluster
 multipath-tools mdadm device-mapper device-mapper-32bit libext2fs2 libuuid1 libuuid1-32bit uuid-runtime
 ClusterTools2"
 #
-SW_NOT="apparmor orarun ulimit"
+SW_NOT="apparmor orarun ulimit oracleasmlib oracleasm-support"
 #
 RUNLVL=3
+# TODO mdadmd ?
 SRV_RUN="boot.multipath multipathd ntp boot.sapconf boot.sysstat boot.clock"
 SRV_NOT="boot.md boot.apparmor boot.dmraid slpd alsasound openais SuSEfirewall2_init SuSEfirewall2_setup ocfs2 o2cb open-iscsi sapinit uuidd"
 #

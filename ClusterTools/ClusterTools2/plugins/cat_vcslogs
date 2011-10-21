@@ -1,7 +1,7 @@
 #!/bin/bash
 # /usr/lib/supportconfig/plugins/cat_vcslogs
 
-PLUG="cat_vcsflog"
+PLUG="cat_vcslogs"
 CONF="/etc/ClusterTools2/supportconfig_plugins"
 LOGA="/var/VRTSvcs/log/engine_A.log"
 LOGS="/var/VRTSvcs/log/*"
@@ -14,7 +14,7 @@ test -r $LOGA && cat $LOGA
 echo "### ${LOGS} ###"
 grep "ERROR.*engine" $LOGS 2>/dev/null
 echo "### VRT core files ###"
-find $VCOR -exec ls -l {} \;
+find $VCOR -name "core" -exec ls -l {} \;
 echo "### Linux core files ###"
-find $LCOR -exec ls -l {} \;
+find $LCOR -name "vmcore*" -exec ls -l {} \;
 #

@@ -3,12 +3,18 @@
 
 PLUG="cat_vcsflog"
 CONF="/etc/ClusterTools2/supportconfig_plugins"
-LOGF="/var/VRTSvcs/log/engine_A.log"
-CORF="/var/VRTSvcs/diag/"
+LOGA="/var/VRTSvcs/log/engine_A.log"
+LOGS="/var/VRTSvcs/log/*"
+VCOR="/var/VRTSvcs/diag/"
+LCOR="/var/crash/"
 
 grep "^${PLUG}$" $CONF >/dev/null || exit 0 
-echo "### $LOGF ###"
-test -r $LOGF && cat $LOGF
-echo "### core files ###"
-find $CORF -exec ls -l {} \;
+echo "### $LOGA ###"
+test -r $LOGA && cat $LOGA
+echo "### ${LOGS} ###"
+grep "ERROR.*engine" $LOGS 2>/dev/null
+echo "### VRT core files ###"
+find $VCOR -exec ls -l {} \;
+echo "### Linux core files ###"
+find $LCOR -exec ls -l {} \;
 #

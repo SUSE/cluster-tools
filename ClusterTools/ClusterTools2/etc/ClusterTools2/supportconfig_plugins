@@ -4,6 +4,7 @@
 cat_messages
 grep_error_patterns
 #cat_psauxlog
+#cat_meminfolog
 #cat_lsoflog
 #cat_xmstat
 #cat_vcslogs

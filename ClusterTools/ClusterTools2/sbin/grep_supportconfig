@@ -125,12 +125,14 @@ function chk_modules() {
 
 	echo_msgsep $FUNCNAME
 
-	# tainted
-	grep "Modules.linked.in:" boot.txt 
+	# tainted [ 4086.446776]
+	grep -e "Modules.linked.in:.*(..)" -e "Modules.linked.in:.*(.)" boot.txt |\
+		cut -b16- | sort -u 
 	echo
 
 	FIL="boot.txt"
 	grep "^\[.*AppArmor:.*initialized" $FIL
+	echo
 
 	# TODO: add Cisco HBA
 	# TODO: test HP eth  nx_nic, be2net
@@ -264,7 +266,8 @@ function chk_veritas() {
 
 	echo "Veritas Storage Foundation and Veritas Cluster Services"
 	echo
-	grep "Modules.linked.in:" boot.txt
+	grep -e "Modules.linked.in:.*(..)" -e "Modules.linked.in:.*(.)" boot.txt |\
+		cut -b16- | sort -u
 	echo
 
 	test -z "${VRT_SVC_YES}" &&\
@@ -301,7 +304,21 @@ eccmad
 		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
 	done
 	echo
-
+#
+#VRT_MOD="
+#vxfen
+#gab
+#vxodm
+#llt
+#dmpaa
+#vxspec
+#vxio
+#vxdmp
+#vxportal
+#fdd
+#vxfs
+#"
+#
 	test -z "${VRT_ERR_PTRN}" &&\
 	VRT_ERR_PTRN="
 "GAB.*failed"
@@ -754,11 +771,11 @@ function chk_overview() {
 	
 	echo_msgsep $FUNCNAME
 
+	#FIL="supportconfig.txt"
+	#grep "Script.Version:" $FIL
 	FIL="network.txt"
 	echo -n "Hostname: "
 	grep -A1 "#./etc/HOSTNAME" $FIL | tail -1
-	FIL="supportconfig.txt"
-	grep "Script.Version:" $FIL
 	FIL="basic-health-report.txt"
 	echo "Supportconfig: " $DIR
 	for p in "^Date.Checked:" "^Status:" "\[...Red...\]" "\[.Yellow..\]"; do

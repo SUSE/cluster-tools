@@ -55,11 +55,17 @@ function chk_gen_swpkg() {
 	echo "--- conf for cluster needs:"
 	echo "sam: "$SW_REL
 	echo
+	echo "zypper patterns: $SW_PTRN"
+	echo
 	echo $SW_PKG | tr ' ' '\n' | sort -u
 	echo
 	
 	echo "--- node $HOSTNAME gives:"
 	echo -n "sam: "; sam | awk -FS=":" '$1=="name version" {print $1,$2}; $1=="arch" {print $1,$2}; $1=="SP, release" {print $1,$2} '
+	echo
+
+	echo "zypper patterns:"
+	zypper se -t pattern | awk '$1=="i" {print $3}' 
 	echo
 
 	# TODO: call rpm -qa only once

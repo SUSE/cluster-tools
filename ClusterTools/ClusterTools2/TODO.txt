@@ -50,4 +50,5 @@ TODO grep_suppoertconfig: HBA auch bei chk_hardware
 TODO grep_error_patterns synchronized.to.LOCAL finds 0 , plugin-grep_error_patterns finds 10, grep -c /var/log/ntp finds 28
 
 TODO precheck_for_sap: grep 127.0 etc/hosts nur 127.0.0.1, nicht 127.0.0.2
+TODO precheck_for_sap: remove "des" 
  

@@ -5,6 +5,17 @@ SW_REL="SLE-11-x86_64-SP1"
 #
 SW_KRNL="kernel-default-2.6.32.19-0.3 x86_64"
 #
+# TODO Minimal-11 Novell-software ?
+SW_PTRN="
+base-11
+Basis-Devel
+documentation
+fonts
+print_server
+x11-11
+32bit-11
+sap_server
+"
 # TODO: check gcc, correct Java (see sles4sap)
 SW_PKG="sapconf sap-locale sap-locale-32bit saplocales
 cups-client cups-drivers cups-libs cups-libs-32bit cups cups-autoconfig

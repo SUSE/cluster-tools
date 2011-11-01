@@ -2,5 +2,5 @@ configure primitive $UUID ocf:heartbeat:SAPDatabase \
 params	SID="$SAPSID" \
 DBTYPE="$DBTYPE" \
 op monitor interval=120s timeout=60s start_delay=180s \
-op start timeout=120s \
-op stop timeout=180s
+op start timeout=1800s \
+op stop timeout=1800s

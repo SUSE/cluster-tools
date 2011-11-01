@@ -3,5 +3,5 @@ params	InstanceName="$SAP_INSTANCE" \
 AUTOMATIC_RECOVER="true" \
 START_PROFILE="$SAP_START_PROFILE" \
 op monitor interval=120s timeout=60s start_delay=120s \
-op start timeout=120s \
-op stop timeout=180s on_fail="block"
+op start timeout=180s \
+op stop timeout=240s on_fail="block"

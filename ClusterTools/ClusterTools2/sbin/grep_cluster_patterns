@@ -213,7 +213,7 @@ case $1 in
 		awk_migration
 		exit
 	;;
-	-s|show)
+	-s|--show)
 		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
 		run_grep_show
 		exit		

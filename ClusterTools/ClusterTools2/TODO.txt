@@ -51,5 +51,6 @@ TODO grep_error_patterns synchronized.to.LOCAL finds 0 , plugin-grep_error_patte
 
 TODO precheck_for_sap: grep 127.0 etc/hosts nur 127.0.0.1, nicht 127.0.0.2
 TODO precheck_for_sap: remove "des" 
-TODO precheck_for_sap: /etc/pam.d/sapstartsrv 
+TODO precheck_for_sap: /etc/pam.d/sapstartsrv
+TODO post-processing SAP installation script 
  

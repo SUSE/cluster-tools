@@ -1,0 +1,32 @@
+#
+# sapall-sbd - start all wow agents to configure sbd stonith fencing
+#
+SBD_ALL_WOW_AGENTS=02-create_sbd
+WOW_AGENTS_DIR=/usr/lib/ClusterTools2/agents
+export PATH="$PATH:/usr/lib/ClusterTools2"
+#
+# simple param check
+#
+if [ $# -ne 1 ]; then
+   echo "usage: $0 wow-config-file"
+   exit 2
+else 
+   config=$1
+fi
+#
+#
+#
+cli_batch=${config%.wow}.sbd.cli
+echo "creating crm batch file $cli_batch"
+#
+# create the resulting cli file
+#
+> $cli_batch
+echo "cib new wow" >> $cli_batch
+echo "cib use wow" >> $cli_batch
+for agent in $SBD_ALL_WOW_AGENTS
+do 
+	echo "calling agent $agent" >&2; 
+	bash $WOW_AGENTS_DIR/$agent --config $config >> $cli_batch
+done 
+

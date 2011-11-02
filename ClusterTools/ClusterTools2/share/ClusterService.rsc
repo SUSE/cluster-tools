@@ -68,7 +68,7 @@ RMI:MAIN:migrate resource:crm resource migrate %{r}
 RIMN:MAIN:migrate resource to specific node:crm resource migrate %{r} %{n}
 #
 # unmigrate resource
-RUM:MAIN:unmigrate resource:crm unmigrate %{r}
+RUM:MAIN:unmigrate resource:crm resource unmigrate %{r}
 #
 # cleanup resource
 RCL:MAIN:cleanup resource:crm resource cleanup %{r}

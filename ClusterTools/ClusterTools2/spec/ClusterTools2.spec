@@ -15,7 +15,7 @@ License:      GPL
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.2.10
+Version:      2.2.11
 Release:      1.0.0 
 #Release:      16
 Source:       %{name}-%{version}.tgz
@@ -133,15 +133,19 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 #/usr/sbin/test_udpmcast
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
-/usr/lib/supportconfig/plugins
+/usr/lib/supportconfig/plugins/*
 %doc /usr/share/man/man5/*.gz
 %doc /usr/share/man/man7/*.gz
 %doc /usr/share/man/man8/*.gz
 %config(noreplace) /etc/ClusterTools2
-%config(noreplace) /etc/cron.d
-%config(noreplace) /etc/logrotate.d
+%config(noreplace) /etc/cron.d/*
+%config(noreplace) /etc/logrotate.d/*
 
 %changelog -n ClusterTools
+* Fri Nov 11 2011 - fabian.herschel@suse.com
+  2.2.11 st martin package version (11.11.2011)
+* Wed Nov 02 2011 - fabian.herschel@suse.com
+  2.2.10 package version
 * Fri Oct 21 2011 - lars.pinne@novell.com
   - added lsoflog, merged separate crontab and logrotate to one ClusterTools2, fixed grep_supportconfig
 * Thu Oct 05 2011 - lars.pinne@novell.com

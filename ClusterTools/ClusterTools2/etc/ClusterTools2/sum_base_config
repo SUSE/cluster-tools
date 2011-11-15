@@ -35,6 +35,7 @@ CONF_FILES="
 /clusterconf/mdadm.*.conf
 /etc/iscsi/iscsid.conf
 /etc/iscsi/initiatorname.iscsi
+/etc/sysstat/*
 /etc/sysconfig/kernel
 /etc/sysconfig/bootloader
 /etc/sysconfig/sbd
@@ -69,7 +70,8 @@ CONF_CALLS="
 '/usr/sbin/dmidecode -t system | /usr/bin/grep -v "UUID:" | /usr/bin/grep -v "Serial.Number:"'
 '/sbin/lspci'
 '/usr/bin/grep "model.name" /proc/cpuinfo'
-'/usr/bin/grep "MemTotal:" /proc/meminfo'
+'/usr/bin/grep -e "MemTotal:" -e "SwapTotal:" -e "VmallocTotal:" /proc/meminfo'
+'/usr/bin/grep -v "#" /etc/sysctl.conf'
 '/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
 '/bin/lsmod'
@@ -77,17 +79,19 @@ CONF_CALLS="
 'ls -l /boot/initrd | colrm 27 39'
 'ls -l /boot/vmlinuz-xen | colrm 27 39'
 'ls -l /boot/initrd-xen | colrm 27 39'
-'zcat /boot/initrd | cpio -itv 2>/dev/null | colrm 43 54'
-'fuser -u /dev/watchdog'
-'make_sbd_devices -d'
+'/usr/bin/zcat /boot/initrd | cpio -itv 2>/dev/null | colrm 43 54'
+'/bin/fuser -u /dev/watchdog'
+'/usr/sbin/make_sbd_devices -d'
 '/bin/rpm -qa'
 '/bin/rpm -Va'
 '/usr/bin/zypper lr'
 '/usr/bin/zypper -n lu'
+'/usr/bin/zypper -n se -t pattern | grep "^i"'
 '/bin/cat /proc/mounts'
-'grep -r deadline /sys/devices/*/*/block/*/queue/scheduler'
+'/usr/bin/grep -r deadline /sys/devices/*/*/block/*/queue/scheduler'
 '/sbin/multipath -ll'
 '/sbin/dmsetup table | sort'
+'/usr/bin/grep -v "#" /etc/lvm/lvm.conf'
 '/sbin/chkconfig -A'
 '/sbin/route -n'
 '/usr/sbin/iptables -L'

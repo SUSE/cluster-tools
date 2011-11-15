@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-09-29
+# Version: 0.1 2011-11-15
 #
 
 EXE="$0"
@@ -47,13 +47,14 @@ crm_mon -r1 | awk '$3=="Stopped"||$0~/FAILED/{print $0}' | wc -l
 echo -n "Started resources: "
 crm_mon -r1 | awk '$3=="Started"{print $0}' | wc -l
 
-PSAUX=$(ps aux | awk '{print $11}' )
+PSAUX=$(ps aux | awk '{print $11}')
 CLPROC="
 stonithd
 cib
 attrd
 pengine
 crmd
+lrmd
 mgmtd
 corosync
 ha_logd

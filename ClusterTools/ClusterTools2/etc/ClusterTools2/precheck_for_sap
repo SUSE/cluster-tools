@@ -36,7 +36,7 @@ SW_NOT="apparmor orarun ulimit oracleasmlib oracleasm-support"
 #
 RUNLVL=3
 # TODO mdadmd ?
-SRV_RUN="boot.multipath multipathd ntp boot.sapconf boot.sysstat boot.clock"
+SRV_RUN="boot.multipath multipathd ntp boot.sapconf boot.sysstat boot.clock logd"
 SRV_NOT="boot.md boot.apparmor boot.dmraid slpd alsasound openais SuSEfirewall2_init SuSEfirewall2_setup ocfs2 o2cb open-iscsi sapinit uuidd"
 #
 PWDENC="des"

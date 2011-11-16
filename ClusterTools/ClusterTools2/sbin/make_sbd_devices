@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: L.Pinne
 #
-# Version: 0.02 2011-07-20 17:20
+# Version: 0.02 2011-11-15 20:20
 #
 #set -x
 
@@ -83,7 +83,6 @@ function make_sbd_devices() {
 function dump_sbd_devices() {
 	CFI=${SBD_CONF}
 	
-	# TODO check for really used SBD devices in CIB
 	RC=0
 	awk -F"=" '$1=="SBD_DEVICE" {print $2}' $CFI |tr -d "\""|tr ";" "\n"|\
 	while read; do
@@ -111,6 +110,12 @@ case $1 in
 	;;
 	-i|--init)
 		echo "INFO: start $EXE"
+		# TODO: more checks
+		RC=$(rcopenais status >/dev/null; echo $?) 
+		if [ $RC -eq 0 ]; then
+			echo "ERR: openais already running."
+			exit 7 
+		fi
 		test -z "${2}" || SBD_INIT_OPTS="${2}"
 		test -z "${3}" || SBD_CONF="${3}"
 		test -z "${SBD_INIT_OPTS}" &&\

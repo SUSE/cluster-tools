@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-10-05
+# Version: 0.1 2011-11-15
 #
 
 EXE="$0"
@@ -34,6 +34,7 @@ test -z "${OSERR_PATTERN}" &&\
 "shutdown.*shutting.down"
 "syslog-ng.shutting.down"
 "syslog-ng.starting.up"
+"SoftDog.*not"
 "
 
 # TODO: verify cluster log msgs. maybe more generic possible ?

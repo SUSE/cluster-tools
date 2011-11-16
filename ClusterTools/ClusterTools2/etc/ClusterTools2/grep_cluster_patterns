@@ -11,6 +11,7 @@ OSERR_PATTERN="
 "shutdown.*shutting.down"
 "syslog-ng.shutting.down"
 "syslog-ng.starting.up"
+"SoftDog.*not"
 "
 #
 CLUSTR_PATTERN="

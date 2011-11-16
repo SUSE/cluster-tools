@@ -173,7 +173,7 @@ SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
 # Watchdog support:
 .br
-SBD_OPTS="-W"
+SBD_OPTS="-W -t300"
 .br
 === 
 
@@ -275,6 +275,9 @@ Putting it all together:
 .TP
 /etc/sysconfig/kernel
 	the kernel and initrd configuration file.
+.TP
+/etc/rc.d/rc3.d/K01openais
+	stop script to prevent stonith during system shutdown.
 .TP
 /dev/<SBD>
 	the SBD block device(s).

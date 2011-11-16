@@ -141,6 +141,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config(noreplace) /etc/logrotate.d
 
 %changelog -n ClusterTools
+* Tue Nov 15 2011 - lars.pinne@novell.com
+  - more grep patterns, minor fixes
 * Fri Oct 21 2011 - lars.pinne@novell.com
   - added lsoflog, merged separate crontab and logrotate to one ClusterTools2, fixed grep_supportconfig
 * Thu Oct 05 2011 - lars.pinne@novell.com

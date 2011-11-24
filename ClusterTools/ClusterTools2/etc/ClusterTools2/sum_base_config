@@ -13,10 +13,12 @@ CONF_FILES="
 /boot/initrd-2.6*xen
 /proc/cmdline
 /proc/sys/kernel/tainted
+/etc/auto.*
 /etc/ld.so.conf
 /etc/ld.so.conf.d/*
 /etc/inittab
 /etc/hosts
+/etc/host.conf
 /etc/resolv.conf
 /etc/ntp.conf
 /etc/adjtime
@@ -72,6 +74,7 @@ CONF_FILES="
 /etc/xen/vm/*.xml
 /etc/hp/*
 /etc/hp*.conf
+/etc/patrol.d/*
 "
 #
 CONF_CALLS="

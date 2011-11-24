@@ -37,6 +37,7 @@ test -z "${CONF_FILES}" &&\
 /etc/adjtime
 /etc/passwd
 /etc/group
+/etc/sudoers
 /etc/ldap.conf
 /etc/openldap/ldap.conf
 /etc/krb5.conf
@@ -73,10 +74,8 @@ test -z "${CONF_FILES}" &&\
 /etc/pam.d/login
 /etc/pam.d/sapstartsrv
 /etc/opt/six/maranello/*stress
-/etc/opt/six/maranello/profiles/two-sets/csets/*
-/etc/opt/six/maranello/profiles/two-sets/services/*
-/etc/opt/six/maranello/profiles/three-sets/csets/*
-/etc/opt/six/maranello/profiles/three-sets/services/*
+/etc/opt/six/maranello/profiles/two-sets/*/*
+/etc/opt/six/maranello/profiles/three-sets/*/*
 /etc/sysctl.conf
 /etc/modprobe.conf.local
 /etc/modprobe.d/*
@@ -86,6 +85,8 @@ test -z "${CONF_FILES}" &&\
 /etc/corosync/authkey
 /etc/xen/xend-config.sxp
 /etc/xen/vm/*.xml
+/etc/hp/*
+/etc/hp*.conf
 "
 # TODO: exact grep patterns
 test -z "${CONF_CALLS}" &&\

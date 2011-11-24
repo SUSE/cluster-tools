@@ -46,6 +46,7 @@ test -z "${CONF_FILES}" &&\
 /etc/multipath.conf
 /etc/multipath.bind*
 /etc/mdadm.conf*
+/etc/mdadm.*.conf
 /clusterconf/*/mdadm.conf
 /clusterconf/mdadm.*.conf
 /etc/iscsi/iscsid.conf
@@ -64,12 +65,16 @@ test -z "${CONF_FILES}" &&\
 /etc/sysconfig/ntp
 /etc/sysconfig/lvm
 /etc/sysconfig/o2cb
+/etc/sysconfig/maranello
 /etc/ocfs2/cluster.conf
 /etc/oratab
 /etc/oraInst.loc
 /etc/security/limits.conf
 /etc/pam.d/login
 /etc/pam.d/sapstartsrv
+/etc/opt/six/maranello/*
+/etc/opt/six/maranello/profiles/two-sets/*
+/etc/opt/six/maranello/profiles/three-sets/*
 /etc/sysctl.conf
 /etc/modprobe.conf.local
 /etc/modprobe.d/*
@@ -113,6 +118,8 @@ test -z "${CONF_CALLS}" &&\
 '/usr/sbin/iptables -L'
 '/bin/ip a s | /usr/bin/grep "^[123456789]\:"'
 '/usr/bin/grep -v "IPADDR=" /etc/sysconfig/network/ifcfg-* | /usr/bin/grep -v "UNIQUE="'
+'/usr/bin/cset set -l -r'
+'/usr/bin/numactl -H; /usr/bin/numactl -s'
 "
 # TODO: better network listing 
 # TODO: calc diff between hwclock and Linux time, fe. based on hwclock --debug --test

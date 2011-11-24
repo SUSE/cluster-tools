@@ -57,7 +57,7 @@ CONF_FILES="
 /etc/security/limits.conf
 /etc/pam.d/login
 /etc/pam.d/sapstartsrv
-/etc/opt/six/maranello/*
+/etc/opt/six/maranello/*stress
 /etc/opt/six/maranello/profiles/two-sets/csets/*
 /etc/opt/six/maranello/profiles/two-sets/services/*
 /etc/opt/six/maranello/profiles/three-sets/csets/*

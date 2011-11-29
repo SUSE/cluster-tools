@@ -47,6 +47,7 @@ test -z "${ERROR_PATTERN}" &&\
 "duplicate.VG"
 "duplicate.PV"
 "not.found"
+"ocfs2.*has.evicted"
 "ocfs2.*ERR"
 "ocfs2.*not.unmounted.cleanly"
 "fsck.*recommended"

@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version 0.01-sle10 2011-07-06
+# Version 0.01-sle10 2011-11-29
 #
 # For SLES10.
 # For Supportconfig Script Version: 2.25-136
@@ -109,12 +109,17 @@ mptbase.ko
 dm_multipath.ko
 dm_mirror.ko
 bonding.ko
+hangcheck-timer.ko
 hpwdt.ko
+iTCO.ko
+ibmasr.ko
 softdog.ko
 "
 	FIL="boot.txt"
 	for m in $MODLS; do
 		grep ${m} $FIL | sort -u
+                n=$(basename ${m} .ko)
+                grep "modprobe ${n}" $FIL
 	done
 
 # TODO: split file to records instead of -A9, to find "supported:"

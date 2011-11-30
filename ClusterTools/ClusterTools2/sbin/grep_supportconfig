@@ -156,6 +156,7 @@ dm_multipath.ko
 dm_mirror.ko
 bonding.ko
 hpwdt.ko
+hangcheck-timer.ko
 ibmasr.ko
 iTCO_wdt.ko
 softdog.ko
@@ -494,6 +495,13 @@ function chk_cluster() {
 
 	# TODO: check /etc/corosync/
 	# TODO: check ???, see sum_base_config, whbsaprecheck
+	# TODO: check watchdogs, define $WATCHMOD, see disbale_other_watchdog
+	# hangcheck_timer here, not "-" as in hangcheck-timer.ko
+	WATCHMOD="hpwdt hangcheck_timer iTCO ibmasr softdog"
+	echo -n "loaded watchdog:"
+	for m in $WATCHMOD; do
+		awk '$1=="'${m}'" {print $1}' modules.txt | sort -u
+	done
 	echo
         echo -n "process on watchdog : "
         awk '$9=="/dev/watchdog" {print $1,$9}' open-files.txt

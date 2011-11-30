@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: L.Pinne
 #
-# Version: 0.01 2011-09-26 19:45
+# Version: 0.01 2011-11-30 12:45
 #
 
 EXE="$0"
@@ -17,7 +17,7 @@ test -s $CFG && source $CFG
 
 test -z "$MODCFG" && MODCFG="/etc/modprobe.d/ClusterTools2"
 test -z "$METHOD" && METHOD="hp-asrd"
-test -z "$MODULES" && MODULES="hpwdt iTCO_wdt ibmasr"
+test -z "$MODULES" && MODULES="hpwdt hangcheck-timer iTCO_wdt ibmasr"
 
 
 function help(){
@@ -70,6 +70,9 @@ function list_other_restart() {
 	echo "configured watchdog module:"
 	grep -v "#.*INITRD_MODULES" $FIL | grep "^INITRD_MODULES="
 	grep -v "#.*MODULES_LOADED_ON_BOOT" $FIL | grep "^MODULES_LOADED_ON_BOOT="
+	for m in $MODULES; do
+		( grep -v "#" /etc/modprobe.d/* /etc/modprobe.conf /etc/modprobe.conf.local ) | grep -v "blacklist" | grep $m
+	done
 
 	echo "loaded watchdog modules:"
 	for m in $OTHMOD; do
@@ -99,22 +102,23 @@ function guess_other_restart() {
 	echo "INFO: start $EXE $FUNCNAME"
 	# TODO: look into initrd, see above
 	# TODO: search loaded modules for files from /lib/modules/.../watchdog/
-	# TODO: search process list for process that has /dev/watchdog
 
 	fuser -f /dev/watchdog
 	lsof | grep "/dev/watchdog"
 	# TODO: define METHOD_LISTONLY
+	# TODO: Veritas?
 	for f in hp-asrd oprocd; do
 		ps aux | grep $f
 	done
-	# TODO
+	# TODO Veritas
 	for f in VRTS ; do
 		find /var -name "*${f}*"
 	done
 	for f in vxfen ; do
 		find /etc -name "*${f}*"
 	done
-
+	# TODO Oracle cluster config
+	mount | grep clusterware
 
 	echo "INFO: end $EXE $FUNCNAME"
 }

@@ -4,6 +4,7 @@
 OSERR_PATTERN="
 "NMI.received"
 "NMI.*error"
+"dlm.*link.*down"
 "ocfs2.*ERR"
 "ocfs2.*not.unmounted.cleanly"
 "fsck.*recommended"

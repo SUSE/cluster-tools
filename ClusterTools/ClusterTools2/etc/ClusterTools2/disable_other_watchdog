@@ -2,7 +2,7 @@
 # For SLES11.
 #
 MODCFG="/etc/modprobe.d/ClusterTools2"
-MODULES="hpwdt iTCO_wdt ibmasr"
+MODULES="hpwdt hangcheck-timer iTCO_wdt ibmasr"
 METHOD="hp-asrd"
 # Oracle Clusterware. Only for curiosity. We do not want to stop it. 
 #METHOD="oprocd"

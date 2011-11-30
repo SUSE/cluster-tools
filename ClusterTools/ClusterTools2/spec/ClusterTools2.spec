@@ -17,7 +17,7 @@ Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.2.11
 Release:      1.0.0 
-#Release:      1
+#Release:      3 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
@@ -142,6 +142,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config(noreplace) /etc/logrotate.d/*
 
 %changelog -n ClusterTools
+* Tue Nov 15 2011 - lars.pinne@novell.com
+  - more grep patterns, minor fixes
 * Fri Nov 11 2011 - fabian.herschel@suse.com
   2.2.11 st martin package version (11.11.2011)
 * Wed Nov 02 2011 - fabian.herschel@suse.com

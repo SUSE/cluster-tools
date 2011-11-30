@@ -23,6 +23,7 @@ dm_multipath.ko
 dm_mirror.ko
 bonding.ko
 hpwdt.ko
+hangcheck-timer.ko
 ibmasr.ko
 iTCO_wdt.ko
 softdog.ko

@@ -65,6 +65,7 @@ test -z "${ERROR_PATTERN}" &&\
 "ocfs2.*not.unmounted.cleanly"
 "fsck.*recommended"
 "EXT.-fs.error"
+"Starting.XFS.recovery"
 "iSCSI.connection.*error"
 "bond.*link.*down"
 "bond.*duplicate.address"

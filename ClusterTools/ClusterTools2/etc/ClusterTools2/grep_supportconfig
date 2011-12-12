@@ -26,6 +26,9 @@ hpwdt.ko
 hangcheck-timer.ko
 ibmasr.ko
 iTCO_wdt.ko
+cpu5wdt.ko
+advantechwdt.ko
+acquirewdt.ko
 softdog.ko
 "
 #

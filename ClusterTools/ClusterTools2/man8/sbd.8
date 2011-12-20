@@ -1,4 +1,4 @@
-.TH sbd 8 "26 Sep 2011" "" "cluster-glue"
+.TH sbd 8 "20 Dec 2011" "" "cluster-glue"
 .\"
 .SH NAME
 sbd \- Stonith Block Device daemon
@@ -82,8 +82,7 @@ option multiple times
 
 The \fBsbd\fR daemon automatically allocates one of the message slots on the
 assigned disk partition to itself, and constantly monitors it for messages to
-itself.
-Upon receipt of a message, the daemon immediately complies with the
+itself. Upon receipt of a message, the daemon immediately complies with the
 request, such as initiating a power-off or reboot cycle for fencing.
 
 The daemon also constantly monitors connectivity to the storage device,
@@ -103,9 +102,13 @@ The \fBsbd\fR can also be called manually to perform actions described in the
 commands section of this manual page.
 
 In the rest of this text, this is referred to as "/dev/<SBD>" or "/dev/<SBD_n>",
-please substitute your actual pathname (ie, "/dev/sdc1") for this below.
+please substitute your actual pathname
+(f.e. "/dev/disk/by-id/scsi-1494554000000000036363600000000000000000000000000")
+for this below.
 
-If a watchdog is used together with the sbd, the watchdog is activated at initial start of the sbd daemon. Afterwards the watchdog timer is reset by the inquisitor process after each successful read loop of each watcher process.
+If a watchdog is used together with the sbd, the watchdog is activated at initial
+start of the sbd daemon. Afterwards the watchdog timer is reset by the inquisitor
+process after each successful read loop of each watcher process.
 
 STONITH is an acronym for Shoot The Other Node in The Head. 
 .\"
@@ -177,7 +180,10 @@ Timeout (loop)     : 1
 Timeout (msgwait)  : 10
 
 As you can see, the timeouts are also stored in the header, to ensure
-that all participating nodes agree on them.
+that all participating nodes agree on them. The example output above
+shows built-in defaults. Usually the timeouts for watchdog and msgwait
+are adjusted to specific needs, see sbd(7). The timeouts for allocate
+and loop normally should not be changed. 
 
 Additionally, it is highly recommended that you set up your Linux system
 to use a watchdog.
@@ -245,6 +251,25 @@ configured. Thus, SBD should automatically recover from temporary outages.
 Should you wish to try reattach to the device right now, you can send a SIGUSR1 to
 the SBD parent daemon.
 
+# \fBps aux | grep sbd\fR
+.br
+root 3363 0.0 1.0 44552 5764 ? SL Dec16 0:13 sbd: inquisitor
+.br
+root 3364 0.0 1.0 44568 5712 ? SL Dec16 0:32 sbd: watcher: /dev/disk/by-id/scsi-1494554000000000036363600000000000000000000000000-part1 - slot: 0
+.br
+# \fBkill -SIGUSR1 3363\fR
+.br
+# \fBps aux | grep sbd\fR
+.br
+root 3363 0.0 1.0 44552 5764 ? SL Dec16 0:13 sbd: inquisitor
+.br
+root 3364 0.0 1.0 44568 5712 ? SL Dec16 0:32 sbd: watcher: /dev/disk/by-id/scsi-1494554000000000036363600000000000000000000000000-part1 - slot: 0
+.br
+root 3380 0.0 1.0 44568 5712 ? SL Dec16 0:00 sbd: watcher: /dev/disk/by-id/scsi-1494554000000000038383800000000000000000000000000-part1 - slot: 0
+.\" check the fake
+
+There are two to four sbd processes, depending on the number of sbd devices:
+One master process (inquisitor), and per device one watcher.
 
 \fB* Configuring the Fencing Resource in the Cluster Information Base\fR
 

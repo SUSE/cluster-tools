@@ -1,4 +1,4 @@
-.TH sbd 7 "26 Sep 2011" "" "cluster-glue"
+.TH sbd 7 "20 Dec 2011" "" "cluster-glue"
 .\"
 .SH NAME
 sbd \- Stonith Block Device
@@ -136,7 +136,9 @@ increased reliability.
 
 It is recommended to create a 1MB partition at the start of the device;
 in the rest of this text, this is referred to as "/dev/<SBD>" or "/dev/<SBD_n>",
-please substitute your actual pathnames (ie, "/dev/sdc1") for this below.
+please substitute your actual pathnames
+(f.e. "/dev/disk/by-id/scsi-1494554000000000036363600000000000000000000000000-part1")
+for this below.
 
 After having made very sure that this is indeed the device you want to
 use, and does not hold any data you need - as the sbd command will
@@ -221,7 +223,7 @@ ship systems management software that use the watchdog for system resets
 (f.e. HP ASR daemon). Such software has to be disabled if the watchdog is
 used by SBD.
 
-SBD can be configured in /etc/sysconfig/sbd to use the systems's watchdog.
+SBD can be configured in /etc/sysconfig/sbd to use the systems' watchdog.
 .\"
 .P
 \fB* Timeout Settings\fR

@@ -45,6 +45,7 @@ test -z "${ERROR_PATTERN}" &&\
 "SCSI.*reset"
 "LUN.larger"
 "I/O.error"
+"Dropped.frame"
 "disabling.*barrier"
 "doesn.*support.*DPO.*FUA"
 "Unable.*SMART.enabled"

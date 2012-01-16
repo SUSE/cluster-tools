@@ -51,7 +51,7 @@ function guess_sysconfig_sbd() {
 		head -3 | sort | tr -d "\n" | sed s/\;$// )
 	}
 	test -z "${SBD_OPTS}" || SBDOPT=${SBD_OPTS}
-	test -z "${SBDOPT}" || SBDOPT="-W"
+	test -z "${SBDOPT}" || SBDOPT="-W -t 20"
 	{ 
 	echo "# $CFI"
 	echo "# please check SBD_DEVICE for correct pathes and order"
@@ -119,7 +119,7 @@ case $1 in
 		test -z "${2}" || SBD_INIT_OPTS="${2}"
 		test -z "${3}" || SBD_CONF="${3}"
 		test -z "${SBD_INIT_OPTS}" &&\
-			SBD_INIT_OPTS="-4 130 -1 30"
+			SBD_INIT_OPTS="-4 130 -3 2 -1 30"
 		test -z "${SBD_CONF}" &&\
 			 SBD_CONF="/etc/sysconfig/sbd"
 		make_sbd_devices

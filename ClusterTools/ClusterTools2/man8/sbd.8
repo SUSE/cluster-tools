@@ -1,4 +1,4 @@
-.TH sbd 8 "20 Dec 2011" "" "cluster-glue"
+.TH sbd 8 "16 Jan 2012" "" "cluster-glue"
 .\"
 .SH NAME
 sbd \- Stonith Block Device daemon
@@ -204,9 +204,9 @@ following to /etc/sysconfig/sbd:
 .br
 SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
-# The next line enables watchdog support, re-discover time 300 seconds:
+# The next line enables watchdog support, re-discover time 90 seconds:
 .br
-SBD_OPTS="-W -t 300"
+SBD_OPTS="-W -t 90"
 .br
 === 
 
@@ -243,13 +243,14 @@ is ready to receive messages.
 
 \fB* Recovering from temporary SBD device outage\fR 
 
-If you have multiple devices, failure of a single device is not immediately fatal.
+If you have multiple devices, failure of a single device is not immediately
+fatal.
 SBD will retry ten times in succession to reattach to the device, and then pause
-(as to not flood the system) before retrying. The pause intervall timeout could be
-configured. Thus, SBD should automatically recover from temporary outages.
+(as to not flood the system) before retrying. The pause intervall timeout could
+ be configured. Thus, SBD should automatically recover from temporary outages.
 
-Should you wish to try reattach to the device right now, you can send a SIGUSR1 to
-the SBD parent daemon.
+Should you wish to try reattach to the device right now, you can send a SIGUSR1
+to the SBD parent daemon.
 
 # \fBps aux | grep sbd\fR
 .br
@@ -282,7 +283,7 @@ configure
 .br
 property stonith-enabled="true"
 .br
-property stonith-timeout="90s"
+property stonith-timeout="120s"
 .br
 primitive stonith_sbd stonith:external/sbd \
 br.

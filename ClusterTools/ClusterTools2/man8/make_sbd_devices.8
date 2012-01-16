@@ -1,4 +1,4 @@
-.TH make_sbd_devices 8 "09 June 2011" "" "ClusterTools2"
+.TH make_sbd_devices 8 "16 Jan 2012" "" "ClusterTools2"
 .\"
 .SH NAME
 make_sbd_devices \- initialise SBD devices 
@@ -14,6 +14,7 @@ make_sbd_devices \- initialise SBD devices
 The first sectors of the devices will be overwritten. This script is simply a
 wrapper for the sbd command.
 .br
+For information on timings please see sbd(7), sbd(8), and multipath.conf(5).
 .\"
 .SH OPTIONS
 .HP
@@ -38,7 +39,7 @@ wrapper for the sbd command.
 .TP
 * Initialise devices with specific options, take other settings from SBD config file. 
 .br
-# make_sbd_devices --init "-1 30 -4 130" /etc/sysconfig/sbd
+# make_sbd_devices --init "-1 30 -3 2 -4 130" /etc/sysconfig/sbd
 .TP
 * Show content of SBD devices.
 .br
@@ -68,7 +69,8 @@ Feedback is welcome, please use the project page at
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
 .\"
 .SH SEE ALSO
-\fBsbd\fP(7), \fBsbd\fP(8), \fBstonith\fP(8), \fBClusterTools2\fP(7)
+\fBsbd\fP(7), \fBsbd\fP(8), \fBstonith\fP(8), \fBClusterTools2\fP(7),
+ \fBmultipath.conf\fP(5)
 .\"
 .\"
 .SH COPYRIGHT

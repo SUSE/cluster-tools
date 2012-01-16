@@ -183,7 +183,7 @@ As you can see, the timeouts are also stored in the header, to ensure
 that all participating nodes agree on them. The example output above
 shows built-in defaults. Usually the timeouts for watchdog and msgwait
 are adjusted to specific needs, see sbd(7). The timeouts for allocate
-and loop normally should not be changed. 
+and loop normally should not be changed.
 
 Additionally, it is highly recommended that you set up your Linux system
 to use a watchdog.
@@ -284,7 +284,9 @@ property stonith-enabled="true"
 .br
 property stonith-timeout="90s"
 .br
-primitive stonith_sbd stonith:external/sbd
+primitive stonith_sbd stonith:external/sbd \
+br.
+op start interval="0" timeout="15" start-delay="5"
 .br
 commit
 .br
@@ -292,7 +294,9 @@ quit
 \fR
 
 Note that since node slots are allocated automatically, no manual hostlist needs
-to be defined. Also, there is no need to define the SBD devices.
+to be defined. Also, there is no need to define the SBD devices. On the other hand,
+ a start delay is set. This is done to overcome situations where both nodes fence
+each other within the sbd loop timeout.
 
 Once the resource has started, your cluster is now successfully
 configured for shared-storage fencing, and will utilize this method in

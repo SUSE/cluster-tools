@@ -253,6 +253,10 @@ cycle should be shorter than the watchdog timeout. Since this cycle is currently
 hardcoded as ten time the loop timeout, it has to be set by choosing an
 apropriate loop timeout.
 
+It might be also wise to set a start delay for the cluster resource agent in the
+CIB. This is done to overcome situations where both nodes fence each other within
+the sbd loop timeout, see sbd(8).
+
 Putting it all together:
 .br
 - How long a cluster survives a storage outage depends on the watchdog

@@ -204,9 +204,9 @@ following to /etc/sysconfig/sbd:
 .br
 SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
-# The next line enables watchdog support, re-discover time 90 seconds:
+# The next line enables watchdog support, re-discover time 210 seconds:
 .br
-SBD_OPTS="-W -t 90"
+SBD_OPTS="-W -t 210"
 .br
 === 
 
@@ -283,7 +283,7 @@ configure
 .br
 property stonith-enabled="true"
 .br
-property stonith-timeout="120s"
+property stonith-timeout="150s"
 .br
 primitive stonith_sbd stonith:external/sbd \
 br.

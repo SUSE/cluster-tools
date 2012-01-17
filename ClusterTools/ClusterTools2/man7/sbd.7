@@ -253,15 +253,15 @@ cycle should be shorter than the watchdog timeout. Since this cycle is currently
 hardcoded as ten time the loop timeout, it has to be set by choosing an
 apropriate loop timeout.
 
-It might be also wise to set a start delay for the cluster resource agent in the
-CIB. This is done to overcome situations where both nodes fence each other within
-the sbd loop timeout, see sbd(8).
+It might be also wise to set a start delay for the cluster resource agent in
+the CIB. This is done to overcome situations where both nodes fence each other
+within the sbd loop timeout, see sbd(8).
 
 Putting it all together:
 .br
 - How long a cluster survives a storage outage depends on the watchdog
   timeout and the sbd retry cycle. All other timeouts should be aligned with
-  that settings. That means they have to be longer.
+  this settings. That means they have to be longer.
 .br
 - Storage resources - as Raid1, LVM, Filesystem - have operation timeouts.
   Those should be aligned with the MPIO settings. This avoids non-needed failure

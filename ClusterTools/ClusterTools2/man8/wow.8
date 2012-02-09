@@ -1,4 +1,4 @@
-.TH wow 8 "20 Jul 2011" "" "ClusterTools2"
+.TH wow 8 "10 Jan 2012" "" "ClusterTools2"
 .\"
 .SH NAME
 wow \- configure pacemaker high-availability cluster
@@ -56,10 +56,10 @@ Global options are:
 	make backup of pacemaker cluster configuration.
 .HP
 \fB cc\fR
-	make cluster configuration change.
+	make cluster configuration change. Different general cluster behaviour could be choosen by setting a path to a certain wow agents directory.  
 .HP
 \fB sc\fR
-	cluster check for SAP pre-requisites, call whbsaprecheck. The check is done according to the concepts described in the technical guide \fIBest Practices for Running SAP NetWeaver on SUSE Linux Enterprise Server with High Availability (Simple Stack)\fR .
+	cluster check for SAP pre-requisites, call precheck_for_sap. The check is done according to the concepts described in the technical guide \fIBest Practices for Running SAP NetWeaver on SUSE Linux Enterprise Server with High Availability (Simple Stack)\fR .
 .\"
 .SH EXIT STATUS
 .B 0
@@ -86,6 +86,10 @@ Read information about the needed resources from file sap_C11.wow . Write output
 .TP
 # wow wcall sap-simplestack C11.wow
 read C11.wow and generate crm configuration for SAP system C11, including storage stack, database and SAP instances. Output is written to C11.wow.sap-simplestack.cli .
+.TP
+# export <TODO>=/usr/share/ClusterTools2/cli/on-fail-block
+# wow wcall sap-simplestack C11.wow
+read C11.wow and generate crm configuration for SAP system C11. Use configuration templates from directory on-fail-block . Output is written to C11.wow.sap-simplestack.cli .
 .TP
 # wow wburn C11.wow.sap-simplestack.cli
 read C11.wow.sap-simplestack.cli an generate shadow CIB called wow.

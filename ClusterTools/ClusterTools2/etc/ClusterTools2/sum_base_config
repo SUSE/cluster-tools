@@ -83,6 +83,7 @@ CONF_CALLS="
 '/usr/bin/grep "model.name" /proc/cpuinfo'
 '/usr/bin/grep -e "MemTotal:" -e "SwapTotal:" -e "VmallocTotal:" /proc/meminfo'
 '/usr/bin/grep -v "#" /etc/sysctl.conf'
+'/usr/bin/grep -v "#" /etc/security/limits.conf'
 '/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
 '/bin/lsmod'

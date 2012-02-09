@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.2 2011-11-15
+# Version: 0.2 2012-02-09
 #
 
 EXE="$0"
@@ -119,6 +119,7 @@ test -z "${CONF_CALLS}" &&\
 '/sbin/multipath -ll'
 '/sbin/dmsetup table | sort'
 '/usr/bin/grep -v "#" /etc/lvm/lvm.conf'
+'/usr/bin/grep -v "#" /etc/security/limits.conf'
 '/sbin/chkconfig -A'
 '/sbin/route -n'
 '/usr/sbin/iptables -L'
@@ -127,6 +128,7 @@ test -z "${CONF_CALLS}" &&\
 '/usr/bin/cset set -l'
 '/usr/bin/numactl -H | grep -v free; /usr/bin/numactl -s'
 "
+# TODO: generic script to strip "#" from conf files 
 # TODO: better network listing 
 # TODO: calc diff between hwclock and Linux time, fe. based on hwclock --debug --test
 

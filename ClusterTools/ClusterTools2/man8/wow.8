@@ -87,9 +87,11 @@ Read information about the needed resources from file sap_C11.wow . Write output
 # wow wcall sap-simplestack C11.wow
 read C11.wow and generate crm configuration for SAP system C11, including storage stack, database and SAP instances. Output is written to C11.wow.sap-simplestack.cli .
 .TP
-# export <TODO>=/usr/share/ClusterTools2/cli/on-fail-block
+# export wowcli=/usr/share/ClusterTools2/cli/on-fail-block
 # wow wcall sap-simplestack C11.wow
-read C11.wow and generate crm configuration for SAP system C11. Use configuration templates from directory on-fail-block . Output is written to C11.wow.sap-simplestack.cli .
+use configuration templates from directory on-fail-block .
+Read C11.wow and generate crm configuration for SAP system C11.
+Output is written to C11.wow.sap-simplestack.cli .
 .TP
 # wow wburn C11.wow.sap-simplestack.cli
 read C11.wow.sap-simplestack.cli an generate shadow CIB called wow.

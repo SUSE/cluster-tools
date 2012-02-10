@@ -1,0 +1,5 @@
+configure primitive $UUID ocf:heartbeat:eDir88 \
+params eDir_config_file="$EDIRCONF" \
+op monitor interval=120s timeout=150s start_delay=60s on_fail=restart \
+op start timeout=600s \
+op stop timeout=600s

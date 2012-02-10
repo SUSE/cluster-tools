@@ -16,7 +16,7 @@ Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.2.10
-Release:      3 
+Release:      4 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
@@ -140,6 +140,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config(noreplace) /etc/logrotate.d
 
 %changelog -n ClusterTools
+* Fri Feb 10 2012 - lars.pinne@novell.com
+  - eDir back again
 * Tue Nov 15 2011 - lars.pinne@novell.com
   - more grep patterns, minor fixes
 * Fri Oct 21 2011 - lars.pinne@novell.com

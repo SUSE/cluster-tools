@@ -5,17 +5,19 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2011-10-21
+# Version: 2012-02-12
 #
 # For SLES11.
 # For Supportconfig Script Version: 2.25-237
 
 EXE=$0
 ERR="/dev/null"
-TMP="/tmp/cltl.$RANDOM"
 
 CFG="/etc/ClusterTools2/grep_supportconfig"
 test -s $CFG && source $CFG
+
+test -z "${TEMP}" &&\
+        TEMP="/dev/shm/cltl.$RANDOM"
 
 # TODO: make DIR= work
 DIR=${2:-$PWD}
@@ -31,9 +33,9 @@ function echo_msgsep() {
 
 function split_file(){
 	F=$1
-	mkdir -p ${TMP}/$F
-	cp $F ${TMP}/${F}/
-	cd ${TMP}/$F
+	mkdir -p ${TEMP}/$F
+	cp $F ${TEMP}/${F}/
+	cd ${TEMP}/$F
 #	csplit $F /^#==\[ [a-zA-Z] ^C \]==*#$/ {*}
 	csplit $F /^#==..Co.*===========================#$/ {*} >>$ERR
 	cd $OLDPWD
@@ -190,10 +192,10 @@ softdog.ko
 	echo
 	FIL="modules.txt"
 	split_file $FIL
-	f=$(grep -l "^# /sbin/lsmod$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /sbin/lsmod$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -vh "^#==..Co.*==#" $f | sort -u | grep -v "#"
-	rm -rf ${TMP}/${FIL}
+	rm -rf ${TEMP}/${FIL}
 	echo	
 	echo -n "process on watchdog : "
         awk '$9=="/dev/watchdog" {print $1,$9}' open-files.txt
@@ -408,26 +410,26 @@ function chk_nameres() {
 	split_file $FIL 
 
 	echo "# /etc/hosts:"
-	f=$(grep -l "^# /etc/hosts$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /etc/hosts$" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
         	grep -v "^#" $f | tr -s "\n"
 	echo
 	echo "# /etc/resolv.conf:"
-	f=$(grep -l "^# /etc/resolv.conf$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /etc/resolv.conf$" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
         	grep -v "^#" $f | tr -s "\n"
 	echo
 #	echo "# /etc/nsswitch.conf:"
-#	f=$(grep -l "^# /etc/nsswitch.conf$" ${TMP}/${FIL}/xx*)
+#	f=$(grep -l "^# /etc/nsswitch.conf$" ${TEMP}/${FIL}/xx*)
 #	test -z "$f" ||\
 #       	grep -v "^#" $f | tr -s "\n"
 #	echo
 	echo "# /etc/host.conf:"
-	f=$(grep -l "^# /etc/host.conf$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /etc/host.conf$" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
         	grep -v "^#" $f | tr -s "\n"
 
-        rm -rf ${TMP}/${FIL}
+        rm -rf ${TEMP}/${FIL}
 	echo
 
 # TODO: DNS
@@ -451,14 +453,14 @@ function chk_timeres() {
 	echo "config:"
 	echo "# /etc/ntp.conf:"
 	split_file $FIL 
-	f=$(grep -l "^# /etc/ntp.conf$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /etc/ntp.conf$" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
 		grep -v "^#" $f | tr -s "\n"
-	f=$(grep -l "^NTPD_FORCE_SYNC_ON_STARTUP=" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^NTPD_FORCE_SYNC_ON_STARTUP=" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
 		grep -v "^#" $f | tr -s "\n"
 
-        rm -rf ${TMP}/${FIL}
+        rm -rf ${TEMP}/${FIL}
 	echo
 
 	test -z "${TIME_ERR}" &&\
@@ -1073,7 +1075,7 @@ case $1 in
 		chk_errors
 		chk_sysload
 
-		rm -rf $TMP
+		rm -rf $TEMP
 		exit
 	;;
 	--function|-f)
@@ -1088,7 +1090,7 @@ case $1 in
 		else $FUN
 		fi
 
-		rm -rf $TMP
+		rm -rf $TEMP
 		exit
 	;;
 	--test|-t)
@@ -1100,7 +1102,7 @@ case $1 in
 		# chk_filesys	
 		# chk_cluster	
 
-		rm -rf $TMP
+		rm -rf $TEMP
 		exit
 	;;
 esac

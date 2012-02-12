@@ -6,21 +6,24 @@
 # GNU Public License. No warranty.
 # Author: L.Pinne
 #
-# Version: 0.01 2011-11-30 12:45
+# Version: 2012-02-12 21:45
 #
 
 EXE="$0"
-TMP="/tmp/cltl.$RANDOM"
 FIL="/etc/sysconfig/kernel"
+
 CFG="/etc/ClusterTools2/disable_other_watchdog"
 test -s $CFG && source $CFG
+
+test -z "${TEMP}" &&\
+	TEMP="/dev/shm/cltl.$RANDOM"
 
 test -z "$MODCFG" && MODCFG="/etc/modprobe.d/ClusterTools2"
 test -z "$METHOD" && METHOD="hp-asrd"
 test -z "$MODULES" && MODULES="hpwdt hangcheck-timer iTCO_wdt ibmasr"
 
 
-function help(){
+function help() {
         echo "usage: $(basename $0) OPTION"
         echo "usage: $(basename $0) --stop <METHOD>"
         echo

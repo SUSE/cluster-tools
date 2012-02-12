@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2011-04-14
+# Version: 2012-02-12
 #
 
 EXE="$0"
@@ -13,7 +13,9 @@ EXE="$0"
 CFG="/etc/ClusterTools2/show_scores"
 test -s $CFG && source $CFG
 
-TMP="/tmp/cltl.$RANDOM"
+test -z "${TEMP}" &&\
+	TEMP="/dev/shm/cltl.$RANDOM"
+
 
 function help() {
 	echo "usage:	$(basename $0)"

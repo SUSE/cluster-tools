@@ -2,11 +2,11 @@
 # spec file for package ClusterTools2
 #
 # Copyright (c) 2008-2010 SUSE LINUX GmbH, Germany.
-# Copyright (c) 2011      SUSE LINUX Products GmbH, Germany.
+# Copyright (c) 2011-2012 SUSE LINUX Products GmbH, Germany.
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
-# GPL
+# GNU Public License
 #
 # please send bugfixes or comments to feedback@suse.de.
 #
@@ -16,8 +16,8 @@ Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.2.11
-#Release:      1.0.0 
-Release:      4 
+Release:      1.0.0 
+#Release:      6  
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
@@ -26,15 +26,15 @@ Requires:     pacemaker > 1.1.1
 Requires:     perl-TermReadLine-Gnu >= 1.16
 	
 %description
-ClusterTools2 provides tools for setting up and managing an openais/
+ClusterTools2 provides tools for setting up and managing a corosync/
 pacemaker cluster.
 
-- wow helps you to create linux-ha system resources.
+- wow helps you to create Linux-ha system resources.
 The wow package countains some agents (which are used to figure out
 config values) and templates (which are used to create the crm-
 snipsets to be inserted into the cluster).
 
-- ClusterService is the main tool for managing a linux-ha cluster.
+- ClusterService is the main tool for managing a Linux-ha cluster.
 There are some other commandline tools to make life easier.
 
 %prep
@@ -73,9 +73,9 @@ cp -va plugins/* %{buildroot}/usr/lib/supportconfig/plugins
 #
 # etc
 #
-cp -va etc/ClusterTools2/*  %{buildroot}/etc/ClusterTools2/
-cp -va etc/cron.d/*  %{buildroot}/etc/cron.d/
-cp -va etc/logrotate.d/*  %{buildroot}/etc/logrotate.d/
+cp -va etc/ClusterTools2/* %{buildroot}/etc/ClusterTools2/
+cp -va etc/cron.d/* %{buildroot}/etc/cron.d/
+cp -va etc/logrotate.d/* %{buildroot}/etc/logrotate.d/
 #
 # share 
 #
@@ -141,7 +141,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config(noreplace) /etc/cron.d/*
 %config(noreplace) /etc/logrotate.d/*
 
-%changelog -n ClusterTools
+%changelog -n ClusterTools2
 * Fri Feb 10 2012 - lars.pinne@suse.com
   - eDir back again
 * Tue Nov 15 2011 - lars.pinne@suse.com
@@ -210,9 +210,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 * Mon Oct 25 2010 - fabian.herschel@novell.com
   2.1.4-1 added new use case for fs only stack
 * Thu Oct 14 2010 - fabian.herschel@novell.com
-  2.1.3-1 menueng2 now supports multiple menues
-          and additional control commands
-	- use case specific sample CS_SAPNA0
+  2.1.3-1 menueng2 now supports multiple menues and additional control commands
+  - use case specific sample CS_SAPNA0
 * Tue Oct 12 2010 - fabian.herschel@novell.com
   2.1.2-1 name scheme for wow and submenus
 * Thu Oct 07 2010 - fabian.herschel@novell.com

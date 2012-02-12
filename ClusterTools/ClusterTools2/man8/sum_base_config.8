@@ -1,15 +1,20 @@
-.TH sum_base_config 8 "12 Apr 2011" "" "ClusterTools2"
+.TH sum_base_config 8 "12 Feb 2012" "" "ClusterTools2"
 .\"
 .SH NAME
-sum_base_config \- calculate checksums for common configuration and system parameters 
+sum_base_config \- calculate checksums for common configuration and system
+parameters 
 .\"
 .SH SYNOPSIS
 .B sum_base_config \fI[OPTION]\fR
 .\"
 .SH DESCRIPTION
-\fBsum_base_config\fP calculates MD5 checksums for common configuration and system parameters.
-By default only files and parameters are checked, that are expected to be identical on all nodes of one cluster. The output can be used to find differences between two or more cluster nodes.
-Or it can be stored and re-used later to check for changes. Please call this script as root.
+\fBsum_base_config\fP calculates MD5 checksums for common configuration and
+system parameters.
+By default only files and parameters are checked, that are expected to be 
+identical on all nodes of one cluster. The output can be used to find
+differences between two or more cluster nodes.
+Or it can be stored and re-used later to check for changes.
+Please call this script as root.
 .br
 .\"
 .SH OPTIONS
@@ -21,22 +26,29 @@ Or it can be stored and re-used later to check for changes. Please call this scr
 	show version.
 .HP
 \fB --files\fR
-	checksum files only.
+	checksum base config files only.
 .HP
 \fB --calls\fR
-	checksum calls only.
+	checksum base calls only.
+.HP
+\fB --apps\fR
+	checksum applications config files and calls only.
 .\"
 .SH EXAMPLES
 .br
 .TP
-* Write checksums for common config files of an node to a file. 
+* Write checksums for common base config files of an node to a file. 
 .br
-# sum_base_config --files >$HOSTNAME.txt
+# sum_base_config -f >$HOSTNAME.txt
 .TP
-* Find differences between nodep and nodeq. Check config files as well as common system parameters. 
+* Find differences between nodep and nodeq. Check base config files as well as common base system parameters and applications configuration. 
 # sum_base_config >nodep.txt
 .br
+# sum_base_config -a >>nodep.txt
+.br
 # ssh root@nodeq sum_base_config >nodeq.txt
+.br
+# ssh root@nodeq "sum_base_config -a" >>nodeq.txt
 .br
 # diff node[pq].txt
 .\"
@@ -56,8 +68,8 @@ Usage, syntax or execution errors.
 	the configuration.
 .\"
 .SH BUGS
-The number of files is limited to the maximum number of arguments for a shell loop.
-Single quotes "'" are not allowed in calls.
+The number of files is limited to the maximum number of arguments for a shell
+loop. Single quotes "'" are not allowed in calls.
 Time is read from hwclock, but not compared to system time.
 Feedback is welcome, please use the project page at
 .br

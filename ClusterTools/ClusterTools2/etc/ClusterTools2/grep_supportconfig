@@ -257,3 +257,5 @@ VRT_ERR_PTRN="
 "vxvm.*volume.*not"
 "
 #
+TEMP="/dev/shm/cltl.$RANDOM"
+#

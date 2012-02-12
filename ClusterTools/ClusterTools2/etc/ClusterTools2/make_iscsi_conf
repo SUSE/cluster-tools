@@ -10,3 +10,5 @@ INITIATORNAME=iqn.${INI_DATE}.${INI_NETW}":01:"${INI_UUID}
 #INI_DATE=""
 #INI_UUID=""
 #
+TEMP="/dev/shm/cltl.$RANDOM"
+#

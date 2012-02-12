@@ -6,7 +6,7 @@
 # GNU Public License. No warranty.
 # Author: L.Pinne
 #
-# Version: 0.02 2011-09-26 19:00
+# Version: 2012-02-12 21:45
 #
 
 EXE="$0"
@@ -25,10 +25,11 @@ test -z $STONITH_CRM &&\
 test -z $SBD_CONF &&\
 	 SBD_CONF=${5:-"/etc/sysconfig/sbd"}
 
-TMP="/tmp/cltl.$RANDOM"
+test -z "${TEMP}" &&\
+	TEMP="/dev/shm/cltl.$RANDOM"
 
 
-function help(){
+function help() {
 	echo "usage: $(basename $0) [ OPTION ]"
 	echo "usage: $(basename $0) [ DEFAULTS_TMPL [ STONITH_TMPL ... [ SBD_CONF ] ] ]"
 	echo

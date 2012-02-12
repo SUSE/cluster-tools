@@ -11,10 +11,11 @@
 #set -x
 
 EXE="$0"
-TMP="/tmp/cltl.$RANDOM"
 CFG="/etc/ClusterTools2/make_sbd_devices"
 test -s $CFG && source $CFG
 
+test -z "${TEMP}" &&\
+	TEMP="/dev/shm/cltl.$RANDOM"
 
 function help(){
 	echo "usage: $(basename $0) OPTION"

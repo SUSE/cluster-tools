@@ -7,3 +7,5 @@ DEFAULTS_CRM="/root/00_bootstrap.crm"
 STONITH_CRM="/root/05_stonith.crm"
 SBD_CONF="/etc/sysconfig/sbd"
 #
+TEMP="/dev/shm/cltl.$RANDOM"
+#

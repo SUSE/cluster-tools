@@ -6,14 +6,15 @@
 # GNU Public License. No warranty.
 # Author: A.Rehg, H.Bertram, L.Pinne.
 #
-# Version: 0.02 2011-07-20
+# Version: 2012-02-12
 #
 
 EXE="$0"
 CFG="/etc/ClusterTools2/make_iscsi_conf"
 test -s $CFG && source $CFG
 
-TMP="/tmp/cltl.$RANDOM"
+test -z "${TEMP}" &&\
+	TEMP="/dev/shm/cltl.$RANDOM"
 
 ISCSI_CFG="/etc/iscsi/iscsid.conf"
 test -z ${INITIATOR_CFG} && INITIATOR_CFG="/etc/iscsi/initiatorname.iscsi"

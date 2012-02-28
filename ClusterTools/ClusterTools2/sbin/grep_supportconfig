@@ -5,19 +5,17 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2012-02-12
+# Version: 0.01 2012-02-28
 #
 # For SLES11.
 # For Supportconfig Script Version: 2.25-237
 
 EXE=$0
 ERR="/dev/null"
+TMP="/tmp/cltl.$RANDOM"
 
 CFG="/etc/ClusterTools2/grep_supportconfig"
 test -s $CFG && source $CFG
-
-test -z "${TEMP}" &&\
-        TEMP="/dev/shm/cltl.$RANDOM"
 
 # TODO: make DIR= work
 DIR=${2:-$PWD}
@@ -26,16 +24,15 @@ OWD=$PWD
 
 
 function echo_msgsep() {
-	echo "============================================================ ${1:0
-:14} ==="
+	echo "============================================================ ${1:0:14} ==="
 }
 
 
 function split_file(){
 	F=$1
-	mkdir -p ${TEMP}/$F
-	cp $F ${TEMP}/${F}/
-	cd ${TEMP}/$F
+	mkdir -p ${TMP}/$F
+	cp $F ${TMP}/${F}/
+	cd ${TMP}/$F
 #	csplit $F /^#==\[ [a-zA-Z] ^C \]==*#$/ {*}
 	csplit $F /^#==..Co.*===========================#$/ {*} >>$ERR
 	cd $OLDPWD
@@ -150,7 +147,6 @@ bnx2.ko
 bnx.ko
 e1000.ko
 tg3.ko
-igb.ko
 be2net.ko
 be2iscsi.ko
 cciss.ko
@@ -162,9 +158,6 @@ hpwdt.ko
 hangcheck-timer.ko
 ibmasr.ko
 iTCO_wdt.ko
-cpu5wdt.ko
-advantechwdt.ko
-acquirewdt.ko
 softdog.ko
 "
 	FIL="boot.txt"
@@ -192,10 +185,10 @@ softdog.ko
 	echo
 	FIL="modules.txt"
 	split_file $FIL
-	f=$(grep -l "^# /sbin/lsmod$" ${TEMP}/${FIL}/xx*)
+	f=$(grep -l "^# /sbin/lsmod$" ${TMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -vh "^#==..Co.*==#" $f | sort -u | grep -v "#"
-	rm -rf ${TEMP}/${FIL}
+	rm -rf ${TMP}/${FIL}
 	echo	
 	echo -n "process on watchdog : "
         awk '$9=="/dev/watchdog" {print $1,$9}' open-files.txt
@@ -348,11 +341,18 @@ eccmad
 	grep "^#./etc/vx" etc.txt
 	grep "^#./etc/opt/VRT" etc.txt
 	echo
+
+	FIL="fs-diskio.txt"
+	echo -n "VxDMP: "
+	grep -c "VxDMP.*/devices/virtual/block/VxDMP" $FIL
+	echo -n "VxVM:  "
+	grep -c "VxVM.*/devices/virtual/block/VxVM" $FIL
+	echo
 }
 
 
 function chk_network() {
-	
+
 	echo_msgsep $FUNCNAME
 	
 	test -z "${NETW_PTRN}" &&\
@@ -410,26 +410,26 @@ function chk_nameres() {
 	split_file $FIL 
 
 	echo "# /etc/hosts:"
-	f=$(grep -l "^# /etc/hosts$" ${TEMP}/${FIL}/xx*)
+	f=$(grep -l "^# /etc/hosts$" ${TMP}/${FIL}/xx*)
         test -z "$f" ||\
         	grep -v "^#" $f | tr -s "\n"
 	echo
 	echo "# /etc/resolv.conf:"
-	f=$(grep -l "^# /etc/resolv.conf$" ${TEMP}/${FIL}/xx*)
+	f=$(grep -l "^# /etc/resolv.conf$" ${TMP}/${FIL}/xx*)
         test -z "$f" ||\
         	grep -v "^#" $f | tr -s "\n"
 	echo
 #	echo "# /etc/nsswitch.conf:"
-#	f=$(grep -l "^# /etc/nsswitch.conf$" ${TEMP}/${FIL}/xx*)
+#	f=$(grep -l "^# /etc/nsswitch.conf$" ${TMP}/${FIL}/xx*)
 #	test -z "$f" ||\
 #       	grep -v "^#" $f | tr -s "\n"
 #	echo
 	echo "# /etc/host.conf:"
-	f=$(grep -l "^# /etc/host.conf$" ${TEMP}/${FIL}/xx*)
+	f=$(grep -l "^# /etc/host.conf$" ${TMP}/${FIL}/xx*)
         test -z "$f" ||\
         	grep -v "^#" $f | tr -s "\n"
 
-        rm -rf ${TEMP}/${FIL}
+        rm -rf ${TMP}/${FIL}
 	echo
 
 # TODO: DNS
@@ -453,14 +453,14 @@ function chk_timeres() {
 	echo "config:"
 	echo "# /etc/ntp.conf:"
 	split_file $FIL 
-	f=$(grep -l "^# /etc/ntp.conf$" ${TEMP}/${FIL}/xx*)
+	f=$(grep -l "^# /etc/ntp.conf$" ${TMP}/${FIL}/xx*)
         test -z "$f" ||\
 		grep -v "^#" $f | tr -s "\n"
-	f=$(grep -l "^NTPD_FORCE_SYNC_ON_STARTUP=" ${TEMP}/${FIL}/xx*)
+	f=$(grep -l "^NTPD_FORCE_SYNC_ON_STARTUP=" ${TMP}/${FIL}/xx*)
         test -z "$f" ||\
 		grep -v "^#" $f | tr -s "\n"
 
-        rm -rf ${TEMP}/${FIL}
+        rm -rf ${TMP}/${FIL}
 	echo
 
 	test -z "${TIME_ERR}" &&\
@@ -733,10 +733,17 @@ function chk_filesys() {
 	echo_msgsep $FUNCNAME
 	
 	FIL="fs-diskio.txt"
-
-	# TODO /etc/fstab
-	# TODO /proc/mounts
-
+	
+	split_file $FIL 
+	
+	F=$(grep "# /etc/fstab" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+	grep -v "#==" $F | tr -s " "
+	F=$(grep "# /bin/mount" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+	# TODO define meaningful limits for await and svctm	
+	F=$(grep "# /usr/bin/iostat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+	awk ' $1=="Device:" {print $0}
+		$10 > 100.0 {print $0}
+		$11 > 20.0 {print $0}' $F | sort -u
 	echo
 }
 
@@ -1063,7 +1070,7 @@ case $1 in
 		chk_modules
 		chk_multipath
 		chk_storage
-		#chk_filesys
+		chk_filesys
 		chk_network
 		chk_nameres
 		chk_timeres
@@ -1075,7 +1082,7 @@ case $1 in
 		chk_errors
 		chk_sysload
 
-		rm -rf $TEMP
+		rm -rf $TMP
 		exit
 	;;
 	--function|-f)
@@ -1090,19 +1097,17 @@ case $1 in
 		else $FUN
 		fi
 
-		rm -rf $TEMP
+		rm -rf $TMP
 		exit
 	;;
 	--test|-t)
 		cd $DIR
 		#set -x
 		#split_file modules.txt
-		chk_sysconf
-		# chk_oracle
-		# chk_filesys	
-		# chk_cluster	
+		# chk_sysconf
+		chk_filesys	
 
-		rm -rf $TEMP
+		rm -rf $TMP
 		exit
 	;;
 esac

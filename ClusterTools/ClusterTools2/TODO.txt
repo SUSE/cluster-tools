@@ -1,3 +1,5 @@
+TODO susemanager cfg files: /etc/sysconfig/rhn/* 
+
 TODO disable_other_ Sybase ASE
 TODO precheck_for_sap: LC_ALL=POSIX
 TODO precheck_for_sap: grep 2.6.3 (http://drjohnstechtalk.com/blog/2011/06/grep-is-slow-as-a-snail-in-sles-11)

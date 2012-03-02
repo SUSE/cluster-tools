@@ -739,7 +739,9 @@ function chk_filesys() {
 	F=$(grep "# /etc/fstab" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
 	grep -v "#==" $F | tr -s " "
 	F=$(grep "# /bin/mount" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+	grep -v "#==" $F | tr -s " "
 	# TODO define meaningful limits for await and svctm	
+	# TODO make limits for await and svctm a config parameter	
 	F=$(grep "# /usr/bin/iostat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
 	awk ' $1=="Device:" {print $0}
 		$10 > 100.0 {print $0}
@@ -857,8 +859,17 @@ vm.nr_hugepages
 		grep ^$m $FIL
 	done | sort -u
 	echo
-	# TODO sysconfig/ulimit, security/limits.conf
+	# TODO security/limits.conf
 	# TODO tmpfs
+	FIL="env.txt"
+	split_file $FIL
+	F=$(grep "# ulimit -a" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+        grep -v "#==" $F | tr -s " "
+
+	FIL="sysconfig.txt"
+	split_file $FIL
+	F=$(grep "# /etc/sysconfig/ulimit" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+	grep -v "#==" $F | tr -s " "
 }
 
 
@@ -998,6 +1009,7 @@ function chk_sysload() {
 
 	# TODO: network errors?
 	# TODO: NFS client and server reports?
+	# TODO: grep -A6 "numastat" sysctl.txt 
 
 	cd $OWD 
 	echo
@@ -1104,8 +1116,8 @@ case $1 in
 		cd $DIR
 		#set -x
 		#split_file modules.txt
-		# chk_sysconf
-		chk_filesys	
+		chk_sysconf
+		#chk_filesys	
 
 		rm -rf $TMP
 		exit

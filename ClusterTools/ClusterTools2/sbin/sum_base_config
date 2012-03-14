@@ -84,7 +84,6 @@ test -z "${CONF_FILES}" &&\
 /etc/corosync/corosync.conf
 /etc/corosync/logd.cf
 /etc/corosync/authkey
-/etc/rhn/rhn.conf
 /etc/xen/xend-config.sxp
 /etc/xen/vm/*.xml
 /etc/hp/*
@@ -141,6 +140,7 @@ test -z "${APPS_FILES}" &&\
 /etc/oratab
 /etc/oraInst.loc
 /etc/sysconfig/oracle
+/etc/tnsnames.ora
 /opt/oracle/product/*/*/dbs/*.ora
 /opt/oracle/product/*/*/network/admin/*.ora
 /etc/opt/novell/eDirectory/conf/nds.conf
@@ -152,6 +152,7 @@ test -z "${APPS_FILES}" &&\
 /usr/sap/sapservices
 /etc/opt/sdb
 /etc/db2nodes.conf
+/etc/rhn/rhn.conf
 "
 #
 test -z "${APPS_CALLS}" &&\

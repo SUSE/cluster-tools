@@ -66,7 +66,6 @@ CONF_FILES="
 /etc/corosync/corosync.conf
 /etc/corosync/logd.cf
 /etc/corosync/authkey
-/etc/rhn/rhn.conf
 /etc/xen/xend-config.sxp
 /etc/xen/vm/*.xml
 /etc/hp/*
@@ -120,6 +119,7 @@ CONF_CALLS="
 APPS_FILES="
 /etc/oratab
 /etc/oraInst.loc
+/etc/tnsnames.ora
 /etc/sysconfig/oracle
 /opt/oracle/product/*/*/dbs/*.ora
 /opt/oracle/product/*/*/network/admin/*.ora
@@ -133,6 +133,7 @@ APPS_FILES="
 /usr/sap/sapservices
 /etc/opt/sdb
 /etc/db2nodes.conf
+/etc/rhn/rhn.conf
 "
 #
 APPS_CALLS="

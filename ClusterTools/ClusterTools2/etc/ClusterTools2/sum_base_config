@@ -66,6 +66,7 @@ CONF_FILES="
 /etc/corosync/corosync.conf
 /etc/corosync/logd.cf
 /etc/corosync/authkey
+/etc/rhn/rhn.conf
 /etc/xen/xend-config.sxp
 /etc/xen/vm/*.xml
 /etc/hp/*

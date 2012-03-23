@@ -5,7 +5,7 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2012-02-28
+# Version: 0.01 2012-02-23
 #
 # For SLES11.
 # For Supportconfig Script Version: 2.25-237
@@ -45,7 +45,7 @@ function chk_hardware() {
 
 	echo "machine:"
 	FIL="hardware.txt"
-	grep "system.hardware.*=" $FIL | grep -v "system.*video"
+	grep -e "system.hardware.*=" -e "system.*.machine.=..s390" $FIL | grep -v "system.*video"
 	grep "system.firmware.*=" $FIL
 	grep -e "Manufacturer:.\"[A-Za-z]" -e "Product:.\"" -e "Product.id:.\"" -e "Serial:.\"" $FIL | sort -u
 	grep -e "str3:.\"../../....\"" -e "str5:.\"[A-Za-z]" $FIL |\
@@ -56,7 +56,8 @@ function chk_hardware() {
 	echo "processor:"
 	FIL="hardware.txt"
 	grep -A16 "^# /usr/bin/lscpu" $FIL
-	grep "^model.name.*:" $FIL | sort -u
+	grep -e "^model.name.*:" $FIL | sort -u
+	grep -A5 "^vendor_id.*:.IBM/S390" $FIL
 	FIL="boot.txt"
 	grep -e "^\[.*Detected.*MHz.processor" -e "^\[.*Brought up.*CPUs" $FIL
 	echo
@@ -86,6 +87,7 @@ function chk_hardware() {
 	echo "disk:"
 	FIL="fs-diskio.txt"
 	grep -A1 "^Model:" $FIL | grep -v "^--$"
+	awk '$0~/^Disk..dev.dasd/ {print $2,$3,$4}' $FIL
 	echo
 
 	echo "storage:"
@@ -110,10 +112,10 @@ function chk_hardware() {
 	NIC_PTRN="
 Model:
 Device.File:
-"	
+"
 	# TODO: better loop
 	for f in $NIC_PTRN; do
-		grep -A20 "^..: PCI.*Ethernet controller" $FIL |\
+		grep --binary-file=text -A20 -e "^..: PCI.*Ethernet controller$" -e "HiperSocket.controller$" $FIL |\
 		grep $f
 	done | sort -u | sed s/Device.File:/"NIC Device File:"/g
 	echo	
@@ -371,26 +373,30 @@ function chk_network() {
 	echo "last setup:"
 	FIL="network.txt"
 	for p in $NETW_PTRN; do
-		grep $p $FIL
+		grep --binary-file=text $p $FIL
 	done | sort -u
 	echo
 
 	FIL="network.txt"
-	( grep -A3 "^# /sbin/ethtool bond" $FIL
-	grep -A18 "^# /sbin/ethtool eth" $FIL ) |\
+	( grep --binary-file=text -A3 "^# /sbin/ethtool bond" $FIL
+	  grep --binary-file=text -A18 -e "^# /sbin/ethtool hsi" \
+		-e "^#.*/sbin/ethtool sit" \
+		-e "^#.*/sbin/ethtool eth" $FIL ) |\
 		 grep -v "^#==\[ " | grep -v "^# /sbin/ethtool" | grep -v "^--$"
 	echo
 	
 # TODO: summary num. NICs, num. "not connected"
-	( grep -A3 "^# /etc/sysconfig/network/routes$" $FIL ) |\
+	( grep --binary-file=text -A3 "^# /etc/sysconfig/network/routes$" $FIL ) |\
 		 grep -v "^#==\[ " | grep -v "^# /sbin/ethtool"
 
-	( grep -A13 "^# /etc/sysconfig/network/ifcfg-bond" $FIL |\
+	( grep --binary-file=text -A13 "^# /etc/sysconfig/network/ifcfg-bond" $FIL |\
 		grep -v "=''$"
 		echo
-	grep -A21 "^# /proc/net/bonding/bond" $FIL
+	grep --binary-file=text -A21 "^# /proc/net/bonding/bond" $FIL
 
-	grep -A10 "^# /etc/sysconfig/network/ifcfg-eth" $FIL |\
+	grep --binary-file=text -A10 \
+		-e "^# /etc/sysconfig/network/ifcfg-qeth" \
+		-e "^# /etc/sysconfig/network/ifcfg-eth" $FIL |\
 		 grep -v "=''$" ) |\
 		 grep -v "^#==\[ " 
 	echo
@@ -402,9 +408,9 @@ function chk_nameres() {
 	echo_msgsep $FUNCNAME
 
 	FIL="network.txt"
-	( grep -A1 "^# /etc/HOSTNAME" $FIL
-	grep -A1 "^# /bin/hostname" $FIL
-	grep -A1 "^# /sbin/chkconfig nscd" $FIL ) |\
+	( grep --binary-file=text -A1 "^# /etc/HOSTNAME" $FIL
+	grep --binary-file=text -A1 "^# /bin/hostname" $FIL
+	grep --binary-file=text -A1 "^# /sbin/chkconfig nscd" $FIL ) |\
 		 grep -v "^#==\[ " 
 	echo
 	split_file $FIL 
@@ -537,16 +543,21 @@ function chk_oracle() {
 
 	echo "standalone Oracle installation"
 	echo
-	# TODO
-	echo -n "sysconfig found :"
-	grep -e "/etc/sysconfig/oracle" etc.txt
-	# TODO show config settings of that file
+	echo "sysconfig_oracle :"
+        FIL="sysconfig.txt"
+        split_file $FIL
+        F=$(grep "# /etc/sysconfig/oracle" $TMP/$FIL/xx* |\
+		 tr -d ":#" | awk '{print $1}')
+        grep -v "^#" $F  | awk -F: '{print $2}' | tr -s "\n "
+        echo
+
 	grep -e "^oracle" -e "^@dba" crash.txt
 	echo
 	grep "^tmpfs" basic-health-check.txt	
 	grep "^vm.nr_hugepages.=" env.txt	
 	echo
 	# TODO: check ???, see sum_base_config, whbsaprecheck
+	# TODO: check async-IO, direct-IO
 	
 	FIL="rpm.txt"
         test -z "${ORA_SFT_PTRN}" &&\
@@ -743,9 +754,9 @@ function chk_filesys() {
 	# TODO define meaningful limits for await and svctm	
 	# TODO make limits for await and svctm a config parameter	
 	F=$(grep "# /usr/bin/iostat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
-	awk ' $1=="Device:" {print $0}
+	echo $F | awk ' $1=="Device:" {print $0}
 		$10 > 100.0 {print $0}
-		$11 > 20.0 {print $0}' $F | sort -u
+		$11 > 20.0 {print $0}' | sort -u
 	echo
 }
 
@@ -804,7 +815,7 @@ function chk_overview() {
 	#grep "Script.Version:" $FIL
 	FIL="network.txt"
 	echo -n "Hostname: "
-	grep -A1 "#./etc/HOSTNAME" $FIL | tail -1
+	grep --binary-file=text -A1 "#./etc/HOSTNAME" $FIL | tail -1
 	FIL="basic-health-report.txt"
 	echo "Supportconfig: " $DIR
 	for p in "^Date.Checked:" "^Status:" "\[...Red...\]" "\[.Yellow..\]"; do
@@ -864,12 +875,13 @@ vm.nr_hugepages
 	FIL="env.txt"
 	split_file $FIL
 	F=$(grep "# ulimit -a" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
-        grep -v "#==" $F | tr -s " "
+        echo $F | grep -v "#==" | tr -s " "
 
 	FIL="sysconfig.txt"
 	split_file $FIL
 	F=$(grep "# /etc/sysconfig/ulimit" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
-	grep -v "#==" $F | tr -s " "
+	echo $F | grep -v "#==" | tr -s " "
+	echo
 }
 
 
@@ -1090,6 +1102,7 @@ case $1 in
 		chk_updates
 		chk_services
 		#chk_cluster
+		#chk_oracle
 		chk_sysconf
 		chk_errors
 		chk_sysload
@@ -1116,7 +1129,7 @@ case $1 in
 		cd $DIR
 		#set -x
 		#split_file modules.txt
-		chk_sysconf
+		chk_oracle
 		#chk_filesys	
 
 		rm -rf $TMP

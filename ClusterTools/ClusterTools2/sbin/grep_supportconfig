@@ -879,8 +879,16 @@ vm.nr_hugepages
 
 	FIL="sysconfig.txt"
 	split_file $FIL
-	F=$(grep "# /etc/sysconfig/ulimit" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
-	echo $F | grep -v "#==" | tr -s " "
+	F=$(grep "# /etc/sysconfig/ulimit" $TMP/$FIL/xx* | tr -d ":#" |\
+		 awk '{print $1}')
+	grep -v "^#" $F | tr -s "\n "
+	# TODO avoid printing of temp file name
+	echo
+
+	FIL="sysfs.txt"
+	echo -n "io_scheduler noop: ";	  grep -c "\[noop\]" $FIL
+	echo -n "io_scheduler deadline: "; grep -c "\[deadline\]" $FIL
+	echo -n "io_scheduler cfq: ";	  grep -c "\[cfq\]" $FIL
 	echo
 }
 
@@ -892,7 +900,7 @@ function chk_sysload() {
 	FIL="basic-health-report.txt"	
 	echo "basic-health-report:"
 	grep "^[A-Z].*\[....e....\]$" $FIL | grep -v "Kernel.Taint"
-	# TODO: make dfull work
+	# TODO make dfull work
 	dfull="X"
 	dfull=$( grep "%.>=.90%" $FIL )
 	test "${dfull}" = "X" &&\

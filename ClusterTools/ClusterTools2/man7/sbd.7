@@ -1,4 +1,4 @@
-.TH sbd 7 "20 Dec 2011" "" "cluster-glue"
+.TH sbd 7 "29 Mar 2012" "" "cluster-glue"
 .\"
 .SH NAME
 sbd \- Stonith Block Device
@@ -134,11 +134,16 @@ increased reliability.
 .P
 \fB* SBD Partition\fR
 
-It is recommended to create a 1MB partition at the start of the device;
-in the rest of this text, this is referred to as "/dev/<SBD>" or "/dev/<SBD_n>",
+It is recommended to create a tiny partition at the start of the device.
+In the rest of this text, this is referred to as "/dev/<SBD>" or "/dev/<SBD_n>",
 please substitute your actual pathnames
 (f.e. "/dev/disk/by-id/scsi-1494554000000000036363600000000000000000000000000-part1")
 for this below.
+
+The size of the SBD device depends on the block size of the underlying
+device. SBD uses 255 slots. Thus, 1MB is fine on plain SCSI devices and
+SAN storages with 512 byte blocks. On the IBM s390x architecture disks could
+have larger block sizes, as 4096 bytes. Therefor 4MB or more are needed there.
 
 After having made very sure that this is indeed the device you want to
 use, and does not hold any data you need - as the sbd command will
@@ -301,6 +306,7 @@ To report bugs for a SUSE or Novell product component, please use
 .SH SEE ALSO
 
 \fBsbd\fP(8), \fBadd_watchdog_to_initrd\fP(8), \fBdisable_other_watchdog\fP(8),
+\fBmake_sbd_devices\fP(8), \fBdasdfmt\fP(8),
 http://www.linux-ha.org/wiki/SBD_Fencing ,
 http://www.mail-archive.com/pacemaker@oss.clusterlabs.org/msg03849.html ,
 http://www.novell.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/book_sleha/data/part_config.html ,

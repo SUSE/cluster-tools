@@ -16,8 +16,8 @@ Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.2.11
-Release:      1.0.0 
-#Release:      6  
+#Release:      1.0.0 
+Release:      7  
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
@@ -142,6 +142,8 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %config(noreplace) /etc/logrotate.d/*
 
 %changelog -n ClusterTools2
+* Fri Mar 23 2012 - lars.pinne@suse.com
+  - grep_supportconfig for Oracle and s390x  
 * Fri Feb 10 2012 - lars.pinne@suse.com
   - eDir back again
 * Tue Nov 15 2011 - lars.pinne@suse.com

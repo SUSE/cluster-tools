@@ -47,6 +47,7 @@ test -z "${CLUSTR_PATTERN}" &&\
 "TOTEM.*FAILED.*RECEIVE"
 "TOTEM.*processor.failed"
 "TOTEM.*Incrementing.problem"
+"pcmk.*Child.process.*exited"
 "pcmk.*Sending.message.*failed"
 "crmd.*quorum.lost"
 "crmd.*our.DC.is.dead"

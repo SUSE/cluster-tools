@@ -104,6 +104,8 @@ test -z "${CLUERR_PATTERN}" &&\
 "fenced.because.*.un-expectedly.down"
 "stonith.*Device.*not.fond"
 "Node.*unclean"
+"pcmk.*Child.process.*exited"
+"pcmk.*message.*local.cib.failed"
 "pengine.*fenced.*resource.failure"
 "pengine.*Forcing.*away.*failures"
 "crm_resource.*Error"

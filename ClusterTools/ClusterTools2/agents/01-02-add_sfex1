@@ -1,3 +1,4 @@
+#!/bin/bash
 source wowlib2
  #
  # at this moment we only support ONE or ZERO SFEX device(s)

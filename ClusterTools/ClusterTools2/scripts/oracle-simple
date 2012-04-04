@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # oracle-simple - configure Oracle resource group.
 # For now: Filesystems and IP only.

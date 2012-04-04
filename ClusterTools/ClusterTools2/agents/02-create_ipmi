@@ -1,3 +1,4 @@
+#!/bin/bash
 source wowlib2
 myIPMI_ADDRESSES=$IPMIADDRESSES
 for node in $ALLNODES; do

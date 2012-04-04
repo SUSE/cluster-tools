@@ -1,3 +1,4 @@
+#!/bin/bash
 source wowlib2
 mode=new_style
 echo "$RAID1_DEVICES" | grep -q '/dev.*/dev' && mode=old_style

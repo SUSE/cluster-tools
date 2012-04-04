@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # sapall-ilo - start all wow agents to configure ipmi stonith fencing
 #

@@ -1,3 +1,4 @@
+#!/bin/bash
 IPagent=""
 source wowlib2
 if [ -z "$IPagent" ]; then

@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # sapall-clxstack - start all wow agents to configure a clxstack resource group
 #

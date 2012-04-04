@@ -1,3 +1,4 @@
+#!/bin/bash
 source wowlib2
 myILO_ADDRESSES=$ILO_ADDRESSES
 for node in $ALLNODES; do

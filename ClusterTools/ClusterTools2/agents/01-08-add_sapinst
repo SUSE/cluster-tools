@@ -1,3 +1,4 @@
+#!/bin/bash
 source wowlib2
 echo "$SAP_INSTANCE_DEF" | while read sap_type sap_inst sap_prof sap_parm; do
   if [ "$sap_type" == "${sap_type#\#}" ]; then

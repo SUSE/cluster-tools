@@ -1,2 +1,3 @@
+#!/bin/bash
 source wowlib2
 woweng2 UUID=rsc_stonith_sbd $wowcli/02-sbd-stonith.cli

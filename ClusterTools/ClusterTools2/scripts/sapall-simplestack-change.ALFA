@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # sapall-simplestack - start all wow agents to configure a simplestack resource group
 # first of all lets be able to CHANGE the group

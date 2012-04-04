@@ -93,6 +93,7 @@ cp -a man7/*.gz %{buildroot}/usr/share/man/man7/
 cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 
 %post
+mkdir -p /usr/lib/supportconfig/plugins
 cp /usr/lib/ClusterTools2/supportconfig/plugins/* /usr/lib/supportconfig/plugins
 
 %files

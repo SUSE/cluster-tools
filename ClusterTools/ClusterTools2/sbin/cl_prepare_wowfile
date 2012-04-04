@@ -1,0 +1,152 @@
+#!/bin/bash
+#
+# prepare_wowfile
+#
+# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version: 0.01 2011-09-22
+#
+
+EXE=$(basename $0)
+DAT=$(date +"%F %T")
+
+function help() {
+	echo "usage:	$EXE --sap <SID> [<SVC_LABEL>]"
+	echo "	$EXE --ora <SID> <SVC_LABEL> [<RAID_CFG> [<VG>]]"
+	echo "	$EXE --help|--version"
+	exit
+}
+
+
+function version() {
+	echo -n "$EXE "
+	head -11 $EXE | grep "^# Version: "
+}
+
+
+function get_header() {
+	echo "# $DAT - $EXE $*"
+	echo "# please check for correct values and order"
+}
+
+
+function get_storage_sap() {
+	# TODO better string manipulation
+	echo -n "RAID_CONFIG=\"${RAID_CFG}\""
+	echo
+	echo -n "RAID1_DEVICES=\""
+	pvs | awk '$2~/'"$SID"'/ {print $1" "}' | tr -d "\n" | sed s/" "$//
+	echo "\""
+	echo
+	#
+	echo -n "LVM_VOLUMEGROUPS=\""
+	pvs | awk '$2~/'"$SID"'/ {print $2" "}' | sort -du | tr -d "\n" | sed s/" "$//
+	echo "\""
+	echo
+	#
+	echo 'FS_FILESYSTEMS=$(cat <<HERE-FS'
+	mount | awk '$1~/\/'"$SID"'/ {	n=split($3,label,"/")
+		print $1,$3,label[n-2]"-"label[n-1]"-"label[n],$5,"noatime,defaults"}'
+	echo 'HERE-FS'
+	echo ')'
+}
+
+
+function get_storage_ora() {
+	# TODO better string manipulation
+	echo -n "RAID_CONFIG=\"${RAID_CFG}\""
+	echo
+	echo -n "RAID1_DEVICES=\""
+	pvs | awk '$1~/^\/dev\/md.$/ && $2~/^'"$VG"'/ {print $1" "}' |\
+		 tr -d "\n" | sed s/" "$//
+	echo "\""
+	echo
+	#
+	echo -n "LVM_VOLUMEGROUPS=\""
+	pvs | awk '$1~/^\/dev\/md.$/ && $2~/^'"$VG"'/ {print $2" "}' |\
+		 sort -du | tr -d "\n" | sed s/" "$//
+	echo "\""
+	echo
+	#
+	echo 'FS_FILESYSTEMS=$(cat <<HERE-FS'
+	mount | awk '$1~/\/dev\/.*\/'"$VG"'-lv/ && $3~/^\/'"$VG"'lv/ { n=split($1,label,"-");
+		print $1,$3,label[2],$5,"noatime,defaults"}'
+	echo 'HERE-FS'
+	echo ')'
+}
+
+
+function get_network() {
+	echo
+	echo "ALLNODES=\"$HOSTNAME\""
+	echo
+	IP_LABELS=$(host $SVCNAM |\
+		 awk '$1~/'"$SVCNAM"'/ {print "'"$SVCNAM"',"$4"\""}')
+	test -z "${IP_LABELS}" &&\
+	IP_LABELS=$(awk '$3=="'$SVCNAM'" {print "'"$SVCNAM"',"$1"\""}' /etc/hosts)
+	echo -n "IP_LABELS=\"${IP_LABELS}"
+}
+
+
+function get_sys_sap() {
+	echo
+	echo "SAPSID=\"$SID\""
+	# TODO
+	#SAPsid=$(echo $SAPSID | tr [:upper:] [:lower:])
+	#echo "SAPsid=\"$SAPsid\""
+	echo "DBTYPE=\"ORA\""
+	echo "GRPID=\"grp_sap_$SID\""
+	echo "SAP_SCORES=\"1000 0\""
+	echo
+}
+
+
+function get_sys_ora() {
+	echo
+	# echo "ORASID=\"$SID\""
+	echo "SAPSID=\"$SID\""
+	echo "DBTYPE=ORA"
+	echo "GRPID=grp_ora_$SID"
+	echo "SAP_SCORES=\"1000 0\""
+	echo
+}
+
+
+# main()
+
+case $1 in
+	-v|--version)
+		version
+	;;
+	-o|--ora|--oracle)
+		shift
+		SID=${1:-"ora01"}	
+		SVCNAM=${2:-"ora01"}
+		RAID_CFG=${3:-"/clusterconf/${SID}/mdadm.conf"}
+		VG=${4:-"vg01"}
+		
+		get_header "${*}"
+		get_network
+		get_sys_ora
+		get_storage_ora
+		echo "#"
+	;;
+	-s|--sap)
+		shift
+		SID=${1:-"ZSAdb"}
+		SVCNAM=$(echo ${2} | tr [:upper:] [:lower:])
+		test -z "$SVCNAM" && SVCNAM=$(echo $SID | tr [:upper:] [:lower:])
+		RAID_CFG=${3:-"/clusterconf/${SID}/mdadm.conf"}
+
+		get_header "${*}"
+		get_network
+		get_sys_sap
+		get_storage_sap
+		echo "#"
+	;;
+	-h|--help|*)
+		help
+	;;
+esac
+#

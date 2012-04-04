@@ -1,9 +1,1 @@
-#!/bin/sh
-
-cmd=""
-case "$1" in
-	*)
-	cmd="--cmd"
-	;;
-esac
-/usr/sbin/menueng2 --program ClusterService --rscFile /usr/share/ClusterTools2/ClusterService.rsc $cmd "$@"
+cl_service

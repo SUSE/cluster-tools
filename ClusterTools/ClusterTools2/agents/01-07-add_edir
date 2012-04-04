@@ -1,5 +1,0 @@
-#!/bin/bash
-source wowlib2
- woweng2 UUID=rsc_edir_$SAPSID \
-		EDIRCONF=$EDIRCONF \
-		$wowcli/$cli

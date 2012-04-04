@@ -24,6 +24,8 @@ BuildArch:    noarch
 Vendor:	      SUSE Linux Products GmbH
 Requires:     pacemaker > 1.1.1
 Requires:     perl-TermReadLine-Gnu >= 1.16
+Requires:     cron
+Requires:     logrotate
 	
 %description
 ClusterTools2 provides tools for setting up and managing a corosync/

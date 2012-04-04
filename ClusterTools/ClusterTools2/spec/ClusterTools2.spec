@@ -17,7 +17,7 @@ Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.3.1
 #Release:      1.0.0 
-Release:      1  
+Release:      2  
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
@@ -63,13 +63,13 @@ mkdir -p %{buildroot}/usr/lib/ClusterTools2/scripts
 mkdir -p %{buildroot}/usr/share/man/man5
 mkdir -p %{buildroot}/usr/share/man/man7
 mkdir -p %{buildroot}/usr/share/man/man8
-mkdir -p %{buildroot}/usr/lib/supportconfig/plugins
+mkdir -p %{buildroot}/usr/lib/ClusterTools2/supportconfig/plugins
 
 #
 # "binaries"
 #
 cp -va sbin/* %{buildroot}/usr/sbin/
-cp -va plugins/* %{buildroot}/usr/lib/supportconfig/plugins
+cp -va plugins/* %{buildroot}/usr/lib/ClusterTools2/supportconfig/plugins
 #
 # etc
 #
@@ -93,13 +93,13 @@ cp -a man7/*.gz %{buildroot}/usr/share/man/man7/
 cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 
 %post
+cp /usr/lib/ClusterTools2/supportconfig/plugins/* /usr/lib/supportconfig/plugins
 
 %files
 %defattr(-,root,root)
 /usr/sbin/*
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
-/usr/lib/supportconfig/plugins/*
 %doc /usr/share/man/man5/*.gz
 %doc /usr/share/man/man7/*.gz
 %doc /usr/share/man/man8/*.gz

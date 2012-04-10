@@ -1,3 +1,4 @@
+#!/bin/bash
 source wowlib2
 export FSTYPE=""
 echo "$FS_FILESYSTEMS" | while read dev dir fsid fstype moptions

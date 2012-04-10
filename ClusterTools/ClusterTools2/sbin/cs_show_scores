@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# show_scores 
+#
+# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version: 2012-02-12
+#
+
+EXE="$0"
+
+CFG="/etc/ClusterTools2/show_scores"
+test -s $CFG && source $CFG
+
+test -z "${TEMP}" &&\
+	TEMP="/dev/shm/cltl.$RANDOM"
+
+
+function help() {
+	echo "usage:	$(basename $0)"
+	echo "	$(basename $0) [OPTION]"
+	echo
+	echo " --help		show help."
+	echo " --version	show version."
+	echo " --raw		show raw scores from ptest."
+}
+
+
+function show_raw() {
+	test -x /usr/sbin/ptest && /usr/sbin/ptest -Ls
+}
+
+# TODO: function to generate informative summary
+
+
+# main()
+
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+        	head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-h|--help)
+		help
+		exit
+	;;
+	-r|--raw)
+		show_raw
+		exit
+	;;
+	*)
+		show_raw
+		exit		
+	;;
+esac
+#

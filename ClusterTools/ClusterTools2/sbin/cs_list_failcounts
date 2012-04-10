@@ -1,0 +1,64 @@
+#!/bin/bash
+#
+# list_failcounts
+#
+# Version: 1.1 2011-07-12
+#
+# (c) 2009-2011 SUSE Linux GmbH, Germany. Author: F.Herschel.
+# GNU Public License. No warranty.
+#
+
+EXE=$0
+
+
+function help() {
+	echo "usage:    $(basename $0)"
+	echo "  	$(basename $0) [OPTION]"
+	echo
+	echo " --help           show help."
+	echo " --version        show version."
+}
+
+
+function do_list() {
+	CRM_RESOURCE=/usr/sbin/crm_resource
+	CRM_FAILCOUNT=/usr/sbin/crm_failcount
+	CRM_NODE=/usr/sbin/crm_node
+	NODES=$($CRM_NODE -l | awk '/member/ { print $2 }')
+	RESOURCES=$($CRM_RESOURCE -l)
+
+	for node in $NODES
+        	do
+        	echo
+        	echo "Node: $node"
+        	echo
+        	for resource in $RESOURCES
+                	do
+                	echo -n "Resource $resource: "
+ 	#               failcount=`$CRM_FAILCOUNT -G -U $node -r $resource | awk '{ print $2 }' | cut -d= -f2`
+	#		failcount=$($CRM_FAILCOUNT -G -U $node -r $resource | sed -e "s/^.*value=\(([0-9][0-9]*|INFINITY)\).*/\1/")
+			failcount=$($CRM_FAILCOUNT -G -U $node -r $resource | awk -F= '{ for(i=1; i<NF; i++) { if ( $i ~ /value/ ) { i++; print $i; }}}')
+                	echo $failcount
+        	done
+	done
+}
+
+
+# main
+
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-h|--help)
+		help                
+		exit
+	;;
+	*)
+		do_list
+		exit
+	;;
+esac
+#

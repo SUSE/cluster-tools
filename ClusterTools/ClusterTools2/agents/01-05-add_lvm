@@ -1,3 +1,4 @@
+#!/bin/bash
 source wowlib2
 for volumegroup in $LVM_VOLUMEGROUPS; do
 	woweng2 UUID=rsc_lvm_${SAPSID}_${volumegroup} \

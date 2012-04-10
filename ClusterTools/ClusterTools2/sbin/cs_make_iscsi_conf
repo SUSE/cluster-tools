@@ -1,0 +1,135 @@
+#!/bin/bash
+#
+# make_iscsi_conf
+#
+# (c) 2011 SUSE Linux GmbH, Germany.
+# GNU Public License. No warranty.
+# Author: A.Rehg, H.Bertram, L.Pinne.
+#
+# Version: 2012-02-12
+#
+
+EXE="$0"
+CFG="/etc/ClusterTools2/make_iscsi_conf"
+test -s $CFG && source $CFG
+
+test -z "${TEMP}" &&\
+	TEMP="/dev/shm/cltl.$RANDOM"
+
+ISCSI_CFG="/etc/iscsi/iscsid.conf"
+test -z ${INITIATOR_CFG} && INITIATOR_CFG="/etc/iscsi/initiatorname.iscsi"
+test -z ${INI_NETW} && INI_NETW=$(hostname -d | perl -e 'chomp($ar = <STDIN>); print join(".", reverse(split(/\./, $ar))), "\n";')
+# f.e InitiatorName=iqn.1996-04.de.suse:01:1d635b8070c2	
+INITIATORNAME=iqn.$(date +%Y-%m).${INI_NETW}:$(hostname):0
+
+# TODO: fill empty vars from config file
+
+
+function fix_iscsid_conf() {
+  echo "INFO: start $EXE $FUNCNAME"
+
+  MOD="manual"
+  CFIL=$ISCSI_CFG
+  BAK=${CFIL}.bak
+
+  grep "^node.startup.*$MOD" $CFIL >/dev/null 
+  RC=$?
+
+  if [ $RC -gt 0 ]; then
+  	cp $CFIL $BAK || exit $?
+  	awk '	$1=="node.startup" {print $1,$2,"'"$MOD"'"}
+		$1!="node.startup" {print}' $BAK >$CFIL
+  else
+	echo "WARN: found \"${MOD}\" already in ${CFIL}"
+  fi 
+
+  echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+function fix_initiatorname() {
+  echo "INFO: start $EXE $FUNCNAME"
+
+  CFIL=$INITIATOR_CFG
+  BAK=${CFIL}.bak
+  cp $CFIL $BAK >/dev/null
+  grep "^InitiatorName=" $CFIL >/dev/null &&\
+	echo "WARN: found InitiatorName already in ${CFIL}" # && return 3
+
+  awk -F"=" '	$1=="InitiatorName" && $2!="'$INITIATORNAME'" {print "InitiatorName=""'"$INITIATORNAME"'"}
+        	$1!="InitiatorName" {print}' $BAK >$CFIL
+  grep "^InitiatorName=$INITIATORNAME" $CFIL >/dev/null ||\
+	echo "InitiatorName=$INITIATORNAME" >>$CFIL
+
+  echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+function make_account(){
+	echo "INFO: start $EXE $FUNCNAME"
+
+	ISCSI_TGT=$(iscsiadm --mode discovery --type sendtargets --portal ${ISCSI_PRT} |\
+		grep "\.${ISCSI_CLSTR}:" | awk -F" " '{print $2}' )
+	# TODO add USR_CLSTR to cmdline instead of guessing it
+
+	iscsiadm -m node -T ${ISCSI_TGT} --op update \
+		-n node.startup -v manual 
+	iscsiadm -m node -T ${ISCSI_TGT} --op update \
+		-n node.conn[0].startup -v automatic
+	iscsiadm -m node -T ${ISCSI_TGT} --op update \
+		-n node.session.auth.username -v ${ISCSI_USR}
+	iscsiadm -m node -T ${ISCSI_TGT} --op update \
+		-n node.session.auth.password -v ${ISCSI_PWD}
+	iscsiadm -m node -T ${ISCSI_TGT} --portal ${ISCSI_PRT} --login
+		
+	#echo "iscsiadm --mode discovery --type sendtargets --portal ${ISCSI_PRT}"
+	#echo "iscsiadm -m node -T ${ISCSI_TGT} --op update \
+	#	-n node.conn[0].startup -v automatic"
+	#echo "iscsiadm -m node -T ${ISCSI_TGT} --op update \
+	#	-n node.session.auth.username -v ${ISCSI_USR}"
+	#echo "iscsiadm -m node -T ${ISCSI_TGT} --op update \
+	#	-n node.session.auth.password -v ${ISCSI_PWD}"
+	#echo iscsiadm -m node -T ${ISCSI_TGT} --portal ${ISCSI_PRT} --login
+
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+# function main()
+
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-i|--init)
+		echo "INFO: start $EXE"
+
+		shift;
+		test -z $1 && exit 3
+			ISCSI_USR="${1}"
+		test -z $1 && exit 4 
+			ISCSI_PWD="${2}"
+		test -z $2 && exit 5  
+			ISCSI_PRT="${3}"
+		ISCSI_CLSTR="${ISCSI_USR}"
+		fix_iscsid_conf
+		fix_initiatorname
+		make_account
+
+		echo "INFO: normal_end $EXE"
+		exit
+	;;
+	-h|--help|*)
+		echo "usage: $(basename $0) OPTION"
+		echo "usage: $(basename $0) --init <ISCSI_USR> <ISCSI_PWD> <ISCSI_PRT>"
+		echo
+		echo "OPTION:"
+		echo " --help		show help."
+		echo " --version	show version."
+		echo " --init		initialise target with given paramters."
+		exit
+	;;
+esac
+#

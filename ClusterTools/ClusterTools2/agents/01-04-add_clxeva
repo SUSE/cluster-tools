@@ -1,3 +1,4 @@
+#!/bin/bash
 source wowlib2
 for clx_application in $CLX_APPLICATION; do
 	woweng2 UUID=rsc_clx_${SAPSID}_${clx_application} \

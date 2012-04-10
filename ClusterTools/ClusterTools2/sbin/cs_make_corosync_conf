@@ -1,0 +1,297 @@
+#!/bin/bash
+#
+# make_corosync_conf
+#
+# (c) 2011 SUSE Linux GmbH, Germany.
+# GNU Public License. No warranty.
+# Author: A.Rehg, L.Pinne
+#
+# Version: 0.03 2011-07-21 12:12
+#
+
+EXE="$0"
+
+CFG="/etc/ClusterTools2/make_corosync_conf"
+test -s $CFG && source $CFG
+test -z "$LIBFUNCIP" && LIBFUNCIP="/usr/lib/ClusterTools2/libfuncip"
+test -s $LIBFUNCIP || LIBFUNCIP="/usr/lib/ClusterTools2/libfuncip"
+test -s $LIBFUNCIP || LIBFUNCIP="/usr/local/lib/functions.ip"
+
+TMP="/tmp/cltl.$RANDOM"
+COROCONF=${COROCONF:-"/etc/corosync/corosync.conf"}
+SMPLTMPL1="/usr/share/ClusterTools2/samples/corosync.conf.tmpl-udpu-1ring"
+SMPLTMPL2="/usr/share/ClusterTools2/samples/corosync.conf.tmpl-udpu-2ring"
+
+
+function get_corosync_vals() {
+	echo "INFO: start $EXE $FUNCNAME"
+	echo "INFO: source LIBFUNCIP: $LIBFUNCIP"
+	test -z "${MEMBERADDR1_0}" &&\
+		MEMBERADDR1_0=$(host ${MEMBERNAM1_0} | awk '{print $4}')
+	test -z "${MEMBERADDR2_0}" &&\
+		MEMBERADDR2_0=$(host ${MEMBERNAM2_0} | awk '{print $4}')
+	test -z "${RINGIF_0}" &&\
+		RINGIF_0=$(ip -o a s | awk '\
+		($2=="bond0"&&$NF=="bond0") ||\
+		($2=="eth0"&&$NF=="eth0") ||\
+		($2=="br0"&&$NF=="br0") \
+		{print $2; exit}')
+	test -z "${BINDNETADDR_0}" && {
+		source $LIBFUNCIP 
+	# TODO use guessing, if no libfuncip:
+	#	/24 -> x.x.x.0
+	#	/16 -> x.x.0.0
+	#	/8  -> x.0.0.0
+	#BINDNETADDR_0=$(ip a s $RINGIF_0 |\
+	#awk '$1=="inet" && $7=="'$RINGIF_0'" {
+	#netaddr=$4
+	#n=gsub("255","0",netaddr)
+	#print netaddr
+	#}')
+		NETMSK=$( ip a s $RINGIF_0 |\
+			awk '$1=="inet"&&$7=="'$RINGIF_0'" {
+			n=split($2,a,"/"); print a[2]}' | head -1 )
+		BINDNETADDR_0=$(ipcalc $MEMBERADDR1_0 $NETMSK |\
+			awk '$1=="Network"&&$2=="address"{print $4}')
+		}
+
+	test -z "${MEMBERADDR1_1}" &&\
+		MEMBERADDR1_1=$(host ${MEMBERNAM1_1} | awk '{print $4}')
+	test -z "${MEMBERADDR2_1}" &&\
+		MEMBERADDR2_1=$(host ${MEMBERNAM2_1} | awk '{print $4}')
+	test -z "${RINGIF_1}" &&\
+		RINGIF_1=$(ip -o a s | awk '\
+		($2=="bond1"&&$NF=="bond1") ||\
+		($2=="eth1"&&$NF=="eth1") ||\
+		($2=="br1"&&$NF=="br1") \
+		{print $2; exit}')
+	test -z "${BINDNETADDR_1}" && {
+		source $LIBFUNCIP
+	# TODO see above
+		NETMSK=$( ip a s $RINGIF_1 |\
+			awk '$1=="inet"&&$7=="'$RINGIF_1'" {
+			n=split($2,a,"/"); print a[2]}' | head -1 )
+		BINDNETADDR_1=$(ipcalc $MEMBERADDR1_1 $NETMSK |\
+			awk '$1=="Network"&&$2=="address"{print $4}')
+		}
+	test -z "${THREADS}" &&
+		THREADS=$(grep -c "cpu.MHz.*:" /proc/cpuinfo)
+	
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+function get_cluster_members() {
+	echo "INFO: start $EXE $FUNCNAME"
+
+	test -s /etc/hosts || exit 24	
+	awk '$3~/'"$MEMBERS_0"'/ {print $1}' /etc/hosts | sort -u >$TMP
+		MEMBERADDR1_0=$(head -1 $TMP)
+		MEMBERADDR2_0=$(tail -1 $TMP)
+		test -z "$MEMBERADDR1_0" && exit 25
+			MEMBERNAM1_0=$(host $MEMBERADDR1_0 | awk '{print $NF}')
+		test -z "$MEMBERADDR2_0" && exit 25
+			MEMBERNAM2_0=$(host $MEMBERADDR2_0 | awk '{print $NF}')
+
+	test -n "${MEMBERS_1}" && test $NUMRING -eq 2 && {
+		awk '$3~/'"$MEMBERS_1"'/ {print $1}' /etc/hosts | sort -u >$TMP
+		MEMBERADDR1_1=$(head -1 $TMP)
+		MEMBERADDR2_1=$(tail -1 $TMP)
+		test -z "$MEMBERADDR1_1" && exit 25
+			MEMBERNAM1_0=$(host $MEMBERADDR1_0 | awk '{print $NF}')
+		test -z "$MEMBERADDR2_1" && exit 25
+			MEMBERNAM2_0=$(host $MEMBERADDR2_0 | awk '{print $NF}')
+	}
+	rm -f $TMP
+
+	echo "INFO: end $EXE $FUNCNAME" 
+}
+
+
+function fix_corosync_conf() {
+	echo "INFO: start $EXE $FUNCNAME"
+
+	cp -af $COROCONF ${COROCONF}.bak 2>/dev/null 
+	test -s $TEMPLATE || exit 11
+
+	awk -F":" ' $2!~/@@[A-Z].*@@/ {print}
+	$1~/rrp_mode/ && $2~/@@RRPMODE@@/ { print $1":","'$RRPMODE'"}
+	$1~/threads/ && $2~/@@THREADS@@/ { print $1":","'$THREADS'"}
+	$1~/secauth/ && $2~/@@SECAUTH@@/ { print $1":","'$SECAUTH'"}
+	$1~/bindnetaddr/ && $2~/@@BINDNETADDR_0@@/ { print $1":","'$BINDNETADDR_0'"}
+	$1~/mcastport/ && $2~/@@MCASTPORT_0@@/ { print $1":","'$MCASTPORT_0'"}
+	$1~/memberaddr/ && $2~/@@MEMBERADDR1_0@@/ { print $1":","'$MEMBERADDR1_0'"}
+	$1~/memberaddr/ && $2~/@@MEMBERADDR2_0@@/ { print $1":","'$MEMBERADDR2_0'"}
+	$1~/bindnetaddr/ && $2~/@@BINDNETADDR_1@@/ { print $1":","'$BINDNETADDR_1'"}
+	$1~/mcastport/ && $2~/@@MCASTPORT_1@@/ { print $1":","'$MCASTPORT_1'"}
+	$1~/memberaddr/ && $2~/@@MEMBERADDR1_1@@/ { print $1":","'$MEMBERADDR1_1'"}
+	$1~/memberaddr/ && $2~/@@MEMBERADDR2_1@@/ { print $1":","'$MEMBERADDR2_1'"}
+	' $TEMPLATE >$COROCONF &&\
+	echo "INFO: wrote $COROCONF"
+
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+function check_template() {
+	echo "INFO: start $EXE $FUNCNAME"
+
+	test -s $TEMPLATE || ln -s ${1} $TEMPLATE
+	test -s $TEMPLATE || exit 11
+
+	# TODO grep -v "^<blanks>#"
+	grep -v "#" $TEMPLATE >$TMP &&
+	echo "INFO: read $TEMPLATE"
+
+	# TODO list and loop
+	PTRN='
+'^aisexec.{'
+'^service.{'
+'^totem.{'
+'^logging.{'
+'^amf.{'
+'transport:.*udpu'
+'
+# TODO use_logd ?
+
+	for p in ${PTRN}; do
+		grep ${p} $TMP >/dev/null 2>&1 || exit 120
+	done
+
+	NUMTMPL=$(grep -c "member.{" $TMP)
+		N2=$[ 2 * $NUMRING ]
+		test $N2 -eq $NUMTMPL || exit 121
+	NUMTMPL=$(grep -c "ringnumber:.*[01]" $TMP)
+		test $NUMRING -eq $NUMTMPL || exit 122
+	NUMTMPL=$(grep -c "bindnetaddr:.*@@BINDNETADDR_.@@" $TMP)
+		test $NUMRING -eq $NUMTMPL || exit 123
+	NUMTMPL=$(grep -c "mcastport:.*@@MCASTPORT_.@@" $TMP)
+		test $NUMRING -eq $NUMTMPL || exit 124
+	NUMTMPL=$(grep -c "memberaddr:.*@@MEMBERADDR1_.@@" $TMP)
+		test $NUMRING -eq $NUMTMPL || exit 125
+	NUMTMPL=$(grep -c "memberaddr:.*@@MEMBERADDR2_.@@" $TMP)
+		test $NUMRING -eq $NUMTMPL || exit 126
+	rm -f $TMP
+
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+function echo_variables() {
+	echo "INFO: start $EXE $FUNCNAME"
+
+# TODO
+#	VARS="RINGIF_0 BINDNETADDR_0 MCASTPORT_0 MEMBER1_0 MEMBER2_0 THREADS SECAUTH RRPMODE TEMPLATE"
+#	for v in ${VARS}; do
+#		echo -n "${v}: "; eval '${v}'
+#	done
+
+	echo "RINGIF_0: $RINGIF_0"
+	echo "BINDNETADDR_0: $BINDNETADDR_0"
+	echo "MCASTPORT_0: $MCASTPORT_0"
+	echo "MEMBERADDR1_0: $MEMBERADDR1_0"
+	echo "MEMBERADDR2_0: $MEMBERADDR2_0"
+	echo "RINGIF_1: $RINGIF_1"
+	echo "BINDNETADDR_1: $BINDNETADDR_1"
+	echo "MCASTPORT_1: $MCASTPORT_1"
+	echo "MEMBERADDR1_1: $MEMBERADDR1_1"
+	echo "MEMBERADDR2_1: $MEMBERADDR2_1"
+	echo "THREADS: $THREADS"
+	echo "SECAUTH: $SECAUTH"
+	echo "RRPMODE: $RRPMODE"
+	echo "TEMPLATE: $TEMPLATE"
+
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+# function main()
+
+case $1 in
+	-h|--help)
+		echo "usage: $(basename $0) <MEMBERNAM1_0> <MEMBERNAM2_0> [<RINGIF_0> <MCASTPORT_0> [<SECAUTH> [<RRPMODE> [<TEMPLATE>]]]]"
+		echo "usage: $(basename $0) --default <MEMBERS_0>"
+		echo "usage: $(basename $0) --DEFAULT <MEMBERS_0> <MEMBERS_1>"
+		echo "usage: $(basename $0) OPTION"
+		echo
+		echo "OPTION:"
+		echo " --help           show help."
+		echo " --version        show version."
+		echo
+		echo "Example:"
+		echo "$(basename $0) -d apple.110$"
+		exit
+	;;
+	-v|--version)
+                echo -n "$(basename $EXE) "
+                head -11 $EXE | grep "^# Version: "
+                exit
+        ;;
+	-d|default)
+		echo "INFO: start $EXE"
+
+		shift;
+		NUMRING=1
+		check_template $SMPLTMPL1
+
+		MEMBARG_0=$1
+		source $CFG
+		test -z "${MEMBARG_0}" || MEMBERS_0=${MEMBARG_0}
+		get_cluster_members
+		get_corosync_vals
+		fix_corosync_conf
+
+		echo "INFO: normal_end $EXE"
+	;;
+	-D|DEFAULT)
+		echo "INFO: start $EXE"
+
+		shift;
+		NUMRING=2
+		check_template $SMPLTMPL2
+ 
+		MEMBARG_0=$1
+		MEMBARG_1=$2
+		source $CFG
+		test -z "${MEMBARG_0}" || MEMBERS_0=${MEMBARG_0}
+		test -z "${MEMBARG_1}" || MEMBERS_1=${MEMBARG_1}
+		get_cluster_members
+		get_corosync_vals
+		fix_corosync_conf
+
+		echo "INFO: normal_end $EXE"
+	;;
+	-t|--test)
+		shift;
+		shift;
+		NUMRING=2
+		MEMBARG_0=$1
+		MEMBARG_1=$2
+		source $CFG
+		test -z "${MEMBARG_0}" || MEMBERS_0=${MEMBARG_0}
+		test -z "${MEMBARG_1}" || MEMBERS_1=${MEMBARG_1}
+
+		get_cluster_members
+		get_corosync_vals
+		echo_variables
+	;;
+	*)
+		echo "INFO: start $EXE"
+
+		NUMRING=1
+		source $CFG
+		test -z "${1}" || MEMBERNAM1_0=${1}
+		test -z "${2}" || MEMBERNAM2_0=${2}
+		RINGIF_0=${3:-"bond0"}
+		MCASTPORT_0=${4:-"5404"}
+		SECAUTH=${5:-"on"}
+		RRPMODE=${6:-"none"}
+		TEMPLATE=${7:-"$COROCONF.tmpl"}
+	
+		get_corosync_vals
+		fix_corosync_conf
+		
+		echo "INFO: normal_end $EXE"
+	;;
+esac
+#

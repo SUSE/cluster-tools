@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # sapall-sbd - start all wow agents to configure sbd stonith fencing
 #

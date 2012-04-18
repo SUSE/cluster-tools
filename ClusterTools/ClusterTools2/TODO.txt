@@ -56,3 +56,5 @@ TODO post-processing SAP installation script
 TODO openais-stop  ignoriert ein start und ruft ansonsten rcopenais auf
 TODO man page multipath: formula to calc timings (s. PIKS)
 TODO rc-script stopopenais to prevent system from being fenced at shutdown
+
+TODO grep_supportconfig: ulimit, lvm

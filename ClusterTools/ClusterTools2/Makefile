@@ -31,3 +31,4 @@ rpm:	tar
 
 all:	tar rpm
 	echo building ${PKT}-${VERS}-${REL}
+#

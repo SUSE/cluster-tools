@@ -5,10 +5,10 @@
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2012-02-23
+# Version: 0.01 2012-04-18
 #
-# For SLES11.
-# For Supportconfig Script Version: 2.25-237
+# For SLES11, for Supportconfig Script Version: 2.25-237
+#
 
 EXE=$0
 ERR="/dev/null"
@@ -546,7 +546,7 @@ function chk_oracle() {
 	echo "sysconfig_oracle :"
         FIL="sysconfig.txt"
         split_file $FIL
-        F=$(grep "# /etc/sysconfig/oracle" $TMP/$FIL/xx* |\
+        F=$(grep -l "# /etc/sysconfig/oracle" $TMP/$FIL/xx* |\
 		 tr -d ":#" | awk '{print $1}')
         grep -v "^#" $F  | awk -F: '{print $2}' | tr -s "\n "
         echo
@@ -747,9 +747,9 @@ function chk_filesys() {
 	
 	split_file $FIL 
 	
-	F=$(grep "# /etc/fstab" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+	F=$(grep -l "# /etc/fstab" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
 	grep -v "#==" $F | tr -s " "
-	F=$(grep "# /bin/mount" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+	F=$(grep -l "# /bin/mount" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
 	grep -v "#==" $F | tr -s " "
 	# TODO define meaningful limits for await and svctm	
 	# TODO make limits for await and svctm a config parameter	
@@ -874,15 +874,15 @@ vm.nr_hugepages
 	# TODO tmpfs
 	FIL="env.txt"
 	split_file $FIL
-	F=$(grep "# ulimit -a" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+	F=$(grep -h "# ulimit -a" $TMP/$FIL/xx* | tr -d ":#")
         echo $F | grep -v "#==" | tr -s " "
 
 	FIL="sysconfig.txt"
 	split_file $FIL
-	F=$(grep "# /etc/sysconfig/ulimit" $TMP/$FIL/xx* | tr -d ":#" |\
+	F=$(grep -l "# /etc/sysconfig/ulimit" $TMP/$FIL/xx* | tr -d ":#" |\
 		 awk '{print $1}')
-	grep -v "^#" $F | tr -s "\n "
-	# TODO avoid printing of temp file name
+	# TODO make it work:
+	# test -r $F && grep -v "^#" $F | tr -s "\n "
 	echo
 
 	FIL="sysfs.txt"
@@ -1109,8 +1109,6 @@ case $1 in
 		chk_software
 		chk_updates
 		chk_services
-		#chk_cluster
-		#chk_oracle
 		chk_sysconf
 		chk_errors
 		chk_sysload

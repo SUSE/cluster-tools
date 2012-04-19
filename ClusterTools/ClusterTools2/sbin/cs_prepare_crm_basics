@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# prepare_crm_basics
+# cs_prepare_crm_basics
 #
 # (c) 2011 SUSE Linux GmbH, Germany.
 # GNU Public License. No warranty.
@@ -11,7 +11,7 @@
 
 EXE="$0"
 
-CFG="/etc/ClusterTools2/prepare_crm_basics"
+CFG="/etc/ClusterTools2/cs_prepare_crm_basics"
 test -s $CFG && source $CFG
 
 test -z $DEFAULTS_TMPL &&\

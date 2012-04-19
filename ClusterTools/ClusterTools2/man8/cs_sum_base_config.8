@@ -1,0 +1,89 @@
+.TH cs_sum_base_config 8 "12 Feb 2012" "" "ClusterTools2"
+.\"
+.SH NAME
+sum_base_config \- calculate checksums for common configuration and system
+parameters 
+.\"
+.SH SYNOPSIS
+.B cs_sum_base_config \fI[OPTION]\fR
+.\"
+.SH DESCRIPTION
+\fBsum_base_config\fP calculates MD5 checksums for common configuration and
+system parameters.
+By default only files and parameters are checked, that are expected to be 
+identical on all nodes of one cluster. The output can be used to find
+differences between two or more cluster nodes.
+Or it can be stored and re-used later to check for changes.
+Please call this script as root.
+.br
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+	show help.
+.HP
+\fB --version\fR
+	show version.
+.HP
+\fB --files\fR
+	checksum base config files only.
+.HP
+\fB --calls\fR
+	checksum base calls only.
+.HP
+\fB --apps\fR
+	checksum applications config files and calls only.
+.\"
+.SH EXAMPLES
+.br
+.TP
+* Write checksums for common base config files of an node to a file. 
+.br
+# sum_base_config -f >$HOSTNAME.txt
+.TP
+* Find differences between nodep and nodeq. Check base config files as well as common base system parameters and applications configuration. 
+# sum_base_config >nodep.txt
+.br
+# sum_base_config -a >>nodep.txt
+.br
+# ssh root@nodeq sum_base_config >nodeq.txt
+.br
+# ssh root@nodeq "sum_base_config -a" >>nodeq.txt
+.br
+# diff node[pq].txt
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/sum_base_config
+	the program itself.
+.TP
+/etc/ClusterTools2/sum_base_config
+	the configuration.
+.\"
+.SH BUGS
+The number of files is limited to the maximum number of arguments for a shell
+loop. Single quotes "'" are not allowed in calls.
+Time is read from hwclock, but not compared to system time.
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBmd5sum\fP(1), \fBClusterTools2\fP(7), \fBaideinit\fP(8), \fBtripwire\fP(8)
+.\"
+.\"
+.SH COPYRIGHT
+(c) 2011 L.Pinne, Germany.
+.br
+sum_base_config comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# sum_base_config
+# cs_sum_base_config
 #
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
@@ -10,7 +10,7 @@
 
 EXE="$0"
 
-CFG="/etc/ClusterTools2/sum_base_config"
+CFG="/etc/ClusterTools2/cs_sum_base_config"
 test -s $CFG && source $CFG
 
 test -z "${TEMP}" &&\

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# make_sbd_devices
+# cs_make_sbd_devices
 #
 # (c) 2011 SUSE Linux GmbH, Germany.
 # GNU Public License. No warranty.
@@ -11,7 +11,7 @@
 #set -x
 
 EXE="$0"
-CFG="/etc/ClusterTools2/make_sbd_devices"
+CFG="/etc/ClusterTools2/cs_make_sbd_devices"
 test -s $CFG && source $CFG
 
 test -z "${TEMP}" &&\

@@ -1,0 +1,178 @@
+#!/bin/bash
+#
+# cs_clusterstate 
+#
+# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version: 0.1 2011-11-15
+#
+
+EXE="$0"
+
+CFG="/etc/ClusterTools2/cs_clusterstate"
+test -s $CFG && source $CFG
+
+test -z "${ETH}" &&\
+	 ETH="bond0 eth3"
+test -z "${SCF}" &&\
+	 SCF="/etc/sysconfig/sbd"
+test -z "${SBD}" && test -s $SCF &&\
+	SBD=$( awk -F"=" '$1=="SBD_DEVICE" {print $2}' $SCF |\
+		tr -d "\""|tr ";" "\n" )
+
+HST=$(hostname -f)
+DAT=$(date +"%Y-%m-%d %T")
+
+
+function help() {
+	echo "usage:    $(basename $0) [OPTION]"
+	echo
+	echo " --help           show help."
+	echo " --all        show all info."
+	echo " --basics        show basic info."
+	echo " --network        show network info."
+	echo " --storage        show storage info."
+}
+
+
+function get_basics() {
+echo
+crm_mon -r1 |\
+ awk '$1=="Current"||$1=="Online:"||$1=="OFFLINE:"||$3=="UNCLEAN"{print $0}'
+# TODO: show [standby] as well
+# TODO: efficient awk
+echo -n "Stopped/FAILED resources: "
+crm_mon -r1 | awk '$3=="Stopped"||$0~/FAILED/{print $0}' | wc -l
+echo -n "Started resources: "
+crm_mon -r1 | awk '$3=="Started"{print $0}' | wc -l
+
+PSAUX=$(ps aux | awk '{print $11}')
+CLPROC="
+stonithd
+cib
+attrd
+pengine
+crmd
+lrmd
+mgmtd
+corosync
+ha_logd
+sbd
+"
+echo -n "HA processes: "
+for f in $CLPROC; do
+	echo $PSAUX | grep -c $f >/dev/null && echo $f
+done | wc -l
+echo
+
+echo "TOTEM: "
+corosync-cfgtool -s | grep -B1 "status.*=" | grep -v "^--$"
+echo
+echo "SBDs:"
+# TODO crm_mon -r -1 | grep "stonith:external/sbd.:.Started"
+for s in $SBD; do
+	echo ${s}
+	sbd -d ${s} list 2>/dev/null
+done
+echo
+}
+
+
+function get_network() {
+echo
+for i in $ETH; do
+	ip -o a s $i | awk '$0~/state/{print $2,$3}'
+	case $i in
+	bond?)
+		cat /proc/net/bonding/$i | grep -B1 "MII.Status" | grep -v "^--$"
+	 	# TODO ethtool
+	;;
+	eth?)
+		# TODO ethtool
+	;;
+	esac
+done
+echo
+# TODO network
+#ip a s | grep "^[0-9].*:.\<.*\>"
+echo -n "IPs: "
+	# TODO only one "ip a s"
+	ip a s | grep -c "inet.*[0-9]\..*\..*\..*[0-9]\/"
+	ip a s | awk '$0~/inet.*[0-9]\..*\..*\..*[0-9]\// {print "    ",$2,$NF}'
+echo
+}
+
+function get_storage() {
+# TODO check for WWIDs 3600...=SAN/SCSI, 1494...=iSCSI 
+# TODO configurable pattern for SAN LUNs (f.e "HP,OPEN-V", "HP,HSV"), local LUNs (f.e. "HP,LOGICAL.VOLUME"), iSCSI LUNs (f.e. "IET,VIRTUAL-DISK")
+# TODO call multipath only once and put ouput in variable
+# echo -n "total LUNs: "
+#	 multipath -l | grep -c "^[0-9].*dm-[0-9]"
+# TODO check for un-matched userfriendly names (mpath[a-z])
+
+echo
+echo -n "SCSI LUNs: "
+	multipath -l | grep -Ec "[\^(]3600.*dm-"
+echo -n "iSCSI LUNs: "
+	multipath -l | grep -Ec "[\^(]1494.*dm-"
+echo
+
+# TODO no grep-grep
+#grep -v "Personalities.:" /proc/mdstat | grep -v "bitmap.*chunk$" | tr -s "\n" 
+echo -n "MDs total: "
+	grep -c "^md[0-9].*:" /proc/mdstat
+echo -n "MDs complete: "
+	grep -c -e "\[UU\]$" -e "\[U\]$" /proc/mdstat
+# TODO MDs syncing / in-sync
+#echo -n "MDs syncing: "
+#	grep -c <TODO> /proc/mdstat
+echo -n "MDs split: "
+	grep -c "U_\|_U" /proc/mdstat
+echo
+
+vgs
+echo
+echo -n "Filesystems rw: "
+	grep -c "^/dev/.*rw" /proc/mounts
+echo
+}
+
+
+# main()
+
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-h|--help)
+		help
+		exit
+	;;
+	-s|--storage)
+		echo "### $HST - $DAT ###"
+		get_storage
+		exit
+	;;	
+	-n|--network)
+		echo "### $HST - $DAT ###"
+		get_network
+		exit
+	;;	
+	-a|--all)
+	# TODO get_processes (number, ram, load), get_groups ?
+		echo "### $HST - $DAT ###"
+		get_basics
+		get_network
+		get_storage
+		exit
+	;;
+	-b|--basics|*)
+		echo "### $HST - $DAT ###"
+		get_basics
+		exit
+	;;	
+esac
+#

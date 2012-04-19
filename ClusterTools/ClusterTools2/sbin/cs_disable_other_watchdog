@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# disable_other_watchdog
+# cs_disable_other_watchdog
 #
 # (c) 2011 SUSE Linux GmbH, Germany.
 # GNU Public License. No warranty.
@@ -12,7 +12,7 @@
 EXE="$0"
 FIL="/etc/sysconfig/kernel"
 
-CFG="/etc/ClusterTools2/disable_other_watchdog"
+CFG="/etc/ClusterTools2/cs_disable_other_watchdog"
 test -s $CFG && source $CFG
 
 test -z "${TEMP}" &&\

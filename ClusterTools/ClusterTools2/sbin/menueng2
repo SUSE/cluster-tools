@@ -1,9 +1,11 @@
 #!/usr/bin/perl
 #
-# ClusterService
+# menueng2
 #
-# (c) 2009-2010 SUSE Linux GmbH, Germany. Author: F.Herschel.
-# GNU Public License. No warranty.
+# (c) 2009-2010 SUSE Linux GmbH, Germany
+# (c) 2011-2012 SUSE Linux Products GmbH, Germany 
+# Author: F.Herschel
+# License: GPL - GNU Public License. No warranty.
 #
 
 

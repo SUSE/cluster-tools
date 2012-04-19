@@ -1,0 +1,77 @@
+.TH cs_prepare_wowfile 8 "21 July 2011" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_prepare_wowfile \- prepare wow configuration from running resources 
+.\"
+.SH SYNOPSIS
+.P
+.B cs_prepare_wowfile --sap \fI<SID> \fR[\fI<SVC_LABEL>\fR]
+.P
+.B cs_prepare_wowfile --ora \fI<SID> <SVC_LABEL> \fR[\fI<VG> \fR[\fI<RAID_CFG>\fR]]
+.P
+.B cs_prepare_wowfile \fIOPTION\fR
+.\"
+.SH DESCRIPTION
+\fBcs_prepare_wowfile\fP generates a wow configuration file from running resources.
+.br
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+	show help.
+.HP
+\fB --version\fR
+	show version.
+.HP
+\fB --ora\fR
+	guess wow configuration for Oracle instance simple-stack.
+.HP
+\fB --sap\fR
+	guess wow configuration for SAP system simple-stack.
+.\"
+.SH FILE SYNTAX
+.\"
+.SH EXAMPLES
+.br
+.TP
+* Guess resources for running Oracle SID orca with service label willy.
+.br
+# cs_prepare_wowfile --ora orca willy vg01
+.TP
+* Guess resources for running instances of SAP system C11. Write to separate files to edit them later.
+.br
+# for i in C11as C11ci C11db ; do prepare_wowfile --sap C11 $i >C11_$i.wow; done
+.br
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_prepare_wowfile
+	the program itself.
+.TP
+/etc/ClusterTools2/cs_prepare_wowfile
+	the program's configuration.
+.\"
+.SH BUGS
+Only specific filesystem layout and naming schema supported for now.
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBwow\fP(8), \fBClusterTools2\fP(7)
+.\"
+.SH COPYRIGHT
+(c) 2011 L.Pinne, Germany.
+.br
+cs_prepare_wowfile comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

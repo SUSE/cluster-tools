@@ -58,3 +58,4 @@ TODO man page multipath: formula to calc timings (s. PIKS)
 TODO rc-script stopopenais to prevent system from being fenced at shutdown
 
 TODO grep_supportconfig: ulimit, lvm
+TODO seacrh for hugetables / hugepages ?

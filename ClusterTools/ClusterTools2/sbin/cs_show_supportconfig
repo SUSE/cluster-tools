@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# grep_supportconfig
+# cs_show_supportconfig
 #
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
@@ -14,7 +14,7 @@ EXE=$0
 ERR="/dev/null"
 TMP="/tmp/cltl.$RANDOM"
 
-CFG="/etc/ClusterTools2/grep_supportconfig"
+CFG="/etc/ClusterTools2/cs_show_supportconfig"
 test -s $CFG && source $CFG
 
 # TODO: make DIR= work
@@ -1042,7 +1042,7 @@ function chk_errors() {
 
 	# TODO: see grep_error_patterns
 	test -z "${ERRCFG}" &&\
-		ERRCFG="/etc/ClusterTools2/grep_error_patterns"
+		ERRCFG="/etc/ClusterTools2/cs_show_error_patterns"
 	test -s $ERRCFG && source $ERRCFG
  
 	# TODO: taint.flag ??

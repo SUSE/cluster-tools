@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# grep_error_patterns
+# cs_show_error_patterns
 #
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
@@ -10,7 +10,7 @@
 
 EXE="$0"
 
-CFG="/etc/ClusterTools2/grep_error_patterns"
+CFG="/etc/ClusterTools2/cs_show_error_patterns"
 test -s $CFG && source $CFG
 
 DMSG="/tmp/dmesg.$RANDOM"

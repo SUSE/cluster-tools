@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# precheck_for_sap 
+# cs_precheck_for_sap 
 #
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
@@ -13,7 +13,7 @@ COMD=$(basename $0)
 CFIL=${2:-wowconfig}
 ERR=/dev/null
 
-CFG="/etc/ClusterTools2/precheck_for_sap"
+CFG="/etc/ClusterTools2/cs_precheck_for_sap"
 if [ -s $CFG ]; then
 	source $CFG
 else
@@ -221,7 +221,7 @@ function chk_gen_storag() {
 "sbd.*Latency"
 "
 	echo "errors:"
-	/usr/sbin/grep_error_patterns
+	/usr/sbin/cs_show_error_patterns
 	echo
 }
 

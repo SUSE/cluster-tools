@@ -1,14 +1,14 @@
-.TH disable_other_watchdog 8 "26 Sep 2011" "" "ClusterTools2"
+.TH cs_disable_other_watchdog 8 "26 Sep 2011" "" "ClusterTools2"
 .\"
 .SH NAME
-disable_other_watchdog \- disable other watchdog and reboot-daemons 
+cs_disable_other_watchdog \- disable other watchdog and reboot-daemons 
 .\"
 .SH SYNOPSIS
 .P
-.B disable_other_watchdog \fR[\fIOPTION\fR] 
+.B cs_disable_other_watchdog \fR[\fIOPTION\fR] 
 .\"
 .SH DESCRIPTION
-\fBdisable_other_watchdog\fP 
+\fBcs_disable_other_watchdog\fP 
 stops reboot-daemon, disables service, removes watchdog module from running kernel. Writes watchdog to modprobe blacklist.
 .br
 .\"
@@ -29,9 +29,9 @@ stops reboot-daemon, disables service, removes watchdog module from running kern
 .SH EXAMPLES
 .br
 .TP
-* disable watchdog and stop reboot-daemon.
+* cs_disable watchdog and stop reboot-daemon.
 .br
-# disable_other_watchdog --stop
+# cs_disable_other_watchdog --stop
 .\"
 .SH EXIT STATUS
 .B 0
@@ -42,10 +42,10 @@ Usage, syntax or execution errors.
 .\"
 .SH FILES
 .TP
-/usr/sbin/disable_other_watchdog
+/usr/sbin/cs_disable_other_watchdog
 	the program itself.
 .TP
-/etc/ClusterTools2/disable_other_watchdog
+/etc/ClusterTools2/cs_disable_other_watchdog
 	the configuration file.
 .TP
 /etc/modprobe.d/ClusterTools2

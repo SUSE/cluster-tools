@@ -1,13 +1,13 @@
-.TH sleha_cleanup 8 "26 Sep 2011" "" "ClusterTools2"
+.TH cs_delcib 8 "26 Sep 2011" "" "ClusterTools2"
 .\"
 .SH NAME
-sleha_cleanup \- remove cluster information base from cluster node
+cs_delcib \- remove cluster information base from cluster node
 .\"
 .SH SYNOPSIS
-.B sleha_cleanup \fIOPTION\fR
+.B cs_delcib \fIOPTION\fR
 .\"
 .SH DESCRIPTION
-\fBsleha_cleanup\fP cleans up a pacemaker HA cluster node. 
+\fBcs_delcib\fP cleans up a pacemaker HA cluster node. 
 It removes the cluster information base, the policy engine logs, the ring
 status and core files that a cluser node has generated during its operation.
 Only the basic cluster configuration in /etc will be left.
@@ -39,10 +39,10 @@ Usage, syntax or execution errors.
 .\"
 .SH FILES
 .TP
-/usr/sbin/sleha_cleanup
+/usr/sbin/cs_delcib
 	the program itself.
 .TP
-/etc/ClusterTools2/sleha_cleanup
+/etc/ClusterTools2/cs_delcib
 	the configuration.
 .TP
 /var/lib/corosync/, /var/lib/heartbeat/cores/, /var/lib/heartbeat/crm/, /var/lib/pengine/

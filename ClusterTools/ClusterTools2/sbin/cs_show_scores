@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# cs_show_scores
 # Apr 2009, Dominik Klein
 # Display scores of Linux-HA resources
 

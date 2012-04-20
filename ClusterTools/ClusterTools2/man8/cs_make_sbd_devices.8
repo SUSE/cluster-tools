@@ -1,16 +1,16 @@
-.TH make_sbd_devices 8 "29 Mar 2012" "" "ClusterTools2"
+.TH cs_make_sbd_devices 8 "29 Mar 2012" "" "ClusterTools2"
 .\"
 .SH NAME
-make_sbd_devices \- initialise SBD devices 
+cs_make_sbd_devices \- initialise SBD devices 
 .\"
 .SH SYNOPSIS
 .P
-.B make_sbd_devices \fIOPTION\fR
+.B cs_make_sbd_devices \fIOPTION\fR
 .P
-.B make_sbd_devices --init \fR[\fI<SBD_OPTS>\fR [\fI<SBD_CONF>\fR]]
+.B cs_make_sbd_devices --init \fR[\fI<SBD_OPTS>\fR [\fI<SBD_CONF>\fR]]
 .\"
 .SH DESCRIPTION
-\fBmake_sbd_devices\fP initialises SBD devices defined in the SBD config file.
+\fBcs_make_sbd_devices\fP initialises SBD devices defined in the SBD config file.
 The first sectors of the devices will be overwritten. This script is simply a
 wrapper for the sbd command.
 .br
@@ -35,15 +35,15 @@ For information on timings please see sbd(7), sbd(8), and multipath.conf(5).
 .TP
 * Initialise devices as defined in the default SBD config file, using built-in default options.
 .br
-# make_sbd_devices --init
+# cs_make_sbd_devices --init
 .TP
 * Initialise devices with specific options, take other settings from SBD config file. 
 .br
-# make_sbd_devices --init "-1 30 -3 2 -4 130" /etc/sysconfig/sbd
+# cs_make_sbd_devices --init "-1 30 -3 2 -4 130" /etc/sysconfig/sbd
 .TP
 * Show content of SBD devices.
 .br
-# make_sbd_devices --dump
+# cs_make_sbd_devices --dump
 .\"
 .SH EXIT STATUS
 .B 0
@@ -54,10 +54,10 @@ Usage, syntax or execution errors.
 .\"
 .SH FILES
 .TP
-/usr/sbin/make_sbd_devices
+/usr/sbin/cs_make_sbd_devices
 	the program itself.
 .TP
-/etc/ClusterTools2/make_sbd_devices
+/etc/ClusterTools2/cs_make_sbd_devices
 	the program's configuration.
 .TP
 /etc/sysconfig/sbd
@@ -76,7 +76,7 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 .SH COPYRIGHT
 (c) 2011 L.Pinne, Germany.
 .br
-make_sbd_devices comes with ABSOLUTELY NO WARRANTY.
+cs_make_sbd_devices comes with ABSOLUTELY NO WARRANTY.
 .br
 For details see the GNU General Public License at
 http://www.gnu.org/licenses/gpl.html

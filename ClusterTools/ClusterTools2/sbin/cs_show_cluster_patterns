@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# grep_cluster_patterns
+# cs_show_cluster_patterns
 #
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
@@ -10,7 +10,7 @@
 
 EXE="$0"
 
-CFG="/etc/ClusterTools2/grep_cluster_patterns"
+CFG="/etc/ClusterTools2/cs_show_cluster_patterns"
 test -s $CFG && source $CFG
 
 test -z "/etc/corosync/corosync.conf" &&\
@@ -95,7 +95,7 @@ test -z "${CLUSTR_PATTERN}" &&\
 "sbd.*Latency"
 "
 
-# TODO: SAPInstace, SAPDatabase patterns, See /etc/ClusterTools2/grep_cluster_patterns
+# TODO: SAPInstace, SAPDatabase patterns, See /etc/ClusterTools2/cs_show_cluster_patterns
 test -z "${RESRC_PATTERN}" &&\
 	 RESRC_PATTERN="
 "Volume.group.*error"

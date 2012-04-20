@@ -1,13 +1,13 @@
-.TH grep_cluster_patterns 8 "05 Oct 2011" "" "ClusterTools2"
+.TH cs_show_cluster_patterns 8 "05 Oct 2011" "" "ClusterTools2"
 .\"
 .SH NAME
-grep_cluster_patterns \- search log files for cluster patterns
+cs_show_cluster_patterns \- search log files for cluster patterns
 .\"
 .SH SYNOPSIS
-.B grep_cluster_patterns \fIOPTION\fR
+.B cs_show_cluster_patterns \fIOPTION\fR
 .\"
 .SH DESCRIPTION
-\fBgrep_cluster_patterns\fP searches log files for cluster patterns.
+\fBcs_show_cluster_patterns\fP searches log files for cluster patterns.
 Please note that most cluster components do logging to their local node only.
 .br
 .\"
@@ -37,7 +37,7 @@ Please note that most cluster components do logging to their local node only.
 .\"
 .SH EXAMPLES
 .HP
-# grep_cluster_patterns -m
+# cs_show_cluster_patterns -m
 .\".HP
 .\" # 
 .\"
@@ -50,10 +50,10 @@ Usage, syntax or execution errors.
 .\"
 .SH FILES
 .TP
-/usr/sbin/grep_cluster_patterns
+/usr/sbin/cs_show_cluster_patterns
 	the program itself.
 .TP
-/etc/ClusterTools2/grep_cluster_patterns
+/etc/ClusterTools2/cs_show_cluster_patterns
 	the configuration.
 .TP
 /etc/corosync/corosync.conf
@@ -75,7 +75,7 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 .SH COPYRIGHT
 (c) 2011 L.Pinne, Germany.
 .br
-grep_cluster_patterns comes with ABSOLUTELY NO WARRANTY.
+cs_show_cluster_patterns comes with ABSOLUTELY NO WARRANTY.
 .br
 For details see the GNU General Public License at
 http://www.gnu.org/licenses/gpl.html

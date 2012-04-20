@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# make_iscsi_conf
+# cs_make_iscsi_conf
 #
 # (c) 2011 SUSE Linux GmbH, Germany.
 # GNU Public License. No warranty.
@@ -10,7 +10,7 @@
 #
 
 EXE="$0"
-CFG="/etc/ClusterTools2/make_iscsi_conf"
+CFG="/etc/ClusterTools2/cs_make_iscsi_conf"
 test -s $CFG && source $CFG
 
 test -z "${TEMP}" &&\

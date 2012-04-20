@@ -1040,7 +1040,7 @@ function chk_errors() {
 	
 	echo_msgsep $FUNCNAME
 
-	# TODO: see grep_error_patterns
+	# TODO: see cs_show_error_patterns
 	test -z "${ERRCFG}" &&\
 		ERRCFG="/etc/ClusterTools2/cs_show_error_patterns"
 	test -s $ERRCFG && source $ERRCFG

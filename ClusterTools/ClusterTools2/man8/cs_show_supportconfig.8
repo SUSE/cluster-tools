@@ -1,17 +1,17 @@
-.TH grep_supportconfig 8 "25 Aug 2011" "" "ClusterTools2"
+.TH cs_show_supportconfig 8 "25 Aug 2011" "" "ClusterTools2"
 .\"
 .SH NAME
-grep_supportconfig \- collect information from supportconfig files
+cs_show_supportconfig \- collect information from supportconfig files
 .\"
 .SH SYNOPSIS
-.B grep_supportconfig \fIOPTION\fR
+.B cs_show_supportconfig \fIOPTION\fR
 .br
-.B grep_supportconfig --generic \fIDIR\fR
+.B cs_show_supportconfig --generic \fIDIR\fR
 .br
-.B grep_supportconfig --function \fIDIR\fR \fIFUNC\fR
+.B cs_show_supportconfig --function \fIDIR\fR \fIFUNC\fR
 .\"
 .SH DESCRIPTION
-\fBgrep_supportconfig\fP collects information from supportconfig files.
+\fBcs_show_supportconfig\fP collects information from supportconfig files.
 This version should work for supportconfig files from SLES11. 
 The supportconfig archive has to be extracted. 
 .br
@@ -42,18 +42,18 @@ Usage, syntax or execution errors.
 .\"
 .SH EXAMPLES
 .TP
-# grep_supportconfig -g nts_node0_111010_1101
+# cs_show_supportconfig -g nts_node0_111010_1101
 show all generic infos for extracted supportconfig archive nts_node0_111010_1101
 .TP
-# grep_supportconfig -f nts_node0_111010_1101 chk_overview chk_veritas
+# cs_show_supportconfig -f nts_node0_111010_1101 chk_overview chk_veritas
 show overview info, than search for Veritas Cluster Services
 .\"
 .SH FILES
 .TP
-/usr/sbin/grep_supportconfig
+/usr/sbin/cs_show_supportconfig
 	the program itself.
 .TP
-/etc/ClusterTools2/grep_supportconfig
+/etc/ClusterTools2/cs_show_supportconfig
 	the configuration.
 .TP
 /etc/ClusterTools2/grep_error_patterns
@@ -73,7 +73,7 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 .SH COPYRIGHT
 (c) 2011 L.Pinne, Germany.
 .br
-grep_supportconfig comes with ABSOLUTELY NO WARRANTY.
+cs_show_supportconfig comes with ABSOLUTELY NO WARRANTY.
 .br
 For details see the GNU General Public License at
 http://www.gnu.org/licenses/gpl.html

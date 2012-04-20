@@ -1,4 +1,10 @@
 #!/bin/sh
+#
+# wow
+#
+# (c) 2011-2012 SUSE Linux Products GmbH, Germany 
+# Author: F.Herschel
+# License: GPL - GNU Public License. No warranty.
 
 cmd=""
 case "$1" in

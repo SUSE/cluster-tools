@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# clusterstate 
+# cs_clusterstate 
 #
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
@@ -10,7 +10,7 @@
 
 EXE="$0"
 
-CFG="/etc/ClusterTools2/clusterstate"
+CFG="/etc/ClusterTools2/cs_clusterstate"
 test -s $CFG && source $CFG
 
 test -z "${ETH}" &&\

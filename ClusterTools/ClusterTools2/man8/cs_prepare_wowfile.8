@@ -1,18 +1,18 @@
-.TH prepare_wowfile 8 "21 July 2011" "" "ClusterTools2"
+.TH cs_prepare_wowfile 8 "21 July 2011" "" "ClusterTools2"
 .\"
 .SH NAME
-prepare_wowfile \- prepare wow configuration from running resources 
+cs_prepare_wowfile \- prepare wow configuration from running resources 
 .\"
 .SH SYNOPSIS
 .P
-.B prepare_wowfile --sap \fI<SID> \fR[\fI<SVC_LABEL>\fR]
+.B cs_prepare_wowfile --sap \fI<SID> \fR[\fI<SVC_LABEL>\fR]
 .P
-.B prepare_wowfile --ora \fI<SID> <SVC_LABEL> \fR[\fI<VG> \fR[\fI<RAID_CFG>\fR]]
+.B cs_prepare_wowfile --ora \fI<SID> <SVC_LABEL> \fR[\fI<VG> \fR[\fI<RAID_CFG>\fR]]
 .P
-.B prepare_wowfile \fIOPTION\fR
+.B cs_prepare_wowfile \fIOPTION\fR
 .\"
 .SH DESCRIPTION
-\fBprepare_wowfile\fP generates a wow configuration file from running resources.
+\fBcs_prepare_wowfile\fP generates a wow configuration file from running resources.
 .br
 .\"
 .SH OPTIONS
@@ -36,7 +36,7 @@ prepare_wowfile \- prepare wow configuration from running resources
 .TP
 * Guess resources for running Oracle SID orca with service label willy.
 .br
-# prepare_wowfile --ora orca willy vg01
+# cs_prepare_wowfile --ora orca willy vg01
 .TP
 * Guess resources for running instances of SAP system C11. Write to separate files to edit them later.
 .br
@@ -52,10 +52,10 @@ Usage, syntax or execution errors.
 .\"
 .SH FILES
 .TP
-/usr/sbin/prepare_wowfile
+/usr/sbin/cs_prepare_wowfile
 	the program itself.
 .TP
-/etc/ClusterTools2/prepare_wowfile
+/etc/ClusterTools2/cs_prepare_wowfile
 	the program's configuration.
 .\"
 .SH BUGS
@@ -70,7 +70,7 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 .SH COPYRIGHT
 (c) 2011 L.Pinne, Germany.
 .br
-prepare_wowfile comes with ABSOLUTELY NO WARRANTY.
+cs_prepare_wowfile comes with ABSOLUTELY NO WARRANTY.
 .br
 For details see the GNU General Public License at
 http://www.gnu.org/licenses/gpl.html

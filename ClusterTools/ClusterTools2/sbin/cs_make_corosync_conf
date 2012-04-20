@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# make_corosync_conf
+# cs_make_corosync_conf
 #
 # (c) 2011 SUSE Linux GmbH, Germany.
 # GNU Public License. No warranty.
@@ -11,7 +11,7 @@
 
 EXE="$0"
 
-CFG="/etc/ClusterTools2/make_corosync_conf"
+CFG="/etc/ClusterTools2/cs_make_corosync_conf"
 test -s $CFG && source $CFG
 test -z "$LIBFUNCIP" && LIBFUNCIP="/usr/lib/ClusterTools2/libfuncip"
 test -s $LIBFUNCIP || LIBFUNCIP="/usr/lib/ClusterTools2/libfuncip"

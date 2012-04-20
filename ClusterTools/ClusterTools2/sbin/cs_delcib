@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# sleha_cleanup
+# cs_delcib
 #
 # (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
@@ -10,7 +10,7 @@
 
 EXE="$0"
 
-CFG="/etc/ClusterTools2/sleha_cleanup"
+CFG="/etc/ClusterTools2/cs_delcib
 test -s $CFG && source $CFG
 
 test -z "${FIL}" &&\

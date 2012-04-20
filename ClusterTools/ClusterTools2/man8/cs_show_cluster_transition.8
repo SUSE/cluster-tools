@@ -1,13 +1,13 @@
-.TH grep_cluster_transition 8 "05 Oct 2011" "" "ClusterTools2"
+.TH cs_show_cluster_transition 8 "05 Oct 2011" "" "ClusterTools2"
 .\"
 .SH NAME
-grep_cluster_transition \- search log files for cluster transition patterns
+cs_show_cluster_transition \- search log files for cluster transition patterns
 .\"
 .SH SYNOPSIS
-.B grep_cluster_transition \fI[OPTION]\fR
+.B cs_show_cluster_transition \fI[OPTION]\fR
 .\"
 .SH DESCRIPTION
-\fBgrep_cluster_transition\fP searches log files for crmd cluster transition
+\fBcs_show_cluster_transition\fP searches log files for crmd cluster transition
 patterns. Please note that crmd writes to log on the DC node only.
 
 All cluster state transitions are triggered by an event. Any change of the
@@ -57,16 +57,16 @@ Usage, syntax or execution errors.
 .\"
 .SH EXAMPLES
 .HP
-# grep_cluster_transition
+# cs_show_cluster_transition
 .HP
-# grep_cluster_transition | grep -e "DC" -e "o.*line"
+# cs_show_cluster_transition | grep -e "DC" -e "o.*line"
 .\"
 .SH FILES
 .TP
-/usr/sbin/grep_cluster_transition
+/usr/sbin/cs_show_cluster_transition
 	the program itself.
 .TP
-/etc/ClusterTools2/grep_cluster_transition
+/etc/ClusterTools2/cs_show_cluster_transition
 	the configuration.
 .TP
 /etc/corosync/corosync.conf
@@ -91,7 +91,7 @@ http://www.clusterlabs.org/man/
 .SH COPYRIGHT
 (c) 2011 L.Pinne, Germany.
 .br
-grep_cluster_transition comes with ABSOLUTELY NO WARRANTY.
+cs_show_cluster_transition comes with ABSOLUTELY NO WARRANTY.
 .br
 For details see the GNU General Public License at
 http://www.gnu.org/licenses/gpl.html

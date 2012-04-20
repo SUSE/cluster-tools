@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# add_watchdog_to_initrd
+# cs_add_watchdog_to_initrd
 #
 # (c) 2011 SUSE Linux GmbH, Germany.
 # GNU Public License. No warranty.

@@ -1,9 +1,10 @@
 #!/bin/bash
 #
-# check4config_files
+# check4man_pages
 # (c) 2012 SUSE Linux Products GmbH, Nuremberg, Germany
 # Author: Fabian Herschel
 # License: GPL
+# Version: 2012-04-20
 
 BIN_FILES="sbin/*"
 
@@ -15,7 +16,7 @@ for bin in ${BIN_FILES}; do
 		echo "MAN PAGE ${mp} MISSING"
 	else
 		#
-		# checking, if title (.TH) and synopsis matches the binary name :)
+		# check, if title (.TH) and synopsis matches the binary name :)
 		#
 		awk 'BEGIN { rc=9; THfound=0; SYNfound=0 }
 		      ( $0 ~ ".TH.*" bin ) { THfound=1; Synopsis=0 }
@@ -39,3 +40,4 @@ for bin in ${BIN_FILES}; do
 			 ' bin=$bin < $mp ; echo "MAN PAGE ${mp} ($bin) rc=$?"
 	fi
 done
+#

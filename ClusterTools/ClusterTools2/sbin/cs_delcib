@@ -10,7 +10,7 @@
 
 EXE="$0"
 
-CFG="/etc/ClusterTools2/cs_delcib
+CFG="/etc/ClusterTools2/cs_delcib"
 test -s $CFG && source $CFG
 
 test -z "${FIL}" &&\

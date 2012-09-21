@@ -2,11 +2,11 @@
 #
 # cs_make_sbd_devices
 #
-# (c) 2011 SUSE Linux GmbH, Germany.
+# (c) 2011-2012 SUSE Linux GmbH, Germany.
 # GNU Public License. No warranty.
 # Author: L.Pinne
 #
-# Version: 0.02 2011-11-15 20:20
+# Version: 0.02 2012-09-21 19:20
 #
 #set -x
 
@@ -17,7 +17,7 @@ test -s $CFG && source $CFG
 test -z "${TEMP}" &&\
 	TEMP="/dev/shm/cltl.$RANDOM"
 
-function help(){
+function help() {
 	echo "usage: $(basename $0) OPTION"
 	echo "usage: $(basename $0) --init [<SBD_OPTS> [<SBD_CONF>]]"
 	echo
@@ -52,7 +52,7 @@ function guess_sysconfig_sbd() {
 		head -3 | sort | tr -d "\n" | sed s/\;$// )
 	}
 	test -z "${SBD_OPTS}" || SBDOPT=${SBD_OPTS}
-	test -z "${SBDOPT}" || SBDOPT="-W -t 210"
+	test -z "${SBDOPT}" || SBDOPT="-W -t 210 -P"
 	{ 
 	echo "# $CFI"
 	echo "# please check SBD_DEVICE for correct pathes and order"

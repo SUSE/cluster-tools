@@ -1,4 +1,4 @@
-#/etc/ClusterTools2/grep_cluster_patterns
+#/etc/ClusterTools2/cs_show_cluster_patterns
 # For SLES11.
 #
 OSERR_PATTERN="

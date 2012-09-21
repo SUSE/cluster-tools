@@ -1,4 +1,4 @@
-# /etc/ClusterTools2/sum_base_config
+# /etc/ClusterTools2/cs_sum_base_config
 # For SLES11.
 #
 CONF_FILES="

@@ -1,4 +1,4 @@
-# /etc/ClusterTools2/make_corosync_conf
+# /etc/ClusterTools2/cs_make_corosync_conf
 # For SLES11.
 #
 MEMBERS_0="sles11[a-z]$"

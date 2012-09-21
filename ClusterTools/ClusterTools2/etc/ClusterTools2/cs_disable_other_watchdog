@@ -1,4 +1,4 @@
-# /etc/ClusterTools2/disable_other_watchdog
+# /etc/ClusterTools2/cs_disable_other_watchdog
 # For SLES11.
 #
 MODCFG="/etc/modprobe.d/ClusterTools2"

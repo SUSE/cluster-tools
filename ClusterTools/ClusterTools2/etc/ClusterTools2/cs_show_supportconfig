@@ -1,8 +1,8 @@
-#/etc/ClusterTools2/grep_supportconfig
+#/etc/ClusterTools2/cs_show_supportconfig
 # For SLES11.
 # The variable names and contents are under development.
 #
-ERRCFG="/etc/ClusterTools2/grep_error_patterns"
+ERRCFG="/etc/ClusterTools2/cs_show_error_patterns"
 #
 HARDW_MOD="
 netxen_nic.ko

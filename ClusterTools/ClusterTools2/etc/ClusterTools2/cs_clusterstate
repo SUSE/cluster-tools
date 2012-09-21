@@ -1,4 +1,4 @@
-# /etc/ClusterTools2/clusterstate
+# /etc/ClusterTools2/cs_clusterstate
 # For SLES11.
 #
 ETH="bond0 eth3"

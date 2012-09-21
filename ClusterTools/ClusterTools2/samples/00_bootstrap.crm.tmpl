@@ -9,4 +9,7 @@ property $id="cib-bootstrap-options" \
 	stonith-timeout="150s"
 configure \
 rsc_defaults $id="rsc_defaults-options" \
-	failure-timeout="86400"
+	failure-timeout="86400s"
+confgure \
+op_defaults $id="op_defaults-options" \
+	timeout="120s"

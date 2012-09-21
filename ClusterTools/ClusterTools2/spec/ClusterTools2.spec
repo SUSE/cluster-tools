@@ -15,9 +15,9 @@ License:      GPL
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.3.2
-#Release:      1.0.0 
-Release:      1  
+Version:      2.3.3
+#Release:     0.5.1 
+Release:      4
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch

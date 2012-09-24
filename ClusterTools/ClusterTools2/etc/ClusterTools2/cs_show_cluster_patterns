@@ -90,6 +90,7 @@ RESRC_PATTERN="
 "Couldn.*fsck"
 "Couldn.*mount"
 "DANGER.*NOT.cluster-aware"
+"SAP.*Unauthorized"
 "
 #
 # calculated, if empty:

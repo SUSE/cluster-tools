@@ -5,7 +5,7 @@
 # (c) 2011-2012 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2012-09-21
+# Version: 0.01 2012-10-04
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -501,6 +501,7 @@ DEFAULT_TIMEZONE
 	grep -A4 "^/etc/adjtime" $FIL
 	echo
 
+# TODO: www.novell.com/support/kb/doc.php?id=7009834 208 days uptime limit
 # TODO: elevenmin mode, ...
 }
 

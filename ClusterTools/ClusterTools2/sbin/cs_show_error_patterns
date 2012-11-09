@@ -65,6 +65,8 @@ test -z "${ERROR_PATTERN}" &&\
 "ocfs2.*has.evicted"
 "ocfs2.*ERR"
 "ocfs2.*not.unmounted.cleanly"
+"OCFS2.*kernel.interface.loaded"
+"o2dlm_eviction_cb"
 "fsck.*recommended"
 "EXT.-fs.error"
 "Starting.XFS.recovery"

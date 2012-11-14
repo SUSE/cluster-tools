@@ -7,5 +7,5 @@ CONF="/etc/ClusterTools2/supportconfig_plugins"
 grep "^${PLUG}$" $CONF >/dev/null || exit 0 
 
 # TODO make -z an option in $CONF
-/usr/sbin/grep_error_patterns -z 2>&1
+/usr/sbin/cs_show_error_patterns -z 2>&1
 #

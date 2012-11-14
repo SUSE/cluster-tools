@@ -6,5 +6,5 @@ CONF="/etc/ClusterTools2/supportconfig_plugins"
 
 grep "^${PLUG}$" $CONF >/dev/null || exit 0
 
-/usr/sbin/sum_base_config 2>&1
+/usr/sbin/cs_sum_base_config 2>&1
 #

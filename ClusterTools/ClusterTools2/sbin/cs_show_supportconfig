@@ -2,10 +2,10 @@
 #
 # cs_show_supportconfig
 #
-# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2012 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2012-04-18
+# Version: 0.01 2012-10-04
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -136,7 +136,8 @@ function chk_modules() {
 	echo
 
 	# TODO: add Cisco HBA
-	# TODO: test HP eth  nx_nic, be2net
+	# TODO: test HP eth  nx_nic
+	# TODO: watchdog ppc64, s390x 
 	test -z "${HARDW_MOD}" &&\
 	HARDW_MOD="
 netxen_nic.ko
@@ -500,6 +501,7 @@ DEFAULT_TIMEZONE
 	grep -A4 "^/etc/adjtime" $FIL
 	echo
 
+# TODO: www.novell.com/support/kb/doc.php?id=7009834 208 days uptime limit
 # TODO: elevenmin mode, ...
 }
 
@@ -558,6 +560,7 @@ function chk_oracle() {
 	echo
 	# TODO: check ???, see sum_base_config, whbsaprecheck
 	# TODO: check async-IO, direct-IO
+	# TODO: hugetblfs from mount
 	
 	FIL="rpm.txt"
         test -z "${ORA_SFT_PTRN}" &&\
@@ -699,6 +702,8 @@ function chk_updates() {
 "SLES11-SP"
 "SLE11-HAE-"
 "SLE11-HAE-SP"
+"SLE11-SP1-SAP-AIO-"
+"SLE11-SP2-SAP-"
 "
 	for p in ${UPDT_PTRN}; do
 		grep "|.*|.${p}.*|.*|" $FIL | sort -u
@@ -731,7 +736,7 @@ function chk_multipath() {
 	# TODO: by-id
 	# TODO: dmsetup
 	# TODO: multipath.conf
-	# TODO check for un-matched userfreindly names (mpath[a-z])
+	# TODO check for un-matched userfriendly names (mpath[a-z])
 	for p in "loading.*prioritizer" "path.checker.=" "prio.="; do
 		grep ${p} $FIL
 	done | awk '{print $6,$7,$8}' | sort -u
@@ -897,7 +902,7 @@ function chk_sysload() {
 
 	echo_msgsep $FUNCNAME
 	
-	FIL="basic-health-report.txt"	
+	FIL="basic-health-report.txt"
 	echo "basic-health-report:"
 	grep "^[A-Z].*\[....e....\]$" $FIL | grep -v "Kernel.Taint"
 	# TODO make dfull work

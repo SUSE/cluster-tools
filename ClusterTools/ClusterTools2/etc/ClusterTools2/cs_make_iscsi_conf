@@ -1,4 +1,4 @@
-# /etc/ClusterTools2/make_iscsi_conf
+# /etc/ClusterTools2/cs_make_iscsi_conf
 # For SLES11.
 #
 ISCSI_CFG="/etc/iscsi/iscsid.conf"

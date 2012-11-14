@@ -1,4 +1,4 @@
-# /etc/ClusterTools2/sum_base_config
+# /etc/ClusterTools2/cs_sum_base_config
 # For SLES11.
 #
 CONF_FILES="
@@ -53,12 +53,16 @@ CONF_FILES="
 /etc/sysconfig/lvm
 /etc/sysconfig/o2cb
 /etc/sysconfig/maranello
+/etc/sysconfig/bravo
 /etc/ocfs2/cluster.conf
 /etc/security/limits.conf
 /etc/pam.d/login
 /etc/opt/six/maranello/*.conf
 /etc/opt/six/maranello/profiles/two-sets/*/*
 /etc/opt/six/maranello/profiles/three-sets/*/*
+/etc/opt/bravo/*.conf
+/etc/opt/bravo/profiles/two-sets/*/*
+/etc/opt/bravoo/profiles/three-sets/*/*
 /etc/sysctl.conf
 /etc/modprobe.conf.local
 /etc/modprobe.d/*
@@ -89,7 +93,7 @@ CONF_CALLS="
 'ls -l /boot/initrd-xen | colrm 27 39'
 '/usr/bin/zcat /boot/initrd | cpio -itv 2>/dev/null | colrm 43 54'
 '/bin/fuser -u /dev/watchdog'
-'/usr/sbin/make_sbd_devices -d'
+'/usr/sbin/cs_make_sbd_devices -d'
 '/bin/rpm -qa'
 '/bin/rpm -Va'
 '/usr/bin/zypper lr'
@@ -134,6 +138,7 @@ APPS_FILES="
 /etc/opt/sdb
 /etc/db2nodes.conf
 /etc/rhn/rhn.conf
+/etc/sysconfig/saphaws
 "
 #
 APPS_CALLS="

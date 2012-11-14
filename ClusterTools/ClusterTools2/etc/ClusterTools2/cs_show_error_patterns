@@ -1,4 +1,4 @@
-# /etc/ClusterTools2/grep_error_patterns
+# /etc/ClusterTools2/cs_show_error_patterns
 # For SLES11.
 #
 ERROR_PATTERN="
@@ -21,6 +21,7 @@ ERROR_PATTERN="
 "disabling.*barrier"
 "doesn.*support.*DPO.*FUA"
 "Unable.*SMART.enabled"
+"BBU.disabled"
 "multipathd.*timed.out"
 "multipathd.*mpath.*unable"
 "multi.*path.*down"
@@ -36,10 +37,13 @@ ERROR_PATTERN="
 "ocfs2.*has.evicted"
 "ocfs2.*ERR"
 "ocfs2.*not.unmounted.cleanly"
+"OCFS2.*kernel.interface.loaded"
+"o2dlm_eviction_cb"
 "fsck.*recommended"
 "EXT.-fs.error"
 "Starting.XFS.recovery"
 "iSCSI.connection.*error"
+"Sense.*error"
 "bond.*link.*down"
 "bond.*duplicate.address"
 "bond.*not.detect.*failures"

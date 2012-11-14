@@ -1,4 +1,4 @@
-# /etc/ClusterTools2/find_appconf
+# /etc/ClusterTools2/cs_find_appconf
 #
 DIRS="/sapmnt /usr/sap /home /sapdb"
 #

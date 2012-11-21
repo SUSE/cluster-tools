@@ -18,7 +18,7 @@ configure property \
 configure rsc_defaults \
 	\$id=$UUID2 \
 	migration-threshold="$DEFAULT_MIGRATION_THRESHOLD" \
-	failure-timeout="86400"
+	failure-timeout="86400s"
 configure op_defaults \
 	\$id=$UUID3 \
 	on-fail="block" timeout="300s"

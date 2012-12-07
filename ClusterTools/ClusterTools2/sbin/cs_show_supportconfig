@@ -5,7 +5,7 @@
 # (c) 2011-2012 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2012-10-04
+# Version: 0.01 2012-12-07
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -510,21 +510,70 @@ function chk_cluster() {
 
 	echo_msgsep $FUNCNAME
 
+	CLUSTER_PKG="
+corosync
+cluster-glue
+crmsh
+drbd-heartbeat
+drbd-pacemaker
+libopenais3
+libcorosync4
+libglue2
+libpacemaker3
+ldirectord
+openais
+pacemaker
+pacemaker-mgmt
+pacemaker-mgmt-client
+resource-agents
+sbd
+"
+	FIL="rpm.txt"
+	for f in $CLUSTER_PGK; do
+		grep $f $FIL 	
+	done | sort
+	echo
 	# TODO: check /etc/corosync/
 	# TODO: check ???, see sum_base_config, whbsaprecheck
 	# TODO: check watchdogs, define $WATCHMOD, see disbale_other_watchdog
 	# hangcheck_timer here, not "-" as in hangcheck-timer.ko
 	WATCHMOD="hpwdt hangcheck_timer iTCO ibmasr softdog"
-	echo -n "loaded watchdog:"
+	echo -n "loaded watchdog: "
 	for m in $WATCHMOD; do
 		awk '$1=="'${m}'" {print $1}' modules.txt | sort -u
-		awk '$2=="'${m}'" {print $*}' boot.txt | sort -u
+		awk '$2=="'${m}'" {print $0}' boot.txt | sort -u
 	done
 	echo
         echo -n "process on watchdog : "
         awk '$9=="/dev/watchdog" {print $1,$9}' open-files.txt
         echo
 
+	echo
+	FIL="ha.txt"
+        split_file $FIL
+
+        f=$(grep -l "^# /etc/corosync/corosync.conf$" ${TMP}/${FIL}/xx*)
+	echo "/etc/corosync/corosync.conf :"
+	test -z $f || grep -v "^#" $f
+
+        f=$(grep -l "^# /etc/sysconfig/sbd$" ${TMP}/${FIL}/xx*)
+	echo "/etc/sysconfig/sbd :"
+	test -z $f || grep -v "^#" $f
+
+	f=$(grep -l "^# /usr/sbin/sbd.-d.*dump$" ${TMP}/${FIL}/xx*)
+	echo "sbd -d /dev/... dump :"
+	test -z $f || grep -v "^#" $f
+
+	f=$(grep -l "^# /usr/sbin/sbd.-d.*list$" ${TMP}/${FIL}/xx*)
+	echo "sbd -d /dev/... list :"
+	test -z $f || grep -v "^#" $f
+	echo
+
+        f=$(grep -l "^# /usr/sbin/crm_mon.-r.-1$" ${TMP}/${FIL}/xx*)
+	echo "crm_mon -r -1 :"
+	test -z $f || grep -v "^#" $f
+
+	# TODO: crm configure show
 }
 
 

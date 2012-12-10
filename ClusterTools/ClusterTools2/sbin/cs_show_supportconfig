@@ -509,7 +509,8 @@ DEFAULT_TIMEZONE
 function chk_cluster() {
 
 	echo_msgsep $FUNCNAME
-
+ 
+	test -z "${CLUSTER_PKG}" &&\
 	CLUSTER_PKG="
 corosync
 cluster-glue
@@ -544,7 +545,7 @@ sbd
 		awk '$2=="'${m}'" {print $0}' boot.txt | sort -u
 	done
 	echo
-        echo -n "process on watchdog : "
+        echo -n "process on watchdog: "
         awk '$9=="/dev/watchdog" {print $1,$9}' open-files.txt
         echo
 
@@ -553,24 +554,24 @@ sbd
         split_file $FIL
 
         f=$(grep -l "^# /etc/corosync/corosync.conf$" ${TMP}/${FIL}/xx*)
-	echo "/etc/corosync/corosync.conf :"
+	echo "/etc/corosync/corosync.conf:"
 	test -z $f || grep -v "^#" $f
 
         f=$(grep -l "^# /etc/sysconfig/sbd$" ${TMP}/${FIL}/xx*)
-	echo "/etc/sysconfig/sbd :"
+	echo "/etc/sysconfig/sbd:"
 	test -z $f || grep -v "^#" $f
 
 	f=$(grep -l "^# /usr/sbin/sbd.-d.*dump$" ${TMP}/${FIL}/xx*)
-	echo "sbd -d /dev/... dump :"
+	echo "sbd -d /dev/... dump:"
 	test -z $f || grep -v "^#" $f
 
 	f=$(grep -l "^# /usr/sbin/sbd.-d.*list$" ${TMP}/${FIL}/xx*)
-	echo "sbd -d /dev/... list :"
+	echo "sbd -d /dev/... list:"
 	test -z $f || grep -v "^#" $f
 	echo
 
         f=$(grep -l "^# /usr/sbin/crm_mon.-r.-1$" ${TMP}/${FIL}/xx*)
-	echo "crm_mon -r -1 :"
+	echo "crm_mon -r -1:"
 	test -z $f || grep -v "^#" $f
 
 	# TODO: crm configure show

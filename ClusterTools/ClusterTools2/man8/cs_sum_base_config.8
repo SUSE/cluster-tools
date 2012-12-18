@@ -1,4 +1,4 @@
-.TH cs_sum_base_config 8 "12 Feb 2012" "" "ClusterTools2"
+.TH cs_sum_base_config 8 "18 Dec 2012" "" "ClusterTools2"
 .\"
 .SH NAME
 sum_base_config \- calculate checksums for common configuration and system
@@ -8,8 +8,8 @@ parameters
 .B cs_sum_base_config \fI[OPTION]\fR
 .\"
 .SH DESCRIPTION
-\fBsum_base_config\fP calculates MD5 checksums for common configuration and
-system parameters.
+\fBcs_sum_base_config\fP calculates MD5 checksums for common configuration
+and system parameters.
 By default only files and parameters are checked, that are expected to be 
 identical on all nodes of one cluster. The output can be used to find
 differences between two or more cluster nodes.
@@ -39,16 +39,16 @@ Please call this script as root.
 .TP
 * Write checksums for common base config files of an node to a file. 
 .br
-# sum_base_config -f >$HOSTNAME.txt
+# cs_sum_base_config -f >$HOSTNAME.txt
 .TP
 * Find differences between nodep and nodeq. Check base config files as well as common base system parameters and applications configuration. 
-# sum_base_config >nodep.txt
+# cs_sum_base_config >nodep.txt
 .br
-# sum_base_config -a >>nodep.txt
+# cs_sum_base_config -a >>nodep.txt
 .br
-# ssh root@nodeq sum_base_config >nodeq.txt
+# ssh root@nodeq cs_sum_base_config >nodeq.txt
 .br
-# ssh root@nodeq "sum_base_config -a" >>nodeq.txt
+# ssh root@nodeq "cs_sum_base_config -a" >>nodeq.txt
 .br
 # diff node[pq].txt
 .\"
@@ -61,10 +61,10 @@ Usage, syntax or execution errors.
 .\"
 .SH FILES
 .TP
-/usr/sbin/sum_base_config
+/usr/sbin/cs_sum_base_config
 	the program itself.
 .TP
-/etc/ClusterTools2/sum_base_config
+/etc/ClusterTools2/cs_sum_base_config
 	the configuration.
 .\"
 .SH BUGS
@@ -80,9 +80,9 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 .\"
 .\"
 .SH COPYRIGHT
-(c) 2011 L.Pinne, Germany.
+(c) 2011-2012 L.Pinne, Germany.
 .br
-sum_base_config comes with ABSOLUTELY NO WARRANTY.
+cs_sum_base_config comes with ABSOLUTELY NO WARRANTY.
 .br
 For details see the GNU General Public License at
 http://www.gnu.org/licenses/gpl.html

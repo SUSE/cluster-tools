@@ -2,11 +2,11 @@
 #
 # cs_disable_other_watchdog
 #
-# (c) 2011 SUSE Linux GmbH, Germany.
+# (c) 2011-2013 SUSE Linux GmbH, Germany.
 # GNU Public License. No warranty.
 # Author: L.Pinne
 #
-# Version: 2012-02-12 21:45
+# Version: 2013-01-25 10:25
 #
 
 EXE="$0"
@@ -55,9 +55,9 @@ function disable_hpasr() {
 		rmmod ${m}
 	done
 
-	# TODO: /etc/sysconfig/kernel
+	# TODO /etc/sysconfig/kernel
 	test -s $FIL || exit 2
-	# TODO: mkinitrd ?
+	# TODO mkinitrd ?
 	echo "INFO: end $EXE $FUNCNAME"
 }
 
@@ -69,7 +69,7 @@ function list_other_restart() {
 	echo "available watchdog modules:"
 	echo $OTHMOD
 
-	# TODO: see add_watchdog_to_initrd
+	# TODO see add_watchdog_to_initrd
 	echo "configured watchdog module:"
 	grep -v "#.*INITRD_MODULES" $FIL | grep "^INITRD_MODULES="
 	grep -v "#.*MODULES_LOADED_ON_BOOT" $FIL | grep "^MODULES_LOADED_ON_BOOT="
@@ -90,7 +90,7 @@ function list_other_restart() {
 		/etc/init.d/$METHOD status 2>/dev/null
 		chkconfig -l $METHOD 2>/dev/null
 	done
-	# TODO: search process list
+	# TODO search process list
 	
 	echo "installed initrds:"
 	ls -l /boot/initrd*
@@ -103,13 +103,13 @@ function list_other_restart() {
 
 function guess_other_restart() {
 	echo "INFO: start $EXE $FUNCNAME"
-	# TODO: look into initrd, see above
-	# TODO: search loaded modules for files from /lib/modules/.../watchdog/
+	# TODO look into initrd, see above
+	# TODO search loaded modules for files from /lib/modules/.../watchdog/
 
 	fuser -f /dev/watchdog
 	lsof | grep "/dev/watchdog"
-	# TODO: define METHOD_LISTONLY
-	# TODO: Veritas?
+	# TODO define METHOD_LISTONLY
+	# TODO Veritas?
 	for f in hp-asrd oprocd; do
 		ps aux | grep $f
 	done
@@ -122,6 +122,9 @@ function guess_other_restart() {
 	done
 	# TODO Oracle cluster config
 	mount | grep clusterware
+
+	# TODO HP generic ilo cluster interface
+	ls -l /etc/cluster/cluster.conf
 
 	echo "INFO: end $EXE $FUNCNAME"
 }

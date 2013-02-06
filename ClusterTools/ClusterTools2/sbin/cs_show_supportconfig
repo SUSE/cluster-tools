@@ -2,10 +2,10 @@
 #
 # cs_show_supportconfig
 #
-# (c) 2011-2012 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2012-12-16
+# Version: 0.01 2013-02-06
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -841,7 +841,7 @@ xfsprogs
 	done
 	echo
 	# TODO check if local disk is in multipath
-	# TODO: nfs
+	# TODO nfs
 	test -z "${STOR_MOD}" &&\
 	STOR_MOD="
 ext2
@@ -855,9 +855,15 @@ xfs
 	grep -A1 "^Model:" $FIL | grep -v "^--$"
 	echo
 	
-	FIL="lvm.txt"
-	FIL="fs-softraid.txt"
-	
+	# TODO FIL="lvm.txt"
+	# TODO FIL="fs-softraid.txt"
+	# TODO better elevator guessing 
+	FIL="boot.txt"
+	grep "io.scheduler.*registered.(default)" $FIL
+	grep "kernel.*elevator" $FIL
+	FIL="sysconfig.txt"
+	grep "DEFAULT_APPEND.*elevator" $FIL
+
 	echo
 }
 

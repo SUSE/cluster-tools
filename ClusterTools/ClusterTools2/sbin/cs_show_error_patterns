@@ -82,6 +82,7 @@ test -z "${ERROR_PATTERN}" &&\
 "link.failure"
 "Link.Failure.Count"
 "RPC.*multiple.fragments"
+"martian.source.*dev"
 "ntpd.*failed"
 "ntpd.*time.reset"
 "failed.to.bind.to.LDAP"

@@ -2,11 +2,11 @@
 #
 # cs_make_sbd_devices
 #
-# (c) 2011-2012 SUSE Linux GmbH, Germany.
+# (c) 2011-2013 SUSE Linux GmbH, Germany.
 # GNU Public License. No warranty.
 # Author: L.Pinne
 #
-# Version: 0.02 2012-09-21 19:20
+# Version: 0.02 2013-02-07 18:51
 #
 #set -x
 
@@ -85,11 +85,16 @@ function dump_sbd_devices() {
 	CFI=${SBD_CONF}
 	
 	RC=0
-	awk -F"=" '$1=="SBD_DEVICE" {print $2}' $CFI |tr -d "\""|tr ";" "\n"|\
-	while read; do
-		sbd -d $REPLY dump 2>/dev/null; RC=$?
-		sbd -d $REPLY list 2>/dev/null; RC=$[ $RC + $? ]
-	done
+	test -r $CFI; RC=$?
+	if [ $RC -ne 0 ]; then
+		echo "ERR: config not found: $CFI"
+	else
+		awk -F"=" '$1=="SBD_DEVICE" {print $2}' $CFI |tr -d "\""|tr ";" "\n"|\
+		while read; do
+			sbd -d $REPLY dump 2>/dev/null; RC=$?
+			sbd -d $REPLY list 2>/dev/null; RC=$[ $RC + $? ]
+		done
+	fi
 }
 
 

@@ -2,10 +2,10 @@
 #
 # cs_sum_base_config
 #
-# (c) 2011-2012 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2012-09-21 19:20
+# Version: 2013-02-07 18:28
 #
 
 EXE="$0"
@@ -27,6 +27,10 @@ test -z "${CONF_FILES}" &&\
 /boot/initrd-2.6*default
 /boot/vmlinuz-2.6*xen
 /boot/initrd-2.6*xen
+/boot/vmlinuz-3.*default
+/boot/initrd-3.*default
+/boot/vmlinuz-3.*xen
+/boot/initrd-3.*xen
 /proc/cmdline
 /proc/sys/kernel/tainted
 /etc/auto.*
@@ -71,6 +75,7 @@ test -z "${CONF_FILES}" &&\
 /etc/sysconfig/o2cb
 /etc/sysconfig/maranello
 /etc/sysconfig/bravo
+/etc/sysconfig/customfw
 /etc/ocfs2/cluster.conf
 /etc/security/limits.conf
 /etc/pam.d/login
@@ -79,8 +84,7 @@ test -z "${CONF_FILES}" &&\
 /etc/opt/six/maranello/profiles/three-sets/*/*
 /etc/opt/bravo/*.conf
 /etc/opt/bravo/profiles/two-sets/*/*
-/etc/opt/bravoo/profiles/three-sets/*/*
-
+/etc/opt/bravo/profiles/three-sets/*/*
 /etc/sysctl.conf
 /etc/modprobe.conf.local
 /etc/modprobe.d/*
@@ -159,6 +163,8 @@ test -z "${APPS_FILES}" &&\
 /etc/db2nodes.conf
 /etc/rhn/rhn.conf
 /etc/sysconfig/saphaws
+/etc/sysconfig/ctdb
+/etc/samba/*
 "
 #
 test -z "${APPS_CALLS}" &&\
@@ -171,7 +177,7 @@ test -z "${APPS_CALLS}" &&\
 '/bin/ls -al /usr/sap/[A-Z]../SYS/profile/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /usr/sap/*/[0-9][0-9]/work/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 "
-#
+# TODO: samba
 # TODO: ndstat and other edir checking
 # TODO: generic script to strip "#" from conf files 
 # TODO: generic script for directory listing 

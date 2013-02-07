@@ -1,5 +1,5 @@
 TODO susemanager cfg files: /etc/sysconfig/rhn/*
-TODO cs_show_supportconfig: libaio, libaio-devel
+DONE cs_show_supportconfig: libaio, libaio-devel
 TODO grep kio /proc/slabinfo: welches feld soll not-null sein?
 TODO cs_disable_other_ Sybase ASE
 TODO cs_precheck_for_sap: LC_ALL=POSIX

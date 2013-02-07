@@ -5,7 +5,7 @@
 # (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2013-02-06
+# Version: 0.01 2013-02-07
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -150,8 +150,12 @@ bnx2.ko
 bnx.ko
 e1000.ko
 tg3.ko
+igb.ko
 be2net.ko
 be2iscsi.ko
+vmxnet3.ko
+vmw_balloon.ko
+vmw_pvscsi.ko
 cciss.ko
 mptbase.ko
 dm_multipath.ko
@@ -161,6 +165,9 @@ hpwdt.ko
 hangcheck-timer.ko
 ibmasr.ko
 iTCO_wdt.ko
+cpu5wdt.ko
+advantechwdt.ko
+acquirewdt.ko
 softdog.ko
 "
 	FIL="boot.txt"

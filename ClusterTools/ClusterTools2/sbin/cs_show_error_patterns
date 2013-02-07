@@ -5,7 +5,7 @@
 # (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.2 2013-01-29
+# Version: 0.2 2013-02-07
 #
 
 EXE="$0"
@@ -40,6 +40,7 @@ test -z "${ERROR_PATTERN}" &&\
 "qlge.*error"
 "NMI.received"
 "NMI.*error"
+"kernel.*task.*abort"
 "target.failure"
 "reservation.conflict"
 "SCSI.*reset"
@@ -51,9 +52,9 @@ test -z "${ERROR_PATTERN}" &&\
 "Unable.*SMART.enabled"
 "BBU.disabled"
 "multipathd.*timed.out"
-"multipathd:.mpath.*unable"
-"multi.*path.*down"
+"multipathd.*mpath.*unable"
 "multipathd.*reinstated"
+"multi.*path.*down"
 "[Ff]ail.*/dev/md"
 "U_\|_U"
 "found.0.matching.devices"
@@ -77,9 +78,10 @@ test -z "${ERROR_PATTERN}" &&\
 "bond.*duplicate.address"
 "bond.*not.detect.*failures"
 "bond.*permanent.HWaddr.*in.use"
-"Link.Failure.Count"
 "link.*not.ready"
 "link.failure"
+"Link.Failure.Count"
+"RPC.*multiple.fragments"
 "ntpd.*failed"
 "ntpd.*time.reset"
 "failed.to.bind.to.LDAP"
@@ -90,8 +92,11 @@ test -z "${ERROR_PATTERN}" &&\
 "Failed.services.*runlevel"
 "shutdown.*shutting.down"
 "syslog-ng.shutting.down"
+"kernel.*segfault.at"
+"Out.of.memory"
 "GAB.*failure"
 "Symantec.Technical.Support"
+"Hangcheck.*clock"
 "
 # TODO: raid.set.*active.with.2.out.of.2.mirrors ?
 # TODO: check for un-matched userfreindly names (mpath[a-z])

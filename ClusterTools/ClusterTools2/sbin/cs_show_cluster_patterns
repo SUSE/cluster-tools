@@ -2,10 +2,10 @@
 #
 # cs_show_cluster_patterns
 #
-# (c) 2011-2012 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2012-09-24
+# Version: 0.1 2013-02-07
 #
 
 EXE="$0"
@@ -105,6 +105,12 @@ test -z "${RESRC_PATTERN}" &&\
 "not.in.Secondary.mode"
 "demote.*still.primary"
 "Clone.options.misconfigured"
+"ERS_InstanceName.parameter.is.mandatory"
+"Cannot.find.sapstartsrv"
+"sapstartsrv.*for.instance"
+"Expected.*instance.*profile"
+"Expected.DIR_PROFILE.parameter"
+"SAP.*Unauthorized"
 "eDirectory.*failed.*stop"
 "eDirectory.*not.*configured"
 "eDir.configuration.error"
@@ -115,7 +121,6 @@ test -z "${RESRC_PATTERN}" &&\
 "Couldn.*fsck"
 "Couldn.*mount"
 "DANGER.*NOT.cluster-aware"
-"SAP.*Unauthorized"
 "
 
 

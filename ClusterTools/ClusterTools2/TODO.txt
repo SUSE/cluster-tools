@@ -1,3 +1,4 @@
+TODO /usr/lib/supportconfig/plugins/  awk /sys/block/*/queue/scheduler
 TODO susemanager cfg files: /etc/sysconfig/rhn/*
 DONE cs_show_supportconfig: libaio, libaio-devel
 TODO grep kio /proc/slabinfo: welches feld soll not-null sein?

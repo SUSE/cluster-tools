@@ -1,4 +1,4 @@
-.TH sbd 7 "28 Jan 2013" "" "cluster-glue"
+.TH sbd 7 "12 Feb 2013" "" "cluster-glue"
 .\"
 .SH NAME
 sbd \- Stonith Block Device
@@ -72,8 +72,14 @@ of SBD as follows:
 In its most simple implementation, you use one device only. (Older
 versions of SBD did not support more.) This is appropriate for clusters
 where all your data is on the same shared storage (with internal redundancy)
-anyway; the SBD device does not introduce an additional single point of
-failure then.
+anyway. From a general perspcective the SBD device does not introduce an
+additional single point of failure then.
+
+But since the timeouts are usually shorter for SBD and watchdog than for
+other resources, a temporary outage of the SBD device might lead to a
+non-wanted shutdown. To cover this, current versions of SBD could be
+configured to tolerate an inacessible SBD deviced as long as the corosync
+link between the cluster nodes is functional.
 
 If the SBD device is not accessible, the daemon will fail to start and
 inhibit openais startup. 
@@ -207,7 +213,7 @@ please disable any others you might have configured before.
 .P
 \fB* Software Watchdog\fR
 
-Increased protection is offered through "watchdog" support. Modern
+Increased protection is offered through watchdog support. Modern
 systems support a "hardware watchdog" that has to be updated by the
 software client, or else the hardware will enforce a system restart.
 This protects against failures of the sbd process itself, such as
@@ -217,8 +223,9 @@ It is highly recommended that you set up your Linux system
 to use a watchdog. Please refer to the SLES manual for this step.
 
 This involves loading the proper watchdog driver on system boot. On HP
-hardware, this is the "hpwdt" module. For systems with a Intel TCO,
-"iTCO_wdt" can be used. "softdog" is the most generic driver, but it is
+hardware, this is the "hpwdt" module. For systems with an Intel TCO,
+"iTCO_wdt" can be used. Inside a VM on z/VM on an IBM mainframe, "vmwatchdog"
+might be used. "softdog" is the most generic driver, but it is
 recommended that you use one with actual hardware integration. See
 /lib/modules/.../kernel/drivers/watchdog in the kernel package for a list
 of choices.
@@ -272,6 +279,8 @@ Putting it all together:
   Those should be aligned with the MPIO settings. This avoids non-needed failure
   actions, but does not define how long the cluster will survive a storage
   outage.
+.br
+- SBD must always be used togheter with a watchdog.
 .\"
 .SH FILES
 .TP
@@ -309,8 +318,8 @@ To report bugs for a SUSE or Novell product component, please use
 \fBcs_make_sbd_devices\fP(8), \fBdasdfmt\fP(8),
 http://www.linux-ha.org/wiki/SBD_Fencing ,
 http://www.mail-archive.com/pacemaker@oss.clusterlabs.org/msg03849.html ,
-http://www.novell.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/book_sleha/data/part_config.html ,
-http://www.novell.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/book_sleha/data/part_storage.html
+http://www.suse.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/book_sleha/data/part_config.html ,
+https://www.suse.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/book_sleha/data/part_storage.html
 .\"
 .SH AUTHORS
 The content of this manual page was mostly derived from online documentation

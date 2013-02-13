@@ -18,6 +18,9 @@ tg3.ko
 igb.ko
 be2net.ko
 be2iscsi.ko
+vmxnet3.ko
+vmw_balloon.ko
+vmw_pvscsi.ko
 cciss.ko
 mptbase.ko
 dm_multipath.ko

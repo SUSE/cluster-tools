@@ -2,7 +2,8 @@
 # For SLES11.
 # one entry per line "^plugin$"
 cat_messages
-grep_error_patterns
+show_error_patterns
+show_elevator
 #cat_psauxlog
 #cat_meminfolog
 #cat_lsoflog

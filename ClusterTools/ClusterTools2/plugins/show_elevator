@@ -1,0 +1,10 @@
+#!/bin/bash
+# /usr/lib/supportconfig/plugins/show_elevator
+
+PLUG="show_elevator"
+CONF="/etc/ClusterTools2/supportconfig_plugins"
+
+grep "^${PLUG}$" $CONF >/dev/null || exit 0 
+
+find /sys/devices/ -name "scheduler" -print -exec grep -v none {} 2>/dev/null \; | grep -v "/sys/devices.*loop"
+#

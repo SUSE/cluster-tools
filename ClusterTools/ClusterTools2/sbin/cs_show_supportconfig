@@ -17,7 +17,7 @@ TMP="/tmp/cltl.$RANDOM"
 CFG="/etc/ClusterTools2/cs_show_supportconfig"
 test -s $CFG && source $CFG
 
-# TODO: make DIR= work
+# TODO make DIR= work
 DIR=${2:-$PWD}
 FUN=${3:-"chk_overview"}
 OWD=$PWD
@@ -70,7 +70,7 @@ function chk_hardware() {
 	grep -A 4 "# /usr/bin/free -k" $FIL | tail -3 
 	echo
 
-# TODO: more specific patterns
+# TODO more specific patterns
 #	FIL="hardware.txt"
 #	for f in "iLO" "IPMI" "DRAC" "Emulex" "Brocade" "QLogic" "Broadcom" "MPT"; do
 #		grep -e ${f} -e "pci.product.=" $FIL | sort -u
@@ -113,7 +113,7 @@ function chk_hardware() {
 Model:
 Device.File:
 "
-	# TODO: better loop
+	# TODO better loop
 	for f in $NIC_PTRN; do
 		grep --binary-file=text -A20 -e "^..: PCI.*Ethernet controller$" -e "HiperSocket.controller$" $FIL |\
 		grep $f
@@ -135,9 +135,9 @@ function chk_modules() {
 	grep "^\[.*AppArmor:.*initialized" $FIL
 	echo
 
-	# TODO: add Cisco HBA
-	# TODO: test HP eth  nx_nic
-	# TODO: watchdog ppc64, s390x 
+	# TODO add Cisco HBA
+	# TODO test HP eth  nx_nic
+	# TODO watchdog ppc64 alim7101_wdt.ko?, s390x vmwatchdog.ko?
 	test -z "${HARDW_MOD}" &&\
 	HARDW_MOD="
 netxen_nic.ko
@@ -169,6 +169,8 @@ cpu5wdt.ko
 advantechwdt.ko
 acquirewdt.ko
 softdog.ko
+vmwatchdog.ko
+alim7101_wdt.ko
 "
 	FIL="boot.txt"
 	for m in INITRD_MODULES MODULES_LOADED_ON_BOOT; do
@@ -181,7 +183,7 @@ softdog.ko
 		grep "modprobe ${n}" $FIL
 	done
 	echo
-# TODO: see below - use split files to records instead of -A9, to find "supported:"
+# TODO see below - use split files to records instead of -A9, to find "supported:"
 	FIL="modules.txt"
 	for m in $HARDW_MOD; do
 		grep -A9 "^filename:.*${m}" $FIL |\
@@ -225,7 +227,7 @@ function chk_services() {
 	done
 	echo
 
-# TODO: precheck_for_sap
+# TODO precheck_for_sap
 	test -z "${SVC_YES}" &&\
 	SVC_YES="
 boot.clock
@@ -393,7 +395,7 @@ function chk_network() {
 		 grep -v "^#==\[ " | grep -v "^# /sbin/ethtool" | grep -v "^--$"
 	echo
 	
-# TODO: summary num. NICs, num. "not connected"
+# TODO summary num. NICs, num. "not connected"
 	( grep --binary-file=text -A3 "^# /etc/sysconfig/network/routes$" $FIL ) |\
 		 grep -v "^#==\[ " | grep -v "^# /sbin/ethtool"
 
@@ -446,7 +448,7 @@ function chk_nameres() {
         rm -rf ${TMP}/${FIL}
 	echo
 
-# TODO: DNS
+# TODO DNS
 }
 
 
@@ -508,8 +510,8 @@ DEFAULT_TIMEZONE
 	grep -A4 "^/etc/adjtime" $FIL
 	echo
 
-# TODO: www.novell.com/support/kb/doc.php?id=7009834 208 days uptime limit
-# TODO: elevenmin mode, ...
+# TODO www.novell.com/support/kb/doc.php?id=7009834 208 days uptime limit
+# TODO elevenmin mode, ...
 }
 
 
@@ -541,9 +543,9 @@ sbd
 		grep $f $FIL 	
 	done | sort
 	echo
-	# TODO: check /etc/corosync/
-	# TODO: check ???, see sum_base_config, whbsaprecheck
-	# TODO: check watchdogs, define $WATCHMOD, see disbale_other_watchdog
+	# TODO check /etc/corosync/
+	# TODO check ???, see sum_base_config, whbsaprecheck
+	# TODO check watchdogs, define $WATCHMOD, see disbale_other_watchdog
 	# hangcheck_timer here, not "-" as in hangcheck-timer.ko
 	WATCHMOD="hpwdt hangcheck_timer iTCO ibmasr softdog"
 	echo -n "loaded watchdog: "
@@ -581,7 +583,51 @@ sbd
 	echo "crm_mon -r -1:"
 	test -z $f || grep -v "^#" $f
 
-	# TODO: crm configure show
+	# TODO crm configure show
+}
+
+
+function chk_vmware() {
+
+	echo_msgsep $FUNCNAME
+
+	test -z "${VMWARE_PKG}" &&\
+	VMWARE_PKG="
+ntp
+
+"
+	test -z "${VMWARE_MODUL}" &&\
+	VMWARE_MODUL="
+vmxnet3
+vmw_pvscsi
+vmw_balloon
+mptbase
+"
+	# TODO vmware tools services?
+	test -z "${VMWARE_SVC_YES}" &&\
+	VMWARE_SVC_YES="
+boot.clock
+boot.sysstat
+boot.sysctl
+ntp
+"
+	test -z "${VMWARE_SVC_OFF}" &&\
+	VMWARE_SVC_OFF="
+alsasound
+ipmi
+irq_balancer
+joystick
+libvirtd
+microcode.ctl
+powerd
+smartd
+xend
+xendomains
+"
+
+	# TODO
+
+	echo
 }
 
 
@@ -589,8 +635,8 @@ function chk_sap() {
 
 	echo_msgsep $FUNCNAME
 
-	# TODO: check /etc/sysconfig/sapconf
-	# TODO: check ???, see sum_base_config, precheck_for_sap
+	# TODO check /etc/sysconfig/sapconf
+	# TODO check ???, see sum_base_config, precheck_for_sap
 	grep -e "^@sapsys" -e "^@sdba" crash.txt
 	echo
 }
@@ -615,9 +661,9 @@ function chk_oracle() {
 	grep "^tmpfs" basic-health-check.txt	
 	grep "^vm.nr_hugepages.=" env.txt	
 	echo
-	# TODO: check ???, see sum_base_config, whbsaprecheck
-	# TODO: check async-IO, direct-IO
-	# TODO: hugetblfs from mount
+	# TODO check ???, see sum_base_config, whbsaprecheck
+	# TODO check async-IO, direct-IO
+	# TODO hugetblfs from mount
 	
 	FIL="rpm.txt"
         test -z "${ORA_SFT_PTRN}" &&\
@@ -789,9 +835,9 @@ function chk_multipath() {
 	grep -B1 "^size=.*features=.*hwhandler=" $FIL |\
 		sed s/^size/"	size"/g | grep -v "^--$"
 	echo
-	# TODO: by-id
-	# TODO: dmsetup
-	# TODO: multipath.conf
+	# TODO by-id
+	# TODO dmsetup
+	# TODO multipath.conf
 	# TODO check for un-matched userfriendly names (mpath[a-z])
 	for p in "loading.*prioritizer" "path.checker.=" "prio.="; do
 		grep ${p} $FIL
@@ -827,7 +873,7 @@ function chk_storage() {
 	echo_msgsep $FUNCNAME
 
 	FIL="rpm.txt"
-	# TODO: see whbsaprecheck
+	# TODO see whbsaprecheck
 	test -z "${STOR_PKG}" &&\
 	STOR_PKG="
 dmraid
@@ -981,10 +1027,10 @@ function chk_sysload() {
 
 	OWD=$PWD
 	cd sar || exit
-	# TODO: print date of sar file to each output line
+	# TODO print date of sar file to each output line
 	#	either by adding date from sar-fiel header,
 	#	or by grep-ing the alreday known maxima out of the files
-	# TODO: reduce number of columns
+	# TODO reduce number of columns
 
 	echo "max. load-avg15:"
 	echo "hh:mm:ss xM   runq-sz  plist-sz   ldavg-1   ldavg-5  ldavg-15"
@@ -1060,7 +1106,7 @@ function chk_sysload() {
 #	done | grep "^[0-9][0-9]:" | grep -v "%" |\
 #	 	awk '$11 != "0.00" {print}' | sort -n -k11 | head
 
-	# TODO: sum up buffer+cache, estimated use memory 
+	# TODO sum up buffer+cache, estimated use memory 
 	echo "max. memory commit:"
 	echo "hh:mm:ss xM kbmemfree kbmemused  %memused kbbuffers  kbcached  kbcommit   %commit"
 	for f in sa??; do
@@ -1097,9 +1143,9 @@ function chk_sysload() {
 		sar -n DEV -f $f 
 	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k6 | tail
 
-	# TODO: network errors?
-	# TODO: NFS client and server reports?
-	# TODO: grep -A6 "numastat" sysctl.txt 
+	# TODO network errors?
+	# TODO NFS client and server reports?
+	# TODO grep -A6 "numastat" sysctl.txt 
 
 	cd $OWD 
 	echo
@@ -1110,17 +1156,17 @@ function chk_errors() {
 	
 	echo_msgsep $FUNCNAME
 
-	# TODO: see cs_show_error_patterns
+	# TODO see cs_show_error_patterns
 	test -z "${ERRCFG}" &&\
 		ERRCFG="/etc/ClusterTools2/cs_show_error_patterns"
 	test -s $ERRCFG && source $ERRCFG
  
-	# TODO: taint.flag ??
+	# TODO taint.flag ?
 	echo -n "kernel.tainted : "
 	grep "^kernel.tainted.=" env.txt
 
-	# TODO: add plugin-messages.txt, man supportconfig for plugin
-	# TODO: find start and end time for each log files
+	# TODO add plugin-messages.txt, man supportconfig for plugin
+	# TODO find start and end time for each log files
 
 	FIL="messages.txt"
 	FRST=$(grep -A1 "# /var/log/messages - Last.*Lines" $FIL |\

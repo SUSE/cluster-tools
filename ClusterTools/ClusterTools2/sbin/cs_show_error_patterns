@@ -40,6 +40,7 @@ test -z "${ERROR_PATTERN}" &&\
 "qlge.*error"
 "NMI.received"
 "NMI.*error"
+"soft.lockup.detected"
 "kernel.*task.*abort"
 "target.failure"
 "reservation.conflict"

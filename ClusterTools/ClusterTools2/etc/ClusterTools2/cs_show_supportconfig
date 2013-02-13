@@ -34,6 +34,8 @@ cpu5wdt.ko
 advantechwdt.ko
 acquirewdt.ko
 softdog.ko
+vmwatchdog.ko
+alim7101_wdt.ko
 "
 #
 NIC_PTRN="
@@ -279,6 +281,26 @@ pacemaker-mgmt
 pacemaker-mgmt-client
 resource-agents
 sbd
+"
+#
+VMWARE_SVC_YES="
+boot.clock
+boot.sysstat
+boot.sysctl
+ntp
+"
+#
+        VMWARE_SVC_OFF="
+alsasound
+ipmi
+irq_balancer
+joystick
+libvirtd
+microcode.ctl
+powerd
+smartd
+xend
+xendomains
 "
 #
 TEMP="/dev/shm/cltl.$RANDOM"

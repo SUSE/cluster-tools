@@ -284,7 +284,7 @@ sbd
 "
 #
 VMW_PKG="
-ntp
+ntp-4
 vmware-tools-core
 vmware-tools-esx
 vmware-tools-esx-kmods-default
@@ -333,6 +333,7 @@ vmware-tools-xorg-drv-mouse
 #
 VMW_MODUL="
 vmxnet3
+vmmouse
 vmw_pvscsi
 vmw_balloon
 mptbase
@@ -357,6 +358,14 @@ powerd
 smartd
 xend
 xendomains
+"
+#
+VMW_ETC="
+"/etc/ntp.conf"
+"/etc/vmware-tools/tools.conf"
+"/etc/vmware-tools/plugins"
+"/etc/pam.d/vmtoolsd"
+"/etc/ld.so.conf.d/vmware-tools-libraries.conf"
 "
 #
 TEMP="/dev/shm/cltl.$RANDOM"

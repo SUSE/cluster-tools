@@ -594,9 +594,9 @@ function chk_vmware() {
 	# http://www.vmware.com/download/packages.html
 	# http://packages.vmware.com/tools
 	# TODO what is really needed?
-	test -z "${VMWARE_PKG}" &&\
+	test -z "${VMW_PKG}" &&\
 	VMW_PKG="
-ntp
+ntp-4
 vmware-tools-core
 vmware-tools-esx
 vmware-tools-esx-kmods-default
@@ -642,15 +642,16 @@ vmware-tools-vsock-kmp-default
 vmware-tools-xorg-drv-display-
 vmware-tools-xorg-drv-mouse
 "
-	test -z "${VMWARE_MODUL}" &&\
+	test -z "${VMW_MODUL}" &&\
 	VMW_MODUL="
 vmxnet3
+vmmouse
 vmw_pvscsi
 vmw_balloon
 mptbase
 "
 	# TODO vmware tools services?
-	test -z "${VMWARE_SVC_YES}" &&\
+	test -z "${VMW_SVC_YES}" &&\
 	VMW_SVC_YES="
 boot.clock
 boot.sysstat
@@ -658,7 +659,7 @@ boot.sysctl
 ntp
 vmware-tools-services
 "
-	test -z "${VMWARE_SVC_OFF}" &&\
+	test -z "${VMW_SVC_OFF}" &&\
 	VMW_SVC_OFF="
 alsasound
 ipmi
@@ -671,41 +672,64 @@ smartd
 xend
 xendomains
 "
-	# TODO /etc/vmware-tools/tools.conf
-	# TODO /etc/vmware-tools/plugins
-	# TODO /etc/pam.d/vmtoolsd
+	test -z "${VMW_ETC}" &&\
+	VMW_ETC="
+"/etc/ntp.conf"
+"/etc/vmware-tools/tools.conf"
+"/etc/vmware-tools/plugins"
+"/etc/pam.d/vmtoolsd"
+"/etc/ld.so.conf.d/vmware-tools-libraries.conf"
+"
 	# TODO  vmware user /usr/lib/vmware-tools/moduleScripts/user/vmware-config.pl --toConfigure=user
 
-	# TODO
+	echo "- packages installed:"
 	FIL="rpm.txt"
-	echo "packages installed : "
 	for p in $VMW_PKG; do
 		echo -n "$p : "
-		grep $p $FIL	
+		# TODO awk only
+		grep $p $FIL | awk '{print $1}'
 	done
-
+	echo
+	echo
+	echo "- modules loaded:"
 	FIL="modules.txt"
-	echo "modules loaded : "
 	for p in $VMW_MODUL; do
 		echo -n "$p : "
 		grep $p $FIL	
 	done
-
+	echo
+	# TODO common function for services, see chk_services, chk_sap, chk_oracle
+	echo "- service should be on:"
 	FIL="chkconfig.txt"
-	echo "services on : "
-	for p in $VMW_SVC_YES; do
-		grep $p $FIL	
+	for s in $VMW_SVC_YES; do
+		grep "${s}:..on" $FIL
+		grep "${s}:..off" $FIL
+		grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
+		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
 	done
-	echo "services off : "
-	for p in $VMW_SVC_YES; do
-		grep $p $FIL	
+	echo
+	echo "- service should be off:"
+	for s in $VMW_SVC_OFF; do
+		grep "${s}:..off" $FIL
+		grep "${s}:..on" $FIL
+		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+		grep "^${s}.*0.*3:on" $FIL | grep -v "boot\."
 	done
-
+	echo
+	echo -n "- vmtoolsd running: "
 	FIL="basic-health-check.txt"
-	echo -n "vmtoolsd running : "
-	grep vmtoolsd $FIL
-
-	# TODO ntp.conf?
+	awk '$10~/vmtoolsd/ {print $10}' $FIL
+	echo
+	echo "- config files:"	
+	FIL="etc.txt"
+	split_file $FIL
+	for p in $VMW_ETC; do
+		echo
+		echo "$p :"
+		f=$(grep -l "^# ${p}$" ${TMP}/${FIL}/xx*)
+		test -z $f && continue
+		test -r $f && grep -v "^#" $f | tr -s "\n"
+	done
 	echo
 }
 
@@ -877,7 +901,7 @@ function chk_updates() {
 	
 	FIL="updates.txt"
 	# TODO sles-for-sap
-	# TODO
+	# TODO fix doubled entries artefact "SLES11-*"
 	test -z "${UPDT_PTRN}" &&\
 	UPDT_PTRN="
 "SLES11-"

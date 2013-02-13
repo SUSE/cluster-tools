@@ -593,8 +593,9 @@ function chk_vmware() {
 
 	# http://www.vmware.com/download/packages.html
 	# http://packages.vmware.com/tools
+	# TODO what is really needed?
 	test -z "${VMWARE_PKG}" &&\
-	VMWARE_PKG="
+	VMW_PKG="
 ntp
 vmware-tools-core
 vmware-tools-esx
@@ -642,7 +643,7 @@ vmware-tools-xorg-drv-display-
 vmware-tools-xorg-drv-mouse
 "
 	test -z "${VMWARE_MODUL}" &&\
-	VMWARE_MODUL="
+	VMW_MODUL="
 vmxnet3
 vmw_pvscsi
 vmw_balloon
@@ -650,7 +651,7 @@ mptbase
 "
 	# TODO vmware tools services?
 	test -z "${VMWARE_SVC_YES}" &&\
-	VMWARE_SVC_YES="
+	VMW_SVC_YES="
 boot.clock
 boot.sysstat
 boot.sysctl
@@ -658,7 +659,7 @@ ntp
 vmware-tools-services
 "
 	test -z "${VMWARE_SVC_OFF}" &&\
-	VMWARE_SVC_OFF="
+	VMW_SVC_OFF="
 alsasound
 ipmi
 irq_balancer
@@ -673,10 +674,38 @@ xendomains
 	# TODO /etc/vmware-tools/tools.conf
 	# TODO /etc/vmware-tools/plugins
 	# TODO /etc/pam.d/vmtoolsd
-	# TODO  vmware user /usr/lib/vmware-tools/moduleScripts/user/vmware-deconfig.pl --toDeconfigure=user
+	# TODO  vmware user /usr/lib/vmware-tools/moduleScripts/user/vmware-config.pl --toConfigure=user
 
 	# TODO
+	FIL="rpm.txt"
+	echo "packages installed : "
+	for p in $VMW_PKG; do
+		echo -n "$p : "
+		grep $p $FIL	
+	done
 
+	FIL="modules.txt"
+	echo "modules loaded : "
+	for p in $VMW_MODUL; do
+		echo -n "$p : "
+		grep $p $FIL	
+	done
+
+	FIL="chkconfig.txt"
+	echo "services on : "
+	for p in $VMW_SVC_YES; do
+		grep $p $FIL	
+	done
+	echo "services off : "
+	for p in $VMW_SVC_YES; do
+		grep $p $FIL	
+	done
+
+	FIL="basic-health-check.txt"
+	echo -n "vmtoolsd running : "
+	grep vmtoolsd $FIL
+
+	# TODO ntp.conf?
 	echo
 }
 

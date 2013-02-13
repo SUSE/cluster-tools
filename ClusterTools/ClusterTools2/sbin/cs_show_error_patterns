@@ -5,7 +5,7 @@
 # (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.2 2013-02-07
+# Version: 0.2 2013-02-13
 #
 
 EXE="$0"
@@ -72,6 +72,7 @@ test -z "${ERROR_PATTERN}" &&\
 "EXT.-fs.error"
 "Starting.XFS.recovery"
 "sdrServ:.*err"
+"server.*not.responding"
 "iSCSI.connection.*error"
 "Sense.*error"
 "bond.*link.*down"
@@ -83,10 +84,14 @@ test -z "${ERROR_PATTERN}" &&\
 "Link.Failure.Count"
 "RPC.*multiple.fragments"
 "martian.source.*dev"
+"unexpectedly.shrunk.window"
 "ntpd.*failed"
 "ntpd.*time.reset"
+"time.sync.status.changed"
 "failed.to.bind.to.LDAP"
+"conversation.failed"
 "refused.mount.request"
+"nfs..server.*not.responding"
 "logrotate.*error"
 "Failed.to.read"
 "exits.with.status.*[1-9]"
@@ -95,10 +100,21 @@ test -z "${ERROR_PATTERN}" &&\
 "syslog-ng.shutting.down"
 "kernel.*segfault.at"
 "Out.of.memory"
+"invoked.oom-killer"
+"Call.Trace"
+"kernel.*deprecated"
+"annot.open.*file"
+"nable.to.open.*file"
+"nable.to.load"
+"Potential.spurious.wakeup"
+"annot.create..ocket"
+"end.*failed"
+"ead.*failed"
 "GAB.*failure"
 "Symantec.Technical.Support"
 "Hangcheck.*clock"
 "
+# TODO: separate variable for application patterns (annot.open..rofile" ... "Hangcheck.*clock"
 # TODO: raid.set.*active.with.2.out.of.2.mirrors ?
 # TODO: check for un-matched userfreindly names (mpath[a-z])
 # TODO: pattern for failed module (could not load)

@@ -5,7 +5,7 @@
 # (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2013-02-07
+# Version: 0.01 2013-02-13
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -757,7 +757,6 @@ function chk_updates() {
 	UPDT_PTRN="
 "SLES11-"
 "SLES11-SP"
-"SLE11-HAE-"
 "SLE11-HAE-SP"
 "SLE11-SP1-SAP-AIO-"
 "SLE11-SP2-SAP-"
@@ -906,6 +905,7 @@ kernel.sem
 kernel.shmall
 kernel.shmmax
 kernel.shmmni
+kernel.threads-max
 net.ipv4.ip_local_port_range
 net.core.rmem_default
 net.core.rmem_max
@@ -919,7 +919,7 @@ vm.swappiness
 vm.overcommit_memory
 vm.max_map_count
 vm.hugetlb_shm_group
-vm.nr_hugepages
+vm.pagecache_limit_*
 "
 	# TODO get really active settings
 #	FIL="proc.txt"
@@ -953,11 +953,12 @@ vm.nr_hugepages
 	# test -r $F && grep -v "^#" $F | tr -s "\n "
 	echo
 
-	# TODO how to find scheduler from supportdonfig?
-#	FIL="sysfs.txt"
-#	echo -n "io_scheduler noop: ";	  grep -c "\[noop\]" $FIL
-#	echo -n "io_scheduler deadline: "; grep -c "\[deadline\]" $FIL
-#	echo -n "io_scheduler cfq: ";	  grep -c "\[cfq\]" $FIL
+	# TODO /sys/kernel/mm/transparent_hugepage/enabled
+	# TODO /sys/kernel/mm/transparent_hugepage/defrag
+
+	# TODO how to find scheduler from supportdonfig? plugin needed?
+	FIL="boot.txt"
+	echo -n "io_scheduler: "; grep "io scheduler.*registered..default" $FIL
 	echo
 }
 

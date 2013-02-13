@@ -591,10 +591,55 @@ function chk_vmware() {
 
 	echo_msgsep $FUNCNAME
 
+	# http://www.vmware.com/download/packages.html
+	# http://packages.vmware.com/tools
 	test -z "${VMWARE_PKG}" &&\
 	VMWARE_PKG="
 ntp
-
+vmware-tools-core
+vmware-tools-esx
+vmware-tools-esx-kmods-default
+vmware-tools-esx-nox
+vmware-tools-guestlib
+vmware-tools-guestsdk
+vmware-tools-hgfs
+vmware-tools-libraries-nox
+vmware-tools-libraries-x
+vmware-tools-plugins-autoUpgrade
+vmware-tools-plugins-deployPkg
+vmware-tools-plugins-desktopEvents
+vmware-tools-plugins-dndcp
+vmware-tools-plugins-guestInfo
+vmware-tools-plugins-hgfsServer
+vmware-tools-plugins-powerOps
+vmware-tools-plugins-resolutionSet
+vmware-tools-plugins-timeSync
+vmware-tools-plugins-unity
+vmware-tools-plugins-vix
+vmware-tools-plugins-vmbackup
+vmware-tools-pvscsi-common
+vmware-tools-pvscsi-kmp-default
+vmware-tools-services
+vmware-tools-thinprint
+vmware-tools-user
+vmware-tools-vmblock-common
+vmware-tools-vmblock-kmp-default
+vmware-tools-vmci-common
+vmware-tools-vmci-kmp-default
+vmware-tools-vmhgfs-common
+vmware-tools-vmhgfs-kmp-default
+vmware-tools-vmmemctl-common
+vmware-tools-vmmemctl-kmp-default
+vmware-tools-vmsync-common
+vmware-tools-vmsync-kmp-default
+vmware-tools-vmxnet-common
+vmware-tools-vmxnet-kmp-default
+vmware-tools-vmxnet3-common
+vmware-tools-vmxnet3-kmp-default
+vmware-tools-vsock-common
+vmware-tools-vsock-kmp-default
+vmware-tools-xorg-drv-display-
+vmware-tools-xorg-drv-mouse
 "
 	test -z "${VMWARE_MODUL}" &&\
 	VMWARE_MODUL="
@@ -610,6 +655,7 @@ boot.clock
 boot.sysstat
 boot.sysctl
 ntp
+vmware-tools-services
 "
 	test -z "${VMWARE_SVC_OFF}" &&\
 	VMWARE_SVC_OFF="
@@ -624,6 +670,10 @@ smartd
 xend
 xendomains
 "
+	# TODO /etc/vmware-tools/tools.conf
+	# TODO /etc/vmware-tools/plugins
+	# TODO /etc/pam.d/vmtoolsd
+	# TODO  vmware user /usr/lib/vmware-tools/moduleScripts/user/vmware-deconfig.pl --toDeconfigure=user
 
 	# TODO
 

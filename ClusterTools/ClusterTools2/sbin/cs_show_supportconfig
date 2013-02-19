@@ -744,7 +744,7 @@ function chk_sap() {
 	split_file $FIL
 	f=$(grep -l "^# /etc/sysconfig/sapconf$" ${TMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		grep -v "^#" | sort -u
+		grep -v "^#" $f | sort -u
 	echo
 
 	# TODO check ???, see sum_base_config, precheck_for_sap

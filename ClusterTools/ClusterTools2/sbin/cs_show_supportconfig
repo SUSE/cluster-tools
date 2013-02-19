@@ -395,7 +395,7 @@ function chk_network() {
 		 grep -v "^#==\[ " | grep -v "^# /sbin/ethtool" | grep -v "^--$"
 	echo
 	
-# TODO summary num. NICs, num. "not connected"
+	# TODO summary num. NICs, num. "not connected"
 	( grep --binary-file=text -A3 "^# /etc/sysconfig/network/routes$" $FIL ) |\
 		 grep -v "^#==\[ " | grep -v "^# /sbin/ethtool"
 
@@ -410,8 +410,10 @@ function chk_network() {
 		 grep -v "=''$" ) |\
 		 grep -v "^#==\[ " 
 	echo
-	
+	# TODO firewall
+	echo "iptables:"	
 	grep "iptable_" $FIL
+	echo
 }
 
 
@@ -875,6 +877,7 @@ sapinit
 	done
         echo
 	# TODO: rpm.txt /usr/local/bin: coraenv, dbhome, oraenv
+	echo "proc :"
 	FIL=memory.txt
 	split_file $FIL
 	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TMP}/${FIL}/xx*)

@@ -746,10 +746,17 @@ function chk_sap() {
 	test -z "$f" ||\
 		grep -v "^#" $f | sort -u
 	echo
-
 	# TODO check ???, see sum_base_config, precheck_for_sap
 	grep -e "^@sapsys" -e "^@sdba" crash.txt
 	echo
+	echo "proc:"
+	FIL=proc.txt
+	split_file $FIL
+	f=$(grep -l "^# /proc/net/unix$" ${TMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		awk '$8~/sap/ || $8~/oracle/ {print $8}' $f | sort -u
+	echo
+	
 }
 
 

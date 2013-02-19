@@ -790,7 +790,8 @@ function chk_oracle() {
 	# TODO check ???, see sum_base_config, whbsaprecheck
 	# TODO check async-IO, direct-IO
 	# TODO hugetblfs from mount
-	
+	# TODO oracleasmlib oracleasm-support still needed?	
+
 	FIL="rpm.txt"
         test -z "${ORA_SFT_PTRN}" &&\
         ORA_SFT_PTRN="

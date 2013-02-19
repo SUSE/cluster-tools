@@ -410,6 +410,8 @@ function chk_network() {
 		 grep -v "=''$" ) |\
 		 grep -v "^#==\[ " 
 	echo
+	
+	grep "iptable_" $FIL
 }
 
 
@@ -763,8 +765,6 @@ function chk_sap() {
 		awk '$2=="sapstartsrv" || $2=="sapstart" || $2~/ms\.sap/ || $2~/en\.sap/  || $2~/ig\.sap/ || $2=="igsmux_mt" || $2=="igspw_mt" || $2=="gwrd" || $2=="icman"  {print}' $f | sort -u
 		awk '$8~/sapstart/ || $8~/disp\+work/ || $8~/igswd_mt/ || $8~/igspw_mt/ || $8~/igsmux_mt/ || $8~/gwrd/ || $8~/icman/ || $8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ || $8~/dw_/  {print $8}' $f | sort -u
 	echo
-	
-	
 }
 
 
@@ -874,8 +874,13 @@ sapinit
 		grep "^${s}.*0.*3:on" $FIL | grep -v "boot\."
 	done
         echo
-
 	# TODO: rpm.txt /usr/local/bin: coraenv, dbhome, oraenv
+	FIL=memory.txt
+	split_file $FIL
+	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		awk '$8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ {print $8}' $f | sort -u
+	echo
 }
 
 

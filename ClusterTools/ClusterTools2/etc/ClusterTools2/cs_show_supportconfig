@@ -177,7 +177,14 @@ vm.pagecache_limit_*
 #
 ORA_SFT_PTRN="
 orarun
-oracleasmlib oracleasm-support
+oracleasmlib oracleasm-support oracleasm-kmp-default
+oracle-instantclient11.2-basic
+oracle-instantclient11.2-basiclite
+oracle-instantclient11.2-jdbc
+oracle-instantclient11.2-sqlplus
+oracle-instantclient11.2-devel
+oracle-instantclient11.2-odbc
+oracle-instantclient11.2-tools
 cups-client cups-drivers cups-libs cups-libs-32bit cups cups-autoconfig
 xorg-x11-libs xorg-x11
 nfs-client

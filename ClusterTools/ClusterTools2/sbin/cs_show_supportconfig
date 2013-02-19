@@ -5,7 +5,7 @@
 # (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2013-02-13
+# Version: 0.01 2013-02-19
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -739,6 +739,14 @@ function chk_sap() {
 	echo_msgsep $FUNCNAME
 
 	# TODO check /etc/sysconfig/sapconf
+	echo "sysconfig:"
+	FIL=etc.txt
+	split_file $FIL
+	f=$(grep -l "^# /etc/sysconfig/sapconf$" ${TMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "^#" | sort -u
+	echo
+
 	# TODO check ???, see sum_base_config, precheck_for_sap
 	grep -e "^@sapsys" -e "^@sdba" crash.txt
 	echo

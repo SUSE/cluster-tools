@@ -5,7 +5,7 @@
 # (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2013-02-07
+# Version: 0.1 2013-02-25
 #
 
 EXE="$0"
@@ -47,6 +47,8 @@ test -z "${CLUSTR_PATTERN}" &&\
 "TOTEM.*FAILED.*RECEIVE"
 "TOTEM.*processor.failed"
 "TOTEM.*Incrementing.problem"
+"pcmk.*Invalid.destination"
+"pcmk.*Assertion.failure"
 "pcmk.*Child.process.*exited"
 "pcmk.*Sending.message.*failed"
 "crmd.*quorum.lost"

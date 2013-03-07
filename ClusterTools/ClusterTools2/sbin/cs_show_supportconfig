@@ -561,60 +561,63 @@ sbd
         echo -n "process on watchdog: "
         awk '$9=="/dev/watchdog" {print $1,$9}' open-files.txt
         echo
+	echo
 
 	FIL="chkconfig.txt"
 	split_file $FIL
 	f=$(grep -l "^# /sbin/chkconfig.--list$" ${TMP}/${FIL}/xx*)
 	echo "/sbin/chkconfig --list:"
-	test -z $f || grep -v "^#" $f
-	grep "^openais.*0:.*1:.*2:.*3:.*4:.*5:.*6:" $f
+	test -z $f ||\
+		grep -e "^openais.*0:" -e "^hp-asrd.*0:" $f
 	echo
 	f=$(grep -l "^/etc/init.d/rc3.d:$" ${TMP}/${FIL}/xx*)
         echo "/etc/init.d/rc3.d:"
-        test -z $f || grep -v "^#" $f
-	grep -e "K.*openais" -e "S.*hp-asrd"$FIL
+        test -z $f ||\
+		grep -e "K..openais" -e "S..hp-asrd" $f
 	echo
 	f=$(grep -l "^/etc/init.d/rc5.d:$" ${TMP}/${FIL}/xx*)
         echo "/etc/init.d/rc5.d:"
-        test -z $f || grep -v "^#" $f
-	grep -e "K.*openais" -e "S.*hp-asrd"$FIL
-	echo
-
-	FIL="ha.txt"
-        split_file $FIL
-        f=$(grep -l "^# /etc/corosync/corosync.conf$" ${TMP}/${FIL}/xx*)
-	echo "/etc/corosync/corosync.conf:"
-	test -z $f || grep -v "^#" $f
-	echo
-        f=$(grep -l "^# /etc/sysconfig/sbd$" ${TMP}/${FIL}/xx*)
-	echo "/etc/sysconfig/sbd:"
-	test -z $f || grep -v "^#" $f
-	echo
-	f=$(grep -l "^# /usr/sbin/sbd.-d.*dump$" ${TMP}/${FIL}/xx*)
-	echo "sbd -d /dev/... dump:"
-	test -z $f || grep -v "^#" $f
-	echo
-        f=$(grep -l "^# /var/lib/heartbeat/crm/cib.xml$" ${TMP}/${FIL}/xx*)
-	echo "/var/lib/heartbeat/crm/cib.xml:"
-	test -z $f || grep -v "^#" $f
-	echo
-	f=$(grep -l "^# /usr/sbin/sbd.-d.*list$" ${TMP}/${FIL}/xx*)
-	echo "sbd -d /dev/... list:"
-	test -z $f || grep -v "^#" $f
-	echo
-        f=$(grep -l "^# /usr/sbin/crm_mon.-r.-1$" ${TMP}/${FIL}/xx*)
-	echo "crm_mon -r -1:"
-	test -z $f || grep -v "^#" $f
+        test -z $f ||\
+		grep -e "K..openais" -e "S..hp-asrd" $f
 	echo
 
 	FIL="sysconfig.txt"
         split_file $FIL
         f=$(grep -l "^# /etc/sysconfig/openais$" ${TMP}/${FIL}/xx*)
 	echo "/etc/sysconfig/openais:"
-	test -z $f || grep -v "^#" $f
+	test -z $f || grep -v "^#" $f | tr -s "\n"
 	echo
         f=$(grep -l "^# /etc/sysconfig/pacemaker$" ${TMP}/${FIL}/xx*)
 	echo "/etc/sysconfig/pacemaker:"
+	test -z $f || grep -v "^#" $f | tr -s "\n"
+	echo	
+	f=$(grep -l "^# /etc/sysconfig/sbd$" ${TMP}/${FIL}/xx*)
+	echo "/etc/sysconfig/sbd:"
+	test -z $f || grep -v "^#" $f | tr -s "\n"
+	echo
+
+	FIL="ha.txt"
+        split_file $FIL
+	f=$(grep -l "^# /usr/sbin/sbd.-d.*dump$" ${TMP}/${FIL}/xx*)
+	echo "sbd -d /dev/... dump:"
+	test -z $f || grep -v "^#" $f
+	echo
+	f=$(grep -l "^# /usr/sbin/sbd.-d.*list$" ${TMP}/${FIL}/xx*)
+	echo "sbd -d /dev/... list:"
+	test -z $f || grep -v "^#" $f
+	echo
+        f=$(grep -l "^# /etc/corosync/corosync.conf$" ${TMP}/${FIL}/xx*)
+	echo "/etc/corosync/corosync.conf:"
+	test -z $f || grep -v "^#" $f
+	echo
+	f=$(grep -l "^# /usr/sbin/sbd.-d.*dump$" ${TMP}/${FIL}/xx*)
+        f=$(grep -l "^# /usr/sbin/crm_mon.-r.-1$" ${TMP}/${FIL}/xx*)
+	echo "crm_mon -r -1:"
+	test -z $f || grep -v "^#" $f
+	echo
+	# TODO crm configure show
+        f=$(grep -l "^# /var/lib/heartbeat/crm/cib.xml$" ${TMP}/${FIL}/xx*)
+	echo "/var/lib/heartbeat/crm/cib.xml:"
 	test -z $f || grep -v "^#" $f
 	echo
 }
@@ -1461,9 +1464,7 @@ case $1 in
 	--test|-t)
 		cd $DIR
 		#set -x
-		#split_file modules.txt
-		chk_oracle
-		#chk_filesys	
+		chk_cluster
 
 		rm -rf $TMP
 		exit

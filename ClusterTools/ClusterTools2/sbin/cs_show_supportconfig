@@ -16,6 +16,7 @@ TMP="/tmp/cltl.$RANDOM"
 
 CFG="/etc/ClusterTools2/cs_show_supportconfig"
 test -s $CFG && source $CFG
+test -z "${TEMP}" && TMP="$TEMP}"
 
 # TODO make DIR= work
 DIR=${2:-$PWD}

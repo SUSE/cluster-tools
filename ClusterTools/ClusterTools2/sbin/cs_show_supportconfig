@@ -5,7 +5,7 @@
 # (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2013-02-19
+# Version: 0.01 2013-03-07
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -548,8 +548,8 @@ sbd
 	done | sort
 	echo
 	# TODO check /etc/corosync/
-	# TODO check ???, see sum_base_config, whbsaprecheck
-	# TODO check watchdogs, define $WATCHMOD, see disbale_other_watchdog
+	# TODO check ???, see cs_sum_baseconfig, whbsaprecheck
+	# TODO check watchdogs, define $WATCHMOD, see cs_disbale_other_watchdog
 	# hangcheck_timer here, not "-" as in hangcheck-timer.ko
 	WATCHMOD="hpwdt hangcheck_timer iTCO ibmasr softdog"
 	echo -n "loaded watchdog: "
@@ -562,32 +562,61 @@ sbd
         awk '$9=="/dev/watchdog" {print $1,$9}' open-files.txt
         echo
 
+	FIL="chkconfig.txt"
+	split_file $FIL
+	f=$(grep -l "^# /sbin/chkconfig.--list$" ${TMP}/${FIL}/xx*)
+	echo "/sbin/chkconfig --list:"
+	test -z $f || grep -v "^#" $f
+	grep "^openais.*0:.*1:.*2:.*3:.*4:.*5:.*6:" $f
 	echo
+	f=$(grep -l "^/etc/init.d/rc3.d:$" ${TMP}/${FIL}/xx*)
+        echo "/etc/init.d/rc3.d:"
+        test -z $f || grep -v "^#" $f
+	grep -e "K.*openais" -e "S.*hp-asrd"$FIL
+	echo
+	f=$(grep -l "^/etc/init.d/rc5.d:$" ${TMP}/${FIL}/xx*)
+        echo "/etc/init.d/rc5.d:"
+        test -z $f || grep -v "^#" $f
+	grep -e "K.*openais" -e "S.*hp-asrd"$FIL
+	echo
+
 	FIL="ha.txt"
         split_file $FIL
-
         f=$(grep -l "^# /etc/corosync/corosync.conf$" ${TMP}/${FIL}/xx*)
 	echo "/etc/corosync/corosync.conf:"
 	test -z $f || grep -v "^#" $f
-
+	echo
         f=$(grep -l "^# /etc/sysconfig/sbd$" ${TMP}/${FIL}/xx*)
 	echo "/etc/sysconfig/sbd:"
 	test -z $f || grep -v "^#" $f
-
+	echo
 	f=$(grep -l "^# /usr/sbin/sbd.-d.*dump$" ${TMP}/${FIL}/xx*)
 	echo "sbd -d /dev/... dump:"
 	test -z $f || grep -v "^#" $f
-
+	echo
+        f=$(grep -l "^# /var/lib/heartbeat/crm/cib.xml$" ${TMP}/${FIL}/xx*)
+	echo "/var/lib/heartbeat/crm/cib.xml:"
+	test -z $f || grep -v "^#" $f
+	echo
 	f=$(grep -l "^# /usr/sbin/sbd.-d.*list$" ${TMP}/${FIL}/xx*)
 	echo "sbd -d /dev/... list:"
 	test -z $f || grep -v "^#" $f
 	echo
-
         f=$(grep -l "^# /usr/sbin/crm_mon.-r.-1$" ${TMP}/${FIL}/xx*)
 	echo "crm_mon -r -1:"
 	test -z $f || grep -v "^#" $f
+	echo
 
-	# TODO crm configure show
+	FIL="sysconfig.txt"
+        split_file $FIL
+        f=$(grep -l "^# /etc/sysconfig/openais$" ${TMP}/${FIL}/xx*)
+	echo "/etc/sysconfig/openais:"
+	test -z $f || grep -v "^#" $f
+	echo
+        f=$(grep -l "^# /etc/sysconfig/pacemaker$" ${TMP}/${FIL}/xx*)
+	echo "/etc/sysconfig/pacemaker:"
+	test -z $f || grep -v "^#" $f
+	echo
 }
 
 

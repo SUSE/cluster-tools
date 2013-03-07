@@ -542,6 +542,18 @@ pacemaker-mgmt-client
 resource-agents
 sbd
 "
+	test -z "${CLUSTER_PRCS}" &&\
+	CLUSTER_PRCS="
+sbd:
+/usr/sbin/corosync
+/usr/lib64/heartbeat/stonithd
+/usr/lib64/heartbeat/cib
+/usr/lib64/heartbeat/lrmd
+/usr/lib64/heartbeat/attrd
+/usr/lib64/heartbeat/pengine
+/usr/lib64/heartbeat/crmd
+/usr/lib64/heartbeat/mgmtd
+"
 	FIL="rpm.txt"
 	for f in $CLUSTER_PGK; do
 		grep $f $FIL 	
@@ -615,10 +627,17 @@ sbd
 	echo "crm_mon -r -1:"
 	test -z $f || grep -v "^#" $f
 	echo
-	# TODO crm configure show
         f=$(grep -l "^# /var/lib/heartbeat/crm/cib.xml$" ${TMP}/${FIL}/xx*)
 	echo "/var/lib/heartbeat/crm/cib.xml:"
 	test -z $f || grep -v "^#" $f
+	echo
+	# TODO crm configure show?
+
+	FIL="basic-health-check.txt"
+	echo "cluster processes running:"
+	for p in $CLUSTER_PRCS; do 
+		awk '$10=="'${p}'" {print $0}' $FIL
+	done
 	echo
 }
 
@@ -825,6 +844,57 @@ function chk_sap() {
 function chk_oracle() {
 
 	echo_msgsep $FUNCNAME
+
+	# TODO put this in config file, use it in function
+	# TODO see /srv/pinne/work/*/sap/technical/from_*/20130304/ps_*.txt
+# orawe3    4637  0.0  2.4 10495496 3260024 ?    Ss   Mar03   3:21 oracleWE3 (LOCAL=NO)
+# orawei    5038  0.0  0.0 10489296 19884 ?      Ss   Feb24   0:21 ora_q001_WEI
+# orawe3   19399  0.0  0.0 10491972 29064 ?      Ss   Mar03   1:20 ora_pmon_WE3
+# orawe3   19402  0.0  0.0 10489520 17080 ?      Ss   Mar03   0:58 ora_psp0_WE3
+# orawe3   20152  0.0  0.0 10489520 16560 ?      Ss   Mar03   0:27 ora_diag_WE3
+# orawe3   20175  0.0  0.0 10490032 41084 ?      Ss   Mar03   0:14 ora_dbrm_WE3
+# orawe3   20191  0.2  0.0 10494128 44176 ?      Ss   Mar03  14:36 ora_dia0_WE3
+# orawe3   20229  0.0  0.0 10489520 84100 ?      Ss   Mar03   0:13 ora_mman_WE3
+# orawe3   20271  0.0  2.7 10496556 3600380 ?    Ss   Mar03   3:38 ora_dbw0_WE3
+# orawet   20296  0.3  1.4 4977156 1958052 ?     Ss   Feb27  35:23 oracleWET (LOCAL=NO)
+# orawe3   20310  0.0  2.7 10495532 3635364 ?    Ss   Mar03   3:36 ora_dbw1_WE3
+# orawe3   20331  0.0  2.8 10496044 3794112 ?    Ss   Mar03   3:36 ora_dbw2_WE3
+# orawe3   20357  0.0  2.7 10495532 3617344 ?    Ss   Mar03   3:34 ora_dbw3_WE3
+# orawe3   20381  0.0  2.7 10496044 3653224 ?    Ss   Mar03   3:35 ora_dbw4_WE3
+# orawe3   20402  0.6  0.0 10512176 39104 ?      Ss   Mar03  35:23 ora_lgwr_WE3
+# orawe3   20422  0.0  0.1 10490536 210024 ?     Ss   Mar03   2:25 ora_ckpt_WE3
+# orawe3   20439  0.0  0.7 10491064 925884 ?     Ss   Mar03   0:37 ora_smon_WE3
+# orawe3   20459  0.0  0.0 10490032 35476 ?      Ss   Mar03   0:07 ora_reco_WE3
+# orawe3   20488  0.0  0.2 10495560 352076 ?     Ss   Mar03   0:34 ora_mmon_WE3
+# orawe3   20523  0.1  0.1 10489520 150708 ?     Ss   Mar03   7:05 ora_mmnl_WE3
+# orawe2   25496  0.0  0.0  83832 12588 ?        Ssl  Feb24   0:25 /oracle/WE2/112_64/bin/tnslsnr listener_WE2 -inherit
+# root     25625  4.7  0.0   6240  1176 ?        S    16:40   0:00 /oracle/WE3/libelle/trd/bin/trd
+# orawe3   25926  0.0  0.0 10489512 20492 ?      Ss   Mar03   0:17 ora_smco_WE3
+# orawe3   26972  0.0  0.0 10491052 33200 ?      Ss   Mar03   0:07 ora_q000_WE3
+# orawe2   27280  0.0  0.0 6885040 17004 ?       Ss   Feb24   2:46 ora_psp0_WE2
+# orawe2   31816  0.0  0.0 6885040 20592 ?       Ss   Feb24   0:25 ora_qmnc_WE2
+	# 
+        ORA_PRCS="
+ora_pmon_
+ora_vktm_
+ora_gen._
+ora_diag_
+ora_dbrm_
+ora_dia._
+ora_dbw._
+ora_lgwr_
+ora_ckpt_
+ora_smon_
+ora_reco_
+ora_mmon_
+ora_mmnl_
+ora_smco_
+ora_psp._
+ora_q.*_
+ora_qmnc_
+oracle.*
+/.*/bin/tnslsnr
+"
 
 	echo "standalone Oracle installation"
 	echo

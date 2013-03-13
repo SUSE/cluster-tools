@@ -520,7 +520,7 @@ DEFAULT_TIMEZONE
 }
 
 
-function chk_cluster() {
+function chk_sleha() {
 
 	echo_msgsep $FUNCNAME
  
@@ -1182,8 +1182,7 @@ xfs
 	#grep -B1 "^Disk./dev/" $FIL
 	grep -A1 "^Model:" $FIL | grep -v "^--$"
 	echo
-	
-	# TODO FIL="lvm.txt"
+
 	# TODO FIL="fs-softraid.txt"
 	# TODO better elevator guessing 
 	FIL="boot.txt"
@@ -1191,6 +1190,20 @@ xfs
 	grep "kernel.*elevator" $FIL
 	FIL="sysconfig.txt"
 	grep "DEFAULT_APPEND.*elevator" $FIL
+	echo
+
+	# TODO better lvm
+	FIL="lvm.txt"
+	split_file $FIL
+        F=$(grep -h "# /sbin/vgs" $TMP/$FIL/xx* | tr -d ":#")
+	test -z $F || echo $F # cat $F
+	echo
+        F=$(grep -h "# /etc/sysconfig/lvm" $TMP/$FIL/xx* | tr -d ":#")
+	test -z $F || echo $F # cat $F
+	echo
+        F=$(grep -h "# /etc/lvm/lvm.conf" $TMP/$FIL/xx* | tr -d ":#")
+	test -z $F || echo $F # cat $F
+	echo
 
 	echo
 }
@@ -1535,7 +1548,7 @@ case $1 in
 	--test|-t)
 		cd $DIR
 		#set -x
-		chk_cluster
+		chk_sleha
 
 		rm -rf $TMP
 		exit

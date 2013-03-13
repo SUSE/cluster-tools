@@ -1,4 +1,4 @@
-.TH cs_show_cluster_patterns 8 "05 Oct 2011" "" "ClusterTools2"
+.TH cs_show_cluster_patterns 8 "13 Mar 2013" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_show_cluster_patterns \- search log files for cluster patterns
@@ -38,8 +38,8 @@ Please note that most cluster components do logging to their local node only.
 .SH EXAMPLES
 .HP
 # cs_show_cluster_patterns -m
-.\".HP
-.\" # 
+.HP
+# cs_show_cluster_patterns -c | grep -v "=.0$"
 .\"
 .SH EXIT STATUS
 .B 0
@@ -73,7 +73,7 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 .\"
 .\"
 .SH COPYRIGHT
-(c) 2011-2012 L.Pinne, Germany.
+(c) 2011-2013 L.Pinne, Germany.
 .br
 cs_show_cluster_patterns comes with ABSOLUTELY NO WARRANTY.
 .br

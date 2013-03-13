@@ -36,9 +36,13 @@ Please note that most cluster components do logging to their local node only.
 .HP
 .\"
 .SH EXAMPLES
-.HP
+.TP
+* show migrations
+.br
 # cs_show_cluster_patterns -m
-.HP
+.TP
+* count occurance of patterns, show non-null only
+.br
 # cs_show_cluster_patterns -c | grep -v "=.0$"
 .\"
 .SH EXIT STATUS

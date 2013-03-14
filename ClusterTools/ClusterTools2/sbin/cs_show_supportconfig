@@ -640,6 +640,20 @@ sbd:
 		awk '$10=="'${p}'" {print $0}' $FIL
 	done
 	echo
+
+	FIL="lvm.txt"
+        split_file $FIL
+        echo "/etc/lvm/lvm.conf:"
+        f=$(grep -l "# /etc/lvm/lvm.conf" $TMP/$FIL/xx*)
+        test -z "$f" || grep -vh "^#" $f | grep "filter"
+        echo
+	FIL="fs-softraidtxt"
+        split_file $FIL
+        echo "/etc/mdadm.conf:"
+        f=$(grep -l "# /etc/mdadm.conf" $TMP/$FIL/xx*)
+        test -z "$f" || grep -vh "^#" $f # | grep "/dev/null"
+        echo
+
 }
 
 
@@ -1186,25 +1200,45 @@ xfs
 	# TODO FIL="fs-softraid.txt"
 	# TODO better elevator guessing 
 	FIL="boot.txt"
+	echo "/boot/grub/menu.lst:"
 	grep "io.scheduler.*registered.(default)" $FIL
 	grep "kernel.*elevator" $FIL
+	echo
 	FIL="sysconfig.txt"
+	echo "/etc/sysconfig/bootloader:"
 	grep "DEFAULT_APPEND.*elevator" $FIL
 	echo
 
-	# TODO better lvm
+	split_file $FIL
+	echo "/etc/sysconfig/mdadm:"
+	f=$(grep -l "# /etc/sysconfig/mdadm" $TMP/$FIL/xx*)
+        test -z "$f" || cat $f | tr -s "\n"
+        echo
+	
+	FIL="fs_softraid.txt"
+	split_file $FIL
+	echo "/etc/sysconfig/mdadm:"
+	f=$(grep -l "# /etc/mdadm.conf" $TMP/$FIL/xx*)
+        test -z "$f" || cat $f | tr -s "\n"
+        echo
+	echo "/proc/mdstat:"
+	f=$(grep -l "# /proc/mdstat" $TMP/$FIL/xx*)
+        test -z "$f" || cat $f | tr -s "\n"
+        echo
+
 	FIL="lvm.txt"
 	split_file $FIL
-        F=$(grep -h "# /sbin/vgs" $TMP/$FIL/xx* | tr -d ":#")
-	test -z $F || echo $F # cat $F
+	echo "/sbin/vgs:"
+        f=$(grep -l "# /sbin/vgs" $TMP/$FIL/xx*)
+	test -z "$f" || grep -vh "^#" $f | tr -s "\n"
 	echo
-        F=$(grep -h "# /etc/sysconfig/lvm" $TMP/$FIL/xx* | tr -d ":#")
-	test -z $F || echo $F # cat $F
+	echo "/etc/sysconfig/lvm:"
+        f=$(grep -l "# /etc/sysconfig/lvm" $TMP/$FIL/xx*)
+	test -z "$f" || grep -vh "^#" $f | tr -s "\n"
 	echo
-        F=$(grep -h "# /etc/lvm/lvm.conf" $TMP/$FIL/xx* | tr -d ":#")
-	test -z $F || echo $F # cat $F
-	echo
-
+	echo "/etc/lvm/lvm.conf:"
+	f=$(grep -l "# /etc/lvm/lvm.conf" $TMP/$FIL/xx*)
+	test -z "$f" || grep -vh "^#" $f | tr -s "\n"
 	echo
 }
 

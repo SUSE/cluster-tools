@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+# cs_show_elevenmin
+#
+# (c) 2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version: 0.1 2013-02-16
+#
+# function from boot.clock
+#
+
+EXE="$0"
+ELEVENMIN_MODE=no
+
+
+# main()
+case $1 in
+	-h|--help)
+	echo "usage:	$(basename $0)"
+	echo "usage:	$(basename $0) OPTION"
+	echo " --help		show help."
+	echo " --version	show version."
+	exit
+	;;
+	-v|--version)
+	echo -n "$(basename $EXE) "
+	head -11 $EXE | grep "^# Version: "
+	exit
+	;;
+	*)
+	typeset -i STA_CLOCK=$(adjtimex --print |\
+	sed -rn '/^[[:blank:]]*status:/{ s/[^[:digit:]]*([[:digit:]]+)/\1/p; }')
+	test $((STA_CLOCK & 65)) -eq 1 && ELEVENMIN_MODE=yes
+	echo "is kernel within 11 minute mode, so boot.clock will not adjust HW clock on shutdown? ELEVENMIN_MODE="$ELEVENMIN_MODE
+	;;
+esac
+#

@@ -1215,7 +1215,7 @@ xfs
         test -z "$f" || cat $f | tr -s "\n"
         echo
 	
-	FIL="fs_softraid.txt"
+	FIL="fs-softraid.txt"
 	split_file $FIL
 	echo "/etc/sysconfig/mdadm:"
 	f=$(grep -l "# /etc/mdadm.conf" $TMP/$FIL/xx*)

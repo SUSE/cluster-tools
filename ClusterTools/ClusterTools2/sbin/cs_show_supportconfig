@@ -5,7 +5,7 @@
 # (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2013-03-07
+# Version: 0.01 2013-03-20
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -386,6 +386,8 @@ function chk_network() {
 	for p in $NETW_PTRN; do
 		grep --binary-file=text $p $FIL
 	done | sort -u
+	echo
+	grep --binary-file=text "eth.*\ device:" $FIL
 	echo
 
 	FIL="network.txt"

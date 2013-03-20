@@ -1514,6 +1514,17 @@ function chk_errors() {
 	f=$(grep -l "^# /proc/net/dev$" ${TMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		cat $f
+
+NET_ERR="
+ICMP.message.failed
+packets.pruned.from.receive.queue
+delayed.acks
+listen.queue.of.a.socket.overflowed
+"
+	FIL="network.txt"
+	for p in $NET_ERR; do
+		grep $p $FIL
+	done
 	echo
 }
 

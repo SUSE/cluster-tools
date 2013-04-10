@@ -15,8 +15,8 @@ License:      GPL
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.3.3
-Release:     0.5.2
+Version:      2.4.1
+Release:      0.1
 #Release:      12 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
@@ -26,6 +26,10 @@ Requires:     pacemaker > 1.1.1
 Requires:     perl-TermReadLine-Gnu >= 1.16
 Requires:     cron
 Requires:     logrotate
+
+%package doc
+Summary: Cluster Tools to control some functions easy
+Group:   Productivity/Clustering/HA
 	
 %description
 ClusterTools2 provides tools for setting up and managing a corosync/
@@ -38,6 +42,12 @@ snipsets to be inserted into the cluster).
 
 - ClusterService is the main tool for managing a Linux-ha cluster.
 There are some other commandline tools to make life easier.
+
+%description doc
+ClusterTools2 provides tools for setting up and managing a corosync/
+pacemaker cluster.
+
+This Subpackage includes the manual pages and documentation.
 
 %prep
 %setup -c -T -a 0
@@ -61,6 +71,7 @@ mkdir -p %{buildroot}/usr/share/ClusterTools2/cli
 mkdir -p %{buildroot}/usr/share/ClusterTools2/samples
 mkdir -p %{buildroot}/usr/lib/ClusterTools2
 mkdir -p %{buildroot}/usr/lib/ClusterTools2/agents
+mkdir -p %{buildroot}/usr/lib/ClusterTools2/check
 mkdir -p %{buildroot}/usr/lib/ClusterTools2/scripts
 mkdir -p %{buildroot}/usr/share/man/man5
 mkdir -p %{buildroot}/usr/share/man/man7
@@ -85,6 +96,7 @@ cp -a share/* %{buildroot}/usr/share/ClusterTools2/
 cp -a cli/* %{buildroot}/usr/share/ClusterTools2/cli/
 cp -a samples/* %{buildroot}/usr/share/ClusterTools2/samples/
 cp -a lib/* %{buildroot}/usr/lib/ClusterTools2/
+cp -a lib/check/* %{buildroot}/usr/lib/ClusterTools2/check
 cp -a agents/* %{buildroot}/usr/lib/ClusterTools2/agents/
 cp -a scripts/* %{buildroot}/usr/lib/ClusterTools2/scripts
 #
@@ -103,11 +115,14 @@ cp /usr/lib/ClusterTools2/supportconfig/plugins/* /usr/lib/supportconfig/plugins
 /usr/sbin/*
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
-%doc /usr/share/man/man5/*.gz
-%doc /usr/share/man/man7/*.gz
-%doc /usr/share/man/man8/*.gz
 %config(noreplace) /etc/ClusterTools2
 %config(noreplace) /etc/cron.d/*
 %config(noreplace) /etc/logrotate.d/*
+
+%files doc
+%defattr(-,root,root)
+%doc /usr/share/man/man5/*.gz
+%doc /usr/share/man/man7/*.gz
+%doc /usr/share/man/man8/*.gz
 
 %changelog 

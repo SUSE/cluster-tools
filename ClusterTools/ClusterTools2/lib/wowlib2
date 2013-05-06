@@ -8,6 +8,7 @@
 # Version: 0.2 2012-02-10
 #
 set +u
+only_members=0
 #
 # call specific setup
 #
@@ -23,6 +24,8 @@ while [ $# -gt 0 ]; do
 		--config )
 			config="$2"
 			shift
+			;;
+	        --members ) only_members=1;
 			;;
 	esac
 	shift

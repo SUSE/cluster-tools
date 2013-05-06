@@ -4,6 +4,7 @@ GROUP_MEMBERS=""
 DBTYPE=""
 
 source wowlib2
+WOW_AGENTS_DIR=/usr/lib/ClusterTools2/agents
 NGM=""
 #
 # sfex
@@ -28,11 +29,12 @@ done
 #
 # RAID1 / MD
 #
-for raiddev in $RAID1_DEVICES; do
-	raidname=${raiddev#/dev/}
-	NGM=rsc_md_${SAPSID}_${raidname} 
-	GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
-done
+GROUP_MEMBERS="$GROUP_MEMBERS $($WOW_AGENTS_DIR/01-04-add_md --config $config --members)"
+#for raiddev in $RAID1_DEVICES; do
+#	raidname=${raiddev#/dev/}
+#	NGM=rsc_md_${SAPSID}_${raidname} 
+#	GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
+#done
 #
 # LVM
 #
@@ -57,7 +59,7 @@ done <<< "$FS_FILESYSTEMS"
 	ORA ) cli=01-sapdb.ora.cli
 		 NGM=rsc_sapdb_$SAPSID 
 		;;
-	ADA | DB2 )   cli=01-sapdb.cli
+	ADA | DB2 | SYB )   cli=01-sapdb.cli
 		 NGM=rsc_sapdb_$SAPSID 
 		;;
 	* ) # If unknown or empty we skip the DB resource
@@ -68,14 +70,16 @@ GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
 #
 # SAPINST
 #
+if [ -n "$SAP_INSTANCE_DEF" ]; then
 while read sap_type sap_inst sap_prof sap_parm; do
 	if [ "$sap_type" == "${sap_type#\#}" ]; then
 		NGM=rsc_sapinst_${sap_inst}  
 		GROUP_MEMBERS="$GROUP_MEMBERS $NGM"
 	fi
 	done <<< "$SAP_INSTANCE_DEF"
+fi
 
-woweng2 UUID=grp_sap_${SAPSID} \
+woweng2 UUID=${GRPID} \
     GROUP_MEMBERS="$GROUP_MEMBERS" \
     $wowcli/01-grp-sap.cli
 #

@@ -1,6 +1,8 @@
 #!/bin/bash
+only_members=0
 source wowlib2
 mode=new_style
+
 echo "$RAID1_DEVICES" | grep -q '/dev.*/dev' && mode=old_style
 
 case "$mode" in
@@ -10,20 +12,30 @@ case "$mode" in
 			if [ -z "$raidname" ]; then
 				raidname=${raiddev#/dev/}
 			fi
-			woweng2 UUID=rsc_md_${SAPSID}_${raidname} \
+			UUID=rsc_md_${SAPSID}_${raidname}
+			if [ $only_members -eq 0 ]; then
+			    woweng2 UUID=$UUID \
 				DEVICE=$raiddev \
 				MDADM_CONF=$RAID_CONFIG \
 				$wowcli/01-md.cli
+			else
+			    printf "%s " "$UUID"
+			fi
 		done
 		;;
 	old_style )
 		for raiddev in $RAID1_DEVICES
 		do
 			raidname=${raiddev#/dev/}
-			woweng2 UUID=rsc_md_${SAPSID}_${raidname} \
+			UUID=rsc_md_${SAPSID}_${raidname}
+			if [ $only_members -eq 0 ]; then
+			   woweng2 UUID=$UUID \
 				DEVICE=$raiddev \
 				MDADM_CONF=$RAID_CONFIG \
 				$wowcli/01-md.cli
+			else
+			    printf "%s " "$UUID"
+			fi
 		done
 		;;
 esac

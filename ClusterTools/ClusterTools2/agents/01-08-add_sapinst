@@ -1,7 +1,8 @@
 #!/bin/bash
 source wowlib2
-echo "$SAP_INSTANCE_DEF" | while read sap_type sap_inst sap_prof sap_parm; do
-  if [ "$sap_type" == "${sap_type#\#}" ]; then
+if [ -n "$SAP_INSTANCE_DEF" ]; then
+  echo "$SAP_INSTANCE_DEF" | while read sap_type sap_inst sap_prof sap_parm; do
+    if [ "$sap_type" == "${sap_type#\#}" ]; then
 	  #echo "sap_type $sap_type"
 	  #echo "sap_inst $sap_inst"
 	  #echo "sap_prof $sap_prof"
@@ -12,5 +13,6 @@ echo "$SAP_INSTANCE_DEF" | while read sap_type sap_inst sap_prof sap_parm; do
 		SAP_START_PROFILE=$sap_prof \
 		$sap_parm \
 		$wowcli/01-sapinst_${sap_type}.cli </dev/null
-  fi
-done
+    fi
+  done
+fi

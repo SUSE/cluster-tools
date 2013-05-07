@@ -2,6 +2,7 @@
 source wowlib2
 woweng2 UUID=cib-bootstrap-options \
        UUID2=rsc_defaults-options \
+       UUID3=rsc_op-defaults \
        DEFAULT_RESOURCE_STICKINESS=$DEFAULT_RESOURCE_STICKINESS \
        DEFAULT_ACTION_TIMEOUT=$DEFAULT_ACTION_TIMEOUT \
        DEFAULT_MIGRATION_THRESHOLD=$DEFAULT_MIGRATION_THRESHOLD \

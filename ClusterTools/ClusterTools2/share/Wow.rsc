@@ -19,6 +19,7 @@ WCALL:MAIN:Call wow script:bash /usr/lib/ClusterTools2/scripts/%{s} %{ww}
 WSHOW:MAIN:Show created cli file:cat %{wcs}
 WBURN:MAIN:Apply created cli file:/usr/lib/ClusterTools2/wow_crm_call %{wcs}
 WCOMM:MAIN:Commit wow shadow cib:crm cib commit wow
+WDELS:MAIN:Delete wow shadow cib:crm cib delete wow
 CONTROL:HIDE:::exit
 EXIT:HIDE:::exit
 QUIT:HIDE:::exit

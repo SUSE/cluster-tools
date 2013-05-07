@@ -1,4 +1,4 @@
-TODO rm ptest.8.gz crm_simulate.8.gz attrd_updater.8.gz
+DONE rm ptest.8.gz crm_simulate.8.gz attrd_updater.8.gz
 TODO ls -l /usr/sbin/uuidd : -rwsr-sr-x 1 uuidd uuidd 19048 Dec  6 16:26 /usr/sbin/uuidd
 TODO /usr/lib/supportconfig/plugins/  awk /sys/block/*/queue/scheduler
 TODO susemanager cfg files: /etc/sysconfig/rhn/*

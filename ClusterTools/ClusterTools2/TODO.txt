@@ -1,3 +1,4 @@
+TODO ls -l /usr/sbin/uuidd : -rwsr-sr-x 1 uuidd uuidd 19048 Dec  6 16:26 /usr/sbin/uuidd
 TODO /usr/lib/supportconfig/plugins/  awk /sys/block/*/queue/scheduler
 TODO susemanager cfg files: /etc/sysconfig/rhn/*
 DONE cs_show_supportconfig: libaio, libaio-devel

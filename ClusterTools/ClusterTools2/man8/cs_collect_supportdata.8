@@ -1,0 +1,59 @@
+.TH cs_collect_supportdata 8 "08 May 2013" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_collect_supportdata \- collect information from running cluster node
+.\"
+.SH SYNOPSIS
+.B cs_collect_supportdata \fIOPTION\fR
+.br
+.\"
+.SH DESCRIPTION
+\fBcs_collect_supportdata\fP collects information from a running cluster node.
+Basically this script calls supportconfig, hb_report, and sbd. 
+This version should work for SLES11. 
+.br
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+        show help.
+.HP
+\fB --version\fR
+        show version.
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH EXAMPLES
+.TP
+# cs_collect_supportdata
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_collect_supportdata
+	the program itself.
+.TP
+/var/log/cs_collect_supportdata_$(date +%y%m%d).tbz
+	the default results archive.
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBsupportconfig\fP(8), \fBsupportconfig_plugins\fP(5), \fBhb_report\fP(8),
+\fBsbd\fP(8), \fBClusterTools2\fP(7), http://support.novell.com/advisor/
+.\"
+.SH COPYRIGHT
+(c) 2013 M.Brookhuis, Germany.
+.br
+cs_collect_supportdata comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

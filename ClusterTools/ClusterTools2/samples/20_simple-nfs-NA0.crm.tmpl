@@ -1,0 +1,51 @@
+# simple stack NFS server example
+#
+# The storage stack is taken directly from SAP HA workshop.    
+# By no means this should be used to run any database for SAP on NFS.
+# Further it is not wise to run NFS server and client on the same system
+# (aka NFS re-import).
+#
+# To make this work, a running kernel-based NFS server is needed:
+# zypper in nfs-kernel-server; chkconfig nfsserver on; rcnfsserver start 
+#
+#  
+configure \
+primitive rsc_exportfs_NA0_sapdb ocf:heartbeat:exportfs \
+	operations $id="rsc_exportfs_sapmnt_nfs-operations" \
+	op monitor interval="10" timeout="20" \
+	params clientspec="@@IPSPEC@@/24" directory="/sapdb" fsid="103" options="rw,no_root_squash" \
+	meta target-role="Stopped"
+#
+configure \
+primitive rsc_fs_NA0_sapdb ocf:heartbeat:Filesystem \
+	params device="/dev/mapper/sapvg-sapdb" directory="/sapdb" fstype="ext3" options="noatime,defaults" \
+	op stop interval="0" timeout="300s" \
+	op monitor interval="30s" timeout="130s" \
+	meta target-role="Stopped"
+#
+configure \
+primitive rsc_ip_NA0_na0 ocf:heartbeat:IPaddr2 \
+	params ip="@@IPADDR@@" \
+	op monitor interval="10s" timeout="20s" on_fail="restart" \
+	meta target-role="Stopped"
+#
+configure \
+primitive rsc_lvm_NA0_sapvg ocf:heartbeat:LVM \
+	params volgrpname="sapvg" \
+	op monitor interval="130s" timeout="130s" \
+	op stop interval="0" timeout="130s" on_fail="fence" \
+	meta target-role="Stopped"
+#
+configure \
+primitive rsc_md_NA0_md0 ocf:heartbeat:Raid1 \
+	params raidconf="/clusterconf/NA0/mdadm.conf" raiddev="/dev/md0" \
+	op monitor interval="60s" timeout="130s" on_fail="fence" \
+	meta target-role="Stopped"
+#
+configure \
+group grp_sap_NA0 rsc_ip_NA0_na0 rsc_md_NA0_md0 rsc_lvm_NA0_sapvg rsc_fs_NA0_sapdb rsc_exportfs_NA0_sapdb \
+	meta target-role="Stopped"
+#
+configure \
+location loc_grp_sap_NA0_on_sles11a grp_sap_NA0 1000: sles11a
+#

@@ -1,0 +1,105 @@
+#!/bin/bash
+#
+# cs_collect_supportdata
+#
+# (c) 2011-2013 SUSE Linux GmbH, Germany.
+# GNU Public License. No warranty.
+# Author: M.Brookhuis
+#
+# Version: 0.01 2013-04-22 
+#
+#set -xv
+
+EXE="$0"
+COMPRESS="/var/log/cs_collect_supportdata_$(date +%y%m%d).tbz"
+DN="/var/log/sc_data$(date +%y%m%d)"
+
+function collectdata () {
+echo "Collecting data. Data will be stored in $DN and this will take some time........."
+
+# create directory to collect data
+mkdir $DN
+
+# check if supportconfig is installed and creating supportconfig
+if ( which supportconfig ) then
+  echo "Creating supportconfig"
+  supportconfig -R $DN > /dev/null 2>%1
+ else
+  echo
+  echo "SupportConfig has not been installed."
+  echo "You can find this on http://software.opensuse.org/package/supportutils"
+  echo
+fi
+
+# create HB_Report
+if ( which hb_report ) then
+  echo "Creating hb_report"
+  hb_report -f $(date -d '-1 hour' +%H:%M) $DN/hb_report-$(date +%y%m%d-%H%M) > /dev/null 2>%1
+ else
+  echo
+  echo "Seems that this server is not running HAE."
+  echo "Skipping HB_Report creation"
+  echo
+fi
+
+# collecting sbd information
+CFI="/etc/sysconfig/sbd"
+rm $DN/sbd_devices.txt 2>/dev/null
+test -r $CFI; RC=$?
+if [ $RC -ne 0 ]; then
+    echo    
+    echo "ERR: config not found: $CFI"
+    echo "This cluster/node has no SBD configuration"
+    echo
+  else
+    cp $CFI $DN
+    awk -F"=" '$1=="SBD_DEVICE" {print $2}' $CFI |tr -d "\""|tr ";" "\n"|\
+    while read; do
+	sbd -d $REPLY dump >> $DN/sbd_devices.txt 2>/dev/null;
+        sbd -d $REPLY list >> $DN/sbd_devices.txt 2>/dev/null;
+    done
+fi
+
+# create TAR
+tar cfj $COMPRESS $DN/* > /dev/null 2>%1
+rm -R $DN
+echo
+echo "Please send the file $COMPRESS to your SuSE contact"
+echo
+}
+
+function help() {
+        echo "usage: $(basename $0) OPTION DIR"
+        echo
+        echo "OPTION:"
+        echo " --create|-c      collect data"
+        echo " --help|-h        show help."
+        echo " --version|-v     show version."
+        echo
+        echo "DIR:              in this directory the data collection will be saved"
+        echo 
+}
+
+# function main()
+case $1 in
+        -v|--version)
+                echo -n "$(basename $EXE) "
+                head -11 $EXE | grep "^# Version: "
+                exit
+        ;;
+        -h|--help)
+                help
+		exit
+        ;;
+        -c|--create)
+                echo "INFO: start $EXE"
+                collectdata
+                echo "INFO: normal_end $EXE"
+		exit
+        ;;
+        *)
+                help
+                exit
+        ;;
+esac
+#

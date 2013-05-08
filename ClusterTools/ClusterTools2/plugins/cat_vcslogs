@@ -1,5 +1,6 @@
 #!/bin/bash
 # /usr/lib/supportconfig/plugins/cat_vcslogs
+# Version: 2013-05-08
 
 PLUG="cat_vcslogs"
 CONF="/etc/ClusterTools2/supportconfig_plugins"
@@ -17,4 +18,5 @@ echo "### VRT core files ###"
 find $VCOR -name "core" -exec ls -l {} \;
 echo "### Linux core files ###"
 find $LCOR -name "vmcore*" -exec ls -l {} \;
+echo "Completed"
 #

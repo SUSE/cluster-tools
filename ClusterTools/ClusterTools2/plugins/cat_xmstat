@@ -1,5 +1,6 @@
 #!/bin/bash
 # /usr/lib/supportconfig/plugins/cat_xmstat
+# Version: 2013-05-08
 
 PLUG="cat_xmstat"
 CONF="/etc/ClusterTools2/supportconfig_plugins"
@@ -14,4 +15,5 @@ for f in $ZLOG; do
 	echo "### $f ###"
 	test -r $f && bzcat $f
 done
+echo "Completed"
 #

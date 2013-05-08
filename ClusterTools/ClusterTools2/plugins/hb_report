@@ -1,10 +1,26 @@
 #!/bin/bash
 # /usr/lib/supportconfig/plugins/hb_report
+# Version: 2013-05-08
+# mbrookhuis@suse.com
 
 PLUG="hb_report"
 CONF="/etc/ClusterTools2/supportconfig_plugins"
+SBD="/etc/sysconfig/sbd"
 
 grep "^${PLUG}$" $CONF >/dev/null || exit 0
 
+echo "#==[ hb_report ]=================================#"
 /usr/sbin/hb_report -S -f 00:00 2>&1
+echo
+
+echo #==[ SBD Devices ]=================================#"
+if test -r $SBD; then
+	echo "$SBD :"
+	cat $SBD
+	echo 
+	/usr/sbin/cs_make_sbd_devices --dump
+else
+	echo "$SBD : file not found"
+fi
+echo "Completed"
 #

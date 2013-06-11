@@ -36,8 +36,10 @@ TODO cs_precheck_for_sap: grep 127.0 etc/hosts nur 127.0.0.1, nicht 127.0.0.2
 TODO cs_precheck_for_sap: remove "des" 
 TODO cs_precheck_for_sap: /etc/pam.d/sapstartsrv
 TODO post-processing SAP installation script 
-TODO openais-stop  ignoriert ein start und ruft ansonsten rcopenais auf
+DONE openais-stop  ignoriert ein start und ruft ansonsten rcopenais auf
 TODO man page multipath: formula to calc timings (s. PIKS)
 TODO rc-script stopopenais to prevent system from being fenced at shutdown
 TODO cs_show_supportconfig: ulimit, lvm, multipath.conf
 TODO compare branches
+DONE neues openais start berücksichtigt sbd status
+TODO wow enqueue replication templates (cli, agents, scripts)

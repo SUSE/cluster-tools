@@ -1,3 +1,7 @@
+TODO see HAWS_SMT_NEEDED_OS HAWS_SMT_NEEDED_HA HAWS_SMT_NEEDED_SAP HAWS_SMT_NEEDED_ORA
+TODO s390: check qeth
+TODO check service multipathd on
+TODO better summary for multipath.conf
 DONE rm ptest.8.gz crm_simulate.8.gz attrd_updater.8.gz
 TODO ls -l /usr/sbin/uuidd : -rwsr-sr-x 1 uuidd uuidd 19048 Dec  6 16:26 /usr/sbin/uuidd
 TODO /usr/lib/supportconfig/plugins/  awk /sys/block/*/queue/scheduler

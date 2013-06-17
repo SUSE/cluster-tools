@@ -5,7 +5,7 @@
 # (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2013-03-20
+# Version: 0.01 2013-06-17
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -649,7 +649,7 @@ sbd:
         f=$(grep -l "# /etc/lvm/lvm.conf" $TMP/$FIL/xx*)
         test -z "$f" || grep -vh "^#" $f | grep "filter"
         echo
-	FIL="fs-softraidtxt"
+	FIL="fs-softraid.txt"
         split_file $FIL
         echo "/etc/mdadm.conf:"
         f=$(grep -l "# /etc/mdadm.conf" $TMP/$FIL/xx*)

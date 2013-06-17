@@ -1,3 +1,4 @@
+TODO man sbd(7): cib snippet for sbd stonith, including start timout, see 05_... 
 TODO see HAWS_SMT_NEEDED_OS HAWS_SMT_NEEDED_HA HAWS_SMT_NEEDED_SAP HAWS_SMT_NEEDED_ORA
 TODO s390: check qeth
 TODO check service multipathd on

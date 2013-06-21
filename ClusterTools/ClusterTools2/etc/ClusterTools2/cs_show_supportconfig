@@ -5,6 +5,7 @@
 ERRCFG="/etc/ClusterTools2/cs_show_error_patterns"
 #
 HARDW_MOD="
+ixgbe.ko
 netxen_nic.ko
 nx_nic.ko
 bfa.ko

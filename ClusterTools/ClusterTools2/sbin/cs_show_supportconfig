@@ -5,7 +5,7 @@
 # (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2013-06-17
+# Version: 0.01 2013-06-21
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -141,6 +141,7 @@ function chk_modules() {
 	# TODO watchdog ppc64 alim7101_wdt.ko?, s390x vmwatchdog.ko?
 	test -z "${HARDW_MOD}" &&\
 	HARDW_MOD="
+ixgbe.ko
 netxen_nic.ko
 nx_nic.ko
 bfa.ko

@@ -1,0 +1,98 @@
+#!/bin/bash
+#
+# cs_check_lsbinit
+#
+# (c) 2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version : 2013-08-07
+#
+
+EXE=$0
+ERR=/dev/null
+# TODO use config file for patterns and number
+
+
+function check() {
+  OK=0; KO=0
+  for f in /etc/init.d/* ; do
+	RC=0
+	if [ -f $f -a -x $f ]; then
+		m=$( grep -c -e "^### BEGIN INIT INFO" \
+		-e "^### END INIT INFO" \
+		-e "^# Provides: " \
+		-e "^# Default-Start: " \
+		-e "^# Default-Stop: " \
+		-e "[[:space:]]\?start\*\?)" \
+		-e "[[:space:]]\?stop\*\?)" \
+		-e "[[:space:]]\?status\*\?)" \
+		-e "[[:space:]]\?/etc/rc.status" \
+		$f 2>>$ERR )
+		# TODO better regexp for start,stop,status
+		#-e " /etc/init.d/functions" \
+		#-e " /lib/lsb/init-functions" \
+		# $m should equal to num of grep patterns $LM
+		LM=9 
+		if [ $m -lt $LM ]; then
+			KO=$[ $KO + 1 ]
+			echo -n "$f : $m/$LM"
+			echo
+	 	else	OK=$[ $OK + 1 ]
+		fi
+	fi
+  done
+
+  echo "OK: $OK"
+  echo "KO: $KO"
+}
+
+
+function show() {
+	f=$1
+	# TODO common search function
+	# TODO show missing
+	grep -e "^### BEGIN INIT INFO" \
+	-e "^### END INIT INFO" \
+	-e "^# Provides: " \
+	-e "^# Default-Start: " \
+	-e "^# Default-Stop: " \
+	-e "[[:space:]]\?start\*\?)" \
+	-e "[[:space:]]\?stop\*\?)" \
+	-e "[[:space:]]\?status\*\?)" \
+	-e "[[:space:]]\?/etc/rc.status" \
+	$f 2>>$ERR
+	echo
+	rpm -qf $f 2>>$ERR
+}
+
+
+function help() {
+	echo "$0 --show <script>" 
+	echo "$0 --check"
+	echo "$0 --version | --help"
+}
+
+
+# main()
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-s|--show)
+		test $UID -gt 0 && echo "please call as root." && exit
+		show $2
+		exit
+	;;
+	-c|--check)
+		#test $UID -gt 0 && echo "please call as root." && exit
+		check
+		exit
+	;;
+	*)
+		help
+		exit
+	;;
+esac
+#

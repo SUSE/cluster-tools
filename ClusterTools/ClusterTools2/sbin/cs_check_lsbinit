@@ -7,6 +7,7 @@
 #
 # Version : 2013-08-07
 #
+#set -x
 
 EXE=$0
 ERR=/dev/null
@@ -18,24 +19,26 @@ function check() {
   for f in /etc/init.d/* ; do
 	RC=0
 	if [ -f $f -a -x $f ]; then
-		m=$( grep -c -e "^### BEGIN INIT INFO" \
-		-e "^# Provides: " \
-		-e "^# Default-Start: " \
-		-e "^# Default-Stop: " \
-		-e "^### END INIT INFO" \
-		-e "[[:space:]]\?/etc/rc.status" \
-		-e "[[:space:]]\?start\*\?)" \
-		-e "[[:space:]]\?stop\*\?)" \
-		-e "[[:space:]]\?status\*\?)" \
+		m=$( grep -c -e '^### BEGIN INIT INFO' \
+		-e '^#[[:blank:]]\{1\}Provides:[[:blank:]]\+' \
+		-e '^#[[:blank:]]\{1\}Default-Start:[[:blank:]]\+' \
+		-e '^#[[:blank:]]\{1\}Default-Stop:[[:blank:]]\+' \
+		-e '^### END INIT INFO' \
+		-e '[[:blank:]]\+/etc/rc.status' \
+		-e '[[:blank:]]\?start\\*\?)' \
+		-e '[[:blank:]]\?stop\\*\?)' \
+		-e '[[:blank:]]\?status\\*\?)' \
 		$f 2>>$ERR )
-		# TODO better regexp for start (see rpmconfigcheck "start|")
-		# TODO better regexp for stop,status
-		# TODO LSB also describes
-		#	-e "[[:space:]]\?restart\*\?)" \
-		#	-e "[[:space:]]\?force-reload\*\?)" \
-		#	-e " /lib/lsb/init-functions" \
-		# TODO runlevel 4 is reserved for local use
-		#
+	# TODO check LSB if only one blank is allowed after # and after :
+	# TODO better regex for start
+	# 	|start start| " "start ^start start"*"
+	# TODO see smt, rpmconfigcheck
+	# TODO nfs has no start), but start-no| start-yes|
+	# TODO better regex for stop,status
+	# TODO LSB also describes: 	restart , force-reload
+	# TODO LSB uses:		/lib/lsb/init-functions
+	# TODO runlevel 4 is reserved for local use
+	#
 		# $m should equal to num of grep patterns $LM
 		LM=9 
 		if [ $m -lt $LM ]; then
@@ -46,7 +49,6 @@ function check() {
 		fi
 	fi
   done
-
   echo "OK: $OK"
   echo "KO: $KO"
 }
@@ -59,38 +61,57 @@ function show() {
 
 	echo "=== need:"
 	echo "^### BEGIN INIT INFO"
-	echo "^# Provides: "
-	echo "^# Default-Start: "
-	echo "^# Default-Stop: "
+	echo '^#[[:blank:]]\{1\}Provides:[[:blank:]]\+'
+	echo '^#[[:blank:]]\{1\}Default-Start:[[:blank:]]\+'
+	echo '^#[[:blank:]]\{1\}Default-Stop:[[:blank:]]\+'
 	echo "^### END INIT INFO"
-	echo "[[:space:]]\?/etc/rc.status"
-	echo "[[:space:]]\?start\*\?)"
-	echo "[[:space:]]\?stop\*\?)"
-	echo "[[:space:]]\?status\*\?)"
-	echo "[[:space:]]\?/etc/rc.status"
+	echo "[[:blank:]]\+/etc/rc.status"
+	echo "[[:blank:]]\?start\\*\?)"
+	echo "[[:blank:]]\?stop\\*\?)"
+	echo "[[:blank:]]\?status\\*\?)"
 	echo "==="
 	echo "=== found:"
-	grep -e "^### BEGIN INIT INFO" \
-	-e "^# Provides: " \
-	-e "^# Default-Start: " \
-	-e "^# Default-Stop: " \
-	-e "^### END INIT INFO" \
-	-e "[[:space:]]\?/etc/rc.status" \
-	-e "[[:space:]]\?start\*\?)" \
-	-e "[[:space:]]\?stop\*\?)" \
-	-e "[[:space:]]\?status\*\?)" \
+	grep -e '^### BEGIN INIT INFO' \
+		-e '^#[[:blank:]]\{1\}Provides:[[:blank:]]\+' \
+		-e '^#[[:blank:]]\{1\}Default-Start:[[:blank:]]\+' \
+		-e '^#[[:blank:]]\{1\}Default-Stop:[[:blank:]]\+' \
+		-e '^### END INIT INFO' \
+		-e '[[:blank:]]\+/etc/rc.status' \
+		-e '[[:blank:]]\?start\\*\?)' \
+		-e '[[:blank:]]\?stop\\*\?)' \
+		-e '[[:blank:]]\?status\\*\?)' \
 	$f 2>>$ERR
 	echo "==="
 	rpm -qf $f 2>>$ERR
 }
 
 
+function orphan() {
+  OK=0; KO=0
+  for f in /etc/init.d/* ; do
+	RC=0
+	if [ -f $f -a -x $f ]; then
+		rpm -qf $f 2>>$ERR 1>&2 || RC=1
+	fi
+	if [ $RC -ne 0 ]; then
+		KO=$[ $KO + 1 ]
+		echo -n "$f : no RPM"
+		echo
+	else	OK=$[ $OK + 1 ]
+	fi
+  done
+  echo "OK: $OK"
+  echo "KO: $KO"
+}
+
+
 function help() {
 	echo "$(basename $EXE) --show <script>" 
-	echo "$(basename $EXE) --check"
+	echo "$(basename $EXE) --check | --orphan"
 	echo "$(basename $EXE) --version | --help"
 	echo "this script is quite beta"
-	echo "see also init.d(7), http://refspecs.linux-foundation.org/LSB_4.1.0/LSB-Core-generic/LSB-Core-generic/iniscrptact.html"
+	echo "see also init.d(7) and"
+	echo "http://refspecs.linux-foundation.org/LSB_4.1.0/LSB-Core-generic/LSB-Core-generic/iniscrptact.html"
 }
 
 
@@ -110,6 +131,11 @@ case $1 in
 		test $UID -gt 0 && echo "please call as root." && exit
 		check
 		exit
+	;;
+	-o|--orphan)
+		test $UID -gt 0 && echo "please call as root." && exit
+		orphan
+		exit	
 	;;
 	*)
 		help

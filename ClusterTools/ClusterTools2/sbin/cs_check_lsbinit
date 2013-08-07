@@ -34,6 +34,7 @@ function check() {
 		#	-e "[[:space:]]\?restart\*\?)" \
 		#	-e "[[:space:]]\?force-reload\*\?)" \
 		#	-e " /lib/lsb/init-functions" \
+		# TODO runlevel 4 is reserved for local use
 		#
 		# $m should equal to num of grep patterns $LM
 		LM=9 

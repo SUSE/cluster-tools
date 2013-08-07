@@ -19,16 +19,17 @@ function check() {
 	RC=0
 	if [ -f $f -a -x $f ]; then
 		m=$( grep -c -e "^### BEGIN INIT INFO" \
-		-e "^### END INIT INFO" \
 		-e "^# Provides: " \
 		-e "^# Default-Start: " \
 		-e "^# Default-Stop: " \
+		-e "^### END INIT INFO" \
+		-e "[[:space:]]\?/etc/rc.status" \
 		-e "[[:space:]]\?start\*\?)" \
 		-e "[[:space:]]\?stop\*\?)" \
 		-e "[[:space:]]\?status\*\?)" \
-		-e "[[:space:]]\?/etc/rc.status" \
 		$f 2>>$ERR )
-		# TODO better regexp for start,stop,status
+		# TODO better regexp for start (see rpmconfigcheck "start|")
+		# TODO better regexp for stop,status
 		#-e " /etc/init.d/functions" \
 		#-e " /lib/lsb/init-functions" \
 		# $m should equal to num of grep patterns $LM
@@ -51,17 +52,31 @@ function show() {
 	f=$1
 	# TODO common search function
 	# TODO show missing
+
+	echo "=== need:"
+	echo "^### BEGIN INIT INFO"
+	echo "^# Provides: "
+	echo "^# Default-Start: "
+	echo "^# Default-Stop: "
+	echo "^### END INIT INFO"
+	echo "[[:space:]]\?/etc/rc.status"
+	echo "[[:space:]]\?start\*\?)"
+	echo "[[:space:]]\?stop\*\?)"
+	echo "[[:space:]]\?status\*\?)"
+	echo "[[:space:]]\?/etc/rc.status"
+	echo "==="
+	echo "=== found:"
 	grep -e "^### BEGIN INIT INFO" \
-	-e "^### END INIT INFO" \
 	-e "^# Provides: " \
 	-e "^# Default-Start: " \
 	-e "^# Default-Stop: " \
+	-e "^### END INIT INFO" \
+	-e "[[:space:]]\?/etc/rc.status" \
 	-e "[[:space:]]\?start\*\?)" \
 	-e "[[:space:]]\?stop\*\?)" \
 	-e "[[:space:]]\?status\*\?)" \
-	-e "[[:space:]]\?/etc/rc.status" \
 	$f 2>>$ERR
-	echo
+	echo "==="
 	rpm -qf $f 2>>$ERR
 }
 
@@ -70,7 +85,8 @@ function help() {
 	echo "$(basename $EXE) --show <script>" 
 	echo "$(basename $EXE) --check"
 	echo "$(basename $EXE) --version | --help"
-	echo "quite beta"
+	echo "this script is quite beta"
+	echo "see also init.d(7), http://refspecs.linux-foundation.org/LSB_4.1.0/LSB-Core-generic/LSB-Core-generic/sysinit.html"
 }
 
 
@@ -87,7 +103,7 @@ case $1 in
 		exit
 	;;
 	-c|--check)
-		#test $UID -gt 0 && echo "please call as root." && exit
+		test $UID -gt 0 && echo "please call as root." && exit
 		check
 		exit
 	;;

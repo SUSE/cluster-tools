@@ -30,8 +30,11 @@ function check() {
 		$f 2>>$ERR )
 		# TODO better regexp for start (see rpmconfigcheck "start|")
 		# TODO better regexp for stop,status
-		#-e " /etc/init.d/functions" \
-		#-e " /lib/lsb/init-functions" \
+		# TODO LSB also describes
+		#	-e "[[:space:]]\?restart\*\?)" \
+		#	-e "[[:space:]]\?force-reload\*\?)" \
+		#	-e " /lib/lsb/init-functions" \
+		#
 		# $m should equal to num of grep patterns $LM
 		LM=9 
 		if [ $m -lt $LM ]; then

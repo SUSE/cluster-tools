@@ -67,9 +67,10 @@ function show() {
 
 
 function help() {
-	echo "$0 --show <script>" 
-	echo "$0 --check"
-	echo "$0 --version | --help"
+	echo "$(basename $EXE) --show <script>" 
+	echo "$(basename $EXE) --check"
+	echo "$(basename $EXE) --version | --help"
+	echo "quite beta"
 }
 
 

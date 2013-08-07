@@ -86,7 +86,7 @@ function help() {
 	echo "$(basename $EXE) --check"
 	echo "$(basename $EXE) --version | --help"
 	echo "this script is quite beta"
-	echo "see also init.d(7), http://refspecs.linux-foundation.org/LSB_4.1.0/LSB-Core-generic/LSB-Core-generic/sysinit.html"
+	echo "see also init.d(7), http://refspecs.linux-foundation.org/LSB_4.1.0/LSB-Core-generic/LSB-Core-generic/iniscrptact.html"
 }
 
 

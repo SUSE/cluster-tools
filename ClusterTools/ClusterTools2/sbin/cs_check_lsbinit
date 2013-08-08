@@ -19,10 +19,11 @@ function check_scripts() {
   for f in /etc/init.d/* ; do
 	RC=0
 	if [ -f $f -a -x $f ]; then
-		m=$( grep -c -e '^### BEGIN INIT INFO' \
+		m=$( grep -c -e '^#\![[:blank:]]\?/bin/.*sh' \
+ 		-e '^### BEGIN INIT INFO' \
 		-e '^#[[:blank:]]\{1\}Provides:[[:blank:]]\+' \
 		-e '^#[[:blank:]]\{1\}Default-Start:[[:blank:]]\+' \
-		-e '^#[[:blank:]]\{1\}Default-Stop:[[:blank:]]\+' \
+		-e '^#[[:blank:]]\{1\}Default-Stop:[[:blank:]]\?' \
 		-e '^### END INIT INFO' \
 		-e '[[:blank:]]\+/etc/rc.status' \
 		-e '[[:blank:]]\?start\\*\?)' \
@@ -40,7 +41,7 @@ function check_scripts() {
 	# TODO runlevel 4 is reserved for local use
 	#
 		# $m should equal to num of grep patterns $LM
-		LM=9 
+		LM=10
 		if [ $m -lt $LM ]; then
 			KO=$[ $KO + 1 ]
 			echo -n "$f : $m/$LM"
@@ -60,21 +61,23 @@ function show_script() {
 	# TODO show missing
 
 	echo "=== need:"
-	echo "^### BEGIN INIT INFO"
+	echo '^#\![[:blank:]]\?/bin/.*sh'
+	echo '^### BEGIN INIT INFO'
 	echo '^#[[:blank:]]\{1\}Provides:[[:blank:]]\+'
 	echo '^#[[:blank:]]\{1\}Default-Start:[[:blank:]]\+'
-	echo '^#[[:blank:]]\{1\}Default-Stop:[[:blank:]]\+'
-	echo "^### END INIT INFO"
+	echo '^#[[:blank:]]\{1\}Default-Stop:[[:blank:]]\?'
+	echo '^### END INIT INFO'
 	echo "[[:blank:]]\+/etc/rc.status"
 	echo "[[:blank:]]\?start\\*\?)"
 	echo "[[:blank:]]\?stop\\*\?)"
 	echo "[[:blank:]]\?status\\*\?)"
 	echo "==="
 	echo "=== found:"
-	grep -e '^### BEGIN INIT INFO' \
+	grep -e '^#\![[:blank:]]\?/bin/.*sh' \
+		-e '^### BEGIN INIT INFO' \
 		-e '^#[[:blank:]]\{1\}Provides:[[:blank:]]\+' \
 		-e '^#[[:blank:]]\{1\}Default-Start:[[:blank:]]\+' \
-		-e '^#[[:blank:]]\{1\}Default-Stop:[[:blank:]]\+' \
+		-e '^#[[:blank:]]\{1\}Default-Stop:[[:blank:]]\?' \
 		-e '^### END INIT INFO' \
 		-e '[[:blank:]]\+/etc/rc.status' \
 		-e '[[:blank:]]\?start\\*\?)' \

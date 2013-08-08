@@ -102,13 +102,13 @@ function foreign_package() {
 	else
 		N=$( zypper se --details -t package $(rpm -qi $p |\
 		awk '$1=="Name"{print $3}') |\
-		awk '$1=="i"&&NF==12 {print $3" : no_repo"}' )
+		awk '$1=="i"&&NF==12 {print "no_repo: "$3}' )
 	fi
 #	if [ $RC -eq 0 ]; then
 #		OK=$[ $OK + 1 ]
 #	else	
 #		KO=$[ $KO + 1 ]
-#		echo "$p : no_repo"
+#		echo "no_repo: $p"
 #	fi	
   done
   echo $N
@@ -127,7 +127,7 @@ function orphan_script() {
 	fi
 	if [ $RC -ne 0 ]; then
 		KO=$[ $KO + 1 ]
-		echo -n "$f : no_RPM"
+		echo -n "no_RPM: $f"
 		echo
 	else
 		OK=$[ $OK + 1 ]
@@ -139,9 +139,11 @@ function orphan_script() {
 
 
 function help() {
-	echo "$(basename $EXE) --show <script>" 
+	echo
+	echo "$(basename $EXE) --show /path/to/script" 
 	echo "$(basename $EXE) --check | --orphan | --foreign"
 	echo "$(basename $EXE) --version | --help"
+	echo
 	echo "please call as root."
 	echo
 	echo "see also init.d(7) and"

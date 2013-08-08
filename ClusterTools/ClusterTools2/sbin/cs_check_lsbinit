@@ -5,13 +5,14 @@
 # (c) 2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version : 2013-08-07
+# Version : 2013-08-08
 #
 #set -x
 
 EXE=$0
 ERR=/dev/null
 # TODO use config file for patterns and number
+# TODO why returns -c 95+20 but -o 122+4 ?
 
 
 function check_scripts() {

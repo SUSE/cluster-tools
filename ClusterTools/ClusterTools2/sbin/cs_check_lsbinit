@@ -5,7 +5,7 @@
 # (c) 2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version : 2013-08-08
+# Version : 2013-08-21
 #
 #set -x
 
@@ -13,7 +13,7 @@ EXE=$0
 ERR=/dev/null
 # TODO use config file for patterns and number
 # TODO why returns -c 95+20 but -o 122+4 ?
-
+# TODO use insserv to check for lsb compliance ""
 
 function check_scripts() {
   OK=0; KO=0
@@ -25,6 +25,8 @@ function check_scripts() {
 		-e '^#[[:blank:]]\{1\}Provides:[[:blank:]]\+' \
 		-e '^#[[:blank:]]\{1\}Default-Start:[[:blank:]]\+' \
 		-e '^#[[:blank:]]\{1\}Default-Stop:[[:blank:]]\?' \
+		-e '^#[[:blank:]]\{1\}Required-Start:[[:blank:]]\+' \
+		-e '^#[[:blank:]]\{1\}Required-Stop:[[:blank:]]\?' \
 		-e '^### END INIT INFO' \
 		-e '[[:blank:]]\+/etc/rc.status' \
 		-e '[[:blank:]]\?start\\*\?)' \
@@ -42,7 +44,7 @@ function check_scripts() {
 	# TODO runlevel 4 is reserved for local use
 	#
 		# $m should equal to num of grep patterns $LM
-		LM=10
+		LM=12
 		if [ $m -lt $LM ]; then
 			KO=$[ $KO + 1 ]
 			echo -n "$f : $m/$LM"
@@ -67,6 +69,8 @@ function show_script() {
 	echo '^#[[:blank:]]\{1\}Provides:[[:blank:]]\+'
 	echo '^#[[:blank:]]\{1\}Default-Start:[[:blank:]]\+'
 	echo '^#[[:blank:]]\{1\}Default-Stop:[[:blank:]]\?'
+	echo '^#[[:blank:]]\{1\}Required-Start:[[:blank:]]\+' \
+	echo '^#[[:blank:]]\{1\}Required-Stop:[[:blank:]]\?' \
 	echo '^### END INIT INFO'
 	echo "[[:blank:]]\+/etc/rc.status"
 	echo "[[:blank:]]\?start\\*\?)"
@@ -79,6 +83,8 @@ function show_script() {
 		-e '^#[[:blank:]]\{1\}Provides:[[:blank:]]\+' \
 		-e '^#[[:blank:]]\{1\}Default-Start:[[:blank:]]\+' \
 		-e '^#[[:blank:]]\{1\}Default-Stop:[[:blank:]]\?' \
+		-e '^#[[:blank:]]\{1\}Required-Start:[[:blank:]]\+' \
+		-e '^#[[:blank:]]\{1\}Required-Stop:[[:blank:]]\?' \
 		-e '^### END INIT INFO' \
 		-e '[[:blank:]]\+/etc/rc.status' \
 		-e '[[:blank:]]\?start\\*\?)' \

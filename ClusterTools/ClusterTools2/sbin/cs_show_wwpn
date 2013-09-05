@@ -1,0 +1,51 @@
+#!/bin/bash
+#
+# cs_show_wwpn 
+#
+# (c) 2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version: 2013-09-05
+#
+
+EXE="$0"
+
+
+function swap_fabric_wwn() {
+	# 0x100500351eae28 -> 10:00:00:05:1e:35:28:ae
+	R=$1
+	echo ${R:2:2}":"${R:6:2}":"${R:4:2}":"${R:10:2}":"${R:8:2}":"${R:14:2}":"${R:12:2}
+}
+
+
+function show_hba_wwpn() {
+	# test -r /sys/class/fc_host || exit 1
+	for f in /sys/class/fc_host/host*; do
+		H=$(basename $f)
+		echo -n "$H port_name: "; cat ${f}/port_name
+
+		R="0x100500351eae28"
+	#	R=$(cat ${f}/port_name)
+		echo -n "$H fabric_name: "; swap_fabric_wwn $R 
+	done
+}
+
+
+# main()
+case $1 in
+	-h|--help)
+	echo "usage:	$(basename $0)"
+	echo " --help		show help."
+	echo " --version	show version."
+	exit
+	;;
+	-v|--version)
+	echo -n "$(basename $EXE) "
+	head -11 $EXE | grep "^# Version: "
+	exit
+	;;
+	*)
+		show_hba_wwpn
+	;;
+esac
+#

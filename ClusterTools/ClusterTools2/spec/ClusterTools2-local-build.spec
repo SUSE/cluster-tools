@@ -17,7 +17,7 @@ Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.5.2
 #Release:      0.5.2
-Release:      7
+Release:      8 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch

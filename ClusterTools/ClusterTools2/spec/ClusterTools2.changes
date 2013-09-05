@@ -1,5 +1,7 @@
+* Thu Sep 06 2013 - lars.pinne@suse.com
+  - added cs_show_wwpn, cs_check_lsbinit first alpha
 * Mon May 06 2013 - fabian.herschel@suse.com
-  - upstream fixes for sap simpelstack to be more felxible
+  - upstream fixes for sap simpelstack to be more flexible
 * Fri Apr 20 2012 - fabian.herschel@suse.com
   - tools, manpages and config files now renamed for ship with SLES for SAP Applications
 * Wed Apr 04 2012 - fabian.herschel@suse.com

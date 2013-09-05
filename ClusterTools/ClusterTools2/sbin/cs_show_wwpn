@@ -24,7 +24,7 @@ function show_hba_wwpn() {
 		H=$(basename $f)
 		echo -n "$H port_name wwpn: "; cat ${f}/port_name
 
-		R="0x100500351eae28"
+		# R="0x100500351eae28"
 		R=$(cat ${f}/fabric_name)
 		echo -n "$H fabric_name wwn: "; swap_fabric_wwn $R
 		echo

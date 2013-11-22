@@ -24,7 +24,7 @@ FUN=${3:-"chk_overview"}
 OWD=$PWD
 
 
-function echo_msgsep() {
+function echo_msgsep(){
 	echo "============================================================ ${1:0:14} ==="
 }
 
@@ -40,7 +40,7 @@ function split_file(){
 }
 
 
-function chk_hardware() {
+function chk_hardware(){
 
 	echo_msgsep $FUNCNAME
 
@@ -123,7 +123,7 @@ Device.File:
 }
 
 
-function chk_modules() {
+function chk_modules(){
 
 	echo_msgsep $FUNCNAME
 
@@ -211,7 +211,7 @@ alim7101_wdt.ko
 }
 
 
-function chk_services() {
+function chk_services(){
 
 	echo_msgsep $FUNCNAME
 
@@ -277,7 +277,7 @@ uuidd
 }
 
 
-function chk_veritas() {
+function chk_veritas(){
 
 	echo_msgsep $FUNCNAME
 
@@ -365,7 +365,7 @@ eccmad
 }
 
 
-function chk_network() {
+function chk_network(){
 
 	echo_msgsep $FUNCNAME
 	
@@ -421,7 +421,7 @@ function chk_network() {
 }
 
 
-function chk_nameres() {
+function chk_nameres(){
 
 	echo_msgsep $FUNCNAME
 
@@ -460,7 +460,7 @@ function chk_nameres() {
 }
 
 
-function chk_timeres() {
+function chk_timeres(){
 
 	echo_msgsep $FUNCNAME
 
@@ -523,7 +523,7 @@ DEFAULT_TIMEZONE
 }
 
 
-function chk_sleha() {
+function chk_sleha(){
 
 	echo_msgsep $FUNCNAME
  
@@ -660,7 +660,7 @@ sbd:
 }
 
 
-function chk_vmware() {
+function chk_vmware(){
 
 	echo_msgsep $FUNCNAME
 
@@ -807,7 +807,7 @@ xendomains
 }
 
 
-function chk_sap() {
+function chk_sap(){
 
 	echo_msgsep $FUNCNAME
 
@@ -859,7 +859,7 @@ function chk_sap() {
 }
 
 
-function chk_oracle() {
+function chk_oracle(){
 
 	echo_msgsep $FUNCNAME
 
@@ -1036,7 +1036,7 @@ sapinit
 }
 
 
-function chk_kernel() {
+function chk_kernel(){
 	
 	echo_msgsep $FUNCNAME
 
@@ -1052,7 +1052,7 @@ function chk_kernel() {
 }
 
 
-function chk_software() {
+function chk_software(){
 
 	echo_msgsep $FUNCNAME
 	
@@ -1085,7 +1085,7 @@ not.our.package:
 }
 
 
-function chk_updates() {
+function chk_updates(){
 
 	echo_msgsep $FUNCNAME
 	
@@ -1109,11 +1109,18 @@ function chk_updates() {
 }
 
 
-function chk_multipath() {
-	
+function chk_multipath(){
+
 	echo_msgsep $FUNCNAME
-	
+
 	FIL="mpio.txt"
+
+	split_file $FIL
+
+	F=$(grep -l "# /etc/multipath.conf" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+	echo "# /etc/multipath.conf:"
+	test -z "$F" || grep -v "^#" $F | tr -s "\n"
+
 	for p in "^#.rpm.-V" "^#.Verification.Status:"; do
 		grep "${p}" $FIL
 	done
@@ -1130,7 +1137,8 @@ function chk_multipath() {
 	echo
 	# TODO by-id
 	# TODO dmsetup
-	# TODO multipath.conf
+	# TODO show complete multipath.conf
+	# TODO multipath.conf: compare failback, rr_min_io, rr_min_io_rq, no_path_retry, polling_interval, dev_loss_tmo, user_friendly_names, async???
 	# TODO check for un-matched userfriendly names (mpath[a-z])
 	for p in "loading.*prioritizer" "path.checker.=" "prio.="; do
 		grep ${p} $FIL
@@ -1139,7 +1147,7 @@ function chk_multipath() {
 }
 		
 
-function chk_filesys() {
+function chk_filesys(){
 	
 	echo_msgsep $FUNCNAME
 	
@@ -1152,7 +1160,8 @@ function chk_filesys() {
 	F=$(grep -l "# /bin/mount" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
 	grep -v "#==" $F | tr -s " "
 	# TODO define meaningful limits for await and svctm	
-	# TODO make limits for await and svctm a config parameter	
+	# TODO make limits for await and svctm a config parameter
+	# TODO autofs	
 	F=$(grep "# /usr/bin/iostat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
 	echo $F | awk ' $1=="Device:" {print $0}
 		$10 > 100.0 {print $0}
@@ -1161,7 +1170,7 @@ function chk_filesys() {
 }
 
 
-function chk_storage() {
+function chk_storage(){
 	
 	echo_msgsep $FUNCNAME
 
@@ -1215,7 +1224,7 @@ xfs
 	split_file $FIL
 	echo "/etc/sysconfig/mdadm:"
 	f=$(grep -l "# /etc/sysconfig/mdadm" $TMP/$FIL/xx*)
-        test -z "$f" || cat $f | tr -s "\n"
+        test -z "$f" || grep -v "^#" $f | tr -s "\n"
         echo
 	
 	FIL="fs-softraid.txt"
@@ -1241,12 +1250,12 @@ xfs
 	echo
 	echo "/etc/lvm/lvm.conf:"
 	f=$(grep -l "# /etc/lvm/lvm.conf" $TMP/$FIL/xx*)
-	test -z "$f" || grep -vh "^#" $f | tr -s "\n"
+	test -z "$f" || grep -vh "^#" $f | grep -vh "^    #" | tr -s "\n"
 	echo
 }
 
 
-function chk_overview() {
+function chk_overview(){
 	
 	echo_msgsep $FUNCNAME
 
@@ -1264,7 +1273,7 @@ function chk_overview() {
 }
 
 
-function chk_sysconf() {
+function chk_sysconf(){
 
 	echo_msgsep $FUNCNAME
 
@@ -1337,7 +1346,7 @@ vm.pagecache_limit_*
 }
 
 
-function chk_sysload() {
+function chk_sysload(){
 
 	echo_msgsep $FUNCNAME
 	
@@ -1480,7 +1489,7 @@ function chk_sysload() {
 }
 
 
-function chk_errors() {
+function chk_errors(){
 	
 	echo_msgsep $FUNCNAME
 
@@ -1555,7 +1564,8 @@ case $1 in
 		exit
 	;;
 	--listfunc|-l)
-		awk '$1=="function" && $2~/^chk_/ {print $2}' $EXE | sort
+		awk '$1=="function" && $2~/^chk_/ {print $2}' $EXE |\
+			tr -d "{()" | sort
 		exit
 	;;
 	--generic|-g)
@@ -1586,7 +1596,7 @@ case $1 in
 		if [ $# -gt 1 ]; then	
 			for f in $*; do
 				EXE=$(type -p $0)
-				grep "^function ${f}()..$" $EXE && $f
+				grep "^function ${f}().$" $EXE && $f
 				shift
 			done
 		else $FUN

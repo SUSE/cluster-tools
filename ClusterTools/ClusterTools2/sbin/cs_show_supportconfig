@@ -5,7 +5,7 @@
 # (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2013-06-21
+# Version: 0.01 2013-11-21
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -1284,6 +1284,8 @@ net.core.rmem_max
 net.core.wmem_default
 net.core.wmem_max
 vm.dirty_*
+vm.zone_reclaim_mode
+vm.numa_zonelist_order
 vm.nr_pdflush_threads
 vm.min_free_kbytes
 vm.nr_hugepages

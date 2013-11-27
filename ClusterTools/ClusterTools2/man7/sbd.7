@@ -1,4 +1,4 @@
-.TH sbd 7 "12 Feb 2013" "" "cluster-glue"
+.TH sbd 7 "26 Nov 2013" "" "cluster-glue"
 .\"
 .SH NAME
 sbd \- Stonith Block Device
@@ -186,9 +186,9 @@ SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
 # Watchdog support:
 .br
-SBD_OPTS="-W -t300"
+SBD_OPTS="-W -P -t60"
 .br
-=== 
+===
 
 Note: If the SBD device becomes inaccessible from a node, this could
 cause the node to enter an infinite reboot cycle. That is technically

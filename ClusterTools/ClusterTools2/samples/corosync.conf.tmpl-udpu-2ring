@@ -36,6 +36,7 @@ totem {
                         memberaddr: @@MEMBERADDR2_0@@
                 }
         }
+	# never use the same sub-network for both rings.
         interface {
                 ringnumber:	1 
                 bindnetaddr:	@@BINDNETADDR_1@@   

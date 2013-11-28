@@ -1,4 +1,4 @@
-.TH cs_make_corosync_conf 8 "08 July 2011" "" "ClusterTools2"
+.TH cs_make_corosync_conf 8 "28 Nov 2013" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_make_corosync_conf \- make simple corosync configuration from template 
@@ -30,6 +30,7 @@ cs_make_corosync_conf \- make simple corosync configuration from template
 .HP
 \fB --DEFAULT\fR
 	make default configuration, two rings. For each ring, only a hostname pattern that matches both cluster nodes is needed as arguments. All other options are built-in defaults. Since DNS servers do not resolve wildcards, only local name resolution is used.
+The two rings have to be in separate sub-networks.
 .\"
 .SH TEMPLATE FILE SYNTAX
 Basically a template file looks like any corosync.conf file. Only difference is that certain parameters are replaced by placeholders. Currently the following placeholders are recognized:
@@ -142,7 +143,7 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 .\"
 .\"
 .SH COPYRIGHT
-(c) 2011 L.Pinne, Germany.
+(c) 2011-2013 L.Pinne, Germany.
 .br
 cs_make_corosync_conf comes with ABSOLUTELY NO WARRANTY.
 .br

@@ -1,4 +1,4 @@
-TODO check for /var/lib/sdb/
+TODO cs_sum_base_config check if newly added test for /var/lib/sdb/ works
 TODO cs_show_cluster_transition: sort order Dec Jan around new year
 TODO check max limit for CIB size and for num resources
 TODO check that corosync rings not on same subnet

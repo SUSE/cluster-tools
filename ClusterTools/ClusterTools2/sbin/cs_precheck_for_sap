@@ -359,6 +359,7 @@ function chk_wow_dbase() {
 			DBGROUP="sdba"
 			ls -l /etc/opt/sdb
 			ls -l /sapdb
+			ls -l /var/lib/sdb
 		;;
 		DB6|db6|DB2|db2)
 			DBUSER="db2.* dasusr"

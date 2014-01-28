@@ -1,3 +1,4 @@
+TODO cs_show_cluster_transition: sort order Dec Jan around new year
 TODO check max limit for CIB size and for num resources
 TODO check that corosync rings not on same subnet
 TODO man sbd(7): cib snippet for sbd stonith, including start timout, see 05_...

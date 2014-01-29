@@ -1,0 +1,99 @@
+#!/bin/bash
+#
+# cs_show_initrd
+#
+# (c) 2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version: 2014-01-29 18:45
+#
+
+#EXE="$0"
+#CFG="/etc/ClusterTools2/cs_show_initrd"
+#test -s $CFG && source $CFG
+
+
+function help() {
+	echo "usage:	$(basename $0)"
+	echo "	$(basename $0) [OPTION]"
+	echo
+	echo " --help		show help"
+	echo " --version	show version"
+	echo " --all		list all initrd files"
+	echo " --etc		list initrd etc files"
+	echo " --modules	list initrd modules"
+	echo " --compare	compare initrd modules with /etc/sysconfig/kernel"
+	echo
+}
+
+
+function show_initrd() {
+	# TODO verbose, f.e.: cpio -itv 2>/dev/null | colrm 43 54
+	/usr/bin/zcat $1 | cpio -it 2>/dev/null
+}
+
+
+function list_modules() {
+	INITRDMODS=$(show_initrd $1 | grep "lib/modules.*.ko" |\
+		while read; do
+			basename $REPLY .ko
+		done | sort
+	)
+}
+
+
+# main()
+case $1 in
+	 -v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-h|--help)
+		help
+		exit
+	;;
+	-m|--modules)
+		for f in /boot/initrd /boot/initrd-xen; do
+			echo $f:
+			show_initrd $f | grep "lib/modules.*.ko"
+			echo
+		done
+	;;
+	-e|--etc)
+		for f in /boot/initrd /boot/initrd-xen; do
+			echo $f:
+			show_initrd $f | grep "etc/"
+			echo
+		done
+	;;
+	-c|--compare)
+		SYSCONFMODS=$(awk -F"=" '$1=="INITRD_MODULES"{print $2}' /etc/sysconfig/kernel |\
+				 tr -d \" | tr " " "\n" | sort)
+		f="/boot/initrd"
+		list_modules $f
+		for m in $SYSCONFMODS; do
+			echo $INITRDMODS | grep -q $m 
+			test $? -eq 0 && echo "OK $f $m" 
+			test $? -ne 0 && echo "NO $f $m" 
+		done
+		
+		SYSCONFMODS=$(awk -F"=" '$1=="DOMU_INITRD_MODULES"{print $2}' /etc/sysconfig/kernel |\
+				 tr -d \" | tr " " "\n" | sort)
+		f="/boot/initrd-xen"
+		list_modules $f
+		for m in $SYSCONFMODS; do
+			echo $INITRDMODS | grep -q $m 
+			test $? -eq 0 && echo "OK $f $m" 
+			test $? -ne 0 && echo "NO $f $m" 
+		done
+	;;
+	*)
+		for f in /boot/initrd /boot/initrd-xen; do
+			echo $f:
+			show_initrd $f
+			echo
+		done
+	exit
+esac
+#

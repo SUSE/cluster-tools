@@ -2,10 +2,10 @@
 #
 # cs_clusterstate 
 #
-# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2014-01-27
+# Version: 0.1 2014-01-29
 #
 
 EXE="$0"
@@ -38,7 +38,7 @@ function help() {
 
 function get_basics() {
 s_state=$(crmadmin -q -S $(crmadmin -Dq 2>&1 1>/dev/null ) 2>&1 1>/dev/null)
-echo "Cluster Status is: $s_state"
+echo "Cluster state: $s_state"
 crm_mon -r1 |\
  awk '$1=="Current"||$1=="Online:"||$1=="OFFLINE:"||$3=="UNCLEAN"{print $0}'
 # TODO: show clusterstate IDLE with crmadmin

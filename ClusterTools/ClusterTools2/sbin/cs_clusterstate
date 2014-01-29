@@ -38,12 +38,12 @@ function help() {
 
 function get_basics() {
 s_state=$(crmadmin -q -S $(crmadmin -Dq 2>&1 1>/dev/null ) 2>&1 1>/dev/null)
-echo "Cluster state: $s_state"
 crm_mon -r1 |\
  awk '$1=="Current"||$1=="Online:"||$1=="OFFLINE:"||$3=="UNCLEAN"{print $0}'
 # TODO: show clusterstate IDLE with crmadmin
 # TODO: show [standby] as well
 # TODO: efficient awk
+echo "Cluster state: $s_state"
 echo -n "Stopped/FAILED resources: "
 crm_mon -r1 | awk '$3=="Stopped"||$0~/FAILED/{print $0}' | wc -l
 echo -n "Started resources: "

@@ -157,8 +157,8 @@ APPS_CALLS="
 '/bin/ls -al /sapdb/programs/runtime/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /sapdb/clients/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /var/lib/sdb/dbm/ | awk °{print %1,%2,%3,%4,%5,%9}°'
-'/bin/ls -al /sapmnt/[A-Z]../profile/ | awk °{print %1,%2,%3,%4,%5,%9}°'
-'/bin/ls -al /usr/sap/[A-Z]../SYS/profile/ | awk °{print %1,%2,%3,%4,%5,%9}°'
+'/bin/ls -al /sapmnt/[A-Z]??/profile/ | awk °{print %1,%2,%3,%4,%5,%9}°'
+'/bin/ls -al /usr/sap/[A-Z]??/SYS/profile/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /usr/sap/*/[0-9][0-9]/work/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 "
 #

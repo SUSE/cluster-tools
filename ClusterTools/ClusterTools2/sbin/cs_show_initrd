@@ -67,7 +67,9 @@ case $1 in
 			echo
 		done
 	;;
+	# TODO feature to compare etc file from initrd with systems etc
 	-c|--compare)
+		# TODO put this into fucntion
 		SYSCONFMODS=$(awk -F"=" '$1=="INITRD_MODULES"{print $2}' /etc/sysconfig/kernel |\
 				 tr -d \" | tr " " "\n" | sort)
 		f="/boot/initrd"

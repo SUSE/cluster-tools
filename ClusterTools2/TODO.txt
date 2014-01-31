@@ -1,3 +1,4 @@
+TODO check git afterv moved ClusterTools to own repo
 TODO cs_clusterstate: check if master-slave enq-repl is shown correctly 
 TODO cs_clusterstate: crmadmin to show clusterstate IDLE 
 TODO cs_sum_base_config check if newly added test for /var/lib/sdb/ works

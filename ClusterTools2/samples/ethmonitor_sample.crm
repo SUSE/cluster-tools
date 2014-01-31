@@ -1,0 +1,10 @@
+
+primitive rsc_ethmonitor0 ocf:heartbeat:ethmonitor \
+        params name="ethmonitor-bond0" repeat_count="13" interface="bond0" multiplier="1000" \
+        op monitor interval="60" timeout="140" start-delay="15" on_fail="ignore"
+
+clone cln_ethmonitor0 rsc_ethmonitor0
+
+location loc_grp_package1_on_connected_node package1 \
+        rule $id="loc_grp_package1_on_connected_node-rule" 90000: ethmonitor-bond0 eq 1000
+

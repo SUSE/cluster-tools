@@ -1,0 +1,96 @@
+node cl3n01
+node cl3n02
+primitive rsc_fs_SO1_sapdb ocf:heartbeat:Filesystem \
+	params device="/dev/sapso1db/sapso1db" directory="/sapdb" fstype="ext3" options="noatime,defaults" \
+	op stop interval="0" timeout="300s" \
+	op monitor interval="30s" timeout="130s"
+primitive rsc_ip_SO1_sapso1as ocf:heartbeat:IPaddr2 \
+	params ip="10.20.91.13" \
+	op monitor interval="10s" timeout="20s" on_fail="restart"
+primitive rsc_ip_SO1_sapso1ci ocf:heartbeat:IPaddr2 \
+	params ip="10.20.91.15" \
+	op monitor interval="10s" timeout="20s" on_fail="restart"
+primitive rsc_ip_SO1_sapso1cs ocf:heartbeat:IPaddr2 \
+	params ip="10.20.91.14" \
+	op monitor interval="10s" timeout="20s" on_fail="restart"
+primitive rsc_ip_SO1_sapso1db ocf:heartbeat:IPaddr2 \
+	params ip="10.20.91.10" \
+	op monitor interval="10s" timeout="20s" on_fail="restart"
+primitive rsc_ip_SO1_sapso1er ocf:heartbeat:IPaddr2 \
+	params ip="192.168.1.21" \
+	op monitor interval="10s" timeout="20s" on_fail="restart"
+primitive rsc_ip_SO1_sapso1es ocf:heartbeat:IPaddr2 \
+	params ip="192.168.1.22" \
+	op monitor interval="10s" timeout="20s" on_fail="restart"
+primitive rsc_lvm_SO1_sapso1db ocf:heartbeat:LVM \
+	params volgrpname="sapso1db" \
+	op monitor interval="130s" timeout="130s" \
+	op stop interval="0" timeout="130s"
+primitive rsc_md_SO1_md0 ocf:heartbeat:Raid1 \
+	params raidconf="/clusterconf/SO1/mdadm.conf" raiddev="/dev/md0" \
+	op monitor interval="60s" timeout="130s"
+primitive rsc_sapdb_SO1 ocf:heartbeat:SAPDatabase \
+	params SID="SO1" DBTYPE="ADA" \
+	op monitor interval="120s" timeout="60s" start_delay="180s" \
+	op start interval="0" timeout="1800s" \
+	op stop interval="0" timeout="1800s"
+primitive rsc_sapinst_SO1_ASCS00_sapso1as ocf:heartbeat:SAPInstance \
+	params InstanceName="SO1_ASCS00_sapso1as" ERS_InstanceName="SO1_ERS10_sapso1er" AUTOMATIC_RECOVER="true" \
+	op monitor interval="31s" timeout="60s" start_delay="120s" \
+	op monitor interval="32s" role="Slave" timeout="60s" start_delay="120s" \
+	op monitor interval="33s" role="Master" timeout="60s" start_delay="120s" \
+	op start interval="0" timeout="180s" \
+	op stop interval="0" timeout="240s" on_fail="block"
+primitive rsc_sapinst_SO1_DVEBMGS20_sapso1ci ocf:heartbeat:SAPInstance \
+	params InstanceName="SO1_DVEBMGS20_sapso1ci" AUTOMATIC_RECOVER="TRUE" \
+	op monitor interval="180s" timeout="60s" start_delay="240s" \
+	op start interval="0" timeout="600s" \
+	op stop interval="0" timeout="600s" on_fail="block"
+primitive rsc_sapinst_SO1_SCS01_sapso1cs ocf:heartbeat:SAPInstance \
+	params InstanceName="SO1_SCS01_sapso1cs" ERS_InstanceName="SO1_ERS11_sapso1er" AUTOMATIC_RECOVER="true" \
+	op monitor interval="31s" timeout="60s" start_delay="120s" \
+	op monitor interval="32s" role="Slave" timeout="60s" start_delay="120s" \
+	op monitor interval="33s" role="Master" timeout="60s" start_delay="120s" \
+	op start interval="0" timeout="180s" \
+	op stop interval="0" timeout="240s" on_fail="block"
+primitive rsc_stonith_sbd stonith:external/sbd \
+	op start interval="0" timeout="15" start-delay="5"
+group grp_sapas_so1 rsc_ip_SO1_sapso1as
+group grp_sapci_so1 rsc_ip_SO1_sapso1ci rsc_sapinst_SO1_DVEBMGS20_sapso1ci
+group grp_sapcs_so1 rsc_ip_SO1_sapso1cs
+group grp_sapdb_so1 rsc_ip_SO1_sapso1db rsc_md_SO1_md0 rsc_lvm_SO1_sapso1db rsc_fs_SO1_sapdb rsc_sapdb_SO1
+group grp_saper_so1 rsc_ip_SO1_sapso1er
+group grp_sapes_so1 rsc_ip_SO1_sapso1es
+ms msl_sapas_SO1 rsc_sapinst_SO1_ASCS00_sapso1as \
+	meta clone-max="2" master-max="1"
+ms msl_sapcs_SO1 rsc_sapinst_SO1_SCS01_sapso1cs \
+	meta clone-max="2" master-max="1"
+location loc_grp_sapdb_so1_on_cl3n01 grp_sapdb_so1 1000: cl3n01
+location loc_grp_sapdb_so1_on_cl3n02 grp_sapdb_so1 0: cl3n02
+colocation col_grp_sapas_so1 2000: grp_sapas_so1:Started msl_sapas_SO1:Master
+colocation col_grp_sapcs_so1 2000: grp_sapcs_so1:Started msl_sapcs_SO1:Master
+colocation col_grp_sapdb_ci 2000: grp_sapdb_so1 grp_sapci_so1
+colocation col_grp_saper_so1 2000: grp_saper_so1:Started msl_sapas_SO1:Slave
+colocation col_grp_sapes_so1 2000: grp_sapes_so1:Started msl_sapcs_SO1:Slave
+order ord_grp_sapdb_so1_grp_sapci_so1 0: grp_sapdb_so1 grp_sapci_so1
+order ord_msl_sapas_so1_master_grp_sapci_so1 0: msl_sapas_SO1:promote grp_sapci_so1:start
+order ord_msl_sapcs_so1_master_grp_sapas_so1 0: grp_sapas_so1:start msl_sapas_SO1:promote
+order ord_msl_sapcs_so1_master_grp_sapci_so1 0: msl_sapcs_SO1:promote grp_sapci_so1:start
+order ord_msl_sapcs_so1_master_grp_sapcs_so1 0: grp_sapcs_so1:start msl_sapcs_SO1:promote
+property $id="cib-bootstrap-options" \
+	dc-version="1.1.7-77eeb099a504ceda05d648ed161ef8b1582c7daf" \
+	cluster-infrastructure="openais" \
+	expected-quorum-votes="2" \
+	stonith-enabled="true" \
+	stonith-action="reboot" \
+	stonith-timeout="150s" \
+	default-action-timeout="120s" \
+	no-quorum-policy="ignore" \
+	default-resource-stickiness="1000" \
+	last-lrm-refresh="1390993779"
+rsc_defaults $id="rsc_defaults-options" \
+	migration-threshold="5" \
+	failure-timeout="86400s"
+op_defaults $id="rsc_op-defaults" \
+	timeout="120s" \
+	record-pending="true"

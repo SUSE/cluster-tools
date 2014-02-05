@@ -1,4 +1,4 @@
-.TH cs_add_watchdog_to_initrd 8 "12 Feb 2013" "" "ClusterTools2"
+.TH cs_add_watchdog_to_initrd 8 "05 Feb 2014" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_add_watchdog_to_initrd \- add kernel module to initrd 
@@ -57,6 +57,9 @@ Usage, syntax or execution errors.
 .TP
 /lib/modules/.../kernel/drivers/watchdog/
 	the kernel's watchdog modules.
+.TP
+/dev/watchdog
+	the watchdog device file (if a module is loaded).
 .\"
 .SH BUGS
 Feedback is welcome, please use the project page at
@@ -71,7 +74,7 @@ http://www.clusterlabs.org/doc/crm_fencing.html ,
 http://code.metager.de/source/xref/linux/stable/drivers/s390/char/vmwatchdog.c 
 .\"
 .SH COPYRIGHT
-(c) 2011-2013 L.Pinne, Germany.
+(c) 2011-2014 L.Pinne, Germany.
 .br
 cs_add_watchdog_to_initrd comes with ABSOLUTELY NO WARRANTY.
 .br

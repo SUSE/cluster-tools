@@ -1,4 +1,4 @@
-.TH cs_disable_other_watchdog 8 "28 Jan 2013" "" "ClusterTools2"
+.TH cs_disable_other_watchdog 8 "05 Feb 2014" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_disable_other_watchdog \- disable other watchdog and reboot-daemons 
@@ -56,6 +56,9 @@ Usage, syntax or execution errors.
 .TP
 /lib/modules/.../kernel/drivers/watchdog/
 	the kernel's watchdog modules.
+.TP
+/dev/watchdog
+        the watchdog device file (if a module is loaded).
 .\"
 .SH BUGS
 Currently only HP ASR daemon and few watchdogs are handled. 
@@ -69,7 +72,7 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 /usr/src/linux/Documentation/watchdog/
 .\"
 .SH COPYRIGHT
-(c) 2011-2013 L.Pinne, Germany.
+(c) 2011-2014 L.Pinne, Germany.
 .br
 cs_disable_other_watchdog comes with ABSOLUTELY NO WARRANTY.
 .br

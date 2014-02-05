@@ -68,7 +68,7 @@ case $1 in
 		done
 	;;
 	# TODO compare etc file from initrd with systems etc
-	# TOTO calculate md5sum for initrd file list, like cs_sum_base_config
+	# TODO calculate md5sum for initrd file list, like cs_sum_base_config
 	-c|--compare)
 		# TODO put this into fucntion
 		SYSCONFMODS=$(awk -F"=" '$1=="INITRD_MODULES"{print $2}' /etc/sysconfig/kernel |\
@@ -92,6 +92,7 @@ case $1 in
 		done
 	;;
 	*)
+		# TODO check if file exists
 		for f in /boot/initrd /boot/initrd-xen; do
 			echo $f:
 			show_initrd $f

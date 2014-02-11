@@ -1,0 +1,84 @@
+.TH cs_show_initrd 8 "12 Feb 2014" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_show_initrd \- show and compare content of initrd 
+.\"
+.SH SYNOPSIS
+.P
+.B cs_show_initrd \fIOPTION\fR
+.\"
+.SH DESCRIPTION
+\fBcs_show_initrd\fP could be used to show the content of the current initrd.
+It also could be used to check the initrd for modules against the sysconfig kernel
+section, or to compare config files against the etc directory.
+.br
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+	show help.
+.HP
+\fB --version\fR
+	show version.
+.HP
+\fB --all\fR
+	list all files on initrd.
+.HP
+\fB --etc\fR
+	list initrd etc files.
+.HP
+\fB --modules\fR
+	list initrd modules.
+.HP
+\fB --compare\fR
+	compare initrd modules with /etc/sysconfig/kernel.
+.\"
+.SH EXAMPLES
+.br
+.TP
+* Compare initrd modules with /etc/sysconfig/kernel.
+.br
+# cs_show_initrd -c
+.TP
+* List all files on initrd.
+.br
+# cs_show_initrd --all
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_show_initrd
+	the program itself.
+.TP
+/etc/sysconfig/kernel
+	the sysconfig kernel section.
+.TP
+/lib/modules/.../
+	the kernel modules.
+.TP
+/boot/initrd , /boot/initrd-xen
+	links to current initrds.
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBmkinitrd\fP(8), \fBcs_add_watchdog_to_initrd\fP(8), \fBcpio\fP(8),
+\fBcs_disable_other_watchdog\fP(8), \fBClusterTools2\fP(7)
+.\"
+.SH COPYRIGHT
+(c) 2014 L.Pinne, Germany.
+.br
+cs_show_initrd comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

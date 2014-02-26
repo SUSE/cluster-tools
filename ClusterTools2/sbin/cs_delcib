@@ -2,10 +2,10 @@
 #
 # cs_delcib
 #
-# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.2 2011-09-26
+# Version: 0.2 2014-02-26
 #
 
 EXE="$0"
@@ -18,6 +18,7 @@ test -z "${FIL}" &&\
 /var/lib/corosync/*
 /var/lib/heartbeat/cores/*/*
 /var/lib/heartbeat/crm/*
+/var/lib/pacemaker/cib/*
 /var/lib/pengine/*
 "
 
@@ -36,7 +37,9 @@ case $1 in
 	-f|--force)
 		rcopenais stop || exit
 
-		mv /var/lib/heartbeat/crm/cib.xml $BAK 
+		# 11sp2 || 11sp3
+		mv /var/lib/heartbeat/crm/cib.xml $BAK ||\ 
+		mv /var/lib/pacemaker/cib/cib.xml $BAK 
 		for f in $FIL; do
 			rm -f $f
 		done
@@ -46,7 +49,9 @@ case $1 in
 		rcopenais status 2>/dev/null
 		test $? -eq  "7" || exit
 
-		mv /var/lib/heartbeat/crm/cib.xml $BAK 
+		# 11sp2 || 11sp3
+		mv /var/lib/heartbeat/crm/cib.xml $BAK ||\ 
+		mv /var/lib/pacemaker/cib/cib.xml $BAK 
 		for f in $FIL; do
 			rm -f $f
 		done

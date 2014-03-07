@@ -88,7 +88,7 @@ test -z "${CONF_FILES}" &&\
 /etc/sysctl.conf
 /etc/modprobe.conf.local
 /etc/modprobe.d/*
-/etc/ld.so.conf.d/*
+/etc/cron.d/*
 /etc/logrotate.d/corosync
 /etc/corosync/corosync.conf
 /etc/corosync/logd.cf

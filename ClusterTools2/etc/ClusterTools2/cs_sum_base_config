@@ -109,6 +109,7 @@ CONF_CALLS="
 '/usr/bin/zypper -n se -t pattern | grep "^i"'
 '/bin/cat /proc/mounts'
 'find /sys/devices/ -name "scheduler" -exec grep deadline {} \;'
+'find /sys/devices/ -name "scheduler" -exec grep noop {} \;'
 '/sbin/multipath -ll'
 '/sbin/dmsetup table | sort'
 '/usr/bin/grep -v "^#" /etc/lvm/lvm.conf'
@@ -135,6 +136,11 @@ APPS_FILES="
 /etc/sysconfig/oracle
 /opt/oracle/product/*/*/dbs/*.ora
 /opt/oracle/product/*/*/network/admin/*.ora
+/etc/sysconfig/postgresql
+/var/lib/pgsql/data/postgresql.conf
+/etc/sysconfig/rhn/*
+/etc/rhn/rhn.conf
+/etc/nocpulse/*
 /etc/opt/novell/eDirectory/conf/nds.conf
 /etc/logevent.conf
 /etc/opt/novell/nici*
@@ -145,8 +151,8 @@ APPS_FILES="
 /usr/sap/sapservices
 /etc/opt/sdb
 /etc/db2nodes.conf
-/etc/rhn/rhn.conf
 /etc/sysconfig/saphaws
+/etc/sysconfig/spock
 /etc/sysconfig/ctdb
 /etc/samba/*
 "

@@ -102,6 +102,8 @@ vm.dirty_background_bytes=134217728
 vm.zone_reclaim_mode=0
 "
 
+# TODO /etc/fstab, tune2fs
+
 
 function ntpconf() {
 	# TODO erroe handling, useful rerturn codes $RC

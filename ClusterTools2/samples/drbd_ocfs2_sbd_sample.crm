@@ -1,0 +1,52 @@
+node node0101
+node node0102
+primitive rsc_controld ocf:pacemaker:controld \
+	op monitor interval="90" timeout="60" \
+	op start interval="0" timeout="90" \
+	op stop interval="0" timeout="100"
+primitive rsc_drbd_app1 ocf:linbit:drbd \
+	params drbd_resource="app1" \
+	op start interval="0" timeout="240" \
+	op promote interval="0" timeout="90" \
+	op demote interval="0" timeout="90" \
+	op notify interval="0" timeout="90" \
+	op monitor interval="100" role="Master" timeout="90" \
+	op monitor interval="110" role="Slave" timeout="90" \
+	op stop interval="0" timeout="330" on_fail="fence"
+primitive rsc_o2cb ocf:ocfs2:o2cb \
+	op monitor interval="90" timeout="60" \
+	op start interval="0" timeout="90" \
+	op stop interval="0" timeout="100" \
+	params stack="pcmk"
+primitive rsc_ocfs2_app1 ocf:heartbeat:Filesystem \
+	params device="/dev/drbd_app1" directory="/srv/app1" fstype="ocfs2" options="noatime,noacl,data=writeback" \
+	op start interval="0" timeout="270" \
+	op monitor interval="90" timeout="100" \
+	op stop interval="0" timeout="300" on_fail="fence"
+primitive rsc_stonith_sbd stonith:external/sbd \
+	op start interval="0" timeout="15" start-delay="15"
+group grp_o2cb rsc_controld rsc_o2cb
+ms msl_drbd_app1 rsc_drbd_app1 \
+	meta master-max="2" clone-max="2" notify="true" target-role="Master"
+clone cln_o2cb grp_o2cb \
+	meta target-role="Started" interleave="true"
+clone cln_ocfs2_app1 rsc_ocfs2_app1 \
+	meta target-role="Started" interleave="true"
+colocation col_ocfs2_with_drbd_master inf: cln_ocfs2_app1 msl_drbd_app1:Master
+order ord_ocfs2_after_drbd inf: msl_drbd_app1:promote cln_ocfs2_app1:start
+order ord_ocfs2_after_o2cb inf: cln_o2cb:start cln_ocfs2_app1:start
+property $id="cib-bootstrap-options" \
+	dc-version="1.1.7-77eeb099a504ceda05d648ed161ef8b1582c7daf" \
+	cluster-infrastructure="openais" \
+	expected-quorum-votes="2" \
+	no-quorum-policy="ignore" \
+	dc-deadtime="20s" \
+	default-resource-stickiness="1000000" \
+	stonith-enabled="true" \
+	stonith-timeout="45s" \
+	last-lrm-refresh="1393416205"
+rsc_defaults $id="rsc_defaults-options" \
+	migration-threshold="1000000" \
+	failure-timeout="86400s"
+op_defaults $id="op_defaults-options" \
+	timeout="90"

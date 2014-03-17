@@ -5,14 +5,16 @@
 # (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.2 2014-02-26
+# Version: 0.2 2014-03-17
 #
 
 EXE="$0"
+ERR="/dev/null"
 
 CFG="/etc/ClusterTools2/cs_delcib"
 test -s $CFG && source $CFG
 
+# TODO check current pathes
 test -z "${FIL}" &&\
 	FIL="
 /var/lib/corosync/*
@@ -38,8 +40,8 @@ case $1 in
 		rcopenais stop || exit
 
 		# 11sp2 || 11sp3
-		mv /var/lib/heartbeat/crm/cib.xml $BAK ||\ 
-		mv /var/lib/pacemaker/cib/cib.xml $BAK 
+		mv /var/lib/heartbeat/crm/cib.xml $BAK 2>$ERR ||\ 
+		mv /var/lib/pacemaker/cib/cib.xml $BAK
 		for f in $FIL; do
 			rm -f $f
 		done
@@ -50,8 +52,8 @@ case $1 in
 		test $? -eq  "7" || exit
 
 		# 11sp2 || 11sp3
-		mv /var/lib/heartbeat/crm/cib.xml $BAK ||\ 
-		mv /var/lib/pacemaker/cib/cib.xml $BAK 
+		mv /var/lib/heartbeat/crm/cib.xml $BAK 2>$ERR ||\ 
+		mv /var/lib/pacemaker/cib/cib.xml $BAK
 		for f in $FIL; do
 			rm -f $f
 		done

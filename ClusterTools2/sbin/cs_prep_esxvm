@@ -136,7 +136,7 @@ function elevator() {
 }
 
 
-function runlevel() {
+function inittab() {
 	# TODO $RC
 	# TODO check
 
@@ -223,7 +223,7 @@ function backup() {
 	mkdir $TMP
 	cd $TMP || exit 1
 
-	sysctl -a >${TMP}/sysctl-a.$SFX
+	/sbin/sysctl -e -a >${TMP}/sysctl-a.$SFX 2>$ERR
 	runlevel >${TMP}/runlevel.$SFX
 	rpm -qa >${TMP}/rpm-qa.$SFX
 	zypper se -t pattern | grep "^i" >${TMP}/zypper-se-tpattern.$SFX
@@ -265,7 +265,7 @@ case $1 in
 
 		packages
 		ntpconf
-		runlevel
+		inittab	
 		services
 		elevator
 		syscontr
@@ -274,12 +274,12 @@ case $1 in
 		backup
 	;;
 	-l|--list)
-		echo TBD
+		echo "not implemented yet"
 	;;
 	-p|preview)
 		#echo "patterns:	$PTRN_OK"
 		echo "packages:	$PCKG_OK"
-		echo "runlevel:	$RLVL_OK"
+		echo "inittab:	$RLVL_OK"
 		echo
 		echo "services:	$SRVC_OK"
 		echo "services_NOT:	$SRVC_NO"

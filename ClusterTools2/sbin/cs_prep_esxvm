@@ -1,0 +1,302 @@
+#!/bin/bash
+#
+# cs_prep_esxvm
+#
+# (c) 2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version: 2014-03-17 18:27
+#
+
+EXE=${0}
+
+CFG="/etc/ClusterTools2/cs_prep_esxvm"
+test -s $CFG && source $CFG
+
+TMP="/tmp/$RANDOM"
+ERR="/dev/null"
+SFX=$(basename $EXE)
+test -z "${BAK}" &&\
+	BAK="/var/adm/backup/${SFX}-$(date +%Y%m%d-%H%M%S)"
+
+
+# TODO use configfile
+SRVC_OK="
+ntp
+sshd
+boot.sysstat
+vmware-tools
+"
+# TODO vmware-tools?
+SRVC_NO="
+boot.multipath
+multipathd
+microcode.ctl
+irq_balancer
+alsasound
+smartd
+mcelog
+fbset
+openais
+splash
+splash_early
+ipmi
+ipmievd
+powerd
+auditd
+SuSEfirewall2_setup
+SuSEfirewall2_init
+"
+
+RLVL_OK="3"
+
+PTRN_OK="
+Minimal
+base
+"
+PTRN_NO="
+apparmor
+gnome
+kde
+Dom0
+Dom0_KVM
+kvm_server
+xen_server
+"
+
+# TODO with and w/o cluster
+PCKG_OK="
+sysstat
+corosync
+cluster-glue
+crmsh
+libcorosync4
+libglue2
+libpacemaker3
+ldirectord
+openais
+libopenais3
+pacemaker
+resource-agents
+ocfs2-kmp-default
+ocfs2-tools
+ocfs2-tools-o2cb
+drbd
+drbd-pacemaker
+drbd-kmp-default
+drbd-utils
+drbd-udev
+drbd-bash-completion
+sbd
+"
+PCKG_NO="
+"
+
+ELVT_OK="noop"
+ELVT_NO="deadline"
+
+SYCT_OK="
+vm.swappiness=40
+vm.dirty_bytes=1073741824
+vm.dirty_background_bytes=134217728
+vm.zone_reclaim_mode=0
+"
+
+
+function ntpconf() {
+	# TODO erroe handling, useful rerturn codes $RC
+	# TODO check
+
+	FIL="/etc/ntp.conf"
+	cp -a $FIL ${FIL}.$SFX || exit 1
+	# TODO
+	cat >$FIL <<EOF
+# /etc/ntp.conf
+tinker panic 0
+EOF
+	sed -e s/^server.127.127.1.0//g -e s/^fudge.127.127.1.0//g <${FIL}.$SFX >>$FIL
+
+	/etc/init.d/ntp restart
+}
+
+
+function elevator() {
+	# TODO $RC
+	# TODO check
+	
+	FIL="/etc/sysconfig/bootloader"
+	cp -a $FIL ${FIL}.$SFX || exit 1
+	sed s/showopts\"$/showopts\ elevator=noop\ cgroup_disable=memory\"/ <${FIL}.$SFX >$FIL
+
+	FIL="/boot/grub/menu.lst"
+	cp -a $FIL ${FIL}.$SFX || exit 1
+	sed s/showopts\ vga=/showopts\ elevator=noop\ cgroup_disable=memory\ vga=/ <${FIL}.$SFX >$FIL
+
+	find /sys -name "scheduler" | while read; do echo noop >$REPLY; done
+}
+
+
+function runlevel() {
+	# TODO $RC
+	# TODO check
+
+	FIL="/etc/inittab"
+	runlevel >/root/runlevel.$SFX
+	cp -a $FIL ${FIL}.$SFX || exit 1
+	sed s/^id:.:initdefault:/id:${RLVL_OK}:initdefault:/ <${FIL}.$SFX >$FIL 
+
+	telinit ${RLVL_OK}
+}
+
+
+function services() {
+	# TODO $RC
+	# TODO check
+
+	chkconfig -A >/root/chkconfig-a.$SFX || exit 1
+	for f in $SRVC_NO; do
+		chkconfig $f off
+		/etc/init.d/$f stop
+	done
+	for f in $SRVC_OK; do
+		chkconfig $f on
+		/etc/init.d/$f start
+	done
+}
+
+
+function syscontr() {
+	# TODO $RC
+	# TODO check
+
+	/sbin/sysctl -e -a >/root/sysctl-a.$SFX 2>$ERR
+
+	FIL="/etc/sysctl.conf"
+	cp -a $FIL ${FIL}.$SFX || exit 1
+
+	# TODO TID if RAM > 4GB
+	# TODO numa and cstate related settings?
+	# TODO use SYCT_OK
+	cat >$FIL <<EOF
+# /etc/sysctl.conf
+vm.swappiness = 40
+#vm.dirty_bytes = 1073741824 
+#vm.dirty_background_bytes = 134217728
+vm.dirty_ratio = 20
+vm.dirty_background_ratio = 5
+#
+EOF
+	cat ${FIL}.$SFX |\
+		grep -v "vm.dirty.*ratio" |\
+		grep -v "vm.dirty.*bytes" |\
+		grep -v "vm.swappiness" >>$FIL
+
+	/sbin/sysctl -e -p $FIL 2>$ERR 1>&2
+}
+
+
+function patterns() {
+	# TODO $RC
+	# TODO check
+
+	zypper se -t pattern | grep "^i" >/root/zypper-se-tpattern.$SFX || exit 1
+	for f in $PTRN_OK; do
+		zypper in -t pattern $f 
+	done
+}
+
+
+function packages() {
+	# TODO $RC
+	# TODO check
+	rpm -qa >/root/rpm-qa.$SFX || exit 1
+	zypper refs -r | exit 1
+	zypper -q -n --no-gpg-checks in -l --no-recommends $PCKG_OK
+	# TODO separate cluster: zypper -q -n --no-gpg-checks --yes in -l --no-recommends $CLST_OK
+
+}
+
+
+function backup() {
+	# TODO use functions check option
+	# TODO error handling, useful return code
+	mkdir $TMP
+	cd $TMP || exit 1
+
+	sysctl -a >${TMP}/sysctl-a.$SFX
+	runlevel >${TMP}/runlevel.$SFX
+	rpm -qa >${TMP}/rpm-qa.$SFX
+	zypper se -t pattern | grep "^i" >${TMP}/zypper-se-tpattern.$SFX
+	cp -a /boot/grub/menu.lst ${TMP}/
+	tar czf ${TMP}/etc.tgz /etc/ >$ERR 2>&1
+
+	cd $OLDPWD
+	tar czf ${BAK}.tgz $TMP >$ERR 2>&1; RC=$? && rm -rf $TMP
+	echo "RC: $RC"
+	ls -l ${BAK}.tgz
+}
+
+
+function help() {
+	echo "usage: $(basename $0) [OPTION]"
+	echo
+	echo " --save		save current settings, call first of all"
+	echo " --list		list current settings (not implemented yet)"
+	echo " --preview	preview recommended settings"
+	echo " --apply	apply recommended settings, call only once"
+	echo " --help		show help"
+	echo " --version	show version"
+	echo
+	echo "This script could apply changes only once on each VM."
+	exit
+}
+
+
+# main()
+
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-a|--apply)
+		# TODO select functions
+
+		packages
+		ntpconf
+		runlevel
+		services
+		elevator
+		syscontr
+	;;
+	-s|save)
+		backup
+	;;
+	-l|--list)
+		echo TBD
+	;;
+	-p|preview)
+		#echo "patterns:	$PTRN_OK"
+		echo "packages:	$PCKG_OK"
+		echo "runlevel:	$RLVL_OK"
+		echo
+		echo "services:	$SRVC_OK"
+		echo "services_NOT:	$SRVC_NO"
+		echo "elevator:	$ELVT_OK"
+		echo
+		echo "syscontr: $SYCT_OK"
+	;;
+	-t|--test)
+		#packages	
+		#ntpconf
+		#runlevel
+		#services
+		#elevator
+		#syscontr
+	;;
+	*)
+		help
+	;;
+esac
+#

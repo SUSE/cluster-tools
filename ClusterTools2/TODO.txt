@@ -1,7 +1,7 @@
-TODO cs_delcib: sp3 /var/lib/pacemaker/cib/cib.xml
-DONE check git after moved ClusterTools to own repo
+TODO check ClusterTools2 for SLE12
+TODO cs_prepare_exsvm check, iostack, configfile
+TODO cs_precheck_exsvm, link to cs_prepare_exsvm
 TODO cs_clusterstate: check if master-slave enq-repl is shown correctly 
-DONE cs_clusterstate: crmadmin to show clusterstate IDLE 
 TODO cs_sum_base_config check if newly added test for /var/lib/sdb/ works
 TODO cs_show_cluster_transition: sort order Dec Jan around new year
 TODO check max limit for CIB size and for num resources
@@ -11,11 +11,9 @@ TODO cs_show_supportconfig s390 network, disk (net: iucv, qeth. disk ccm...)
 TODO see HAWS_SMT_NEEDED_OS HAWS_SMT_NEEDED_HA HAWS_SMT_NEEDED_SAP HAWS_SMT_NEEDED_ORA
 TODO check service multipathd on
 TODO better summary for multipath.conf
-DONE rm ptest.8.gz crm_simulate.8.gz attrd_updater.8.gz
 TODO ls -l /usr/sbin/uuidd : -rwsr-sr-x 1 uuidd uuidd 19048 Dec  6 16:26 /usr/sbin/uuidd
 TODO /usr/lib/supportconfig/plugins/  awk /sys/block/*/queue/scheduler
 TODO susemanager cfg files: /etc/sysconfig/rhn/*
-DONE cs_show_supportconfig: libaio, libaio-devel
 TODO grep kio /proc/slabinfo: welches feld soll not-null sein?
 TODO cs_disable_other_ Sybase ASE
 TODO cs_precheck_for_sap: LC_ALL=POSIX

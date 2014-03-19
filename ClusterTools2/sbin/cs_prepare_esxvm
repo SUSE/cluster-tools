@@ -5,7 +5,7 @@
 # (c) 2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2014-03-18 09:37
+# Version: 2014-03-19 09:10
 #
 
 EXE=${0}
@@ -67,6 +67,8 @@ xen_server
 # TODO with and w/o cluster
 PCKG_OK="
 sysstat
+"
+PCLT_OK="
 corosync
 cluster-glue
 crmsh
@@ -177,7 +179,8 @@ function syscontr() {
 	cp -a $FIL ${FIL}.$SFX || exit 1
 
 	# TODO TID if RAM > 4GB
-	# TODO numa and cstate related settings?
+	# TODO numa and cstate settings
+	# TODO transparent hugepages, hugepages
 	# TODO use SYCT_OK
 	cat >$FIL <<EOF
 # /etc/sysctl.conf
@@ -213,9 +216,9 @@ function packages() {
 	# TODO check
 	rpm -qa >/root/rpm-qa.$SFX || exit 1
 	zypper refs -r | exit 1
+	# TODO -y ?
 	zypper -q -n --no-gpg-checks in -l --no-recommends $PCKG_OK
-	# TODO separate cluster: zypper -q -n --no-gpg-checks --yes in -l --no-recommends $CLST_OK
-
+	zypper -q -n --no-gpg-checks in -l --no-recommends $PCLT_OK
 }
 
 

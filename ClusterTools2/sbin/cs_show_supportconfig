@@ -863,6 +863,17 @@ function chk_sap(){
 # TODO no /etc/hosts 127.0.0.2   <hostname>.<domain> <hostname>
 # TODO 1275776	Linux: Preparing SLES for SAP environments
 # TODO /usr/sbin/uuidd         uuidd:uuidd     6755, chkstat --set /etc/permissions.local
+# TODO 1557506 - Linux paging improvements
+# The recommended value is 1/16 (~6%) of the amount of RAM, but not less than 512 MByte and not more than 4 GByte.
+#<  8 GB:  512  (remommended min. limit)
+#  8 GB:  512  (=  8 * 1024 MB / 16)
+#  16 GB: 1024  (= 16 * 1024 MB / 16)
+#  32 GB: 2048  (= 32 * 1024 MB / 16)
+#  64 GB: 4096  (= 64 * 1024 MB / 16)
+#> 64 GB: 4096  (recommended max. limit)
+#vm.pagecache_limit_ignore_dirty
+# If there is a lot of local writes and it is OK to throttle them by limiting the writeback caching, we recommended that you set the value to 0. If writing mainly happens to NFS filesystems, the default 1 should be left untouched.(A value of 2 would be a middle ground, not limiting local write back caching as much, but potentially resulting in some paging.)
+
 }
 
 
@@ -895,9 +906,31 @@ function chk_saphana(){
 # swap_space 2x RAM, but max. 50GB 
 # XFS as prefered file system
 
+	test -z "${HANA_SAP_BOOTARG}" &&\
+	HANA_SAP_BOOTARG="
+intel_idle.max_cstate=0
+processor.max_cstate=0
+"
+	test -z "${HANA_SUSE_BOOTARG}" &&\
+	HANA_SUSE_BOOTARG="
+elevator=noop
+cgroup_disable=memory
+"
+# TODO should sysctl go to chk_sap?
+	test -z "${HANA_SAP_SYSCTL}" &&\
+	HANA_SAP_SYSCTL="
+vm.pagecache_limit_mb
+vm.pagecache_limit_ignore_dirty
+"
+	test -z "${HANA_SUSE_SYSCTL}" &&\
+	HANA_SUSE_SYSCTL="
+vm.dirty_bytes
+vm.dirty_background_bytes
+"
 	test -z "${HANA_VERS_MIN}" &&\
 	HANA_VERS_MIN="
-kernel:3.0.101-0.7.15.1
+kernel-default:3.0.101-0.7.15.1
+kernel-xen:3.0.101-0.7.15.1
 glibc:2.11.3-17.56.2
 "
 	test -z "${HANA_SAP_PKG_YES}" &&\
@@ -917,7 +950,7 @@ yast2-ncurses
 bing
 bonnie
 cairo
-fincutils-locate
+findutils-locate
 graphviz
 iptraf
 krb5-32bit
@@ -933,29 +966,77 @@ sensors
 # TODO XFS create and mount options?
 
 	test -z "${HANA_SUSE_PKG_YES}" &&\
-HANA_SUSE_PGK_YES="
+HANA_SUSE_PKG_YES="
 xfsprogs
 sysstat
-supportconfig
+supportutils
 sapconf
 "
 
 	# TODO kernel glibc version
-
+	FIL="rpm.txt"
+	echo "RPM with specific version recommended by SAP:"
+	for f in $HANA_VERS_MIN; do
+		FULL=$(echo $f | awk -F: '{print $1"-"$2}')
+		BASE=$(echo $f | awk -F: '{print $1}')
+		echo -n "$FULL : "
+		q="$FULL"
+		# TODO do search, if package is -32bit
+		grep -v -- "-32bit" $FIL | grep "^${FULL}" ||\
+		 	q=$(	p=$(grep -v -- "-32bit" $FIL |\
+					grep  "^${BASE}-[0-9]")
+				echo "NO but $p"
+			)
+		echo "${q}"
+	done | awk '{print $1,":",$3,$4,$5}' | sort
+	echo
+	FIL="boot.txt"
+	grep -A1 "^# /bin/uname -a" $FIL
+	echo
 
 	FIL="rpm.txt"
 	echo "RPMs recommended by SAP:"
-	for f in $HANA_SAP_PGK; do
-		grep $f $FIL
-	done | sort
+	for f in $HANA_SAP_PKG_YES; do
+		echo -n "$f : "
+		# TODO do search, if package is -32bit
+		grep -v -- "-32bit" $FIL | grep "^${f}-[0-9]" || echo "NO"
+	done | awk '{print $1,":",$3}' | sort
 	echo
 	echo "RPMs recommended by SUSE:"
-	for f in $HANA_SAP_PGK; do
-		grep $f $FIL
-	done | sort
+	for f in $HANA_SUSE_PKG_YES; do
+		echo -n "$f : "
+		# TODO do search, if package is -32bit
+		grep -v -- "-32bit" $FIL | grep "^${f}-[0-9]" || echo "NO"
+	done | awk '{print $1,":",$3}' | sort
 	echo
 
+	FIL="boot.txt"
+	KRNLCMD=$(grep -A1 "^# /proc/cmdline" $FIL | tail -1)
+	echo "SAP recommended /proc/cmdline args:"
+	# TODO shorter output
+	for f in $HANA_SAP_BOOTARG; do
+		echo -n "$f : "
+		p="NO"
+		q=$( echo $KRNLCMD | grep "$f" ) && p=$q
+		echo $p
+	done
+	echo
+	echo "SUSE recommended /proc/cmdline args:"
+	# TODO shorter output
+	for f in $HANA_SUSE_BOOTARG; do
+		echo -n "$f : "
+		p="NO"
+		q=$( echo $KRNLCMD | grep "$f" ) && p=$q
+		echo $p
+	done
+	echo
+	echo "Current /proc/cmdline:"
+	echo "$KRNLCMD"
+	echo
+	# TODO /etc/sysconfig/bootloader, /boot/grub/menu.lst
 
+
+	# TODO sysctl.conf
 }
 
 

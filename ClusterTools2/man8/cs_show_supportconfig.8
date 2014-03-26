@@ -1,4 +1,4 @@
-.TH cs_show_supportconfig 8 "04 Apr 2013" "" "ClusterTools2"
+.TH cs_show_supportconfig 8 "25 Mar 2014" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_show_supportconfig \- collect information from supportconfig files
@@ -47,6 +47,9 @@ show all generic infos for extracted supportconfig archive nts_node0_111010_1101
 .TP
 # cs_show_supportconfig -f nts_node0_111010_1101 chk_overview chk_veritas
 show overview info, than search for Veritas Cluster Services
+.TP
+# cs_show_supportconfig -f nts_node0_111010_1101 chk_sap chk_saphana
+search for SAP HANA related informations
 .\"
 .SH FILES
 .TP
@@ -69,7 +72,8 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 .\"
 .SH SEE ALSO
 \fBsupportconfig\fP(8), \fBcs_show_error_patterns\fP(8), \fBClusterTools2\fP(7),
-\fBcs_show_cluster_patterns\fP(8), \fBcs_show_cluster_transition\fP(8), 
+\fBcs_show_cluster_patterns\fP(8), \fBcs_show_cluster_transition\fP(8),
+\fBcs_prepare_esxvm\fP(8),
 http://support.novell.com/advisor/
 .\"
 .SH COPYRIGHT

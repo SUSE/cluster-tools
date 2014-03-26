@@ -2,10 +2,10 @@
 #
 # cs_show_supportconfig
 #
-# (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.01 2013-11-21
+# Version: 0.01 2014-03-25
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -564,7 +564,7 @@ sbd:
 	done | sort
 	echo
 	# TODO check /etc/corosync/
-	# TODO check ???, see cs_sum_baseconfig, whbsaprecheck
+	# TODO check ???, see cs_sum_baseconfig, cs_precheck_for_sap
 	# TODO check watchdogs, define $WATCHMOD, see cs_disbale_other_watchdog
 	# hangcheck_timer here, not "-" as in hangcheck-timer.ko
 	WATCHMOD="hpwdt hangcheck_timer iTCO ibmasr softdog"
@@ -856,6 +856,106 @@ function chk_sap(){
 		awk '$2=="sapstartsrv" || $2=="sapstart" || $2~/ms\.sap/ || $2~/en\.sap/  || $2~/ig\.sap/ || $2=="igsmux_mt" || $2=="igspw_mt" || $2=="gwrd" || $2=="icman" {print}' $f | sort -u
 		awk '$8~/sapstart/ || $8~/disp\+work/ || $8~/igswd_mt/ || $8~/igspw_mt/ || $8~/igsmux_mt/ || $8~/gwrd/ || $8~/icman/ || $8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ || $8~/dw_/  {print $8}' $f | sort -u
 	echo
+
+# TODO 1310037   SUSE LINUX Enterprise Server 11: Installation notes?
+# TODO SAP Application Server Base, Minimal System (Appliances), X Window System, Print Server, C/C++ Compiler and Tools
+# TODO no 32bit pattern 
+# TODO no /etc/hosts 127.0.0.2   <hostname>.<domain> <hostname>
+# TODO 1275776	Linux: Preparing SLES for SAP environments
+# TODO /usr/sbin/uuidd         uuidd:uuidd     6755, chkstat --set /etc/permissions.local
+}
+
+
+function chk_saphana(){
+
+	echo_msgsep $FUNCNAME
+
+# TODO chk_sap for 1310037   SUSE LINUX Enterprise Server 11: Installation notes?
+# TODO chk_sap for 1275776   prepare SLES ...?
+# 1514967   SAP HANA: Central Note
+# 1523337   SAP In-Memory Database 1.0: Central Note
+# 1944799   SAP HANA Guidelines for SLES Operating System Installation
+# 1824819   SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP2
+# 1954788   SAP HANA DB: Recommended OS settings for SLES 11 / SLES for SAP Applications 11 SP3
+# 1855805   Recommended SLES 11 packages for HANA support on OS level
+# 1890444   Slow HANA system due to CPU power save mode
+# 1867783   XFS Data Inconsistency Bug with SLES 11 SP2
+# 1888072   SAP HANA DB: Indexserver crash in __strcmp_sse42
+# TODO 1846872   "No space left on device" error reported from HANA
+# TID 7011982 cstate
+# TODO krb5-32bit needs 32bit pattern 
+
+# SAP HANA
+# echo never > /sys/kernel/mm/transparent_hugepage/enabled
+# cat /etc/sysconfig/bootloader
+#        DEFAULT_APPEND= ... intel_idle.max_cstate=0 processor.max_cstate=0
+# cat /sys/devices/system/cpu/cpuidle/current_driver
+# 	correct value "acpi_idle"
+
+# swap_space 2x RAM, but max. 50GB 
+# XFS as prefered file system
+
+	test -z "${HANA_VERS_MIN}" &&\
+	HANA_VERS_MIN="
+kernel:3.0.101-0.7.15.1
+glibc:2.11.3-17.56.2
+"
+	test -z "${HANA_SAP_PKG_YES}" &&\
+	HANA_SAP_PKG_YES="
+gtk2
+java-1_6_0-ibm
+libicu
+mozilla-xulrunner192
+ntp
+sudo
+syslog-ng
+tcsh
+libssh2-1
+expect
+autoyast2-installation
+yast2-ncurses
+bing
+bonnie
+cairo
+fincutils-locate
+graphviz
+iptraf
+krb5-32bit
+krb5-client
+nfs-client
+sensors
+"
+
+# SUSE HANA
+# TID vm.dirty, cache reclaim
+# TID cgroup memory 
+# TODO DEFAULT_APPEND= ...  $SAP_APPEND cgroups memory
+# TODO XFS create and mount options?
+
+	test -z "${HANA_SUSE_PKG_YES}" &&\
+HANA_SUSE_PGK_YES="
+xfsprogs
+sysstat
+supportconfig
+sapconf
+"
+
+	# TODO kernel glibc version
+
+
+	FIL="rpm.txt"
+	echo "RPMs recommended by SAP:"
+	for f in $HANA_SAP_PGK; do
+		grep $f $FIL
+	done | sort
+	echo
+	echo "RPMs recommended by SUSE:"
+	for f in $HANA_SAP_PGK; do
+		grep $f $FIL
+	done | sort
+	echo
+
+
 }
 
 
@@ -1099,6 +1199,7 @@ function chk_updates(){
 "SLE11-HAE-SP"
 "SLE11-SP1-SAP-AIO-"
 "SLE11-SP2-SAP-"
+"SLE11-SP3-SAP-"
 "
 	for p in ${UPDT_PTRN}; do
 		grep "|.*|.${p}.*|.*|" $FIL | sort -u

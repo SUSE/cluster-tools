@@ -896,16 +896,6 @@ function chk_saphana(){
 # TID 7011982 cstate
 # TODO krb5-32bit needs 32bit pattern 
 
-# SAP HANA
-# echo never > /sys/kernel/mm/transparent_hugepage/enabled
-# cat /etc/sysconfig/bootloader
-#        DEFAULT_APPEND= ... intel_idle.max_cstate=0 processor.max_cstate=0
-# cat /sys/devices/system/cpu/cpuidle/current_driver
-# 	correct value "acpi_idle"
-
-# swap_space 2x RAM, but max. 50GB 
-# XFS as prefered file system
-
 	test -z "${HANA_SAP_BOOTARG}" &&\
 	HANA_SAP_BOOTARG="
 intel_idle.max_cstate=0
@@ -959,12 +949,6 @@ nfs-client
 sensors
 "
 
-# SUSE HANA
-# TID vm.dirty, cache reclaim
-# TID cgroup memory 
-# TODO DEFAULT_APPEND= ...  $SAP_APPEND cgroups memory
-# TODO XFS create and mount options?
-
 	test -z "${HANA_SUSE_PKG_YES}" &&\
 HANA_SUSE_PKG_YES="
 xfsprogs
@@ -973,7 +957,6 @@ supportutils
 sapconf
 "
 
-	# TODO kernel glibc version
 	FIL="rpm.txt"
 	echo "RPM with specific version recommended by SAP:"
 	for f in $HANA_VERS_MIN; do
@@ -1033,10 +1016,124 @@ sapconf
 	echo "Current /proc/cmdline:"
 	echo "$KRNLCMD"
 	echo
-	# TODO /etc/sysconfig/bootloader, /boot/grub/menu.lst
+	
+	FIL="sysconfig.txt"
+
+	split_file $FIL
+
+	hana_defapd=$(echo "${HANA_SAP_BOOTARG}" "${HANA_SUSE_BOOTARG}" | tr -d "\n")
+	echo "SAP+SUSE recommended DEFAULT_APPEND: $hana_defapd"
+	echo "# /etc/sysconfig/bootloader:"
+	f=$(grep -l "^# /etc/sysconfig/bootloader$" ${TMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep DEFAULT_APPEND $f
+	echo
+	rm -rf ${TMP}/${FIL}
+
+	# TODO HANA_SAP_SYSCTL, HANA_SUSE_SYSCTL as SAP_SYSCTL in chk_sap? 
+	FIL="etc.txt"
+
+	split_file $FIL
+
+	f=$(grep -l "^# /etc/sysctl.conf$" ${TMP}/${FIL}/xx*)
+	echo "SAP recommended sysctl:"
+	test -z "$f" ||\
+		for p in $HANA_SAP_SYSCTL; do
+			echo -n "$p : "
+			grep $p $f || echo "NO"
+		done
+	echo
+	echo "SUSE recommended sysctl:"
+	test -z "$f" ||\
+		for p in $HANA_SUSE_SYSCTL; do
+			echo -n "$p : "
+			grep $p $f || echo "NO"
+		done
+	echo
+	rm -rf ${TMP}/${FIL}
+
+	# TODO /boot/grub/menu.lst
+	
+	FIL="boot.txt"
+	
+	split_file $FIL
+
+	# TODO
+	echo "SAP recommended boot.local: echo never > /sys/kernel/mm/transparent_hugepage/enabled"
+	echo "# /etc/init.d/boot.local:"
+	F=$(grep -l "# /etc/init.d/boot.local" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')	
+		test -z "$F" ||\
+			grep -v "^#" $F
+
+	FIL="sysfs.txt"
+	echo "SAP recommeded nr_anon_transparent_hugepages: 0 , nr_hugepages: 0"
+	grep "nr_anon_transparent_hugepages " $FIL | grep -v -- "--" 
+	grep -A1 "# /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages" $FIL | grep -v -- "--"
+	
+# TODO fix it: csplit runs on 100% CPU for ever
+#	split_file $FIL
+#
+#	echo "SAP recommeded nr_anon_transparent_hugepages: 0 , nr_hugepages: 0"
+#	# TODO n NUMA nodes
+#	F=$(grep -l "# /sys/devices/system/node/node0/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#		test -z "$F" ||\
+#			grep "nr_anon_transparent_hugepages" $F
+#	F=$(grep -l "# /sys/devices/system/node/node1/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#		test -z "$F" ||\
+#			grep "nr_anon_transparent_hugepages" $F
+#	F=$(grep -l "# /sys/devices/system/node/node2/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#		test -z "$F" ||\
+#			grep "nr_anon_transparent_hugepages" $F
+#	F=$(grep -l "# /sys/devices/system/node/node3/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#		test -z "$F" ||\
+#			grep "nr_anon_transparent_hugepages" $F
+#	F=$(grep -l "# /sys/devices/system/node/node4/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#		test -z "$F" ||\
+#			grep "nr_anon_transparent_hugepages" $F
+#	F=$(grep -l "# /sys/devices/system/node/node5/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#		test -z "$F" ||\
+#			grep "nr_anon_transparent_hugepages" $F
+#	F=$(grep -l "# /sys/devices/system/node/node6/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#		test -z "$F" ||\
+#			grep "nr_anon_transparent_hugepages" $F
+#	F=$(grep -l "# /sys/devices/system/node/node7/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#		test -z "$F" ||\
+#			grep "nr_anon_transparent_hugepages" $F
+#	F=$(grep -l "# /sys/devices/system/node/node8/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#		test -z "$F" ||\
+#			grep "nr_anon_transparent_hugepages" $F
+#
+#	F=$(grep -l "# /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#		test -z "$F" ||\
+#			cat $F
+	echo
+	echo "SAP recommended cpuidle: acpi_idle"
+	grep -A1 "# /sys/devices/system/cpu/cpuidle/current_driver" sysfs.txt
+	echo
+
+	FIL="boot.txt"
+	
+	split_file $FIL
+	
 
 
-	# TODO sysctl.conf
+	FIL="fs-diskio.txt"
+
+	split_file $FIL
+	
+	echo "SAP recommeded filesystem type: XFS"
+	F=$(grep -l "# /etc/fstab" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+	grep -v "#==" $F | tr -s " "
+	# TODO XFS create options
+
+	# TODO calculate 2x RAM, max.50GB
+	echo "SAP recommended swap space: 2x RAM, max.50GB"
+	# TODO depends on name "swap"
+	grep "Disk.*swap" $FIL
+	
+	FIL="boot.txt"
+	grep "^\[.*System RAM: " $FIL | awk '{print $11,$12,$13}'
+
 }
 
 

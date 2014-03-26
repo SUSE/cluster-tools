@@ -440,6 +440,10 @@ cgroup_disable=memory
 "
 #
 HANA_SAP_SYSCTL="
+kernel.shmmax
+kernel.sem
+kernel.shmall
+vm.max_map_count
 vm.pagecache_limit_mb
 vm.pagecache_limit_ignore_dirty
 "

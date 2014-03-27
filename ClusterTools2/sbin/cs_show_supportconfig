@@ -893,6 +893,9 @@ function chk_saphana(){
 # 1867783   XFS Data Inconsistency Bug with SLES 11 SP2
 # 1888072   SAP HANA DB: Indexserver crash in __strcmp_sse42
 # TODO 1846872   "No space left on device" error reported from HANA
+# TODO 1681360 - Support for SAP software in Linux / Fusion-IO
+# 784391	SAP support terms and 3rd-party Linux kernel drivers
+# 171356	SAP software on Linux: General information
 # TID 7011982 cstate
 # TODO krb5-32bit needs 32bit pattern 
 
@@ -949,6 +952,7 @@ nfs-client
 sensors
 "
 
+# TODO Fusion IO driver RPM?
 	test -z "${HANA_SUSE_PKG_YES}" &&\
 HANA_SUSE_PKG_YES="
 rear
@@ -1126,6 +1130,7 @@ xfsprogs
 	# TODO depends on name "swap"
 	grep "Disk.*swap" $FIL
 
+	# TODO search Fusion IO drives 
 	# TODO boot msg shows max.4GB, use other info here	
 	FIL="boot.txt"
 	grep "^\[.*System RAM: " $FIL | awk '{print $11,$12,$13}'

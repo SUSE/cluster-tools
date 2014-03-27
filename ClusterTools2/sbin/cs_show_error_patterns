@@ -149,6 +149,12 @@ test -z "${CLUERR_PATTERN}" &&\
 "SoftDog.*not"
 "
 
+test -z "${APPERR_PATTERN}" &&\
+	APPERR_PATTERN="
+"vasd.will.not.synchronize.time"
+"vascache.*error"
+"
+
 
 function help() {
 	echo "usage:	$(basename $0)"
@@ -166,7 +172,7 @@ function run_grep() {
 	dmesg >$DMSG
 
 	# TODO: more efficient loop
-	for e in ${ERROR_PATTERN} ${CLUERR_PATTERN}; do
+	for e in ${ERROR_PATTERN} ${CLUERR_PATTERN} ${APPERR_PATTERN}; do
         	echo -n "$e = "
 		for f in ${LOG}; do
 			test -r $f && cat $f

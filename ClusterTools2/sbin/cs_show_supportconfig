@@ -1112,12 +1112,6 @@ xfsprogs
 	grep -A1 "# /sys/devices/system/cpu/cpuidle/current_driver" sysfs.txt
 	echo
 
-	FIL="boot.txt"
-	
-	split_file $FIL
-	
-
-
 	FIL="fs-diskio.txt"
 
 	split_file $FIL
@@ -1131,7 +1125,8 @@ xfsprogs
 	echo "SAP recommended swap space: 2x RAM, max.50GB"
 	# TODO depends on name "swap"
 	grep "Disk.*swap" $FIL
-	
+
+	# TODO boot msg shows max.4GB, use other info here	
 	FIL="boot.txt"
 	grep "^\[.*System RAM: " $FIL | awk '{print $11,$12,$13}'
 

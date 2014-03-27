@@ -2,10 +2,10 @@
 #
 # cs_show_error_patterns
 #
-# (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.2 2013-02-13
+# Version: 0.2 2014-03-27
 #
 
 EXE="$0"
@@ -117,6 +117,7 @@ test -z "${ERROR_PATTERN}" &&\
 "VCS.CRITICAL"
 "vxvm.*volume.*not"
 "Hangcheck.*clock"
+"pagecache.limit.set"
 "
 # TODO: separate variable for application patterns (annot.open..rofile" ... "Hangcheck.*clock"
 # TODO: raid.set.*active.with.2.out.of.2.mirrors ?

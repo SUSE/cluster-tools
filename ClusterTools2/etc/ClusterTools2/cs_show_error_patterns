@@ -89,6 +89,7 @@ ERROR_PATTERN="
 "VCS.CRITICAL"
 "vxvm.*volume.*not"
 "Hangcheck.*clock"
+"pagecache.limit.set"
 "
 #
 CLUERR_PATTERN="

@@ -417,10 +417,11 @@ sensors
 "
 #
 HANA_SUSE_PGK_YES="
-xfsprogs
+rear
 sysstat
 supportutils
 sapconf
+xfsprogs
 "
 #
 HANA_VERS_MIN="

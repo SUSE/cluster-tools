@@ -951,10 +951,11 @@ sensors
 
 	test -z "${HANA_SUSE_PKG_YES}" &&\
 HANA_SUSE_PKG_YES="
-xfsprogs
+rear
 sysstat
 supportutils
 sapconf
+xfsprogs
 "
 
 	FIL="rpm.txt"

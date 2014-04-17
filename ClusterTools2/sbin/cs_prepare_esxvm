@@ -5,7 +5,7 @@
 # (c) 2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2014-03-19 09:10
+# Version: 2014-04-17 14:10
 #
 
 EXE=${0}
@@ -16,19 +16,19 @@ test -s $CFG && source $CFG
 TMP="/tmp/$RANDOM"
 ERR="/dev/null"
 SFX=$(basename $EXE)
+
 test -z "${BAK}" &&\
 	BAK="/var/adm/backup/${SFX}-$(date +%Y%m%d-%H%M%S)"
-
-
-# TODO use configfile
-SRVC_OK="
+test -z "${SRVC_OK}" &&\
+	SRVC_OK="
 ntp
 sshd
 boot.sysstat
 vmware-tools
 "
 # TODO vmware-tools?
-SRVC_NO="
+test -z "${SRVC_NO}" &&\
+	SRVC_NO="
 boot.multipath
 multipathd
 microcode.ctl
@@ -47,14 +47,15 @@ auditd
 SuSEfirewall2_setup
 SuSEfirewall2_init
 "
-
-RLVL_OK="3"
-
-PTRN_OK="
+test -z "${RLVL_OK}" &&\
+	RLVL_OK="3"
+test -z "${PTRN_OK}" &&\
+	PTRN_OK="
 Minimal
 base
 "
-PTRN_NO="
+test -z "${PTRN_NO}" &&\
+	PTRN_NO="
 apparmor
 gnome
 kde
@@ -63,12 +64,13 @@ Dom0_KVM
 kvm_server
 xen_server
 "
-
 # TODO with and w/o cluster
-PCKG_OK="
+test -z "${PCKG_OK}" &&\
+	PCKG_OK="
 sysstat
 "
-PCLT_OK="
+test -z "${PCLT_OK}" &&\
+	PCLT_OK="
 corosync
 cluster-glue
 crmsh
@@ -91,13 +93,15 @@ drbd-udev
 drbd-bash-completion
 sbd
 "
-PCKG_NO="
+test -z "${PCKG_NO}" &&\
+	PCKG_NO="
 "
-
-ELVT_OK="noop"
-ELVT_NO="deadline"
-
-SYCT_OK="
+test -z "${ELVT_OK}" &&\
+	ELVT_OK="noop"
+test -z "${ELVT_NO}" &&\
+	ELVT_NO="cfq"
+test -z "${SYCT_OK}" &&\
+	SYCT_OK="
 vm.swappiness=40
 vm.dirty_bytes=1073741824
 vm.dirty_background_bytes=134217728
@@ -108,9 +112,9 @@ vm.zone_reclaim_mode=0
 
 
 function ntpconf() {
+ case $1 in
+ apply)
 	# TODO error handling, useful rerturn codes $RC
-	# TODO check
-
 	FIL="/etc/ntp.conf"
 	cp -a $FIL ${FIL}.$SFX || exit 1
 	# TODO
@@ -121,13 +125,33 @@ EOF
 	sed -e s/^server.127.127.1.0//g -e s/^fudge.127.127.1.0//g <${FIL}.$SFX >>$FIL
 
 	/etc/init.d/ntp restart
+	/sbin/chkconfig on
+ ;;
+ list)
+	echo "=== $FUNCNAME ==="
+
+	FIL="/etc/ntp.conf"
+	echo -n "chkconfig: "
+	/sbin/chkconfig ntp
+	echo
+	/etc/init.d/ntp status
+	echo
+	/usr/sbin/ntpq -p
+	echo
+	echo "$FIL:"
+	grep -v "^#" $FIL | tr -s "\n"
+	echo
+ ;;
+ esac
 }
 
 
 function elevator() {
+ case $1 in
+ apply)
 	# TODO $RC
-	# TODO check
-	
+	# TODO also look into udev rules	
+
 	FIL="/etc/sysconfig/bootloader"
 	cp -a $FIL ${FIL}.$SFX || exit 1
 	sed s/showopts\"$/showopts\ elevator=noop\ cgroup_disable=memory\"/ <${FIL}.$SFX >$FIL
@@ -137,41 +161,87 @@ function elevator() {
 	sed s/showopts\ vga=/showopts\ elevator=noop\ cgroup_disable=memory\ vga=/ <${FIL}.$SFX >$FIL
 
 	find /sys -name "scheduler" | while read; do echo noop >$REPLY; done
+ ;;
+ list)
+	echo "=== $FUNCNAME ==="
+	
+	FIL="/etc/sysconfig/bootloader"
+	echo "$FIL:"
+	grep "DEFAULT_APPEND=" $FIL
+	echo
+
+	FIL="/boot/grub/menu.lst"
+	echo "$FIL:"
+	grep showopts $FIL | grep -v x11failsafe | grep -v "vmlinuz.*xen"
+	echo
+	find /sys -name "scheduler" | while read; do echo -n "$REPLY: "; cat $REPLY; done | grep -v "none$"
+	echo
+ ;;
+ esac
 }
 
 
 function inittab() {
+ case $1 in
+ apply)
 	# TODO $RC
-	# TODO check
-
 	FIL="/etc/inittab"
-	runlevel >/root/runlevel.$SFX
+	/sbin/runlevel >/root/runlevel.$SFX
 	cp -a $FIL ${FIL}.$SFX || exit 1
 	sed s/^id:.:initdefault:/id:${RLVL_OK}:initdefault:/ <${FIL}.$SFX >$FIL 
 
-	telinit ${RLVL_OK}
+	/sbin/telinit ${RLVL_OK}
+ ;;
+ list)
+	echo "=== $FUNCNAME ==="
+
+	FIL="/etc/inittab"
+
+	echo -n "runlevel: "
+	/sbin/runlevel
+	echo	
+	echo "$FIL:"
+	grep "^id:.:" $FIL
+	echo
+ ;;
+ esac
 }
 
 
 function services() {
 	# TODO $RC
-	# TODO check
-
-	chkconfig -A >/root/chkconfig-a.$SFX || exit 1
+ case $1 in
+ apply)
+	/sbin/chkconfig -A >/root/chkconfig-a.$SFX || exit 1
 	for f in $SRVC_NO; do
-		chkconfig $f off
+		/sbin/chkconfig $f off
 		/etc/init.d/$f stop
 	done
 	for f in $SRVC_OK; do
-		chkconfig $f on
+		/sbin/chkconfig $f on
 		/etc/init.d/$f start
 	done
+ ;;
+ list)
+	echo "=== $FUNCNAME ==="
+
+	for f in $SRVC_NO; do
+                /sbin/chkconfig $f
+        done
+	echo
+	for f in $SRVC_OK; do
+                /sbin/chkconfig $f
+        done
+	echo
+ ;;
+ esac
 }
 
 
 function syscontr() {
+ case $1 in
+ apply)
 	# TODO $RC
-	# TODO check
 
 	/sbin/sysctl -e -a >/root/sysctl-a.$SFX 2>$ERR
 
@@ -197,6 +267,21 @@ EOF
 		grep -v "vm.swappiness" >>$FIL
 
 	/sbin/sysctl -e -p $FIL 2>$ERR 1>&2
+ ;;
+ list)
+	echo "=== $FUNCNAME ==="
+
+	FIL="/etc/sysctl.conf"
+	for f in $SYCT_OK ; do
+		S=$( echo $f | awk -F= '{print $1}' )
+		/sbin/sysctl $S
+	done
+	echo
+	echo "$FIL:"
+	grep -v "^#" $FIL
+	echo
+ ;;
+ esac
 }
 
 
@@ -206,12 +291,14 @@ function patterns() {
 
 	zypper se -t pattern | grep "^i" >/root/zypper-se-tpattern.$SFX || exit 1
 	for f in $PTRN_OK; do
-		zypper in -t pattern $f 
+			zypper in -t pattern $f 
 	done
 }
 
 
 function packages() {
+ case $1 in
+ apply)
 	# TODO $RC
 	# TODO check
 	rpm -qa >/root/rpm-qa.$SFX || exit 1
@@ -219,6 +306,13 @@ function packages() {
 	# TODO -y ?
 	zypper -q -n --no-gpg-checks in -l --no-recommends $PCKG_OK
 	zypper -q -n --no-gpg-checks in -l --no-recommends $PCLT_OK
+ ;;
+ list)
+	echo "=== $FUNCNAME ==="
+	zypper se $PCKG_OK 2>$ERR #| grep "|.package$" 
+	zypper se $PCLT_OK 2>$ERR #| grep "|.package$"
+ ;;
+ esac
 }
 
 
@@ -229,7 +323,7 @@ function backup() {
 	cd $TMP || exit 1
 
 	/sbin/sysctl -e -a >${TMP}/sysctl-a.$SFX 2>$ERR
-	runlevel >${TMP}/runlevel.$SFX
+	/sbin/runlevel >${TMP}/runlevel.$SFX
 	rpm -qa >${TMP}/rpm-qa.$SFX
 	zypper se -t pattern | grep "^i" >${TMP}/zypper-se-tpattern.$SFX
 	cp -a /boot/grub/menu.lst ${TMP}/
@@ -256,7 +350,7 @@ function help() {
 	echo "usage: $(basename $0) [OPTION]"
 	echo
 	echo " --save		save current settings, call first of all"
-	echo " --list		list current settings (not implemented yet)"
+	echo " --list		list current settings, not fully implemented"
 	echo " --preview	preview recommended settings"
 	echo " --apply	apply recommended settings, call only once"
 	echo " --help		show help"
@@ -277,22 +371,27 @@ case $1 in
 	;;
 	-a|--apply)
 		# TODO select functions
-
-		packages
-		ntpconf
-		inittab	
-		services
-		elevator
-		syscontr
+		packages apply
+		ntpconf apply
+		inittab apply	
+		services apply
+		elevator apply
+		syscontr apply
+	;;
+	-l|--list)
+		packages list
+		ntpconf list 
+		inittab list
+		services list
+		elevator list
+		syscontr list
 	;;
 	-s|save)
 		backup
 	;;
-	-l|--list)
-		echo "not implemented yet"
-	;;
 	-p|preview)
 		# TODO hardcoded settings?
+		echo
 		#echo "patterns:	$PTRN_OK"
 		echo "packages:	$PCKG_OK"
 		echo "inittab:	$RLVL_OK"
@@ -304,12 +403,12 @@ case $1 in
 		echo "syscontr: $SYCT_OK"
 	;;
 	-t|--test)
-		#packages	
-		#ntpconf
-		#runlevel
-		#services
-		#elevator
-		#syscontr
+		packages list	
+		#ntpconf list
+		#inittab list
+		#services list
+		#elevator list
+		#syscontr list
 	;;
 	*)
 		help

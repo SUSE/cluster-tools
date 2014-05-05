@@ -308,7 +308,12 @@ case $1 in
 	cd $TMP
 	# outputs looks like sam-20140505-12:43.report
 	FIL="cs_sam.report"
-	sam >$FIL 2>$ERR
+	SOPT="--no-rpm-verify --no-rpm-verify-md5 --skip-unmatched-prod"	
+	# TODO sam how to handle user input prompt?
+	# TODO sam Packages not created by SUSE/Novell:
+	# TODO sam Unsupported SUSE/Novell packages:
+	# TODO sam Unsatisfied dependencies:
+	sam $SOPT >$FIL 2>$ERR
 	awk '$1=="Product:"{print "prod:"$2,"vers:"$3,"sp:"$4,"arch:"$5}
 		$1=="Baseproduct:"{print "base_prod:"$2}' $FIL 
 	# TODO base products

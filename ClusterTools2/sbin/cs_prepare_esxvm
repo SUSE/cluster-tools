@@ -5,7 +5,7 @@
 # (c) 2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2014-04-17 14:10
+# Version: 2014-05-05 12:35
 #
 
 EXE=${0}
@@ -49,6 +49,15 @@ SuSEfirewall2_init
 "
 test -z "${RLVL_OK}" &&\
 	RLVL_OK="3"
+# TODO SLES for SAP?
+test -z "${PROD_OK}" &&\
+	PROD_OK="
+SUSE_SLES
+"
+# TODO SLES for VMware?
+test -z "${PROD_NO}" &&\
+	PROD_NO="
+"
 test -z "${PTRN_OK}" &&\
 	PTRN_OK="
 Minimal
@@ -64,10 +73,11 @@ Dom0_KVM
 kvm_server
 xen_server
 "
-# TODO with and w/o cluster
 test -z "${PCKG_OK}" &&\
 	PCKG_OK="
 sysstat
+kernel-default-base
+kernel-default
 "
 test -z "${PCLT_OK}" &&\
 	PCLT_OK="
@@ -92,7 +102,9 @@ drbd-utils
 drbd-udev
 drbd-bash-completion
 sbd
+ClusterTools2
 "
+# TODO with and w/o cluster
 test -z "${PCKG_NO}" &&\
 	PCKG_NO="
 "
@@ -285,6 +297,29 @@ EOF
 }
 
 
+function products() {
+case $1 in
+ apply)
+	echo nop
+ ;;
+ list)
+	echo "=== $FUNCNAME ==="
+	mkdir $TMP || exit 1
+	cd $TMP
+	# outputs looks like sam-20140505-12:43.report
+	FIL="cs_sam.report"
+	sam >$FIL 2>$ERR
+	awk '$1=="Product:"{print "prod:"$2,"vers:"$3,"sp:"$4,"arch:"$5}
+		$1=="Baseproduct:"{print "base_prod:"$2}' $FIL 
+	# TODO base products
+	# TODO add-on products
+	cd $OLDPWD || exit 2
+	rm -rf $TMP
+ ;;
+esac
+}
+
+
 function patterns() {
 	# TODO $RC
 	# TODO check
@@ -371,6 +406,7 @@ case $1 in
 	;;
 	-a|--apply)
 		# TODO select functions
+		# Makes no sense: products apply
 		packages apply
 		ntpconf apply
 		inittab apply	
@@ -379,6 +415,7 @@ case $1 in
 		syscontr apply
 	;;
 	-l|--list)
+		products list
 		packages list
 		ntpconf list 
 		inittab list
@@ -403,7 +440,8 @@ case $1 in
 		echo "syscontr: $SYCT_OK"
 	;;
 	-t|--test)
-		packages list	
+		products list
+		#packages list	
 		#ntpconf list
 		#inittab list
 		#services list

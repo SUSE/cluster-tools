@@ -49,6 +49,8 @@ xen_server
 #
 PCKG_OK="
 sysstat
+kernel-default-base
+kernel-default
 "
 #
 PCLT_OK="
@@ -73,6 +75,7 @@ drbd-utils
 drbd-udev
 drbd-bash-completion
 sbd
+ClusterTools2
 "
 #
 PCKG_NO=""

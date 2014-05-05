@@ -298,7 +298,7 @@ EOF
 
 
 function products() {
-case $1 in
+ case $1 in
  apply)
 	echo nop
  ;;
@@ -310,22 +310,23 @@ case $1 in
 	FIL="cs_sam.report"
 	SOPT="--no-rpm-verify --no-rpm-verify-md5 --skip-unmatched-prod"	
 	# TODO sam how to handle user input prompt?
-	# TODO sam Packages not created by SUSE/Novell:
-	# TODO sam Unsupported SUSE/Novell packages:
 	# TODO sam Unsatisfied dependencies:
 	sam $SOPT >$FIL 2>$ERR
-	awk '$1=="Product:"{print "prod:"$2,"vers:"$3,"sp:"$4,"arch:"$5}
-		$1=="Baseproduct:"{print "base_prod:"$2}' $FIL 
-	# TODO base products
+	awk '$1=="Product:"{print "prod: "$2,"vers: "$3,"sp: "$4,"arch: "$6}
+		$1=="Baseproduct:"{print "base_prod: "$2}
+		$1=="Packages"&&$2=="not" {print "3rd-party: "$6} 
+		$1=="Unsupported"&&$2=="SUSE/Novell" {print "unsupported: "$4}' $FIL 
 	# TODO add-on products
-	cd $OLDPWD || exit 2
+	cd $OLDPWD || exit 1 
 	rm -rf $TMP
  ;;
-esac
+ esac
 }
 
 
 function patterns() {
+ case $1 in
+ apply)
 	# TODO $RC
 	# TODO check
 
@@ -333,6 +334,12 @@ function patterns() {
 	for f in $PTRN_OK; do
 			zypper in -t pattern $f 
 	done
+ ;;
+ list)
+	echo "=== $FUNCNAME ==="
+	zypper se -t pattern | grep "^i"
+ ;;
+ esac
 }
 
 
@@ -377,12 +384,20 @@ function backup() {
 
 
 function hardware() {
+ case $1 in
+ apply)
+	echo nop
+ ;;
+ list)
+	echo "=== $FUNCNAME ==="
 	# TODO check vmxnet3, pvscsi, memcrtl
 	# TODO check hwinfo for PV hardware and VMware BIOS
 	# TODO check modules.d/*
 	# TODO check NUMA topology, CPU count, RAM size
 	# TODO LUNs visible, to decide if pvscsi useful or not? 
 	echo "not implemented yet"
+ ;;
+ esac
 }
 
 
@@ -412,6 +427,7 @@ case $1 in
 	-a|--apply)
 		# TODO select functions
 		# Makes no sense: products apply
+		# patterns apply?
 		packages apply
 		ntpconf apply
 		inittab apply	
@@ -421,6 +437,7 @@ case $1 in
 	;;
 	-l|--list)
 		products list
+		# patterns list
 		packages list
 		ntpconf list 
 		inittab list
@@ -434,6 +451,7 @@ case $1 in
 	-p|preview)
 		# TODO hardcoded settings?
 		echo
+		#echo "patterns:        $PROD_OK"
 		#echo "patterns:	$PTRN_OK"
 		echo "packages:	$PCKG_OK"
 		echo "inittab:	$RLVL_OK"
@@ -446,6 +464,7 @@ case $1 in
 	;;
 	-t|--test)
 		products list
+		#patterns list
 		#packages list	
 		#ntpconf list
 		#inittab list

@@ -1,4 +1,4 @@
-.TH cs_prepare_esxvm 8 "26 Mar 2014" "" "ClusterTools2"
+.TH cs_prepare_esxvm 8 "05 May 2014" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_prepare_esxvm \- prepare or check guest OS settings in ESX VMs 
@@ -12,7 +12,7 @@ cs_prepare_esxvm \- prepare or check guest OS settings in ESX VMs
 \fBcs_prepare_esxvm\fP applies configuration settings in order to optimise a
 (SUSE) Linux operating system as guest inside an ESX VM.   
 Settings and checks are done according to the best practices described in
-several SUSE TIDs and VMware knowlegdebase articles.
+several SUSE TIDs and VMware knowlegde base articles.
 .\"
 .SH OPTIONS
 Global options are:
@@ -27,7 +27,7 @@ Global options are:
 	save current settings, call first of all.
 .HP
 \fB --list\fR
-	list current settings (not implemented yet).
+	list current settings (only partly implemented yet).
 .HP
 \fB --preview\fR
 	preview recommended settings.
@@ -67,6 +67,7 @@ show most of the settings that would be applied.
 .SH BUGS
 This script could apply changes only once on each VM.
 The preview does not show all changes.
+The preview needs all activated software repositories online.
 Feedback is welcome, please use the project page at
 .br
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel

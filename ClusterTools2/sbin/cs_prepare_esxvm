@@ -120,7 +120,34 @@ vm.dirty_background_bytes=134217728
 vm.zone_reclaim_mode=0
 "
 
-# TODO /etc/fstab noatime,data=writeback, tune2fs -c0 -i0, show inode density
+
+function filesystem() {
+
+ # TODO /etc/fstab noatime,data=writeback
+ # TODO tune2fs -c0 -i0, show inode density
+ # TODO xfs, ocfs2
+
+ case $1 in
+ apply)
+	echo nop
+ ;;
+ list)
+	echo "=== $FUNCNAME ==="
+
+	FIL="/etc/fstab"
+	grep -v "^#" $FIL
+
+	mount | awk '{print $1}' | while read; do
+		echo $REPLY
+		tune2fs -l $REPLY 2>$ERR |\
+		awk '$1/Block size:/ || $1/Maximum mount count:/ || $1/Check interval:/ || $1/Filesystem features:/ || $1~/Filesystem flags:/ || $1~/Block count:/'
+	done
+
+	# TODO autofs
+ 
+ ;;
+ esac
+}
 
 
 function ntpconf() {

@@ -5,7 +5,7 @@
 # (c) 2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2014-05-05 12:35
+# Version: 2014-05-08 14:17
 #
 
 EXE=${0}
@@ -122,29 +122,32 @@ vm.zone_reclaim_mode=0
 
 
 function filesystem() {
-
- # TODO /etc/fstab noatime,data=writeback
- # TODO tune2fs -c0 -i0, show inode density
- # TODO xfs, ocfs2
-
  case $1 in
  apply)
+	# TODO /etc/fstab noatime,data=writeback
+	# TODO tune2fs -c0 -i0
+	# TODO xfs, ocfs2
+
 	echo nop
  ;;
  list)
+	# TODO xfs, ocfs2
+
 	echo "=== $FUNCNAME ==="
 
-	FIL="/etc/fstab"
-	grep -v "^#" $FIL
-
-	mount | awk '{print $1}' | while read; do
-		echo $REPLY
-		tune2fs -l $REPLY 2>$ERR |\
-		awk '$1/Block size:/ || $1/Maximum mount count:/ || $1/Check interval:/ || $1/Filesystem features:/ || $1~/Filesystem flags:/ || $1~/Block count:/'
-	done
+	echo
+	grep -v "^#" /etc/fstab
 
 	# TODO autofs
- 
+	# echo
+	# grep -v "^#" /etc/auto.*
+	echo
+	mount | awk '{print $1}' | while read; do
+		echo -e "\n$REPLY"
+		tune2fs -l $REPLY 2>$ERR |\
+		awk '( $0~/Block size:/ || $0~/Maximum mount count:/ || $0~/Check interval:/ || $0~/Filesystem features:/ || $0~/Filesystem flags:/ || $0~/Block count:/ || $0~/Inode count:/ ) { print }'
+	done 
+	# TODO hide pseudo filesystems
  ;;
  esac
 }
@@ -460,6 +463,7 @@ case $1 in
 		inittab apply	
 		services apply
 		elevator apply
+		# TODO filesystem apply
 		syscontr apply
 	;;
 	-l|--list)
@@ -470,6 +474,7 @@ case $1 in
 		inittab list
 		services list
 		elevator list
+		# TODO filesystem list
 		syscontr list
 	;;
 	-s|save)
@@ -486,17 +491,19 @@ case $1 in
 		echo "services:	$SRVC_OK"
 		echo "services_NOT:	$SRVC_NO"
 		echo "elevator:	$ELVT_OK"
+		# TODO filesystem
 		echo
 		echo "syscontr: $SYCT_OK"
 	;;
 	-t|--test)
-		products list
+		#products list
 		#patterns list
 		#packages list	
 		#ntpconf list
 		#inittab list
 		#services list
 		#elevator list
+		filesystem list
 		#syscontr list
 	;;
 	*)

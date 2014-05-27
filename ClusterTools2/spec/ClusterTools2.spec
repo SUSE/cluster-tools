@@ -71,7 +71,7 @@ mkdir -p %{buildroot}/usr/share/ClusterTools2/cli
 mkdir -p %{buildroot}/usr/share/ClusterTools2/samples
 mkdir -p %{buildroot}/usr/lib/ClusterTools2
 mkdir -p %{buildroot}/usr/lib/ClusterTools2/agents
-mkdir -p %{buildroot}/usr/lib/ClusterTools2/check
+#mkdir -p %{buildroot}/usr/lib/ClusterTools2/check
 mkdir -p %{buildroot}/usr/lib/ClusterTools2/scripts
 mkdir -p %{buildroot}/usr/share/man/man5
 mkdir -p %{buildroot}/usr/share/man/man7
@@ -94,9 +94,10 @@ cp -va etc/logrotate.d/* %{buildroot}/etc/logrotate.d/
 #
 cp -a share/* %{buildroot}/usr/share/ClusterTools2/
 cp -a cli/* %{buildroot}/usr/share/ClusterTools2/cli/
+chmod 0755 samples/*.pl 
 cp -a samples/* %{buildroot}/usr/share/ClusterTools2/samples/
 cp -a lib/* %{buildroot}/usr/lib/ClusterTools2/
-cp -a lib/check/* %{buildroot}/usr/lib/ClusterTools2/check
+#cp -a lib/check/* %{buildroot}/usr/lib/ClusterTools2/check
 cp -a agents/* %{buildroot}/usr/lib/ClusterTools2/agents/
 cp -a scripts/* %{buildroot}/usr/lib/ClusterTools2/scripts
 #

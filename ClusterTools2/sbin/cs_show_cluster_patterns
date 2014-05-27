@@ -2,10 +2,10 @@
 #
 # cs_show_cluster_patterns
 #
-# (c) 2011-2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.1 2013-02-25
+# Version: 0.1 2014-05-27
 #
 
 EXE="$0"
@@ -113,6 +113,7 @@ test -z "${RESRC_PATTERN}" &&\
 "Expected.*instance.*profile"
 "Expected.DIR_PROFILE.parameter"
 "SAP.*Unauthorized"
+"SAPHana.*RA.*rc="
 "eDirectory.*failed.*stop"
 "eDirectory.*not.*configured"
 "eDir.configuration.error"

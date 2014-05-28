@@ -15,7 +15,7 @@ test -s $CFG && source $CFG
 
 test -z "/etc/corosync/corosync.conf" &&\
 test -z "${CLUSTER_LOG}" &&\
-	 CLUSTER_LOG=$(grep "logfile:.*/" /etc/corosync/corosync.conf |\
+	 CLUSTER_LOG=$(grep "^[^#]*logfile:.*/" /etc/corosync/corosync.conf |\
 		 tr -d "    " | cut -d":" -f2)
 test -z "${CLUSTER_LOG}" &&\
 	 CLUSTER_LOG="/var/log/messages"
@@ -145,7 +145,7 @@ function run_grep_show() {
 	echo "logs: $LOG" >/dev/stderr
 
         # TODO: more efficient loop
-	for e in ${CLUSTR_PATTERN}; do
+	for e in ${OSERR_PATTERN} ${CLUSTR_PATTERN} ${RESRC_PATTERN}; do
 		for f in ${LOG}; do
 			test -r $f && cat $f
 		done | grep -i $e

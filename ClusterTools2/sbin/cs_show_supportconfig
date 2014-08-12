@@ -5,7 +5,7 @@
 # (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.02 2014-03-27
+# Version: 0.02 2014-08-09
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -854,8 +854,8 @@ function chk_sap(){
 	split_file $FIL
 	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		awk '$2=="sapstartsrv" || $2=="sapstart" || $2~/ms\.sap/ || $2~/en\.sap/  || $2~/ig\.sap/ || $2=="igsmux_mt" || $2=="igspw_mt" || $2=="gwrd" || $2=="icman" {print}' $f | sort -u
-		awk '$8~/sapstart/ || $8~/disp\+work/ || $8~/igswd_mt/ || $8~/igspw_mt/ || $8~/igsmux_mt/ || $8~/gwrd/ || $8~/icman/ || $8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ || $8~/dw_/  {print $8}' $f | sort -u
+		awk '$2=="sapstartsrv" || $2=="sapstart" || $2~/ms\.sap/ || $2~/en\.sap/  || $2~/ig\.sap/ || $2=="igsmux_mt" || $2=="igspw_mt" || $2=="gwrd" || $2=="icman" || $2~/jc\.sap/ || $2=="jstart" {print}' $f | sort -u
+		awk '$8~/sapstart/ || $8~/disp\+work/ || $8~/igswd_mt/ || $8~/igspw_mt/ || $8~/igsmux_mt/ || $8~/gwrd/ || $8~/icman/ || $8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ || $8~/dw_/ || $8~/jstart/  {print $8}' $f | sort -u
 	echo
 
 # TODO 1310037   SUSE LINUX Enterprise Server 11: Installation notes?

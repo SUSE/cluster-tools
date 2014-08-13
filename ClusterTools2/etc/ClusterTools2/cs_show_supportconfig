@@ -37,6 +37,7 @@ acquirewdt.ko
 softdog.ko
 vmwatchdog.ko
 alim7101_wdt.ko
+iomemory-vsl.ko
 "
 #
 NIC_PTRN="
@@ -422,6 +423,13 @@ sysstat
 supportutils
 sapconf
 xfsprogs
+xfsdump
+fio-util
+fio-common
+fio-sysvinit
+libvsl
+iomemory-vsl
+fio-firmware-highiops
 "
 #
 HANA_VERS_MIN="

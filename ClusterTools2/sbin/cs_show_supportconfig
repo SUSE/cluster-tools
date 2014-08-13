@@ -218,7 +218,6 @@ function chk_memory(){
 
 	# TODO page cache, anonymous
 	# TODO paging rate, swapspace usage, biggest process?
-	# TODO transparent hugepage
 	# TODO static hugepage
 	# TODO tmpfs, w/ or w/o hugepage
 	# TODO kernel boot cmdline cgroup..., transparent_hugepage=
@@ -239,7 +238,6 @@ function chk_memory(){
 	# TODO what else?
 	test -z "${MEM_VMSTAT}" &&\
 MEM_VMSTAT="
-numa_miss
 nr_anon_transparent_hugepages
 thp_collapse_alloc_failed
 "
@@ -253,6 +251,9 @@ thp_collapse_alloc_failed
 	# TODO what else?
 	test -z "${MEM_SYSCTL}" &&\
 MEM_SYSCTL="
+kernel.shmall
+kernel.shmmax
+kernel.shmmni
 vm.overcommit_memory
 vm.overcommit_ratio
 vm.dirty_background_ratio
@@ -264,6 +265,7 @@ vm.pagecache_limit_mb
 vm.pagecache_limit_ignore_dirty
 vm.nr_hugepages
 vm.nr_hugepages_mempolicy
+vm.max_map_count
 vm.hugetlb_shm_group
 vm.hugepages_treat_as_movable
 vm.nr_overcommit_hugepages
@@ -322,7 +324,7 @@ function chk_numa(){
 	# TODO what else?
 	f=$(grep -l "^# /sbin/sysctl -a 2>/dev/null | grep ^vm$" ${TMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		grep -e "vm.zone_reclaim_mode" -e "numa"  $f
+		grep -e "vm.zone_reclaim_mode" -e "vm.numa_zonelist_order"  $f
 	echo
 }
 

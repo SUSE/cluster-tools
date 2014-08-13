@@ -198,7 +198,6 @@ vm.dirty_bytes
 vm.swappiness
 vm.pagecache_limit_mb
 vm.pagecache_limit_ignore_dirty
-vm.nr_hugepages
 vm.nr_hugepages_mempolicy
 vm.max_map_count
 vm.hugetlb_shm_group

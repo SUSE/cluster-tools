@@ -915,6 +915,7 @@ xendomains
 		test -r $f && grep -v "^#" $f | tr -s "\n"
 	done
 	echo
+	# TODO sysfs.txt: # /usr/bin/systool -vb scsi; Device path = "/sys/devices"; timeout             = "180" 
 }
 
 

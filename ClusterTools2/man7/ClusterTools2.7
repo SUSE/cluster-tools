@@ -1,4 +1,4 @@
-.TH ClusterTools2 7 "06 Mar 2011" "" "ClusterTools2"
+.TH ClusterTools2 7 "12 Aug 2014" "" "ClusterTools2"
 .\"
 .SH NAME
 ClusterTools2 \- Tools for setting up and managing pacemaker HA clusters
@@ -9,12 +9,12 @@ The tools are aimed to make tasks easy around the pacemaker HA cluster manager a
 storage stack.
 
 Main command for managing a running cluster is \fBClusterService\fP. This ASCII-terminal based
-menu system allows to perform common administrative tasks. It can be used instead of hb_gui if
-no X desktop is available.
+menu system allows to perform common administrative tasks. It can be used instead of crm_gui or
+Hawk if no webservice and no X desktop is available.
 
-Tools like \fBlist_failcounts\fP and \fBcluster_actions\fP help to analyse the cluster behaviour.
-A set of tools based on \fBwow\fP allows to make configuration of clusters reproduceable and
-efficiant.
+Tools like \fBcs_list_failcounts\fP and \fBcs_show_cluster_transistion\fP help to analyse the
+cluster behaviour. A set of tools based on \fBwow\fP allows to make configuration of clusters
+reproduceable and efficiant.
 
 Currently the tools are mainly used to setup and manage high-availability cluster for following 
 workloads:
@@ -24,8 +24,6 @@ workloads:
 - XEN virtual machine hosts
 
 - Novell eDirectory servers
-
-- Novell ZENworks Linux Management servers
 
 - NFS file servers
 
@@ -40,7 +38,7 @@ add configuration for a resource of type Novell eDirectory to the cluster.
 Use configuration agent 01-A-07-group_add_ndsd.
 Read information about the resource from file edir01.wow .
 .TP
-# whbsaprecheck --all sap_C11.wow >precheck-sap_C11-$HOST
+# cs_precheck_for_sap --all sap_C11.wow >precheck-sap_C11-$HOST
 check for allmost all pre-requistes that are needed to set up an HA cluster for SAP instance C11. 
 Read information about the needed resources from file sap_C11.wow . Write output into file precheck-sap_C11-<hostname>. 
 .TP
@@ -78,13 +76,13 @@ Feedback is welcome, please use the project page at
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
 .\"
 .SH SEE ALSO
-\fBwow\fP(8), \fBmake_hb_backup\fP(8), \fBwhbsaprecheck\fP(8), \fBClusterService\fP(8),
-\fBlist_failcounts\fP(8), \fBcluster_actions\fP(8), \fBcheck_split_brain\fP(8),
-\fBclusterstate\fP(8), \fBlinkstate\fP(8), \fBreset_failcounts\fP(8), \fBshowscores\fP(8),
-\fBsleha_cleanup\fP(8), \fBgrep_error_patterns\fP(8),
-\fBmenueng2\fP(8), \fBmenueng2\fP(5).
+\fBwow\fP(8), \fBmake_hb_backup\fP(8), \fBcs_precheck_for_sap\fP(8), \fBClusterService\fP(8),
+\fBcs_list_failcounts\fP(8), \fBcs_show_cluster_transition\fP(8), \fccs_clusterstate\fP(8),
+\fBcs_reset_failcounts\fP(8), \fBcs_show_scores\fP(8), \fBcs_delcib\fP(8),
+\fBcs_show_error_patterns\fP(8), \fBcs_show_supportconfig\fP(8), \fBmenueng2\fP(8),
+\fBmenueng2\fP(5).
 .br
-http://www.novell.com/documentation/sle_ha/ , http://www.clusterlabs.org/
+http://www.novell.com/documentation/sle_ha/ , http://clusterlabs.org/wiki/Main_Page
 .\"
 .SH AUTHORS
 M.Guertler, F.Herschel, L.Pinne

@@ -5,7 +5,7 @@
 # (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.02 2014-08-09
+# Version: 0.02 2014-08-12
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -208,6 +208,121 @@ iomemory-vsl.ko
 	echo -n "process on watchdog : "
         awk '$9=="/dev/watchdog" {print $1,$9}' open-files.txt
 	echo
+	echo
+}
+
+
+function chk_memory(){
+
+	echo_msgsep $FUNCNAME
+
+	# TODO page cache, anonymous
+	# TODO paging rate, swapspace usage, biggest process?
+	# TODO transparent hugepage
+	# TODO static hugepage
+	# TODO tmpfs, w/ or w/o hugepage
+	# TODO kernel boot cmdline cgroup..., transparent_hugepage=
+	# TODO env.txt ...?
+	# TODO memory.txt: slabinfo?
+
+	FIL="memory.txt"
+	split_file $FIL
+	echo
+	f=$(grep -l "^# /usr/bin/free -k$" ${TMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -vh "^#==..Co.*==#" $f
+	f=$(grep -l "^# /proc/meminfo$" ${TMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -vh "^#==..Co.*==#" $f
+
+	echo "# /proc/vmstat"
+	# TODO what else?
+	test -z "${MEM_VMSTAT}" &&\
+MEM_VMSTAT="
+numa_miss
+nr_anon_transparent_hugepages
+thp_collapse_alloc_failed
+"
+	f=$(grep -l "^# /proc/vmstat$" ${TMP}/${FIL}/xx*)
+	test -z "$f" ||\
+	for m in $MEM_VMSTAT; do
+		grep $m $f
+	done
+	echo
+	echo "# /sbin/sysctl -a"
+	# TODO what else?
+	test -z "${MEM_SYSCTL}" &&\
+MEM_SYSCTL="
+vm.overcommit_memory
+vm.overcommit_ratio
+vm.dirty_background_ratio
+vm.dirty_background_bytes
+vm.dirty_ratio
+vm.dirty_bytes
+vm.swappiness
+vm.pagecache_limit_mb
+vm.pagecache_limit_ignore_dirty
+vm.nr_hugepages
+vm.nr_hugepages_mempolicy
+vm.hugetlb_shm_group
+vm.hugepages_treat_as_movable
+vm.nr_overcommit_hugepages
+vm.lowmem_reserve_ratio
+vm.drop_caches
+vm.min_free_kbytes
+vm.vfs_cache_pressure
+vm.memory_failure_early_kill
+"
+	f=$(grep -l "^# /sbin/sysctl -a 2>/dev/null | grep ^vm$" ${TMP}/${FIL}/xx*)
+	test -z "$f" ||\
+	for m in $MEM_SYSCTL; do
+		grep $m $f
+	done
+	echo
+	f=$(grep -l "^# /sys/kernel/mm/transparent_hugepage/enabled$" ${TMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -vh "^#==..Co.*==#" $f | tr -s "\n"
+	f=$(grep -l "^# /sys/kernel/mm/transparent_hugepage/defrag$" ${TMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -vh "^#==..Co.*==#" $f | tr -s "\n"
+	echo	
+	FIL="basic-health-check.txt"
+	echo "# tmpfs:"
+	echo "   Size  Used  Avail  Use%  Mount"
+	echo "   Inodes  IUsed  IFree  IUse%  Mount"
+	grep "^tmpfs" $FIL | tr -s " "
+	echo
+}
+
+
+function chk_numa(){
+
+	echo_msgsep $FUNCNAME
+
+	FIL="memory.txt"
+	split_file $FIL
+	echo
+	f=$(grep -l "^# /usr/bin/numactl --hardware$" ${TMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -vh "^#==..Co.*==#" $f
+# TODO buddyinfo needed?
+#	f=$(grep -l "^# /proc/buddyinfo$" ${TMP}/${FIL}/xx*)
+#	test -z "$f" ||\
+#		grep -vh "^#==..Co.*==#" $f
+	f=$(grep -l "^# /usr/bin/numastat$" ${TMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -vh "^#==..Co.*==#" $f
+	echo "# /proc/vmstat"
+	# TODO what else?
+	f=$(grep -l "^# /proc/vmstat$" ${TMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -e "numa_miss" -e "zone_reclaim_" -e "htlb_buddy_alloc" $f
+	echo
+	echo "# /sbin/sysctl -a"
+	# TODO what else?
+	f=$(grep -l "^# /sbin/sysctl -a 2>/dev/null | grep ^vm$" ${TMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -e "vm.zone_reclaim_mode" -e "numa"  $f
 	echo
 }
 
@@ -1219,17 +1334,19 @@ oracle.*
 
 	grep -e "^oracle" -e "^@dba" crash.txt
 	echo
-	grep "^tmpfs" basic-health-check.txt	
+	echo "tmpfs:"
+	echo "   Size  Used  Avail  Use%  Mount"
+	echo "   Inodes  IUsed  IFree  IUse%  Mount"
+	grep "^tmpfs" basic-health-check.txt | tr -s " "
+	echo		
 	grep "^vm.nr_hugepages.=" env.txt	
 	echo
-	# TODO /proc/meminfo PageTables:, AnonHugePages:, HugePages_Free:, ...
-	# TODO sysctl.conf: vm.nr_hugepages, vm.hugetlb_shm_group
 	# TODO limits.conf: soft memlock, hard memlock
 	# TODO http://www.oracle-base.com/articles/linux/configuring-huge-pages-for-oracle-on-linux-64.php
 	# TODO check ???, see sum_base_config, whbsaprecheck
 	# TODO check async-IO, direct-IO
 	# TODO hugetblfs from mount
-	# TODO check Oracle alert file for severla "Large.Pages.*=" 
+	# TODO check Oracle alert file for several "Large.Pages.*=" 
 	# TODO oracleasmlib oracleasm-support still needed?	
 
 	FIL="rpm.txt"

@@ -181,12 +181,14 @@ vm.pagecache_limit_*
 "
 #
 MEM_VMSTAT="
-numa_miss
 nr_anon_transparent_hugepages
 thp_collapse_alloc_failed
 "
 #
 MEM_SYSCTL="
+kernel.shmall
+kernel.shmmax
+kernel.shmmni
 vm.overcommit_memory
 vm.overcommit_ratio
 vm.dirty_background_ratio
@@ -198,6 +200,7 @@ vm.pagecache_limit_mb
 vm.pagecache_limit_ignore_dirty
 vm.nr_hugepages
 vm.nr_hugepages_mempolicy
+vm.max_map_count
 vm.hugetlb_shm_group
 vm.hugepages_treat_as_movable
 vm.nr_overcommit_hugepages

@@ -233,7 +233,6 @@ function chk_memory(){
 	f=$(grep -l "^# /proc/meminfo$" ${TMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -vh "^#==..Co.*==#" $f
-
 	echo "# /proc/vmstat"
 	# TODO what else?
 	test -z "${MEM_VMSTAT}" &&\
@@ -254,17 +253,11 @@ MEM_SYSCTL="
 kernel.shmall
 kernel.shmmax
 kernel.shmmni
-vm.overcommit_memory
-vm.overcommit_ratio
-vm.dirty_background_ratio
-vm.dirty_background_bytes
-vm.dirty_ratio
-vm.dirty_bytes
+vm.overcommit_*
+vm.dirty_*
 vm.swappiness
-vm.pagecache_limit_mb
-vm.pagecache_limit_ignore_dirty
-vm.nr_hugepages
-vm.nr_hugepages_mempolicy
+vm.pagecache_limit_*
+vm.nr_hugepages_*
 vm.max_map_count
 vm.hugetlb_shm_group
 vm.hugepages_treat_as_movable

@@ -1222,9 +1222,14 @@ oracle.*
 	grep "^tmpfs" basic-health-check.txt	
 	grep "^vm.nr_hugepages.=" env.txt	
 	echo
+	# TODO /proc/meminfo PageTables:, AnonHugePages:, HugePages_Free:, ...
+	# TODO sysctl.conf: vm.nr_hugepages, vm.hugetlb_shm_group
+	# TODO limits.conf: soft memlock, hard memlock
+	# TODO http://www.oracle-base.com/articles/linux/configuring-huge-pages-for-oracle-on-linux-64.php
 	# TODO check ???, see sum_base_config, whbsaprecheck
 	# TODO check async-IO, direct-IO
 	# TODO hugetblfs from mount
+	# TODO check Oracle alert file for severla "Large.Pages.*=" 
 	# TODO oracleasmlib oracleasm-support still needed?	
 
 	FIL="rpm.txt"

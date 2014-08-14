@@ -45,8 +45,11 @@ function help() {
 }
 
 
-# TODO: sort: As LC_TIME differs from LC_CTYPE, the results may be strange.
-# TODO: better awk
+# TODO sort: As LC_TIME differs from LC_CTYPE, the results may be strange.
+# TODO better awk
+# TODO diffenrent fields for 11sp2 and 11sp3
+# TODO LARS, FABIAN: Implement other patterns
+# TODO FABIAN: What about readable patterns
 function awk_transition() {
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
@@ -77,8 +80,6 @@ function filter_transition() {
                         if ( $4 eq "S_IDLE" ) { printf "\n"; }
                   }
                }'
-# TODO: LARS, FABIAN: Implement other patterns
-# TODO: FABIAN: What about readable patterns
 } 
 
 
@@ -93,7 +94,7 @@ function awk_crmd-error() {
 
 # main()
 
-# TODO: reading from pipe 
+# TODO reading from pipe 
 
 case $1 in
 	-h|--help)

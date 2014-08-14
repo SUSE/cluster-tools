@@ -223,6 +223,7 @@ function chk_memory(){
 	# TODO kernel boot cmdline cgroup..., transparent_hugepage=
 	# TODO env.txt ...?
 	# TODO memory.txt: slabinfo?
+	# TODO cgroups, ulimit
 
 	FIL="memory.txt"
 	split_file $FIL

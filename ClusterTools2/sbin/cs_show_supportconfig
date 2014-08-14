@@ -40,6 +40,16 @@ function split_file(){
 }
 
 
+function show_sys_scsi(){
+	echo "# /usr/bin/systool -vb scsi"
+	FIL="sysfs.txt"
+	split_file $FIL
+	f=$(grep -l "^# /usr/bin/systool -vb scsi$" ${TMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -e "Device.path.=.*/sys/devices/.*target.*/[0-9]" -e "timeout.*=..[1-9]" -e "model.*=" $f 
+}
+
+
 function chk_hardware(){
 
 	echo_msgsep $FUNCNAME
@@ -90,11 +100,11 @@ function chk_hardware(){
 	grep -A1 "^Model:" $FIL | grep -v "^--$"
 	awk '$0~/^Disk..dev.dasd/ {print $2,$3,$4}' $FIL
 	echo
-
 	echo "storage:"
 	FIL="mpio.txt"
 	grep "Vendor:.*Model:.*Rev:" $FIL | sort -u
 	echo
+
 	FIL="hardware.txt"
 	for f in "supports.DPO.and.FUA" "support.DPO.or.FUA"; do
 		echo -n "${f} : "
@@ -851,6 +861,7 @@ ipmi
 irq_balancer
 joystick
 libvirtd
+mcelog
 microcode.ctl
 powerd
 smartd
@@ -916,7 +927,8 @@ xendomains
 		test -r $f && grep -v "^#" $f | tr -s "\n"
 	done
 	echo
-	# TODO sysfs.txt: # /usr/bin/systool -vb scsi; Device path = "/sys/devices"; timeout             = "180" 
+	show_sys_scsi
+	echo
 }
 
 
@@ -1621,6 +1633,8 @@ xfs
 	#grep -B1 "^Disk./dev/" $FIL
 	grep -A1 "^Model:" $FIL | grep -v "^--$"
 	echo
+	show_sys_scsi
+	echo
 
 	# TODO FIL="fs-softraid.txt"
 	# TODO better elevator guessing 
@@ -1633,7 +1647,6 @@ xfs
 	echo "/etc/sysconfig/bootloader:"
 	grep "DEFAULT_APPEND.*elevator" $FIL
 	echo
-
 	split_file $FIL
 	echo "/etc/sysconfig/mdadm:"
 	f=$(grep -l "# /etc/sysconfig/mdadm" $TMP/$FIL/xx*)

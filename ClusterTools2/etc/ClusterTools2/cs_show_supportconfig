@@ -402,6 +402,7 @@ ipmi
 irq_balancer
 joystick
 libvirtd
+mcelog
 microcode.ctl
 powerd
 smartd

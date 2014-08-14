@@ -8,7 +8,7 @@
 # Version: 2014-01-29 18:45
 #
 
-#EXE="$0"
+EXE="$0"
 #CFG="/etc/ClusterTools2/cs_show_initrd"
 #test -s $CFG && source $CFG
 

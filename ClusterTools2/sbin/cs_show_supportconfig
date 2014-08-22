@@ -5,7 +5,7 @@
 # (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.02 2014-08-12
+# Version: 0.02 2014-08-22
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -779,6 +779,33 @@ sbd:
         test -z "$f" || grep -vh "^#" $f # | grep "/dev/null"
         echo
 
+}
+
+
+function chk_xenhost(){
+
+	echo_msgsep $FUNCNAME
+
+	# TODO what is really needed?
+	FIL="xen.txt"
+        split_file $FIL
+	echo
+	echo "# /boot/grub/menu.lst"
+	f=$(grep -l "# /boot/grub/menu.lst" $TMP/$FIL/xx*)
+	test -z "$f" || grep -e "kernel /boot/xen.gz" -e "module /boot/vmlinuz.*-xen" -e "module /boot/initrd.*-xen" $f
+	echo
+	grep -e "vmdp" -e "libvirt" rpm.txt
+	echo
+	f=$(grep -l "# /etc/xen/xend-config.sxp" $TMP/$FIL/xx*)
+	echo "# /etc/xen/xend-config.sxp"
+	test -z "$f" || cat $f
+	echo
+	f=$(grep -l "# /etc/sysconfig/xendomains" $TMP/$FIL/xx*)
+	echo "# /etc/sysconfig/xendomains"
+	test -z "$f" || cat $f
+	# TODO xm info, xm list
+	# TODO network, LUNs
+	# TODO Xen errors in syslog
 }
 
 

@@ -5,7 +5,7 @@
 # (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.02 2014-08-22
+# Version: 0.02 2014-08-25
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -147,8 +147,9 @@ function chk_modules(){
 	echo
 
 	# TODO add Cisco HBA
-	# TODO test HP eth  nx_nic
+	# TODO test HP eth nx_nic
 	# TODO watchdog ppc64 alim7101_wdt.ko?, s390x vmwatchdog.ko?
+	# TODO check Fusion IO
 	test -z "${HARDW_MOD}" &&\
 	HARDW_MOD="
 ixgbe.ko
@@ -794,18 +795,35 @@ function chk_xenhost(){
 	f=$(grep -l "# /boot/grub/menu.lst" $TMP/$FIL/xx*)
 	test -z "$f" || grep -e "kernel /boot/xen.gz" -e "module /boot/vmlinuz.*-xen" -e "module /boot/initrd.*-xen" $f
 	echo
+	# TODO more xen specific RPMs?
 	grep -e "vmdp" -e "libvirt" rpm.txt
 	echo
 	f=$(grep -l "# /etc/xen/xend-config.sxp" $TMP/$FIL/xx*)
 	echo "# /etc/xen/xend-config.sxp"
-	test -z "$f" || cat $f
+	test -z "$f" || grep -vh "^#" $f
 	echo
 	f=$(grep -l "# /etc/sysconfig/xendomains" $TMP/$FIL/xx*)
 	echo "# /etc/sysconfig/xendomains"
-	test -z "$f" || cat $f
+	test -z "$f" || grep -vh "^#" $f
 	# TODO xm info, xm list
 	# TODO network, LUNs
 	# TODO Xen errors in syslog
+
+	FIL="modules.txt"
+        split_file $FIL
+	# TODO blkbk "max_ring_page_order=0..4" from /etc/modules.d/* ?
+	echo "# /sbin/modinfo blkbk"
+	f=$(grep -l "# /sbin/modinfo blkbk" $TMP/$FIL/xx*)
+	test -z "$f" || grep -vh "^#" $f
+	echo
+	# TODO netbk some options only from /etc/modules.d/* ?
+	echo "# /sbin/modinfo netbk"
+	f=$(grep -l "# /sbin/modinfo netbk" $TMP/$FIL/xx*)
+	test -z "$f" || grep -vh "^#" $f
+	echo
+	echo "# /sbin/modinfo iomemory_vsl (propietary Fusion-IO)"
+	f=$(grep -l "# /sbin/modinfo iomemory_vsl" $TMP/$FIL/xx*)
+	test -z "$f" || grep -vh "^#" $f
 }
 
 
@@ -1108,7 +1126,7 @@ nfs-client
 sensors
 "
 
-# TODO Fusion IO driver RPMs per vendor (IBM, Dell are same)
+# TODO Fusion IO driver RPMs per vendor? (IBM, Dell, HP are same)
 	test -z "${HANA_SUSE_PKG_YES}" &&\
 HANA_SUSE_PKG_YES="
 rear
@@ -1122,6 +1140,7 @@ fio-common
 fio-sysvinit
 libvsl
 iomemory-vsl
+fio-firmware-ioaccelerator
 fio-firmware-highiops
 "
 

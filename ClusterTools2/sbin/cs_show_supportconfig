@@ -811,19 +811,36 @@ function chk_xenhost(){
 
 	FIL="modules.txt"
         split_file $FIL
-	# TODO blkbk "max_ring_page_order=0..4" from /etc/modules.d/* ?
+	# TODO what filenames?
+	echo "# /etc/modprobe.d/xen-blkbk.conf"
+	f=$(grep -l "# /etc/modprobe.d/xen-blkbk.conf" $TMP/$FIL/xx*)
+	test -z "$f" || grep -vh "^#" $f
+	echo
 	echo "# /sbin/modinfo blkbk"
 	f=$(grep -l "# /sbin/modinfo blkbk" $TMP/$FIL/xx*)
 	test -z "$f" || grep -vh "^#" $f
 	echo
-	# TODO netbk some options only from /etc/modules.d/* ?
+	# TODO netbk some options only from /etc/modules.d/*; what filenames?
+	echo "# /etc/modprobe.d/xen-netbk.conf"
+	f=$(grep -l "# /etc/modprobe.d/xen-netbk.conf" $TMP/$FIL/xx*)
+	test -z "$f" || grep -vh "^#" $f
+	echo
 	echo "# /sbin/modinfo netbk"
 	f=$(grep -l "# /sbin/modinfo netbk" $TMP/$FIL/xx*)
 	test -z "$f" || grep -vh "^#" $f
 	echo
+	# TODO blkbk "max_ring_page_order=0..4" from /etc/modules.d/*; what filenames?
+	echo "# /etc/modprobe.d/iomemory-vsl.conf"
+	f=$(grep -l "# /etc/modprobe.d/iomemory-vsl.conf" $TMP/$FIL/xx*)
+	test -z "$f" || grep -vh "^#" $f
+	echo	
 	echo "# /sbin/modinfo iomemory_vsl (propietary Fusion-IO)"
 	f=$(grep -l "# /sbin/modinfo iomemory_vsl" $TMP/$FIL/xx*)
 	test -z "$f" || grep -vh "^#" $f
+	echo
+	echo "# grep for options [netbk|blkbk|iomemory_vsl]:"
+	grep -e "options netbk" -e "options blkbk" -e "options iomemory_vsl" $FIL
+	echo
 }
 
 

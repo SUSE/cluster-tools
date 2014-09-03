@@ -41,7 +41,7 @@ function help() {
 	echo " --help		show help."
 	echo " --version	show version."
 #	echo " --zip		show transitions from compressed logs, too."
-	echo " --error		show errors."
+	echo " --error	show errors."
 }
 
 

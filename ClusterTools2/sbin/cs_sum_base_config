@@ -5,7 +5,7 @@
 # (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2014-02-07 16:25
+# Version: 2014-10-09 11:25
 #
 
 EXE="$0"
@@ -99,7 +99,7 @@ test -z "${CONF_FILES}" &&\
 /etc/hp*.conf
 /etc/patrol.d/*.conf
 /etc/vmware-tools/tools.conf
-/etc/vmware-tools/plugins
+/etc/vmware-tools/plugins/*
 /etc/pam.d/vmtoolsd
 "
 # TODO: exact grep patterns

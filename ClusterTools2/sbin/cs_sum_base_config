@@ -229,7 +229,7 @@ function sum_files() {
 	for f in ${CONF_FILES}; do
 		(( nf++ ))
 		S="NA"
-		test -r $f && S=$(md5sum $f | awk '{print $1}')
+		test -r "$f" && S=$(md5sum "$f" | awk '{print $1}')
         	echo "$f = $S"
 	done
 	echo "INFO: $nf files" >>/dev/stderr

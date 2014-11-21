@@ -1121,7 +1121,9 @@ glibc:2.11.3-17.56.2
 "
 	test -z "${HANA_SAP_PKG_YES}" &&\
 	HANA_SAP_PKG_YES="
+hal
 gtk2
+iptraf
 java-1_6_0-ibm
 libicu
 mozilla-xulrunner192
@@ -1130,6 +1132,8 @@ sudo
 syslog-ng
 tcsh
 libssh2-1
+libstdc++6
+libgcc_s1
 expect
 autoyast2-installation
 yast2-ncurses

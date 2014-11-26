@@ -2,7 +2,7 @@
 # xmstat
 #
 # Copyright (c) 2008-2011 SUSE Linux GmbH, Germany.
-# GNU Public License - No warranty. 
+# GNU General Public License - No warranty. 
 #
 LOG=${1:-/var/log/xmstat.log}
 WAIT=${2:-3}

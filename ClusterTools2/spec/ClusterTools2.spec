@@ -6,7 +6,7 @@
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
-# GNU Public License
+# GNU General Public License
 #
 # please send bugfixes or comments to feedback@suse.de.
 #

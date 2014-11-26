@@ -1,9 +1,9 @@
 #!/bin/bash
-
+#
 # ClusterService, cs_service
 # (c) 2011-2014 SUSE Linux Products GmbH, Germany 
 # Author: F.Herschel
-# License: GPL - GNU General Public License. No warranty.
+# GNU General Public License. No warranty.
 
 cmd=""
 case "$1" in

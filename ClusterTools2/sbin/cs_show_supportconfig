@@ -5,7 +5,7 @@
 # (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 0.02 2014-11-20
+# Version: 0.02 2014-11-26
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -1107,6 +1107,13 @@ cgroup_disable=memory
 	HANA_SAP_SYSCTL="
 vm.pagecache_limit_mb
 vm.pagecache_limit_ignore_dirty
+vm.overcommit_memory
+vm.swappiness
+vm.max_map_count
+kernel.sem
+kernel.shmall
+kernel.shmmax
+net.ipv4.tcp_slow_start_after_idle
 "
 	test -z "${HANA_SUSE_SYSCTL}" &&\
 	HANA_SUSE_SYSCTL="
@@ -1148,7 +1155,25 @@ krb5-client
 nfs-client
 sensors
 "
-
+	test -z "${HANA_SAP_SVC_YES}" &&\
+	HANA_SAP_SVC_YES="
+boot.sysstat
+boot.sapinit
+boot.clock
+ntp
+"
+	test -z "${HANA_SAP_SVC_OFF}" &&\
+	HANA_SAP_SVC_OFF="
+boot.kdump
+"
+	test -z "${HANA_SUSE_PTRN}" &&\
+	HANA_SUSE_PTRN="
+base
+x11
+Basis-Devel
+sap_hana
+ha_sles
+"
 # TODO Fusion IO driver RPMs per vendor? (IBM, Dell, HP are same)
 	test -z "${HANA_SUSE_PKG_YES}" &&\
 HANA_SUSE_PKG_YES="
@@ -1165,7 +1190,14 @@ libvsl
 iomemory-vsl
 fio-firmware-ioaccelerator
 fio-firmware-highiops
+SAPHanaSR
+SAPHanaSR-doc
+HANA-Firewall
 "
+
+	#TODO HANA_SAP_SYSCTL HANA_SUSE_SYSCTL HANA_SAP_SVC_YES HANA_SAP_SVC_OFF HANA_SUSE_PTRN
+	# TODO boot.local: performance > /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+	# TODO boot.local: never > /sys/kernel/mm/transparent_hugepage/enabled
 
 	FIL="rpm.txt"
 	echo "RPM with specific version recommended by SAP:"

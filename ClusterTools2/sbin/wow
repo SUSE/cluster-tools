@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 #
 # wow
 #
-# (c) 2011-2012 SUSE Linux Products GmbH, Germany 
+# (c) 2011-2014 SUSE Linux Products GmbH, Germany 
 # Author: F.Herschel
-# License: GPL - GNU Public License. No warranty.
+# License: GPL - GNU General Public License. No warranty.
 
 cmd=""
 case "$1" in
@@ -13,3 +13,4 @@ case "$1" in
 	;;
 esac
 /usr/sbin/menueng2 --program wow --rscFile /usr/share/ClusterTools2/Wow.rsc $cmd "$@"
+#

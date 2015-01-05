@@ -2,10 +2,10 @@
 #
 # cs_show_error_patterns
 #
-# (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2051 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.2 2014-03-27
+# Version: 0.2 2015-01-05
 #
 
 EXE="$0"
@@ -42,6 +42,7 @@ test -z "${ERROR_PATTERN}" &&\
 "NMI.*error"
 "Error.DRAM"
 "kernel.*task.*abort"
+"double.fault:"
 "target.failure"
 "reservation.conflict"
 "SCSI.*reset"

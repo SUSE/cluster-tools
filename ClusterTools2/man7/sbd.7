@@ -1,4 +1,4 @@
-.TH sbd 7 "06 Nov 2014" "" "cluster-glue"
+.TH sbd 7 "18 Feb 2015" "" "cluster-glue"
 .\"
 .SH NAME
 sbd \- Stonith Block Device
@@ -225,8 +225,9 @@ to use a watchdog. Please refer to the SLES manual for this step.
 This involves loading the proper watchdog driver on system boot. On HP
 hardware, this is the "hpwdt" module. For systems with an Intel TCO,
 "iTCO_wdt" can be used. Inside a VM on z/VM on an IBM mainframe, "vmwatchdog"
-might be used. "softdog" is the most generic driver, but it is
-recommended that you use one with actual hardware integration. See
+might be used. Inside a Xen VM (aka DomU) "xen_wdt" is a good choice.
+"softdog" is the most generic driver, but it is recommended that you use one
+with actual hardware integration. See
 /lib/modules/.../kernel/drivers/watchdog in the kernel package for a list
 of choices.
 
@@ -329,7 +330,7 @@ The content of this manual page was mostly derived from online documentation
 mentioned above.
 .\"
 .SH COPYRIGHT
-(c) 2009-2013 SUSE Linux GmbH, Germany.
+(c) 2009-2015 SUSE Linux GmbH, Germany.
 .br
 sbd comes with ABSOLUTELY NO WARRANTY.
 .br

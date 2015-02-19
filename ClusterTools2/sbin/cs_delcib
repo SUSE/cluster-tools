@@ -20,8 +20,9 @@ test -z "${FIL}" &&\
 /var/lib/corosync/*
 /var/lib/heartbeat/cores/*/*
 /var/lib/heartbeat/crm/*
-/var/lib/pacemaker/cib/*
 /var/lib/pengine/*
+/var/lib/pacemaker/cib/*
+/var/lib/pacemaker/pengine/*
 "
 
 test -z "${BAK}" &&\

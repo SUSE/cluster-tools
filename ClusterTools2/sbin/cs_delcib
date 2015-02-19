@@ -2,10 +2,10 @@
 #
 # cs_delcib
 #
-# (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.2 2014-03-17
+# Version: 0.2 2015-02-19
 #
 
 EXE="$0"
@@ -51,9 +51,9 @@ case $1 in
 		rcopenais status 2>/dev/null
 		test $? -eq  "7" || exit
 
-		# 11sp2 || 11sp3
-		mv /var/lib/heartbeat/crm/cib.xml $BAK 2>$ERR ||\ 
-		mv /var/lib/pacemaker/cib/cib.xml $BAK
+		# 11sp2 or 11sp3
+		mv /var/lib/heartbeat/crm/cib.xml $BAK 2>$ERR ||\
+		mv /var/lib/pacemaker/cib/cib.xml $BAK 2>$ERR
 		for f in $FIL; do
 			rm -f $f
 		done

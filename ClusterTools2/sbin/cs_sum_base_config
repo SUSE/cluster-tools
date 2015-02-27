@@ -2,10 +2,10 @@
 #
 # cs_sum_base_config
 #
-# (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 2014-10-09 11:25
+# Version: 2015-02-27 17:25
 #
 
 EXE="$0"
@@ -59,6 +59,7 @@ test -z "${CONF_FILES}" &&\
 /etc/*mdadm.*.conf
 /clusterconf/*/mdadm.conf
 /clusterconf/mdadm.*.conf
+/etc/CLUSTER
 /etc/iscsi/iscsid.conf
 /etc/iscsi/initiatorname.iscsi
 /etc/sysstat/*

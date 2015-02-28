@@ -44,6 +44,7 @@ test -z "${CONF_FILES}" &&\
 /root/.ssh/known_hosts
 /root/.ssh/authorized_keys
 "
+# TODO: use common library with cs_sum_base_config and cs_show_supportconfig
 # TODO: exact grep patterns
 test -z "${CONF_CALLS}" &&\
 	 CONF_CALLS="
@@ -99,10 +100,10 @@ function help() {
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
-	echo " --base 	checksum base files and calls."
-	echo " --apps 	checksum HANA apps files and calls."
+	echo " --base 	checksum base files and calls only."
+	echo " --apps 	checksum HANA apps files and calls only."
 	echo
-	echo "Default is \"--base --apps\"\""
+	echo "Default is to show files and calls for base and HANA apps."
 	echo
 	test $UID -gt 0 && echo "please call as root."
 }

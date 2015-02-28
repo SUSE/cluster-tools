@@ -140,7 +140,7 @@ function show_base() {
 	mkdir $TEMP
 	cd $TEMP
 
-	/usr/bin/grep "model.name" /proc/cpuinfo
+	/usr/bin/grep "model.name" /proc/cpuinfo | sort -u
 	echo -n "cpu MHz:	"
 	/usr/bin/awk '$2=="MHz" {print $4}' /proc/cpuinfo | sort -u | tr "\n" " "
 	echo

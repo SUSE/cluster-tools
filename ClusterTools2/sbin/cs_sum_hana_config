@@ -1,0 +1,220 @@
+#!/bin/bash
+#
+# cs_sum_hana_config
+#
+# (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version: 2015-02-28 10:35
+#
+
+EXE="$0"
+
+CFG="/etc/ClusterTools2/cs_sum_hana_config"
+test -s $CFG && source $CFG
+
+test -z "${TEMP}" &&\
+	TEMP="/dev/shm/cltl.$RANDOM"
+
+test -z "${CONF_FILES}" &&\
+	 CONF_FILES="
+/etc/SuSE-release
+/etc/products.d/*.prod
+/proc/sys/kernel/tainted
+/boot/grub/menu.lst
+/etc/hosts
+/etc/CLUSTER
+/etc/ntp.conf
+/etc/multipath.conf
+/etc/multipath.bind*
+/etc/iscsi/iscsid.conf
+/etc/iscsi/initiatorname.iscsi
+/etc/sysconfig/kernel
+/etc/sysconfig/bootloader
+/etc/sysconfig/kdump
+/etc/sysconfig/sbd
+/etc/sysconfig/ulimit
+/etc/security/limits.conf
+/etc/sysctl.conf
+/etc/modprobe.conf.local
+/etc/modprobe.d/*
+/etc/corosync/corosync.conf
+/etc/corosync/authkey
+/etc/ClusterTools2/*
+/root/.ssh/known_hosts
+/root/.ssh/authorized_keys
+"
+# TODO: exact grep patterns
+test -z "${CONF_CALLS}" &&\
+	 CONF_CALLS="
+'/usr/bin/grep "MHz:" /proc/cpuinfo'
+'/usr/bin/grep "model.name" /proc/cpuinfo'
+'/usr/bin/grep -e "MemTotal:" -e "SwapTotal:" -e "VmallocTotal:" /proc/meminfo'
+'/usr/bin/grep -v "^#" /etc/sysctl.conf'
+'/usr/bin/lsscsi --kname'
+'/bin/uname -s -r -v -m -p -i -o'
+'ls -l /boot/vmlinuz | colrm 27 39'
+'ls -l /boot/initrd | colrm 27 39'
+'ls -l /boot/vmlinuz-xen | colrm 27 39'
+'ls -l /boot/initrd-xen | colrm 27 39'
+'/usr/bin/zcat /boot/initrd | cpio -itv 2>/dev/null | colrm 43 54'
+'/bin/fuser -u /dev/watchdog'
+'/usr/sbin/cs_make_sbd_devices -d'
+'/bin/rpm -qa'
+'find /sys/devices/ -name "scheduler" -exec grep deadline {} \;'
+'find /sys/devices/ -name "scheduler" -exec grep noop {} \;'
+'/sbin/multipath -ll'
+'/sbin/dmsetup table | sort'
+'/sbin/chkconfig -A'
+'/bin/ip a s | /usr/bin/grep "^[123456789]\:"'
+'/usr/sbin/cs_show_hana_config -b'
+"
+#
+# TODO SAP HANA files
+test -z "${APPS_FILES}" &&\
+	 APPS_FILES="
+/etc/sysconfig/sapconf
+/etc/pam.d/sapstartsrv
+/etc/rc.d/sapinit
+/usr/sap/sapservices
+/etc/sysconfig/saphaws
+"
+#
+# TODO SAP HANA calls
+test -z "${APPS_CALLS}" &&\
+	 APPS_CALLS="
+'/bin/ls -al /sapdb/programs/lib/ | awk °{print %1,%2,%3,%4,%5,%9}°'
+'/bin/ls -al /sapdb/programs/runtime/ | awk °{print %1,%2,%3,%4,%5,%9}°'
+'/bin/ls -al /sapdb/clients/ | awk °{print %1,%2,%3,%4,%5,%9}°'
+'/bin/ls -al /sapmnt/[A-Z]??/profile/ | awk °{print %1,%2,%3,%4,%5,%9}°'
+'/bin/ls -al /usr/sap/[A-Z]??/SYS/profile/ | awk °{print %1,%2,%3,%4,%5,%9}°'
+'/bin/ls -al /usr/sap/*/[0-9][0-9]/work/ | awk °{print %1,%2,%3,%4,%5,%9}°'
+'/usr/sbin/cs_show_hana_config -a'
+"
+
+
+function help() {
+	echo "usage:	$(basename $0)"
+	echo "	$(basename $0) [OPTION]"
+	echo
+	echo " --help		show help."
+	echo " --version	show version."
+	echo " --base 	checksum base files and calls."
+	echo " --apps 	checksum HANA apps files and calls."
+	echo
+	echo "Default is \"--base --apps\"\""
+	echo
+	test $UID -gt 0 && echo "please call as root."
+}
+
+
+# TODO: function to collect relevant files and output
+# TODO: find reason for error on repos.d/ (line 136 ?)
+# TODO: generic function for sum_calls and sum_files
+
+function sum_config() {
+	S="NA"
+	test -r $f && S=$(md5sum $f | awk '{print $1}')
+	echo "$f = $S"
+}
+
+
+function sum_files() {
+	nf=1
+	f=$CFG
+	sum_config
+	# TODO: better loop
+	for f in ${CONF_FILES}; do
+		(( nf++ ))
+		S="NA"
+		test -r $f && S=$(md5sum $f | awk '{print $1}')
+        	echo "$f = $S"
+	done
+	echo "INFO: $nf files" >>/dev/stderr
+}
+
+
+function sum_calls() {
+	# TODO: replace errors by "$REPLY = NA" as above
+	# TODO: array instead of list, to avoid ugly "'" handling
+	mkdir $TEMP
+	nc=0
+	f=$CFG
+	sum_config
+	echo ${CONF_CALLS} |\
+		 tr "'" "\n" | tr -s "\n" | tr -s "°" "'" | tr "%" "$" |\
+	while read; do
+		REPLY=$(echo "${REPLY}" | tr -s "'")
+		echo -n "'${REPLY}' = "
+		eval ${REPLY} | sort | md5sum - | awk '{print $1}'
+		(( nc++ ))
+		echo $nc >${TEMP}/nc
+	done | grep -v "'.*d41d8cd98f00b204e9800998ecf8427e"
+	nc=$(cat ${TEMP}/nc); nc=$[ $nc / 2 ]
+	echo "INF0: $nc calls" >>/dev/stderr
+	rm -rf $TEMP
+}
+
+
+function sum_apps() {
+	nf=1
+	f=$CFG
+	sum_config
+	# TODO: better loop
+	for f in ${APPS_FILES}; do
+		(( nf++ ))
+		S="NA"
+		test -r $f && S=$(md5sum $f | awk '{print $1}')
+        	echo "$f = $S"
+	done
+	echo "INFO: $nf files" >>/dev/stderr
+
+	mkdir $TEMP
+	nc=0
+	f=$CFG
+	sum_config
+	echo "${APPS_CALLS}" |\
+		 tr "'" "\n" | tr -s "\n" | tr "°" "'" | tr "%" "$" |\
+	while read; do
+		REPLY=$(echo "${REPLY}" | tr -s "'")
+		echo -n "'${REPLY}' = "
+		eval "${REPLY}" | sort | md5sum - | awk '{print $1}'
+		(( nc++ ))
+		echo $nc >${TEMP}/nc
+	done | grep -v "'.*d41d8cd98f00b204e9800998ecf8427e"
+	nc=$(cat ${TEMP}/nc); nc=$[ $nc / 2 ]
+	rm -rf $TEMP
+}
+
+
+# main()
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+        	head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-h|--help)
+		help
+		exit
+	;;
+	-b|--base)
+		test $UID -gt 0 && echo "please call as root." && exit
+		sum_files
+		sum_calls
+		exit
+	;;
+	-a|--apps)
+		test $UID -gt 0 && echo "please call as root." && exit
+		sum_apps
+		exit
+	;;
+	*)
+		test $UID -gt 0 && echo "please call as root." && exit
+		sum_files
+		sum_calls
+		sum_apps
+		exit		
+	;;
+esac
+#

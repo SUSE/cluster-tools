@@ -189,6 +189,7 @@ test -z "${APPS_CALLS}" &&\
 '/bin/ls -al /usr/sap/[A-Z]??/SYS/profile/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /usr/sap/*/[0-9][0-9]/work/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 "
+# TODO: HANA
 # TODO: samba
 # TODO: ndstat and other edir checking
 # TODO: generic script to strip "#" from conf files 

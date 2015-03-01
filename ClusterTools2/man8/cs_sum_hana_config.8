@@ -25,24 +25,24 @@ Please call this script as root.
 	show version.
 .HP
 \fB --base\fR
-	checksum base config files and calls only.
+	checksum basic OS config files and calls only.
 .HP
 \fB --apps\fR
-	checksum applications config files and calls only.
+	checksum basic HANA application config files and calls only.
 .\"
 .SH EXAMPLES
 .br
 .TP
-* Write checksums for common base config files of an node to a file. 
+* Write checksums for basic OS config files of an node to a file. 
 .br
 # cs_sum_hana_config -b >$HOSTNAME.txt
 .TP
-* Find differences between nodep and nodeq. Check base config files as well as common base system parameters and applications configuration. 
-# cs_sum_hana_config >nodep.txt
+* Find differences between nodep and nodeq. Check basic OS configuration as well as some basic HANA configuration. 
+# cs_sum_hana_config -b >nodep.txt
 .br
 # cs_sum_hana_config -a >>nodep.txt
 .br
-# ssh root@nodeq cs_sum_hana_config >nodeq.txt
+# ssh root@nodeq "cs_sum_hana_config -b" >nodeq.txt
 .br
 # ssh root@nodeq "cs_sum_hana_config -a" >>nodeq.txt
 .br

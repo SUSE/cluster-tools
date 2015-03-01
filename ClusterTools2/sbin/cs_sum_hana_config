@@ -56,6 +56,7 @@ test -z "${CONF_CALLS}" &&\
 '/bin/cat /sys/kernel/mm/transparent_hugepage/enabled'
 '/usr/bin/grep -v "^#" /etc/sysctl.conf'
 '/usr/bin/grep -v "^#" /etc/security/limits.conf'
+'/usr/bin/grep -v "^#" /etc/services'
 '/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
 '/bin/ls -l /boot/vmlinuz | colrm 27 39'

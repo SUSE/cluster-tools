@@ -64,6 +64,9 @@ test -z "${HANA_VERS_MIN}" &&\
 kernel-default:3.0.101-0.7.15.1
 kernel-xen:3.0.101-0.7.15.1
 glibc:2.11.3-17.56.2
+libgcc_s1:4.7.2_20130108-0.17.2
+libstdc++6:4.7.2_20130108-0.17.2
+xfsprogs:3.1.8-0.5.1
 "
 test -z "${HANA_SAP_PKG_YES}" &&\
 	HANA_SAP_PKG_YES="
@@ -156,7 +159,7 @@ function prck_hardware(){
 	echo
 
 	/usr/bin/grep -e "MemTotal:" -e "SwapTotal:" -e "VmallocTotal:" /proc/meminfo
-	
+
 	echo
 	echo "INFO: normal_end $EXE $FUNCNAME"
 }
@@ -181,6 +184,11 @@ function prck_kernel(){
 	done
 	echo
 
+	FOUND=$(/bin/dmesg | /usr/bin/grep -e governor -e cpupower -e cpuidle |\
+			tr -s "\n" " ")
+	test -z "${FOUND}" && FOUND="NA"
+	echo "CPU frequency scaling:      ${FOUND}"
+	echo
 	OPT="/sys/devices/system/cpu/cpu*/cpufreq/scaling_governor /sys/kernel/mm/transparent_hugepage/enabled /sys/.*/scheduler"
 	f="/etc/init.d/boot.local"
 	for a in $OPT ; do
@@ -344,9 +352,27 @@ function prck_apps() {
 	echo_msgsep $FUNCNAME
 
 	# TODO check for SAP programs needed by SAPHanaSR
+	#	1. sapcontrol/sapstartsrv 
+	#		/usr/sap/$SID/$InstanceName/exe/sapstartsrv
+	#		/usr/sap/$SID/$InstanceName/exe/sapcontrol
+	#	2. landscapeHostConfiguration
+	#		
+	#	3. hdbnsutil
+	#	4. was hdbsql, not needed anymore
+	#	5. saphostctrl
 	# TODO check for disk space for HANA
+	#	50GB	/usr/sap/
+	#	x RAM	/hana/log/ 
+	#	x RAM	/hana/data/
+		x RAM	/hana/shared/	NFS 
 	# TODO see HWCCT output for other interesting points
-
+	# TODO loop, "NA"
+	/bin/ls -al /hana/data/ | awk '{print $1,$2,$3,$4,$5,$9}'
+	/bin/ls -al /hana/log/ | awk '{print $1,$2,$3,$4,$5,$9}'
+	/bin/ls -al /hana/shared/ | awk '{print $1,$2,$3,$4,$5,$9}'
+	/bin/ls -al /usr/sap/[A-Z]??/SYS/profile/ | awk '{print $1,$2,$3,$4,$5,$9}'
+	/bin/ls -al /usr/sap/*/[0-9][0-9]/work/ | awk '{print $1,$2,$3,$4,$5,$9}
+	# TODO /usr/sap/sapservices
 	echo
 	echo "INFO: normal_end $EXE $FUNCNAME"
 }

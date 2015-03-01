@@ -5,7 +5,7 @@
 # (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2015-02-28 19:15
+# Version: 2015-03-01 22:00
 #
 
 EXE="$0"
@@ -51,24 +51,28 @@ test -z "${CONF_CALLS}" &&\
 '/usr/bin/grep "MHz:" /proc/cpuinfo'
 '/usr/bin/grep "model.name" /proc/cpuinfo'
 '/usr/bin/grep -e "MemTotal:" -e "SwapTotal:" -e "VmallocTotal:" /proc/meminfo'
+'/bin/dmesg | /usr/bin/grep -e governor -e cpupower -e cpuidle'
+'/bin/cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
+'/bin/cat /sys/kernel/mm/transparent_hugepage/enabled'
 '/usr/bin/grep -v "^#" /etc/sysctl.conf'
+'/usr/bin/grep -v "^#" /etc/security/limits.conf'
 '/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
-'ls -l /boot/vmlinuz | colrm 27 39'
-'ls -l /boot/initrd | colrm 27 39'
-'ls -l /boot/vmlinuz-xen | colrm 27 39'
-'ls -l /boot/initrd-xen | colrm 27 39'
+'/bin/ls -l /boot/vmlinuz | colrm 27 39'
+'/bin/ls -l /boot/initrd | colrm 27 39'
+'/bin/ls -l /boot/vmlinuz-xen | colrm 27 39'
+'/bin/ls -l /boot/initrd-xen | colrm 27 39'
 '/usr/bin/zcat /boot/initrd | cpio -itv 2>/dev/null | colrm 43 54'
 '/bin/fuser -u /dev/watchdog'
 '/usr/sbin/cs_make_sbd_devices -d'
 '/bin/rpm -qa'
-'find /sys/devices/ -name "scheduler" -exec grep deadline {} \;'
-'find /sys/devices/ -name "scheduler" -exec grep noop {} \;'
+'/usr/bin/find /sys/devices/ -name "scheduler" -exec grep deadline {} \;'
+'/usr/bin/find /sys/devices/ -name "scheduler" -exec grep noop {} \;'
 '/sbin/multipath -ll'
 '/sbin/dmsetup table | sort'
 '/sbin/chkconfig -A'
 '/bin/ip a s | /usr/bin/grep "^[123456789]\:"'
-'/usr/sbin/cs_show_hana_config -b'
+'/usr/sbin/cs_precheck_for_hana -b'
 "
 #
 # TODO SAP HANA files
@@ -84,13 +88,13 @@ test -z "${APPS_FILES}" &&\
 # TODO SAP HANA calls
 test -z "${APPS_CALLS}" &&\
 	 APPS_CALLS="
-'/bin/ls -al /sapdb/programs/lib/ | awk °{print %1,%2,%3,%4,%5,%9}°'
-'/bin/ls -al /sapdb/programs/runtime/ | awk °{print %1,%2,%3,%4,%5,%9}°'
-'/bin/ls -al /sapdb/clients/ | awk °{print %1,%2,%3,%4,%5,%9}°'
+'/bin/ls -al /hana/data/ | awk °{print %1,%2,%3,%4,%5,%9}°'
+'/bin/ls -al /hana/log/ | awk °{print %1,%2,%3,%4,%5,%9}°'
+'/bin/ls -al /hana/shared/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /sapmnt/[A-Z]??/profile/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /usr/sap/[A-Z]??/SYS/profile/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /usr/sap/*/[0-9][0-9]/work/ | awk °{print %1,%2,%3,%4,%5,%9}°'
-'/usr/sbin/cs_show_hana_config -a'
+'/usr/sbin/cs_precheck_for_hana -a'
 "
 
 

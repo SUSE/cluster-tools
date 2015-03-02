@@ -12,6 +12,7 @@ bfa.ko
 lpfc.ko
 qlge.ko
 qla2xxx.ko
+hfcldd.ko
 bnx2.ko
 bnx.ko
 e1000.ko

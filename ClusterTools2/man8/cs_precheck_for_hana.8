@@ -47,11 +47,18 @@ Usage, syntax or execution errors.
 .\"
 .SH EXAMPLES
 .TP
+* Show help.
 # cs_precheck_for_hana -h
-show help.
 .TP
+* Check for basic OS pre-requisites needed to install SAP HANA. Items needed to setup automation for System Replication are also checked.
 # cs_precheck_for_hana -b
-check for basic OS pre-requisites needed to install SAP HANA. Items needed to setup automation for System Replication are also checked.
+.TP
+* Find differences between nodep and nodeq.
+# cs_precheck_for_hana -b >nodeq.precheck.txt 2>/dev/null
+.br
+# ssh root@nodep "cs_precheck_for_hana -b 2>/dev/null" >nodep.precheck.txt
+.br
+# diff --suppress-common-lines nodeq.precheck.txt nodep.precheck.txt
 .\"
 .SH FILES
 .TP

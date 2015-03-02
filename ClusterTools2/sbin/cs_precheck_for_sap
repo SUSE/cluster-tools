@@ -65,7 +65,7 @@ function chk_gen_swpkg() {
 	echo
 
 	echo "zypper patterns:"
-	zypper se -t pattern | awk '$1=="i" {print $3}' 
+	zypper -n se -t pattern | awk '$1=="i" {print $3}' 
 	echo
 
 	# TODO: call rpm -qa only once

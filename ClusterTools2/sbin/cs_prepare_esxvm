@@ -360,14 +360,14 @@ function patterns() {
 	# TODO $RC
 	# TODO check
 
-	zypper se -t pattern | grep "^i" >/root/zypper-se-tpattern.$SFX || exit 1
+	zypper -n se -t pattern | grep "^i" >/root/zypper-se-tpattern.$SFX || exit 1
 	for f in $PTRN_OK; do
-			zypper in -t pattern $f 
+			zypper -n in -t pattern $f 
 	done
  ;;
  list)
 	echo "=== $FUNCNAME ==="
-	zypper se -t pattern | grep "^i"
+	zypper -n se -t pattern | grep "^i"
  ;;
  esac
 }
@@ -379,15 +379,15 @@ function packages() {
 	# TODO $RC
 	# TODO check
 	rpm -qa >/root/rpm-qa.$SFX || exit 1
-	zypper refs -r | exit 1
+	zypper -n refs -r | exit 1
 	# TODO -y ?
-	zypper -q -n --no-gpg-checks in -l --no-recommends $PCKG_OK
-	zypper -q -n --no-gpg-checks in -l --no-recommends $PCLT_OK
+	zypper -n -q --no-gpg-checks in -l --no-recommends $PCKG_OK
+	zypper -n -q --no-gpg-checks in -l --no-recommends $PCLT_OK
  ;;
  list)
 	echo "=== $FUNCNAME ==="
-	zypper se $PCKG_OK 2>$ERR #| grep "|.package$" 
-	zypper se $PCLT_OK 2>$ERR #| grep "|.package$"
+	zypper -n se $PCKG_OK 2>$ERR #| grep "|.package$" 
+	zypper -n se $PCLT_OK 2>$ERR #| grep "|.package$"
  ;;
  esac
 }

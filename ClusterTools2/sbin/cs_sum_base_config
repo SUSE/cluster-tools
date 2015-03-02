@@ -127,7 +127,7 @@ test -z "${CONF_CALLS}" &&\
 '/usr/sbin/cs_make_sbd_devices -d'
 '/bin/rpm -qa'
 '/bin/rpm -Va'
-'/usr/bin/zypper lr'
+'/usr/bin/zypper -n lr'
 '/usr/bin/zypper -n lu'
 '/usr/bin/zypper -n se -t pattern | grep "^i"'
 '/bin/cat /proc/mounts'

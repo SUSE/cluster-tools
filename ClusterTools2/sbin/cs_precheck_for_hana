@@ -5,7 +5,7 @@
 # (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2015-03-02 15:00
+# Version: 2015-03-02 15:05
 #
 
 EXE="$0"
@@ -287,6 +287,12 @@ function prck_sysconf(){
 		awk '{print $6}' | tr "\n" " ")
 	test -z "${FOUND}" && FOUND="NA"
 	echo "Watchdog in initrd:      ${FOUND}"
+
+	FOUND=$(/usr/bin/zcat /boot/initrd | cpio -itv 2>/dev/null |\
+		colrm 43 54 | grep -e "/etc/multipath.*"  -e lvm.conf |\
+		awk '{print $6}' | tr "\n" " ")
+	test -z "${FOUND}" && FOUND="NA"
+	echo "MPIO, LVM in initrd:      ${FOUND}"
 
 	echo
 	echo "INFO: normal_end $EXE $FUNCNAME"

@@ -332,7 +332,7 @@ function prck_basesoft(){
 	echo_msgsep $FUNCNAME
 
 	# TODO abort zypper, if server not reached
-	INSTALLED_PTRN=$(zypper se -t pattern | awk '$1=="i" {print $3}')
+	INSTALLED_PTRN=$(zypper -n se -t pattern | awk '$1=="i" {print $3}')
 	for a in ${HANA_SUSE_PTRN}; do
 		FOUND=$(echo $INSTALLED_PTRN | tr " " "\n" | grep $a)
 		test -z "${FOUND}" && FOUND="NA"

@@ -230,6 +230,7 @@ function prck_network(){
 	echo "INFO: start $EXE $FUNCNAME"
 	echo_msgsep $FUNCNAME
 
+	# TODO fix output
 	a="bond"
 	FOUND=$(ip -o a s | grep $a)
 	test -z "${FOUND}" && FOUND="NA"

@@ -91,6 +91,7 @@ test -z "${ERROR_PATTERN}" &&\
 "TCP:.Possible.SYN.flooding.on.port"
 "net_ratelimit:"
 "Host.*is.not.allowed.to.talk.to.us!"
+"COMPLAIN.ACCEPT.*MAC"
 "ntpd.*failed"
 "ntpd.*time.reset"
 "time.sync.status.changed"

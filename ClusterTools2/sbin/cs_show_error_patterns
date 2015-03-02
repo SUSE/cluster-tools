@@ -5,7 +5,7 @@
 # (c) 2011-2051 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.2 2015-01-05
+# Version: 0.2 2015-03-02
 #
 
 EXE="$0"
@@ -38,6 +38,7 @@ test -z "${ERROR_PATTERN}" &&\
 "qla.*err"
 "qla.*failed"
 "qlge.*error"
+"hfcldd.*Err"
 "NMI.received"
 "NMI.*error"
 "Error.DRAM"

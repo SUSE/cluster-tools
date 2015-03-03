@@ -14,36 +14,38 @@ ERR="/dev/null"
 CFG="/etc/ClusterTools2/cs_stresscib"
 test -s $CFG && source $CFG
 
-test -z "${N_NODES}" && N_NODES="9"
-test -z "${F_CRON}" && F_CRON="/etc/crontab.d/cs_stresscib"
+test -z "${N_NODE}" && N_NODE="9"
+test -z "${F_CRON}" && F_CRON="/etc/cron.d/cs_stresscib"
 test -z "${F_LOG}" && F_LOG="/var/log/cs_stresscib.log"
 
 
 function do_init() {
 	# TODO 2nd arg for stress profile (hana ...)
-	LNK=1
+	LNK=2
 	test -L $F_CRON && LNK=0
-	test $LNK -eq 0 && echo "existing symlink: $F_CRON" && exit 2 
+	test $LNK -eq 0 && echo "existing symlink: $F_CRON: RC:2" && exit 2
 	test $LNK -eq 0 ||\
 		ln -s /usr/share/ClusterTools2/cs_stresscib.cron $F_CRON &&\
-		grep -v "^#" /etc/crontab.d/cs_stresscib
+		echo "created symlink: $F_CRON: RC:0"
+		grep -v "^#" $F_CRON
 }
 
 
 function do_exit() {
-	LNK=1
+	LNK=2
 	test -L $F_CRON && LNK=0
-	test $LNK -eq 0 && rm $F_CRON && echo "removed symlink: $F_CRON" && exit 0
-	test $LNK -eq 0 || echo "not a symlink: $F_CRON" && exit 2
+	test -e $F_CRON || LNK=0
+	test $LNK -eq 0 && rm -f $F_CRON &&\
+		echo "removed symlink: $F_CRON: RC:0" && exit 0
+	test $LNK -eq 0 || echo "not a symlink: $F_CRON: RC:2" && exit 2
 }
 
 
 function do_run() {
-	log_file=$F_LOG
 	attr_store="reboot"	# reboot or forever
 	time_stamp=$(/bin/date +%F_%H:%M:%S)
 	
-	for i in {1..$N_NODES}; do
+	for i in {1..$N_NODE}; do
  		attr_node="node$i"
  		attr_value=$(/bin/date +%F_%H:%M:%S)
  		attr_name="val_stresscib_${attr_node}"
@@ -52,8 +54,7 @@ function do_run() {
 		# /usr/sbin/crm_attribute -N ${attr_node} -v "$attr_value" -n "$attr_name" -l $attr_store -q
 		# write CLUSTER-specific
 		/usr/sbin/crm_attribute -t crm_config -v "$time_stamp" -n "$attr_name"
-		done >>$log_file 2>&1
-	done
+	done >>$F_LOG 2>&1
 }
 
 

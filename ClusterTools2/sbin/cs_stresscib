@@ -5,7 +5,7 @@
 # (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 2015-03-03
+# Version: 2015-03-03 14:37
 #
 
 EXE="$0"
@@ -14,9 +14,12 @@ ERR="/dev/null"
 CFG="/etc/ClusterTools2/cs_stresscib"
 test -s $CFG && source $CFG
 
-test -z "${N_NODE}" && N_NODE="9"
-test -z "${F_CRON}" && F_CRON="/etc/cron.d/cs_stresscib"
-test -z "${F_LOG}" && F_LOG="/var/log/cs_stresscib.log"
+test -z "${N_NODE}" &&\
+	N_NODE="9"
+test -z "${F_CRON}" &&\
+	F_CRON="/etc/cron.d/cs_stresscib"
+test -z "${F_LOG}" &&\
+	F_LOG="/var/log/cs_stresscib.log"
 
 
 function do_init() {
@@ -42,23 +45,84 @@ function do_exit() {
 
 
 function do_run() {
-	attr_store="reboot"	# reboot or forever
-	time_stamp=$(/bin/date +%F_%H:%M:%S)
-	
-	for i in {1..$N_NODE}; do
- 		attr_node="node$i"
- 		attr_value=$(/bin/date +%F_%H:%M:%S)
- 		attr_name="val_stresscib_${attr_node}"
+#
+# stress profile for SAP HANA scale-out, to run every 20-30 seconds
+# 	host attributes
+#		write	6 x $N_NODE
+#		read	$N_NODE x $N_NODE
+# 	cluster attributes
+#		write	2 
+#		read	$N_NODE		(planned ca.2 later)
+#
 
-		# write HOST-specific
-		# /usr/sbin/crm_attribute -N ${attr_node} -v "$attr_value" -n "$attr_name" -l $attr_store -q
-		# write CLUSTER-specific
-		/usr/sbin/crm_attribute -t crm_config -v "$time_stamp" -n "$attr_name"
+	attr_store="reboot"			# reboot or forever
+
+	time_stamp=$(/bin/date +%F_%H-%M-%S)
+	# write host specific attributes, 6 x $N_NODE times
+	# TODO how many attributes: 6 x $N_NODE or $N_NODE ?
+ 	attr_value=${time_stamp}
+	for i in {1..$N_NODE}; do
+	    for j in {1..6}; do
+ 		attr_node="node$i"
+ 		attr_name="val_stresscib_${attr_node}"
+		do_run_writehost
+		echo "$time_stamp: do_run_writehost: $attr_node $attr_name $attr_value:$?"
+	    done
+	done >>$F_LOG 2>&1
+
+	time_stamp=$(/bin/date +%F_%H-%M-%S)
+	# write cluster specific attributes, 2 times
+	attr_value=${time_stamp}
+	for i in {1..2}; do
+		attr_name="val_stresscib_cluster"
+		do_run_writecluster
+		echo "$time_stamp: do_run_writecluster: cluster $attr_name $attr_value:$?}"
+	done >>$F_LOG 2>&1
+	
+	time_stamp=$(/bin/date +%F_%H-%M-%S)
+	# read host specific attributes, $N_NODE x $N_NODE times
+	for i in {1..$N_NODE}; do
+	    for j in {1..$N_NODE}; do
+		attr_node="node$i"
+		attr_name="val_stresscib_${attr_node}"
+		do_run_readhost
+		echo "$time_stamp: do_run_readhost: ${attr_node}.$j $attr_name $attr_value:$?"
+	    done
+	done >>$F_LOG 2>&1
+
+	time_stamp=$(/bin/date +%F_%H-%M-%S)
+	# read cluster specific attributes, $N_NODE times
+	for i in {1..$N_NODE}; do
+		attr_name="val_stresscib_cluster"
+		do_run_readcluster
+		echo "$time_stamp: do_run_readcluster: $attr_node $attr_name $attr_value:$?"
 	done >>$F_LOG 2>&1
 }
 
 
+function do_run_writehost(){
+	/usr/sbin/crm_attribute -N ${attr_node} -v "$attr_value" -n "$attr_name" -l $attr_store -q
+}
+
+
+function do_run_readhost(){
+	/usr/sbin/crm_attribute -N ${attr_node} -G -n "$attr_name" -l $attr_store -q	
+}
+
+
+function do_run_writecluster(){
+	/usr/sbin/crm_attribute -t crm_config -v "$time_stamp" -n "$attr_name"
+}
+
+
+function do_run_readcluster(){
+	/usr/sbin/crm_attribute -t crm_config -G -n "$attr_name"
+}
+
+
 function do_show() {
+	# TODO summary only?
+	# TODO options?
 	echo noop
 }
 
@@ -70,7 +134,7 @@ function do_help() {
 	echo " --init		initialise cib stress cron job."
 	echo " --exit		stop cib stress cron job."
 	echo " --run		run cib stress."
-	#echo " --show		show cib cron job stress log."
+	echo " --show		show cib cron job stress log."
 	echo " --help		show help."
 	echo " --version	show version."
 }
@@ -86,19 +150,15 @@ case $1 in
 	;;
 	-i|--init)
 		do_init
-		exit
 	;;
 	-e|exit)
 		do_exit
-		exit
 	;;
 	-r|run)
 		do_run
-		exit
 	;;
 	-s|show)
 		do_show
-		exit
 	;;
 	*)
 		do_help

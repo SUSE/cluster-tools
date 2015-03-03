@@ -31,6 +31,7 @@ function do_init() {
 		ln -s /usr/share/ClusterTools2/cs_stresscib.cron $F_CRON &&\
 		echo "created symlink: $F_CRON: RC:0"
 		grep -v "^#" $F_CRON
+	touch $F_LOG
 }
 
 

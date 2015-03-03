@@ -129,7 +129,7 @@ function do_show() {
 
 function do_help() {
 	echo "usage: $(basename $0) [--help | --version | --init | --exit]"
-	echo "usage: $(basename $0) --run <NUMBER_OF_NODES>"
+	echo "usage: $(basename $0) --run [ NUMBER_OF_NODES ]"
 	echo
 	echo " --init		initialise cib stress cron job."
 	echo " --exit		stop cib stress cron job."
@@ -155,7 +155,10 @@ case $1 in
 		do_exit
 	;;
 	-r|run)
-		do_run
+		shift
+		test -z $1 || N_NODE=$1
+		echo $N_NODE
+		#do_run
 	;;
 	-s|show)
 		do_show

@@ -5,7 +5,7 @@
 # (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 2015-03-03 14:37
+# Version: 2015-03-04 00:37
 #
 
 EXE="$0"
@@ -14,8 +14,8 @@ ERR="/dev/null"
 CFG="/etc/ClusterTools2/cs_stresscib"
 test -s $CFG && source $CFG
 
-test -z "${N_NODE}" &&\
-	N_NODE="9"
+test -z "${L_NODE}" &&\
+	echo "undefined L_NODE" # && exit 3
 test -z "${F_CRON}" &&\
 	F_CRON="/etc/cron.d/cs_stresscib"
 test -z "${F_LOG}" &&\
@@ -62,12 +62,11 @@ function do_run() {
 	# write host specific attributes, 6 x $N_NODE times
 	# TODO how many attributes: 6 x $N_NODE or $N_NODE ?
  	attr_value=${time_stamp}
-	for i in $(seq 1 $N_NODE); do
+	for attr_node in ${L_NODE}; do
 	    for j in {1..6}; do
- 		attr_node="node$i"
  		attr_name="val_stresscib_${attr_node}"
 		do_run_writehost
-		echo "$time_stamp: do_run_writehost: $attr_node $attr_name $attr_value:$?"
+		echo "$time_stamp: do_run_writehost: ${attr_node} $attr_name $attr_value:$?"
 	    done
 	done >>$F_LOG 2>&1
 
@@ -77,26 +76,25 @@ function do_run() {
 	for i in {1..2}; do
 		attr_name="val_stresscib_cluster"
 		do_run_writecluster
-		echo "$time_stamp: do_run_writecluster: cluster $attr_name $attr_value:$?}"
+		echo "$time_stamp: do_run_writecluster: cluster $attr_name $attr_value:$?"
 	done >>$F_LOG 2>&1
 	
 	time_stamp=$(/bin/date +%F_%H-%M-%S)
 	# read host specific attributes, $N_NODE x $N_NODE times
-	for i in $(seq 1 $N_NODE); do
-	    for j in $(seq 1 $N_NODE); do
-		attr_node="node$i"
+	for attr_node in ${L_NODE}; do
+	    for j in ${L_NODE}; do
 		attr_name="val_stresscib_${attr_node}"
 		do_run_readhost
-		echo "$time_stamp: do_run_readhost: ${attr_node}.$j $attr_name $attr_value:$?"
+		echo "$time_stamp: do_run_readhost: ${attr_node} $attr_name $attr_value:$?"
 	    done
 	done >>$F_LOG 2>&1
 
 	time_stamp=$(/bin/date +%F_%H-%M-%S)
 	# read cluster specific attributes, $N_NODE times
-	for i in $(seq 1 $N_NODE); do
+	for attr_node in ${L_NODE}; do
 		attr_name="val_stresscib_cluster"
 		do_run_readcluster
-		echo "$time_stamp: do_run_readcluster: $attr_node $attr_name $attr_value:$?"
+		echo "$time_stamp: do_run_readcluster: ${attr_node} $attr_name $attr_value:$?"
 	done >>$F_LOG 2>&1
 }
 
@@ -138,6 +136,8 @@ function do_help() {
 	echo " --show		show cib cron job stress log."
 	echo " --help		show help."
 	echo " --version	show version."
+	echo
+	echo "please adapt L_NODE in /etc/ClusterTools2/cs_stresscib."
 }
 
 

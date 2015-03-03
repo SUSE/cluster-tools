@@ -1,0 +1,7 @@
+# /etc/ClusterTools2/cs_stresscib
+# For SLES11.
+#
+N_NODES="9"
+C_JOB="/etc/crontab.d/cs_stresscib"
+# LOAD=
+#

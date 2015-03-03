@@ -14,14 +14,47 @@ ERR="/dev/null"
 CFG="/etc/ClusterTools2/cs_stresscib"
 test -s $CFG && source $CFG
 
+test -z "${N_NODES}" && N_NODES="9"
+test -z "${C_JOB}" && C_JOB="/etc/crontab.d/cs_stresscib"
 
 
-function help() {
-	echo "usage: $(basename $0) [OPTION]"
+function do_init() {
+	# TODO 2nd arg for stress profile (hana ...)
+	LNK=1
+	test -L $C_JOB && LNK=0
+	test $LNK -eq 0 && echo "existing symlink: $C_JOB" && exit 2 
+	test $LNK -eq 0 ||\
+		ln -s /usr/share/ClusterTools2/cs_stresscib.cron $C_JOB &&\
+		grep -v "^#" /etc/crontab.d/cs_stresscib
+}
+
+
+function do_exit() {
+	LNK=1
+	test -L $C_JOB && LNK=0
+	test $LNK -eq 0 && rm $C_JOB && echo "removed symlink: $C_JOB" && exit 0
+	test $LNK -eq 0 || echo "not a symlink: $C_JOB" && exit 2
+}
+
+
+function do_run() {
+
+}
+
+
+function do_show() {
+	echo noop
+}
+
+
+function do_help() {
+	echo "usage: $(basename $0) [--help | --version | --init | --exit]"
+	echo "usage: $(basename $0) --run <NUMBER_OF_NODES>"
 	echo
-	echo " --init		initialise cib stress job."
-	echo " --exit		stop cib stress job."
-	#echo " --show		show cib stress log."
+	echo " --init		initialise cib stress cron job."
+	echo " --exit		stop cib stress cron job."
+	echo " --run		run cib stress."
+	#echo " --show		show cib cron job stress log."
 	echo " --help		show help."
 	echo " --version	show version."
 }
@@ -36,19 +69,23 @@ case $1 in
 		exit
 	;;
 	-i|--init)
-		# TODO 2nd arg for stress profile (hana ...)
-		ln -s /usr/share/ClusterTools2/cs_stresscib.cron /etc/crontab.d/cs_stresscib
-		grep -v "^#" /etc/crontab.d/cs_stresscib
+		do_init
 		exit
 	;;
 	-e|exit)
-
+		do_exit
+		exit
+	;;
+	-r|run)
+		do_run
+		exit
 	;;
 	-s|show)
-
+		do_show
+		exit
 	;;
 	*)
-		help
+		do_help
 		exit
 	;;
 esac

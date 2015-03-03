@@ -371,7 +371,8 @@ function prck_apps() {
 	#	50GB	/usr/sap/
 	#	x RAM	/hana/log/ 
 	#	x RAM	/hana/data/
-		x RAM	/hana/shared/	NFS 
+	#	x RAM	/hana/shared/	NFS
+	# TODO instance name, site name, virt. ho0stname for detailled checks
 	# TODO see HWCCT output for other interesting points
 	# TODO loop, "NA"
 	/bin/ls -al /hana/data/ | awk '{print $1,$2,$3,$4,$5,$9}'

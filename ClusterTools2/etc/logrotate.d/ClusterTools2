@@ -44,3 +44,14 @@
     copytruncate
 }
 #
+/var/log/cs_stresscib.log {
+    compress
+    dateext
+    maxage 365
+    rotate 99
+    size +2M
+    notifempty
+    missingok
+    copytruncate	
+}
+#

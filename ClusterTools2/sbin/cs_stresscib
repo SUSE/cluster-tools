@@ -62,7 +62,7 @@ function do_run() {
 	# write host specific attributes, 6 x $N_NODE times
 	# TODO how many attributes: 6 x $N_NODE or $N_NODE ?
  	attr_value=${time_stamp}
-	for i in {1..$N_NODE}; do
+	for i in $(seq 1 $N_NODE); do
 	    for j in {1..6}; do
  		attr_node="node$i"
  		attr_name="val_stresscib_${attr_node}"
@@ -82,8 +82,8 @@ function do_run() {
 	
 	time_stamp=$(/bin/date +%F_%H-%M-%S)
 	# read host specific attributes, $N_NODE x $N_NODE times
-	for i in {1..$N_NODE}; do
-	    for j in {1..$N_NODE}; do
+	for i in $(seq 1 $N_NODE); do
+	    for j in $(seq 1 $N_NODE); do
 		attr_node="node$i"
 		attr_name="val_stresscib_${attr_node}"
 		do_run_readhost
@@ -93,7 +93,7 @@ function do_run() {
 
 	time_stamp=$(/bin/date +%F_%H-%M-%S)
 	# read cluster specific attributes, $N_NODE times
-	for i in {1..$N_NODE}; do
+	for i in $(seq 1 $N_NODE); do
 		attr_name="val_stresscib_cluster"
 		do_run_readcluster
 		echo "$time_stamp: do_run_readcluster: $attr_node $attr_name $attr_value:$?"

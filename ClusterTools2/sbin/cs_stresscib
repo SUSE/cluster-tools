@@ -158,8 +158,7 @@ case $1 in
 	-r|run)
 		shift
 		test -z $1 || N_NODE=$1
-		echo $N_NODE
-		#do_run
+		do_run
 	;;
 	-s|show)
 		do_show

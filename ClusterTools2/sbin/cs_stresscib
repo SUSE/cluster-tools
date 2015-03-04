@@ -72,9 +72,9 @@ function do_run() {
 	time_stamp=$(/bin/date +%F_%H-%M-%S)
 	# write cluster specific attributes, 2 times
 	attr_value=${time_stamp}
-	1_NODE=$(echo $L_NODE | cut -d" " -f1)
-	2_NODE=$(echo $L_NODE | cut -d" " -f2)
-	if $HOSTNAME -eq "1_NODE" -o  $HOSTNAME -eq "2_NODE" ; then
+	NODE_1=$(echo $L_NODE | cut -d" " -f1)
+	NODE_2=$(echo $L_NODE | cut -d" " -f2)
+	if [ "$HOSTNAME" = "$NODE_1" -o "$HOSTNAME" = "$NODE_2" ]; then
 		attr_name="val_stresscib_cluster"
 		do_run_writecluster
 		echo "$time_stamp: do_run_writecluster: cluster $attr_name $attr_value:$?"

@@ -1,4 +1,4 @@
-TODO use testx39 testx39attr for testdriver (30sec intervall by two crontab lines, one with sleep 30)
+TODO check in sysconfig for HALD_IGNORE_STORAGE=yes
 TODO cs_precheck_for_saphana: improve
 TODO cs_show_supportconfig: chk_modules software RAID?
 TODO cs_show_supportconfig: chk_entwork eth bridge

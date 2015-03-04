@@ -1,4 +1,4 @@
-.TH sbd 7 "26 Nov 2013" "" "cluster-glue"
+.TH sbd 7 "18 Feb 2015" "" "cluster-glue"
 .\"
 .SH NAME
 sbd \- Stonith Block Device
@@ -186,7 +186,7 @@ SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
 # Watchdog support:
 .br
-SBD_OPTS="-W -P -t60"
+SBD_OPTS="-W -P -S"
 .br
 ===
 
@@ -225,8 +225,9 @@ to use a watchdog. Please refer to the SLES manual for this step.
 This involves loading the proper watchdog driver on system boot. On HP
 hardware, this is the "hpwdt" module. For systems with an Intel TCO,
 "iTCO_wdt" can be used. Inside a VM on z/VM on an IBM mainframe, "vmwatchdog"
-might be used. "softdog" is the most generic driver, but it is
-recommended that you use one with actual hardware integration. See
+might be used. Inside a Xen VM (aka DomU) "xen_wdt" is a good choice.
+"softdog" is the most generic driver, but it is recommended that you use one
+with actual hardware integration. See
 /lib/modules/.../kernel/drivers/watchdog in the kernel package for a list
 of choices.
 
@@ -319,14 +320,17 @@ To report bugs for a SUSE or Novell product component, please use
 http://www.linux-ha.org/wiki/SBD_Fencing ,
 http://www.mail-archive.com/pacemaker@oss.clusterlabs.org/msg03849.html ,
 http://www.suse.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/book_sleha/data/part_config.html ,
-https://www.suse.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/book_sleha/data/part_storage.html
+https://www.suse.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/book_sleha/data/part_storage.html ,
+https://www.suse.com/documentation/sle_ha/book_sleha/data/sec_ha_storage_protect_fencing.html ,
+https://www.suse.com/support/kb/doc.php?id=7011346 ,
+https://www.suse.com/support/kb/doc.php?id=7009485
 .\"
 .SH AUTHORS
 The content of this manual page was mostly derived from online documentation
 mentioned above.
 .\"
 .SH COPYRIGHT
-(c) 2009-2013 SUSE Linux GmbH, Germany.
+(c) 2009-2015 SUSE Linux GmbH, Germany.
 .br
 sbd comes with ABSOLUTELY NO WARRANTY.
 .br

@@ -1,0 +1,85 @@
+.TH cs_sum_hana_config 8 "01 Mar 2015" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_sum_hana_config \- calculate checksums for HANA related system parameters
+.\"
+.SH SYNOPSIS
+.B cs_sum_hana_config \fI[OPTION]\fR
+.\"
+.SH DESCRIPTION
+\fBcs_sum_hana_config\fP calculates MD5 checksums for configuration
+and system parameters, related to SAP HANA.
+By default only files and parameters are checked, that are expected to be 
+identical on all nodes of one cluster. The output can be used to find
+differences between two or more cluster nodes.
+Or it can be stored and re-used later to check for changes.
+Please call this script as root.
+.br
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+	show help.
+.HP
+\fB --version\fR
+	show version.
+.HP
+\fB --base\fR
+	checksum basic OS config files and calls only.
+.HP
+\fB --apps\fR
+	checksum basic HANA application config files and calls only.
+.\"
+.SH EXAMPLES
+.br
+.TP
+* Write checksums for basic OS config files of an node to a file. 
+.br
+# cs_sum_hana_config -b >$HOSTNAME.txt
+.TP
+* Find differences between nodep and nodeq. Check basic OS configuration as well as some basic HANA configuration. 
+# cs_sum_hana_config -b >nodep.txt
+.br
+# cs_sum_hana_config -a >>nodep.txt
+.br
+# ssh root@nodeq "cs_sum_hana_config -b" >nodeq.txt
+.br
+# ssh root@nodeq "cs_sum_hana_config -a" >>nodeq.txt
+.br
+# diff node[pq].txt
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_sum_hana_config
+	the program itself.
+.TP
+/etc/ClusterTools2/cs_sum_hana_config
+	the configuration.
+.\"
+.SH BUGS
+The number of files is limited to the maximum number of arguments for a shell
+loop. Single quotes "'" are not allowed in calls.
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBmd5sum\fP(1), \fBClusterTools2\fP(7), \fBaideinit\fP(8), \fBtripwire\fP(8),
+\fBcs_sum_base_config\fP(8), \fBcs_precheck_for_hana\fP(8),
+.\"
+.\"
+.SH COPYRIGHT
+(c) 2015 L.Pinne, Germany.
+.br
+cs_sum_hana_config comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

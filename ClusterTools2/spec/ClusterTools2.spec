@@ -6,7 +6,7 @@
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
-# GNU Public License
+# GNU General Public License
 #
 # please send bugfixes or comments to feedback@suse.de.
 #
@@ -17,7 +17,7 @@ Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.5.3
 #Release:      0.1
-Release:      14
+Release:      17
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch

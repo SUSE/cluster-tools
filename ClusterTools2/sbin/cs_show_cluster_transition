@@ -2,10 +2,10 @@
 #
 # cs_show_cluster_transition
 #
-# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
-# GNU Public License. No warranty.
+# (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU General Public License. No warranty.
 #
-# Version: 0.1 2011-10-06
+# Version: 0.2 2014-09-03
 #
 
 EXE="$0"
@@ -41,13 +41,26 @@ function help() {
 	echo " --help		show help."
 	echo " --version	show version."
 #	echo " --zip		show transitions from compressed logs, too."
-	echo " --error		show errors."
+	echo " --error	show errors."
 }
 
 
-# TODO: sort: As LC_TIME differs from LC_CTYPE, the results may be strange.
-# TODO: better awk
+function show_sleha_release() {
+	# TODO
+	for b in SUSE_SLES_SAP sle-hae; do
+	f=/etc/products.d/$b.prod
+	test -r $f &&\
+		grep "<version>[1-9][0-9]\.[0-9]</version>$" $f |\
+		tr "<>" "::"| awk -F":" '{print $3}'  ##'{print "'$b'",$3}'
+	done
+}
+
+
+# TODO sort: As LC_TIME differs from LC_CTYPE, the results may be strange.
+# TODO better awk
+# TODO LARS, FABIAN: Implement other patterns
 function awk_transition() {
+	# for SLE-HA11 sp1,sp2
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
 		test -r $f && cat $f
@@ -66,7 +79,9 @@ function awk_transition() {
 	awk '$7=="S_IDLE"{print $0,"\n"}; $7!="S_IDLE"{print $0}'
 }
 
+
 function filter_transition() {
+	# for SLE-HA11 sp3
         echo "logs: $LOG" >/dev/stderr
         for f in ${LOG}; do
                 test -r $f && cat $f
@@ -77,8 +92,6 @@ function filter_transition() {
                         if ( $4 eq "S_IDLE" ) { printf "\n"; }
                   }
                }'
-# TODO: LARS, FABIAN: Implement other patterns
-# TODO: FABIAN: What about readable patterns
 } 
 
 
@@ -93,7 +106,7 @@ function awk_crmd-error() {
 
 # main()
 
-# TODO: reading from pipe 
+# TODO reading from pipe 
 
 case $1 in
 	-h|--help)
@@ -123,7 +136,12 @@ case $1 in
 	;;
 	*)
 		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
-		filter_transition
+		rel=$(show_sleha_release)
+		if [ "$rel" == "11.1" -o "$rel" == "11.2" ]; then
+			awk_transition
+		else
+			filter_transition
+		fi
 		exit
 	;;
 esac

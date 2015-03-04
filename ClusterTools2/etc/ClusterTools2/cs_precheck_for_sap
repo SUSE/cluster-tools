@@ -42,7 +42,7 @@ SRV_NOT="boot.md boot.apparmor boot.dmraid slpd alsasound openais SuSEfirewall2_
 PWDENC="des"
 #
 # Were to look for log files.
-ERROR_CFG="/etc/ClusterTools2/grep_error_patterns"
+ERROR_CFG="/etc/ClusterTools2/cs_grep_error_patterns"
 #
 # Oracle
 #DBUSER="oracle"

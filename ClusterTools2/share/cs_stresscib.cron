@@ -1,0 +1,9 @@
+# /usr/share/ClusterTools2/cs_stresscib.cron
+# run cib stress test for HANA scale-out
+#
+# stress cib in 30 seconds intervals
+# because this shorter than cron's minimum interval, we use two jobs
+00-59/1 * * * * root sleep $[ $RANDOM / 3000 ]; /usr/sbin/cs_stresscib -r
+00-59/1 * * * * root sleep $[ 30 + $RANDOM / 3000 ]; /usr/sbin/cs_stresscib -r
+#
+#

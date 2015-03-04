@@ -32,6 +32,13 @@ SuSEfirewall2_init
 #
 RLVL_OK="3"
 #
+PROD_OK="
+SUSE_SLES
+"
+#
+PROD_NO="
+"
+#
 PTRN_OK="
 Minimal
 base

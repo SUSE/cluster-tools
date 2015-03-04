@@ -2,10 +2,10 @@
 #
 # cs_show_error_patterns
 #
-# (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
-# GNU Public License. No warranty.
+# (c) 2011-2051 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU General Public License. No warranty.
 #
-# Version: 0.2 2014-03-27
+# Version: 0.2 2015-03-02
 #
 
 EXE="$0"
@@ -38,10 +38,12 @@ test -z "${ERROR_PATTERN}" &&\
 "qla.*err"
 "qla.*failed"
 "qlge.*error"
+"hfcldd.*Err"
 "NMI.received"
 "NMI.*error"
-"soft.lockup.detected"
+"Error.DRAM"
 "kernel.*task.*abort"
+"double.fault:"
 "target.failure"
 "reservation.conflict"
 "SCSI.*reset"
@@ -86,10 +88,16 @@ test -z "${ERROR_PATTERN}" &&\
 "RPC.*multiple.fragments"
 "martian.source.*dev"
 "unexpectedly.shrunk.window"
+"TCP:.Possible.SYN.flooding.on.port"
+"net_ratelimit:"
+"Host.*is.not.allowed.to.talk.to.us!"
+"COMPLAIN.ACCEPT.*MAC"
 "ntpd.*failed"
 "ntpd.*time.reset"
 "time.sync.status.changed"
+"Frequency.format.error"
 "failed.to.bind.to.LDAP"
+"error:.PAM:.User.not.known"
 "conversation.failed"
 "refused.mount.request"
 "nfs..server.*not.responding"
@@ -103,6 +111,7 @@ test -z "${ERROR_PATTERN}" &&\
 "Out.of.memory"
 "invoked.oom-killer"
 "Call.Trace"
+"soft.lockup"
 "kernel.*deprecated"
 "annot.open.*file"
 "nable.to.open.*file"

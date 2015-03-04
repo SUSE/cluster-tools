@@ -1,0 +1,185 @@
+#!/bin/bash
+#
+# cs_stresscib
+#
+# (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU General Public License. No warranty.
+#
+# Version: 2015-03-04 08:00
+#
+
+EXE="$0"
+ERR="/dev/null"
+
+CFG="/etc/ClusterTools2/cs_stresscib"
+test -s $CFG && source $CFG
+
+test -z "${L_NODE}" &&\
+	echo "ERR: undefined L_NODE" # && exit 3
+test -z "${F_CRON}" &&\
+	F_CRON="/etc/cron.d/cs_stresscib"
+test -z "${F_LOG}" &&\
+	F_LOG="/var/log/cs_stresscib.log"
+
+
+# TODO better checks
+# TODO all echo RC= instead of RC:
+
+
+function do_init() {
+	# TODO 2nd arg for stress profile (hana ...)
+	# check or create attributes in CIB?
+	LNK=2
+	test -L $F_CRON && LNK=0
+	test $LNK -eq 0 && echo "ERR: existing symlink: $F_CRON: RC:2" && exit 2
+	test $LNK -eq 0 ||\
+		ln -s /usr/share/ClusterTools2/cs_stresscib.cron $F_CRON &&\
+		echo "INF: created symlink: $F_CRON: RC:0"
+		grep -v "^#" $F_CRON
+	touch $F_LOG
+	SVC=$(/sbin/chkconfig openais | tr -d " ")
+	if [ "$SVC" != openaison ]; then
+		echo "ERR: no chkconfig openais on: RC:$2"
+		exit 2
+	fi
+}
+
+
+function do_exit() {
+	LNK=2
+	test -L $F_CRON && LNK=0
+	test -e $F_CRON || LNK=0
+	test $LNK -eq 0 && rm -f $F_CRON &&\
+		echo "INF: removed symlink: $F_CRON: RC:0" && exit 0
+	test $LNK -eq 0 || echo "ERR: not a symlink: $F_CRON: RC:2" && exit 2
+}
+
+
+function do_run() {
+
+	/etc/init.d/rcopenais status >/dev/null 2>&1; RC=$?
+	if [ $RC -ne 0 ]; then
+		echo "ERR: openais not running"
+		exit $RC
+	fi
+
+#
+# stress profile for SAP HANA scale-out, to run every 20-30 seconds
+# 	host attributes
+#		write	6 x $N_NODE
+#		read	$N_NODE x $N_NODE
+# 	cluster attributes
+#		write	2 
+#		read	$N_NODE		(planned ca.2 later)
+#
+
+	attr_store="reboot"			# reboot or forever
+
+	time_stamp=$(/bin/date +%F_%H-%M-%S)
+	# write host specific attributes, 6 x $N_NODE times
+	# TODO how many attributes: 6 x $N_NODE or $N_NODE ?
+ 	attr_value=${time_stamp}
+	attr_node=$HOSTNAME
+	for j in {1..6}; do
+ 		attr_name="val_stresscib_${attr_node}"
+		do_run_writehost
+		echo "$time_stamp: do_run_writehost: ${attr_node} $attr_name $attr_value:$?"
+	done >>$F_LOG 2>&1
+
+	time_stamp=$(/bin/date +%F_%H-%M-%S)
+	# write cluster specific attributes, 2 times
+	attr_value=${time_stamp}
+	NODE_1=$(echo $L_NODE | cut -d" " -f1)
+	NODE_2=$(echo $L_NODE | cut -d" " -f2)
+	if [ "$HOSTNAME" = "$NODE_1" -o "$HOSTNAME" = "$NODE_2" ]; then
+		attr_name="val_stresscib_cluster"
+		do_run_writecluster
+		echo "$time_stamp: do_run_writecluster: cluster $attr_name $attr_value:$?"
+	fi >>$F_LOG 2>&1
+	
+	time_stamp=$(/bin/date +%F_%H-%M-%S)
+	# read host specific attributes, $N_NODE x $N_NODE times
+	for attr_node in ${L_NODE}; do
+		attr_name="val_stresscib_${attr_node}"
+		attr_value=$(do_run_readhost)
+		echo "$time_stamp: do_run_readhost: ${attr_node} $attr_name $attr_value:$?"
+	done >>$F_LOG 2>&1
+
+	time_stamp=$(/bin/date +%F_%H-%M-%S)
+	# read cluster specific attributes, $N_NODE times
+	attr_node=$HOSTNAME
+	attr_name="val_stresscib_cluster"
+	attr_value=$(do_run_readcluster | cut -d" " -f4 | cut -d"=" -f2)
+	echo "$time_stamp: do_run_readcluster: ${attr_node} $attr_name $attr_value:$?" >>$F_LOG 2>&1
+}
+
+
+function do_run_writehost(){
+	/usr/sbin/crm_attribute -N ${attr_node} -v "$attr_value" -n "$attr_name" -l $attr_store -q
+}
+
+
+function do_run_readhost(){
+	/usr/sbin/crm_attribute -N ${attr_node} -G -n "$attr_name" -l $attr_store -q	
+}
+
+
+function do_run_writecluster(){
+	/usr/sbin/crm_attribute -t crm_config -v "$time_stamp" -n "$attr_name"
+}
+
+
+function do_run_readcluster(){
+	/usr/sbin/crm_attribute -t crm_config -G -n "$attr_name"
+}
+
+
+function do_show() {
+	# TODO summary only?
+	# TODO options?
+	echo noop
+}
+
+
+function do_help() {
+	echo "usage: $(basename $0) [--help | --version | --init | --exit | --run ] "
+	echo
+	echo " --init		initialise cib stress cron job."
+	echo " --exit		stop cib stress cron job."
+	echo " --run		run cib stress."
+	echo " --show		show cib cron job stress log."
+	echo " --help		show help."
+	echo " --version	show version."
+	echo
+	echo "please adapt L_NODE in /etc/ClusterTools2/cs_stresscib."
+}
+
+
+# main()
+
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-i|--init)
+		do_init
+	;;
+	-e|exit)
+		do_exit
+	;;
+	-r|run)
+		shift
+		test -z $1 || N_NODE=$1
+		do_run
+	;;
+	-s|show)
+		do_show
+	;;
+	*)
+		do_help
+		exit
+	;;
+esac
+#

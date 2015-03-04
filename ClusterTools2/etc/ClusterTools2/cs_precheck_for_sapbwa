@@ -1,4 +1,4 @@
-# /etc/ClusterTools2/precheck_for_sapbwa
+# /etc/ClusterTools2/cs_precheck_for_sapbwa
 # For SLES11.
 #
 SW_REL="SLE-11-x86_64-SP1"

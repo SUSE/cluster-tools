@@ -2,11 +2,11 @@
 #
 # cs_add_watchdog_to_initrd
 #
-# (c) 2011 SUSE Linux GmbH, Germany.
-# GNU Public License. No warranty.
+# (c) 2011-2014 SUSE Linux GmbH, Germany.
+# GNU General Public License. No warranty.
 # Author: A.Rehg, L.Pinne
 # 
-# Version: 0.02 2011-09-29 19:00
+# Version: 0.02 2014-09-03 13:25
 #
 
 EXE="$0"
@@ -62,9 +62,13 @@ function show_mod(){
 	done
 	echo
 	echo "=== initrd watchdog modules:"
-	/bin/zcat /boot/initrd | cpio -itv 2>/dev/null |\
-               	grep "lib/modules/.*/kernel/drivers/watchdog/.*ko$" |\
-		awk '{print $9}'
+	for f in  /boot/initrd /boot/initrd-xen; do
+		test -r $f &&\
+		( echo $f:
+		  /bin/zcat $f | cpio -itv 2>/dev/null |\
+               	  grep "lib/modules/.*/kernel/drivers/watchdog/.*ko$" |\
+		  awk '{print $9}' )
+	done
 	echo
 	echo "=== available watchdog modules:"
 	echo $OTHMOD

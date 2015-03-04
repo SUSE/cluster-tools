@@ -1,16 +1,16 @@
 #!/bin/bash
 #
-# cs_sum_base_config
+# cs_sum_hana_config
 #
-# (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
-# GNU General Public License. No warranty.
+# (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
 #
-# Version: 2015-02-27 17:25
+# Version: 2015-03-01 22:00
 #
 
 EXE="$0"
 
-CFG="/etc/ClusterTools2/cs_sum_base_config"
+CFG="/etc/ClusterTools2/cs_sum_hana_config"
 test -s $CFG && source $CFG
 
 test -z "${TEMP}" &&\
@@ -19,95 +19,36 @@ test -z "${TEMP}" &&\
 test -z "${CONF_FILES}" &&\
 	 CONF_FILES="
 /etc/SuSE-release
-/etc/zypp/zypp.conf
-/etc/zypp/zypper.conf
-/etc/zypp/repos.d/*.repo
 /etc/products.d/*.prod
-/boot/vmlinuz-2.6*default
-/boot/initrd-2.6*default
-/boot/vmlinuz-2.6*xen
-/boot/initrd-2.6*xen
-/boot/vmlinuz-3.*default
-/boot/initrd-3.*default
-/boot/vmlinuz-3.*xen
-/boot/initrd-3.*xen
-/proc/cmdline
 /proc/sys/kernel/tainted
-/etc/auto.*
-/etc/ld.so.conf
-/etc/ld.so.conf.d/*
-/etc/inittab
+/boot/grub/menu.lst
 /etc/hosts
-/etc/host.conf
-/etc/resolv.conf
+/etc/CLUSTER
 /etc/ntp.conf
-/etc/adjtime
-/etc/passwd
-/etc/group
-/etc/sudoers
-/etc/services
-/etc/ldap.conf
-/etc/openldap/ldap.conf
-/etc/logevent.conf
-/etc/krb5.conf
-/etc/drbd.conf
-/etc/drbd.d/*
-/etc/lvm/lvm.conf
 /etc/multipath.conf
 /etc/multipath.bind*
-/etc/mdadm.conf*
-/etc/*mdadm.*.conf
-/clusterconf/*/mdadm.conf
-/clusterconf/mdadm.*.conf
-/etc/CLUSTER
 /etc/iscsi/iscsid.conf
 /etc/iscsi/initiatorname.iscsi
-/etc/sysstat/*
 /etc/sysconfig/kernel
 /etc/sysconfig/bootloader
 /etc/sysconfig/kdump
 /etc/sysconfig/sbd
 /etc/sysconfig/ulimit
-/etc/sysconfig/uuidd
-/etc/sysconfig/security
-/etc/sysconfig/language
-/etc/sysconfig/clock
-/etc/sysconfig/ntp
-/etc/sysconfig/lvm
-/etc/sysconfig/o2cb
-/etc/sysconfig/maranello
-/etc/sysconfig/bravo
-/etc/sysconfig/customfw
-/etc/ocfs2/cluster.conf
-/etc/pam.d/login
-/etc/opt/six/maranello/*.conf
-/etc/opt/six/maranello/profiles/two-sets/*/*
-/etc/opt/six/maranello/profiles/three-sets/*/*
-/etc/opt/bravo/*.conf
-/etc/opt/bravo/profiles/two-sets/*/*
-/etc/opt/bravo/profiles/three-sets/*/*
+/etc/security/limits.conf
 /etc/sysctl.conf
 /etc/modprobe.conf.local
 /etc/modprobe.d/*
-/etc/cron.d/*
-/etc/logrotate.d/corosync
 /etc/corosync/corosync.conf
-/etc/corosync/logd.cf
 /etc/corosync/authkey
-/etc/xen/xend-config.sxp
-/etc/xen/vm/*.xml
-/etc/hp/*
-/etc/hp*.conf
-/etc/patrol.d/*.conf
-/etc/vmware-tools/tools.conf
-/etc/vmware-tools/plugins/*
-/etc/pam.d/vmtoolsd
+/etc/ClusterTools2/*
+/root/.ssh/known_hosts
+/root/.ssh/authorized_keys
 "
+# TODO: use common library with cs_sum_base_config and cs_show_supportconfig
 # TODO: exact grep patterns
 test -z "${CONF_CALLS}" &&\
 	 CONF_CALLS="
-'/usr/sbin/dmidecode -t system | /usr/bin/grep -v "UUID:" | /usr/bin/grep -v "Serial.Number:"'
-'/sbin/lspci'
+'/usr/bin/grep "MHz:" /proc/cpuinfo'
 '/usr/bin/grep "model.name" /proc/cpuinfo'
 '/usr/bin/grep -e "MemTotal:" -e "SwapTotal:" -e "VmallocTotal:" /proc/meminfo'
 '/bin/dmesg | /usr/bin/grep -e governor -e cpupower -e cpuidle'
@@ -115,9 +56,9 @@ test -z "${CONF_CALLS}" &&\
 '/bin/cat /sys/kernel/mm/transparent_hugepage/enabled'
 '/usr/bin/grep -v "^#" /etc/sysctl.conf'
 '/usr/bin/grep -v "^#" /etc/security/limits.conf'
+'/usr/bin/grep -v "^#" /etc/services'
 '/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
-'/bin/lsmod'
 '/bin/ls -l /boot/vmlinuz | colrm 27 39'
 '/bin/ls -l /boot/initrd | colrm 27 39'
 '/bin/ls -l /boot/vmlinuz-xen | colrm 27 39'
@@ -126,81 +67,35 @@ test -z "${CONF_CALLS}" &&\
 '/bin/fuser -u /dev/watchdog'
 '/usr/sbin/cs_make_sbd_devices -d'
 '/bin/rpm -qa'
-'/bin/rpm -Va'
-'/usr/bin/zypper -n lr'
-'/usr/bin/zypper -n lu'
-'/usr/bin/zypper -n se -t pattern | grep "^i"'
-'/bin/cat /proc/mounts'
 '/usr/bin/find /sys/devices/ -name "scheduler" -exec grep -e deadline -e noop {} \;'
 '/sbin/multipath -ll'
 '/sbin/dmsetup table | sort'
-'/usr/bin/grep -v "^#" /etc/lvm/lvm.conf'
-'/usr/bin/grep -v "^#" /etc/multipath.conf'
 '/sbin/chkconfig -A'
-'/sbin/route -n'
-'/usr/sbin/iptables -L'
 '/bin/ip a s | /usr/bin/grep "^[123456789]\:"'
-'/usr/bin/grep -v "IPADDR=" /etc/sysconfig/network/ifcfg-* | /usr/bin/grep -v "UNIQUE="'
-'/usr/bin/cset set -l'
-'/usr/bin/numactl -H | grep -v free; /usr/bin/numactl -s'
-'/usr/bin/find /opt/'
-'/usr/bin/find /usr/'
-'/usr/bin/find /etc/'
-'/bin/ls -al /etc/ | awk °{print %1,%2,%3,%4,%5,%9}°'
-'/bin/ls -al /etc/*/ | awk °{print %1,%2,%3,%4,%5,%9}°'
-'/bin/ls -al /home/ | awk °{print %1,%2,%3,%4,%5,%9}°'
+'/usr/sbin/cs_precheck_for_hana -b'
 "
 #
+# TODO SAP HANA files
 test -z "${APPS_FILES}" &&\
 	 APPS_FILES="
-/etc/oratab
-/etc/oraInst.loc
-/etc/sysconfig/oracle
-/etc/tnsnames.ora
-/opt/oracle/product/*/*/dbs/*.ora
-/opt/oracle/product/*/*/network/admin/*.ora
-/etc/sysconfig/postgresql
-/var/lib/pgsql/data/postgresql.conf
-/etc/sysconfig/rhn/*
-/etc/rhn/rhn.conf
-/etc/nocpulse/*
-/etc/opt/novell/eDirectory/conf/nds.conf
-/etc/logevent.conf
-/etc/opt/novell/nici*
 /etc/sysconfig/sapconf
 /etc/pam.d/sapstartsrv
 /etc/rc.d/sapinit
 /usr/sap/sapservices
-/etc/opt/sdb
-/etc/db2nodes.conf
 /etc/sysconfig/saphaws
-/etc/sysconfig/spock
-/etc/sysconfig/ctdb
-/etc/samba/*
 "
 #
+# TODO SAP HANA calls
 test -z "${APPS_CALLS}" &&\
 	 APPS_CALLS="
-'/bin/ls -al /home/ | awk °{print %1,%2,%3,%4,%5,%9}°'
-'/bin/ls -al /usr/spool/sql/ | awk °{print %1,%2,%3,%4,%5,%9}°'
-'/bin/ls -al /sapdb/programs/lib/ | awk °{print %1,%2,%3,%4,%5,%9}°'
-'/bin/ls -al /sapdb/programs/runtime/ | awk °{print %1,%2,%3,%4,%5,%9}°'
-'/bin/ls -al /sapdb/clients/ | awk °{print %1,%2,%3,%4,%5,%9}°'
-'/bin/ls -al /var/lib/sdb/dbm/ | awk °{print %1,%2,%3,%4,%5,%9}°'
+'/bin/ls -al /hana/data/ | awk °{print %1,%2,%3,%4,%5,%9}°'
+'/bin/ls -al /hana/log/ | awk °{print %1,%2,%3,%4,%5,%9}°'
+'/bin/ls -al /hana/shared/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /sapmnt/[A-Z]??/profile/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /usr/sap/[A-Z]??/SYS/profile/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /usr/sap/*/[0-9][0-9]/work/ | awk °{print %1,%2,%3,%4,%5,%9}°'
-'/bin/ls -al /hana/log/ | awk °{print %1,%2,%3,%4,%5,%9}°'
-'/bin/ls -al /hana/data/ | awk °{print %1,%2,%3,%4,%5,%9}°'
-'/bin/ls -al /hana/shared/ | awk °{print %1,%2,%3,%4,%5,%9}°'
+'/usr/sbin/cs_precheck_for_hana -a'
 "
-# TODO: HANA
-# TODO: samba
-# TODO: ndstat and other edir checking
-# TODO: generic script to strip "#" from conf files 
-# TODO: generic script for directory listing 
-# TODO: better network listing 
-# TODO: calc diff between hwclock and Linux time, fe. based on hwclock --debug --test
 
 
 function help() {
@@ -209,9 +104,10 @@ function help() {
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
-	echo " --files	checksum base files only."
-	echo " --calls	checksum base calls only."
-	echo " --apps 	checksum apps config files and calls only."
+	echo " --base 	checksum base files and calls only."
+	echo " --apps 	checksum HANA apps files and calls only."
+	echo
+	echo "Default is to show files and calls for base and HANA apps."
 	echo
 	test $UID -gt 0 && echo "please call as root."
 }
@@ -236,7 +132,7 @@ function sum_files() {
 	for f in ${CONF_FILES}; do
 		(( nf++ ))
 		S="NA"
-		test -r "$f" && S=$(md5sum "$f" | awk '{print $1}')
+		test -r $f && S=$(md5sum $f | awk '{print $1}')
         	echo "$f = $S"
 	done
 	echo "INFO: $nf files" >>/dev/stderr
@@ -307,13 +203,9 @@ case $1 in
 		help
 		exit
 	;;
-	-f|--files)
+	-b|--base)
 		test $UID -gt 0 && echo "please call as root." && exit
 		sum_files
-		exit
-	;;
-	-c|--calls)
-		test $UID -gt 0 && echo "please call as root." && exit
 		sum_calls
 		exit
 	;;
@@ -326,6 +218,7 @@ case $1 in
 		test $UID -gt 0 && echo "please call as root." && exit
 		sum_files
 		sum_calls
+		sum_apps
 		exit		
 	;;
 esac

@@ -13,7 +13,7 @@ service {
 totem {
 	version:	2
 	token:		5000
-	token_retransmits_before_loss_const: 10
+	token_retransmits_before_loss_const: 28 
 	join:		60
 	consensus:	6000
 	vsftype:	none
@@ -43,7 +43,7 @@ logging {
 	to_syslog:	no	
 	syslog_facility: daemon
 	debug:		off
-	timestamp:	on
+	timestamp:	off
 }
 amf {
 	mode: disabled

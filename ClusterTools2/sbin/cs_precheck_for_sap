@@ -2,10 +2,10 @@
 #
 # cs_precheck_for_sap 
 #
-# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
-# GNU Public License. No warranty.
+# (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU General Public License. No warranty.
 #
-# Version: 0.2.10 2011-08-25
+# Version: 0.2.10 2015-03-02
 #
 # For SLES11.
 
@@ -65,7 +65,7 @@ function chk_gen_swpkg() {
 	echo
 
 	echo "zypper patterns:"
-	zypper se -t pattern | awk '$1=="i" {print $3}' 
+	zypper -n se -t pattern | awk '$1=="i" {print $3}' 
 	echo
 
 	# TODO: call rpm -qa only once
@@ -189,6 +189,7 @@ function chk_gen_storag() {
 "qla.*err"
 "qla.*failed"
 "qlge.*error"
+"fcldd.*Err"
 "target.failure"
 "reservation.conflict"
 "SCSI.*reset"

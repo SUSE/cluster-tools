@@ -1,0 +1,428 @@
+#!/bin/bash
+#
+# cs_precheck_for_hana
+#
+# (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU Public License. No warranty.
+#
+# Version: 2015-03-02 15:05
+#
+
+EXE="$0"
+
+for CFG in "/etc/ClusterTools2/cs_precheck_for_hana" "/etc/ClusterTools2/cs_show_supportconfig"; do
+	test -s $CFG && source $CFG
+done
+
+test -z "${TEMP}" &&\
+	TEMP="/dev/shm/cltl.$RANDOM"
+
+# TODO use common library with cs_sum_base_config and cs_show_supportconfig
+
+test -z "${HANA_SAP_BOOTARG}" &&\
+	HANA_SAP_BOOTARG="
+intel_idle.max_cstate=0
+processor.max_cstate=0
+"
+test -z "${HANA_SUSE_BOOTARG}" &&\
+	HANA_SUSE_BOOTARG="
+elevator=noop
+cgroup_disable=memory
+"
+test -z "${HANA_SAP_SYSCTL}" &&\
+	HANA_SAP_SYSCTL="
+vm.pagecache_limit_mb
+vm.pagecache_limit_ignore_dirty
+vm.overcommit_memory
+vm.swappiness
+vm.max_map_count
+kernel.sem
+kernel.shmall
+kernel.shmmax
+net.ipv4.tcp_slow_start_after_idle
+"
+test -z "${HANA_SUSE_SYSCTL}" &&\
+	HANA_SUSE_SYSCTL="
+vm.dirty_bytes
+vm.dirty_background_bytes
+"
+# TODO HANA_VERS_MIN as well?
+# TODO HANA_SAP_PKG_YES as well?
+test -z "${HANA_SAP_SVC_YES}" &&\
+	HANA_SAP_SVC_YES="
+boot.sysstat
+boot.sapinit
+boot.clock
+ntp
+"
+test -z "${HANA_SAP_SVC_OFF}" &&\
+	HANA_SAP_SVC_OFF="
+boot.kdump
+"
+test -z "${HANA_VERS_MIN}" &&\
+	HANA_VERS_MIN="
+kernel-default:3.0.101-0.7.15.1
+kernel-xen:3.0.101-0.7.15.1
+glibc:2.11.3-17.56.2
+libgcc_s1:4.7.2_20130108-0.17.2
+libstdc++6:4.7.2_20130108-0.17.2
+xfsprogs:3.1.8-0.5.1
+"
+test -z "${HANA_SAP_PKG_YES}" &&\
+	HANA_SAP_PKG_YES="
+hal
+gtk2
+iptraf
+java-1_6_0-ibm
+libicu
+mozilla-xulrunner192
+ntp
+sudo
+syslog-ng
+tcsh
+libssh2-1
+libstdc++6
+libgcc_s1
+expect
+autoyast2-installation
+yast2-ncurses
+bing
+bonnie
+cairo
+findutils-locate
+graphviz
+iptraf
+krb5-32bit
+krb5-client
+nfs-client
+sensors
+"
+test -z "${HANA_SUSE_PTRN}" &&\
+	HANA_SUSE_PTRN="
+base
+x11
+Basis-Devel
+sap_hana
+ha_sles
+"
+test -z "${HANA_SUSE_PKG_YES}" &&\
+	HANA_SUSE_PKG_YES="
+rear
+sysstat
+supportutils
+sapconf
+xfsprogs
+xfsdump
+fio-util
+fio-common
+fio-sysvinit
+libvsl
+iomemory-vsl
+fio-firmware-ioaccelerator
+fio-firmware-highiops
+SAPHanaSR
+SAPHanaSR-doc
+HANA-Firewall
+"
+
+
+function help() {
+	echo "usage:	$(basename $0)"
+	echo "	$(basename $0) [OPTION]"
+	echo
+	echo " --help		show help."
+	echo " --version	show version."
+	echo " --base 	show base config."
+	echo " --apps 	show HANA apps config."
+	echo
+	test $UID -gt 0 && echo "please call as root."
+}
+
+
+function echo_msgsep(){
+	echo
+	echo "============================================================ ${1:0
+:14} ==="
+}
+
+
+function prck_hardware(){
+
+	echo "INFO: start $EXE $FUNCNAME"
+	echo_msgsep $FUNCNAME
+
+	echo -n "cpu "
+	/usr/bin/grep "model.name" /proc/cpuinfo | sort -u
+	echo -n "cpu MHz:	"
+	/usr/bin/awk '$2=="MHz" {print $4}' /proc/cpuinfo | sort -u | tr "\n" " "
+	# TODO number of sockets
+	echo
+
+	/usr/bin/grep -e "MemTotal:" -e "SwapTotal:" -e "VmallocTotal:" /proc/meminfo
+
+	echo
+	echo "INFO: normal_end $EXE $FUNCNAME"
+}
+
+
+function prck_kernel(){
+
+	echo "INFO: start $EXE $FUNCNAME"
+	echo_msgsep $FUNCNAME
+
+	# TODO show recommeded version from HANA_VERS_MIN
+	echo -n "Kernel: "; /bin/uname -s -r -v -m -p -i -o
+	echo
+
+	FIL="/proc/cmdline"
+	for f in $FIL; do
+		for a in ${HANA_SAP_BOOTARG} ${HANA_SUSE_BOOTARG}; do
+			FOUND=$(grep $a $f)
+			test -z "${FOUND}" && FOUND="NA"
+			echo "${f}: ${a} :	${FOUND}"
+		done
+	done
+	echo
+
+	FOUND=$(/bin/dmesg | /usr/bin/grep -e governor -e cpupower -e cpuidle |\
+			tr -s "\n" " ")
+	test -z "${FOUND}" && FOUND="NA"
+	echo "CPU frequency scaling:      ${FOUND}"
+	echo
+	OPT="/sys/devices/system/cpu/cpu*/cpufreq/scaling_governor /sys/kernel/mm/transparent_hugepage/enabled /sys/.*/scheduler"
+	f="/etc/init.d/boot.local"
+	for a in $OPT ; do
+		FOUND=$(grep $a $f)
+		test -z "${FOUND}" && FOUND="NA"
+		echo "${f}: ${a} :      ${FOUND}"
+	done
+	echo
+	f="/sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages"
+	FOUND=$(cat $f 2>/dev/null)
+	test -z "${FOUND}" && FOUND="NA"
+	echo "$f (=0):	${FOUND}"
+	f="/sys/devices/system/cpu/cpuidle/current_driver"
+	FOUND=$(cat $f 2>/dev/null)
+	test -z "${FOUND}" && FOUND="NA"
+	echo "$f (acpi_idle):  ${FOUND}"
+	echo
+
+	# TODO loop
+	echo -n "Elevator: deadline: "
+	find /sys/devices/ -name "scheduler" -exec grep "\[deadline\]" {} \; | wc -l
+	echo -n "Elevator: noop: "
+	find /sys/devices/ -name "scheduler" -exec grep "\[noop\]" {} \; | wc -l
+	echo -n "Elevator: cfq (=0): "
+	find /sys/devices/ -name "scheduler" -exec grep "\[cfq\]" {} \; | wc -l
+	echo
+
+	FOUND=$(lsmod | grep -e dog -e wdt | cut -d" " -f1 | tr "\n" " ")
+	test -z "${FOUND}" && FOUND="NA"
+	echo "Watchdog loaded:  ${FOUND}"
+
+	echo
+	echo "INFO: normal_end $EXE $FUNCNAME"
+}
+
+
+function prck_network(){
+
+	echo "INFO: start $EXE $FUNCNAME"
+	echo_msgsep $FUNCNAME
+
+	# TODO fix output
+	a="bond"
+	FOUND=$(ip -o a s | grep $a)
+	test -z "${FOUND}" && FOUND="NA"
+	### echo "network ${a} :      ${FOUND}"
+	# TODO look for 10gbit/s
+
+	echo
+	echo "INFO: normal_end $EXE $FUNCNAME"
+}
+
+
+function prck_sysconf(){
+
+	echo "INFO: start $EXE $FUNCNAME"
+	echo_msgsep $FUNCNAME
+
+	FIL="/boot/grub/menu.lst /etc/sysconfig/bootloader"
+	for f in $FIL; do
+		for a in ${HANA_SAP_BOOTARG} ${HANA_SUSE_BOOTARG}; do
+			FOUND=$(grep $a $f)
+			test -z "${FOUND}" && FOUND="NA"
+			echo "${f}: ${a} :	${FOUND}"
+		done
+	done
+	echo
+
+	OPT="/sys/devices/system/cpu/cpu*/cpufreq/scaling_governor /sys/kernel/mm/transparent_hugepage/enabled /sys/.*/scheduler"
+	f="/etc/init.d/boot.local"
+	for a in $OPT ; do
+		FOUND=$(grep $a $f)
+		test -z "${FOUND}" && FOUND="NA"
+		echo "${f}: ${a} :      ${FOUND}"
+	done
+	echo
+
+	f=/etc/sysctl.conf
+	for a in ${HANA_SAP_SYSCTL} ${HANA_SUSE_SYSCTL}; do
+		FOUND=$(grep $a $f)
+		test -z "${FOUND}" && FOUND="NA"
+		echo "${f}: ${a} :	${FOUND}"
+	done
+	echo
+
+	# TODO variable
+	for f in bootloader kernel kdump; do
+		g="/etc/sysconfig/$f"
+		echo "${g}:"
+		grep -v "^#" $g | tr -s "\n" | grep -v "\"\"$"
+		echo 
+	done	
+	echo
+
+	FOUND=$(/usr/bin/zcat /boot/initrd | cpio -itv 2>/dev/null |\
+		colrm 43 54 | grep -e dog.*.ko -e wdt.*.ko |\
+		awk '{print $6}' | tr "\n" " ")
+	test -z "${FOUND}" && FOUND="NA"
+	echo "Watchdog in initrd:      ${FOUND}"
+
+	FOUND=$(/usr/bin/zcat /boot/initrd | cpio -itv 2>/dev/null |\
+		colrm 43 54 | grep -e "/etc/multipath.*"  -e lvm.conf |\
+		awk '{print $6}' | tr "\n" " ")
+	test -z "${FOUND}" && FOUND="NA"
+	echo "MPIO, LVM in initrd:      ${FOUND}"
+
+	echo
+	echo "INFO: normal_end $EXE $FUNCNAME"
+}
+
+
+function prck_runlvl(){
+
+	echo "INFO: start $EXE $FUNCNAME"
+	echo_msgsep $FUNCNAME
+
+	FOUND=$(awk -F: '$1=="id" && $3=="initdefault" {print $2}' /etc/inittab)
+	test -z "${FOUND}" && FOUND="NA"
+	echo "default runlevel (3):	${FOUND}"
+
+	# TODO boot.sapinit?
+	for a in ${HANA_SAP_SVC_YES} ${HANA_SUSE_SVC_YES}; do
+		FOUND=$(chkconfig -A | grep $a | awk '{print $2}')
+		test -z "${FOUND}" && FOUND="NA"
+		echo "chkconfig ${a} ON:	${FOUND}"
+	done
+	for a in ${HANA_SAP_SVC_OFF} ${HANA_SUSE_SVC_OFF}; do
+		FOUND=$(chkconfig -A | grep $a | awk '{print $2}')
+		test -z "${FOUND}" && FOUND="NA"
+		echo "chkconfig ${a} OFF:	${FOUND}"
+	done
+
+	echo
+	echo "INFO: normal_end $EXE $FUNCNAME"
+}
+
+
+function prck_basesoft(){
+
+	echo "INFO: start $EXE $FUNCNAME"
+	echo_msgsep $FUNCNAME
+
+	# TODO abort zypper, if server not reached
+	INSTALLED_PTRN=$(zypper -n se -t pattern | awk '$1=="i" {print $3}')
+	for a in ${HANA_SUSE_PTRN}; do
+		FOUND=$(echo $INSTALLED_PTRN | tr " " "\n" | grep $a)
+		test -z "${FOUND}" && FOUND="NA"
+		echo "pattern ${a}:       ${FOUND}"
+	done
+	echo
+
+	RPMLIST=$(rpm -qa | sort)
+	for a in ${HANA_SAP_PKG_YES} ${HANA_SUSE_PKG_YES}; do
+		FOUND=$(echo $RPMLIST | tr " " "\n" | grep $a | tr "\n" " ")
+		test -z "${FOUND}" && FOUND="NA"
+		echo "${a} :      ${FOUND}"
+	done
+	# TODO also glibc HANA_VERS_MIN
+
+	echo
+	echo "INFO: normal_end $EXE $FUNCNAME"
+}
+
+
+function prck_apps() {
+
+	echo "INFO: start $EXE $FUNCNAME"
+	echo_msgsep $FUNCNAME
+
+	# TODO check for SAP programs needed by SAPHanaSR
+	#	1. sapcontrol/sapstartsrv 
+	#		/usr/sap/$SID/$InstanceName/exe/sapstartsrv
+	#		/usr/sap/$SID/$InstanceName/exe/sapcontrol
+	#	2. landscapeHostConfiguration
+	#		
+	#	3. hdbnsutil
+	#	4. was hdbsql, not needed anymore
+	#	5. saphostctrl
+	# TODO check for disk space for HANA
+	#	50GB	/usr/sap/
+	#	x RAM	/hana/log/ 
+	#	x RAM	/hana/data/
+	#	x RAM	/hana/shared/	NFS
+	# TODO instance name, site name, virt. ho0stname for detailled checks
+	# TODO see HWCCT output for other interesting points
+	# TODO loop, "NA"
+	/bin/ls -al /hana/data/ | awk '{print $1,$2,$3,$4,$5,$9}'
+	/bin/ls -al /hana/log/ | awk '{print $1,$2,$3,$4,$5,$9}'
+	/bin/ls -al /hana/shared/ | awk '{print $1,$2,$3,$4,$5,$9}'
+	/bin/ls -al /usr/sap/[A-Z]??/SYS/profile/ | awk '{print $1,$2,$3,$4,$5,$9}'
+	/bin/ls -al /usr/sap/*/[0-9][0-9]/work/ | awk '{print $1,$2,$3,$4,$5,$9}'
+	# TODO /usr/sap/sapservices
+	echo
+	echo "INFO: normal_end $EXE $FUNCNAME"
+}
+
+
+# main()
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+        	head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-b|--base)
+		echo "INFO: start $EXE"
+
+		test $UID -gt 0 && echo "please call as root." && exit
+		mkdir $TEMP
+		cd $TEMP
+		prck_hardware
+		prck_kernel
+		prck_sysconf
+		prck_runlvl
+		prck_network
+		prck_basesoft
+		cd $OLDPWD
+		rm -rf $TEMP
+
+		echo "INFO: normal_end $EXE"
+		exit
+	;;
+	-a|--apps)
+		echo "INFO: start $EXE"
+		test $UID -gt 0 && echo "please call as root." && exit
+
+		prck_apps
+
+		echo "INFO: normal_end $EXE"
+		exit
+	;;
+	*)
+		help
+		exit		
+	;;
+esac
+#

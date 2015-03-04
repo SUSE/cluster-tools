@@ -1,3 +1,10 @@
+TODO use testx39 testx39attr for testdriver (30sec intervall by two crontab lines, one with sleep 30)
+TODO cs_precheck_for_saphana: improve
+TODO cs_show_supportconfig: chk_modules software RAID?
+TODO cs_show_supportconfig: chk_entwork eth bridge
+TODO cs_show_supportconfig: chk_xen boot opts (dom0_mem, ...), eth bridge, etc/xend-conf.sxp (dom0 mem, cpu, remote access)
+TODO cs_show_supportconfig: grep: basic-health-report.txt: No such file or directory (SLES11SP3)
+TODO check for shellshock
 TODO check ClusterTools2 for SLE12
 TODO cs_prepare_exsvm check, iostack, configfile
 TODO cs_precheck_exsvm, link to cs_prepare_exsvm

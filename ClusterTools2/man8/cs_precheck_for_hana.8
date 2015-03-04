@@ -1,0 +1,102 @@
+.TH cs_precheck_for_hana 8 "01 Mar 2015" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_precheck_for_hana \- check pre-requisites for SAP HANA System Replication and automation with SLE-HA cluster
+.\"
+.SH SYNOPSIS
+.br
+.B cs_precheck_for_hana
+[\fIOPTION\fR]
+.br
+.\"
+.SH DESCRIPTION
+\fBcs_precheck_for_hana\fP checks if a Linux system is prepared for running
+SAP HANA in general. It also checks pre-requisites for SAP HANA System Replication automation with a SLE-HA cluster.
+The check is done according to the concept described in the setup guide
+\fISAP HANA System Replication on SLES for SAP Applications\fR . 
+.\"
+.\" A check could be done on one of two areas:
+.\" TODO
+.br
+All nodes of a cluster should be checked. The output of \fBcs_precheck_for_hana\fP
+could be re-directed into a file. Output files from different hosts might be
+compared to ensure all nodes of a cluster are set up identically. This is
+helpful particularly in scale-out scenarios.
+.\"
+.SH OPTIONS
+Global options are:
+.HP
+\fB --help\fR
+	show help information.
+.HP
+\fB --version\fR
+	show version.
+.HP
+\fB --base\fR
+	show basic OS configuration, related to SAP HANA and its System Replication.
+.HP
+\fB --apps\fR
+	show basic HANA application configuration, and more specific related OS settings.
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH EXAMPLES
+.TP
+* Show help.
+# cs_precheck_for_hana -h
+.TP
+* Check for basic OS pre-requisites needed to install SAP HANA. Items needed to setup automation for System Replication are also checked.
+# cs_precheck_for_hana -b
+.TP
+* Find differences between nodep and nodeq.
+# cs_precheck_for_hana -b >nodeq.precheck.txt 2>/dev/null
+.br
+# ssh root@nodep "cs_precheck_for_hana -b 2>/dev/null" >nodep.precheck.txt
+.br
+# diff --suppress-common-lines nodeq.precheck.txt nodep.precheck.txt
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_precheck_for_hana
+	the program itself.
+.TP
+/etc/ClusterTools2/cs_precheck_for_hana, /etc/ClusterTools2/cs_show_supportconfig
+	the configuration files.
+.\"
+.SH BUGS
+Formatting and content of this script's output will be changing, since this
+script is under development.
+Checks specific to the HANA application are currently not implemented.
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBhb_report\fP(8), \fBsupportconfig\fP(8), \fBcs_sum_hana_config\fP(8),
+\fBcs_sum_base_config\fP(8), \fBcs_show_error_patterns\fP(8),
+\fBcs_show_supportconfig\fP(8), \fBcs_show_initrd\fP(8), \fBClusterTools2\fP(7),
+.br
+https://www.suse.com/promo/saphana-replication.html ,
+.br
+http://help.sap.com/hana/sap_hana_technical_operations_manual_en.pdf ,
+.br
+http://help.sap.com/hana_platform ,
+.br
+http://help.sap.com/hana/SAP_HANA_Installation_Guide_en.pdf ,
+.br
+http://help.sap.com/hana/SAP_HANA_Master_Guide_en.pdf
+.\"
+.\"
+.SH COPYRIGHT
+(c) 2015 L.Pinne, Germany.
+.br
+cs_precheck_for_hana comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

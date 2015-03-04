@@ -2,11 +2,11 @@
 #
 # cs_disable_other_watchdog
 #
-# (c) 2011-2013 SUSE Linux GmbH, Germany.
-# GNU Public License. No warranty.
+# (c) 2011-2014 SUSE Linux GmbH, Germany.
+# GNU General Public License. No warranty.
 # Author: L.Pinne
 #
-# Version: 2013-01-25 10:25
+# Version: 2014-09-03 13:30
 #
 
 EXE="$0"
@@ -57,7 +57,7 @@ function disable_hpasr() {
 
 	# TODO /etc/sysconfig/kernel
 	test -s $FIL || exit 2
-	# TODO mkinitrd ?
+	# TODO mkinitrd?
 	echo "INFO: end $EXE $FUNCNAME"
 }
 
@@ -96,8 +96,12 @@ function list_other_restart() {
 	ls -l /boot/initrd*
 
 	echo "initrd watchdog module:"
-	/bin/zcat /boot/initrd | cpio -itv 2>/dev/null |\
-		grep "lib/modules/.*/kernel/drivers/watchdog/.*ko$"
+	for f in /boot/initrd /boot/initrd-xen; do
+		test -r $f &&\
+		( echo $f:
+	  	/bin/zcat $f | cpio -itv 2>/dev/null |\
+	  	grep "lib/modules/.*/kernel/drivers/watchdog/.*ko$" )
+	done
 }
 
 

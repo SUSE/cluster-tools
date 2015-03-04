@@ -2,10 +2,10 @@
 #
 # cs_clusterstate 
 #
-# (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
-# GNU Public License. No warranty.
+# (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU General Public License. No warranty.
 #
-# Version: 0.1 2014-01-29
+# Version: 0.1 2015-02-27
 #
 
 EXE="$0"
@@ -82,7 +82,9 @@ echo
 
 function get_network() {
 echo
-for i in $ETH; do
+# limit to 64 ETHs
+ETH64=$(echo $ETH | cut -d" " -f1-16)
+for i in $ETH16; do
 	ip -o a s $i | awk '$0~/state/{print $2,$3}'
 	case $i in
 	bond?)
@@ -174,6 +176,8 @@ case $1 in
 		echo "### $HST - $DAT ###"
 		get_basics
 		exit
-	;;	
+	;;
+	# TODO get_hana_scaleup (master-slave + clone)
+	# TODO get_hana_scaleout (master-slave + clone)
 esac
 #

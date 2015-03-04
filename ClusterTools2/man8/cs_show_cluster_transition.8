@@ -1,4 +1,4 @@
-.TH cs_show_cluster_transition 8 "18 Dec 2012" "" "ClusterTools2"
+.TH cs_show_cluster_transition 8 "03 Aug 2014" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_show_cluster_transition \- search log files for cluster transition patterns
@@ -72,10 +72,15 @@ Usage, syntax or execution errors.
 /etc/corosync/corosync.conf
 	the corosync configuration, maybe defining log file. 
 .TP
+/etc/products.d/
+	the directory with product identification files.
+.TP
 /var/log/messages
 	the default log file.
 .\"
 .SH BUGS
+Currently SLES11 SP1 and SP2 are handled.
+For SLES11 SP3 only a sub-set of patterns is shown, because fields differ.
 Feedback is welcome, please use the project page at
 .br
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
@@ -89,7 +94,7 @@ http://www.clusterlabs.org/man/
 .\"
 .\"
 .SH COPYRIGHT
-(c) 2011-2012 L.Pinne, Germany.
+(c) 2011-2014 L.Pinne, Germany.
 .br
 cs_show_cluster_transition comes with ABSOLUTELY NO WARRANTY.
 .br

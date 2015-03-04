@@ -1,1 +1,15 @@
-cs_service
+#!/bin/bash
+#
+# ClusterService, cs_service
+# (c) 2011-2014 SUSE Linux Products GmbH, Germany 
+# Author: F.Herschel
+# GNU General Public License. No warranty.
+
+cmd=""
+case "$1" in
+	*)
+	cmd="--cmd"
+	;;
+esac
+/usr/sbin/menueng2 --program ClusterService --rscFile /usr/share/ClusterTools2/ClusterService.rsc $cmd "$@"
+#

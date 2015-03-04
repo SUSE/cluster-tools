@@ -5,7 +5,7 @@
 # (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 2015-03-04 00:37
+# Version: 2015-03-04 08:00
 #
 
 EXE="$0"
@@ -15,23 +15,33 @@ CFG="/etc/ClusterTools2/cs_stresscib"
 test -s $CFG && source $CFG
 
 test -z "${L_NODE}" &&\
-	echo "undefined L_NODE" # && exit 3
+	echo "ERR: undefined L_NODE" # && exit 3
 test -z "${F_CRON}" &&\
 	F_CRON="/etc/cron.d/cs_stresscib"
 test -z "${F_LOG}" &&\
 	F_LOG="/var/log/cs_stresscib.log"
 
 
+# TODO better checks
+# TODO all echo RC= instead of RC:
+
+
 function do_init() {
 	# TODO 2nd arg for stress profile (hana ...)
+	# check or create attributes in CIB?
 	LNK=2
 	test -L $F_CRON && LNK=0
-	test $LNK -eq 0 && echo "existing symlink: $F_CRON: RC:2" && exit 2
+	test $LNK -eq 0 && echo "ERR: existing symlink: $F_CRON: RC:2" && exit 2
 	test $LNK -eq 0 ||\
 		ln -s /usr/share/ClusterTools2/cs_stresscib.cron $F_CRON &&\
-		echo "created symlink: $F_CRON: RC:0"
+		echo "INF: created symlink: $F_CRON: RC:0"
 		grep -v "^#" $F_CRON
 	touch $F_LOG
+	/sbin/chkconfig openais >/dev/null 2>&1; RC=$?
+	if [ $RC -ne 0 ]; then
+		echo "ERR: no chkconfig openais on: RC:$RC"
+		exit $RC
+	fi
 }
 
 
@@ -40,12 +50,19 @@ function do_exit() {
 	test -L $F_CRON && LNK=0
 	test -e $F_CRON || LNK=0
 	test $LNK -eq 0 && rm -f $F_CRON &&\
-		echo "removed symlink: $F_CRON: RC:0" && exit 0
-	test $LNK -eq 0 || echo "not a symlink: $F_CRON: RC:2" && exit 2
+		echo "INF: removed symlink: $F_CRON: RC:0" && exit 0
+	test $LNK -eq 0 || echo "ERR: not a symlink: $F_CRON: RC:2" && exit 2
 }
 
 
 function do_run() {
+
+	/etc/init.d/rcopenais status >/dev/null 2>&1; RC=$?
+	if [ $RC -ne 0 ]; then
+		echo "ERR: openais not running"
+		exit $RC
+	fi
+
 #
 # stress profile for SAP HANA scale-out, to run every 20-30 seconds
 # 	host attributes
@@ -125,8 +142,7 @@ function do_show() {
 
 
 function do_help() {
-	echo "usage: $(basename $0) [--help | --version | --init | --exit]"
-	echo "usage: $(basename $0) --run [ NUMBER_OF_NODES ]"
+	echo "usage: $(basename $0) [--help | --version | --init | --exit | --run ] "
 	echo
 	echo " --init		initialise cib stress cron job."
 	echo " --exit		stop cib stress cron job."

@@ -37,10 +37,10 @@ function do_init() {
 		echo "INF: created symlink: $F_CRON: RC:0"
 		grep -v "^#" $F_CRON
 	touch $F_LOG
-	/sbin/chkconfig openais >/dev/null 2>&1; RC=$?
-	if [ $RC -ne 0 ]; then
-		echo "ERR: no chkconfig openais on: RC:$RC"
-		exit $RC
+	SVC=$(/sbin/chkconfig openais | tr -d " ")
+	if [ "$SVC" != openaison ]; then
+		echo "ERR: no chkconfig openais on: RC:$2"
+		exit 2
 	fi
 }
 

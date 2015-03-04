@@ -84,7 +84,7 @@ function do_run() {
 	# read host specific attributes, $N_NODE x $N_NODE times
 	for attr_node in ${L_NODE}; do
 		attr_name="val_stresscib_${attr_node}"
-		do_run_readhost
+		attr_value=$(do_run_readhost)
 		echo "$time_stamp: do_run_readhost: ${attr_node} $attr_name $attr_value:$?"
 	done >>$F_LOG 2>&1
 
@@ -92,7 +92,7 @@ function do_run() {
 	# read cluster specific attributes, $N_NODE times
 	attr_node=$HOSTNAME
 	attr_name="val_stresscib_cluster"
-	do_run_readcluster
+	attr_value=$(do_run_readcluster | cut -d" " -f4 | cut -d"=" -f2)
 	echo "$time_stamp: do_run_readcluster: ${attr_node} $attr_name $attr_value:$?" >>$F_LOG 2>&1
 }
 

@@ -11,7 +11,7 @@
 # please send bugfixes or comments to feedback@suse.de.
 #
 Name:         ClusterTools2
-License:      GPL
+License:      GPL-2.0
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy

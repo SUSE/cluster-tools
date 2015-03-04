@@ -25,7 +25,7 @@ function do_list() {
 	CRM_FAILCOUNT=/usr/sbin/crm_failcount
 	CRM_NODE=/usr/sbin/crm_node
 	NODES=$($CRM_NODE -l | awk '/member/ { print $2 }')
-	RESOURCES=$($CRM_RESOURCE -l)
+	RESOURCES=$($CRM_RESOURCE -l | cut -d: -f1 | sort -u)
 
 	for node in $NODES
         	do

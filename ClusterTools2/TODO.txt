@@ -1,3 +1,4 @@
+TODO check vgs, see mail from d.hagen
 TODO check in sysconfig for HALD_IGNORE_STORAGE=yes
 TODO cs_precheck_for_saphana: improve
 TODO cs_show_supportconfig: chk_modules software RAID?

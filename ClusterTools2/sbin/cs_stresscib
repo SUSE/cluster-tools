@@ -31,15 +31,15 @@ function do_init() {
 	# check or create attributes in CIB?
 	LNK=2
 	test -L $F_CRON && LNK=0
-	test $LNK -eq 0 && echo "ERR: existing symlink: $F_CRON: RC:2" && exit 2
+	test $LNK -eq 0 && echo "ERR: existing symlink: $F_CRON: RC=2" && exit 2
 	test $LNK -eq 0 ||\
 		ln -s /usr/share/ClusterTools2/cs_stresscib.cron $F_CRON &&\
-		echo "INF: created symlink: $F_CRON: RC:0"
+		echo "INF: created symlink: $F_CRON: RC=0"
 		grep -v "^#" $F_CRON
 	touch $F_LOG
 	SVC=$(/sbin/chkconfig openais | tr -d " ")
 	if [ "$SVC" != openaison ]; then
-		echo "ERR: no chkconfig openais on: RC:$2"
+		echo "ERR: no chkconfig openais on: RC=$2"
 		exit 2
 	fi
 }
@@ -50,27 +50,28 @@ function do_exit() {
 	test -L $F_CRON && LNK=0
 	test -e $F_CRON || LNK=0
 	test $LNK -eq 0 && rm -f $F_CRON &&\
-		echo "INF: removed symlink: $F_CRON: RC:0" && exit 0
-	test $LNK -eq 0 || echo "ERR: not a symlink: $F_CRON: RC:2" && exit 2
+		echo "INF: removed symlink: $F_CRON: RC=0" && exit 0
+	test $LNK -eq 0 || echo "ERR: not a symlink: $F_CRON: RC=2" && exit 2
 }
 
 
 function do_run() {
 
-	/etc/init.d/rcopenais status >/dev/null 2>&1; RC=$?
+	/etc/init.d/openais status >/dev/null 2>&1; RC=$?
 	if [ $RC -ne 0 ]; then
-		echo "ERR: openais not running"
+		echo "ERR: openais not running: RC=$RC"
+	# TODO double check if this works
 		exit $RC
 	fi
 
 #
 # stress profile for SAP HANA scale-out, to run every 20-30 seconds
 # 	host attributes
-#		write	6 x $N_NODE
-#		read	$N_NODE x $N_NODE
+#		write	6 x N_NODE
+#		read	N_NODE x N_NODE
 # 	cluster attributes
-#		write	2 
-#		read	$N_NODE		(planned ca.2 later)
+#		write	2
+#		read	N_NODE		(planned ca.2 later)
 #
 
 	attr_store="reboot"			# reboot or forever
@@ -83,18 +84,19 @@ function do_run() {
 	for j in {1..6}; do
  		attr_name="val_stresscib_${attr_node}"
 		do_run_writehost
-		echo "$time_stamp: do_run_writehost: ${attr_node} $attr_name $attr_value:$?"
+		echo "$time_stamp: do_run_writehost: ${attr_node} $attr_name $attr_value: RC=$?"
 	done >>$F_LOG 2>&1
 
 	time_stamp=$(/bin/date +%F_%H-%M-%S)
 	# write cluster specific attributes, 2 times
 	attr_value=${time_stamp}
 	NODE_1=$(echo $L_NODE | cut -d" " -f1)
+	# TODO better to get NODE_2 from last entry?
 	NODE_2=$(echo $L_NODE | cut -d" " -f2)
 	if [ "$HOSTNAME" = "$NODE_1" -o "$HOSTNAME" = "$NODE_2" ]; then
 		attr_name="val_stresscib_cluster"
 		do_run_writecluster
-		echo "$time_stamp: do_run_writecluster: cluster $attr_name $attr_value:$?"
+		echo "$time_stamp: do_run_writecluster: cluster $attr_name $attr_value: RC=$?"
 	fi >>$F_LOG 2>&1
 	
 	time_stamp=$(/bin/date +%F_%H-%M-%S)
@@ -102,7 +104,7 @@ function do_run() {
 	for attr_node in ${L_NODE}; do
 		attr_name="val_stresscib_${attr_node}"
 		attr_value=$(do_run_readhost)
-		echo "$time_stamp: do_run_readhost: ${attr_node} $attr_name $attr_value:$?"
+		echo "$time_stamp: do_run_readhost: ${attr_node} $attr_name $attr_value: RC=$?"
 	done >>$F_LOG 2>&1
 
 	time_stamp=$(/bin/date +%F_%H-%M-%S)
@@ -110,7 +112,7 @@ function do_run() {
 	attr_node=$HOSTNAME
 	attr_name="val_stresscib_cluster"
 	attr_value=$(do_run_readcluster | cut -d" " -f4 | cut -d"=" -f2)
-	echo "$time_stamp: do_run_readcluster: ${attr_node} $attr_name $attr_value:$?" >>$F_LOG 2>&1
+	echo "$time_stamp: do_run_readcluster: ${attr_node} $attr_name $attr_value: RC=$?" >>$F_LOG 2>&1
 }
 
 
@@ -131,6 +133,13 @@ function do_run_writecluster(){
 
 function do_run_readcluster(){
 	/usr/sbin/crm_attribute -t crm_config -G -n "$attr_name"
+}
+
+
+function do_run_cibadmin() {
+	time_stamp=$(/bin/date +%F_%H-%M-%S)
+	/usr/sbin/cibadmin -Q >/dev/null 2>&1; RC=$?
+	echo "$time_stamp: do_run_cibadmin: $HOSTNAME: RC=$RC"
 }
 
 
@@ -171,8 +180,17 @@ case $1 in
 	;;
 	-r|run)
 		shift
-		test -z $1 || N_NODE=$1
-		do_run
+		LOAD=1
+		test -z $1 || LOAD=$1
+		case $LOAD in
+			1)
+				do_run
+			;;
+			2)
+				do_run
+				do_run_cibadmin
+			;; 
+		esac
 	;;
 	-s|show)
 		do_show

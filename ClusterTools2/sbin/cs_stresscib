@@ -5,7 +5,7 @@
 # (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 2015-03-04 08:00
+# Version: 2015-03-09 10:50
 #
 
 EXE="$0"
@@ -16,6 +16,8 @@ test -s $CFG && source $CFG
 
 test -z "${L_NODE}" &&\
 	echo "ERR: undefined L_NODE" # && exit 3
+	# echo "INF: undefined L_NODE"
+	# TODO get L_NODE from cluster
 test -z "${F_CRON}" &&\
 	F_CRON="/etc/cron.d/cs_stresscib"
 test -z "${F_LOG}" &&\
@@ -23,7 +25,6 @@ test -z "${F_LOG}" &&\
 
 
 # TODO better checks
-# TODO all echo RC= instead of RC:
 
 
 function do_init() {
@@ -85,7 +86,7 @@ function do_run() {
  		attr_name="val_stresscib_${attr_node}"
 		do_run_writehost
 		echo "$time_stamp: do_run_writehost: ${attr_node} $attr_name $attr_value: RC=$?"
-	done >>$F_LOG 2>&1
+	done
 
 	time_stamp=$(/bin/date +%F_%H-%M-%S)
 	# write cluster specific attributes, 2 times
@@ -97,7 +98,7 @@ function do_run() {
 		attr_name="val_stresscib_cluster"
 		do_run_writecluster
 		echo "$time_stamp: do_run_writecluster: cluster $attr_name $attr_value: RC=$?"
-	fi >>$F_LOG 2>&1
+	fi
 	
 	time_stamp=$(/bin/date +%F_%H-%M-%S)
 	# read host specific attributes, $N_NODE x $N_NODE times
@@ -105,14 +106,14 @@ function do_run() {
 		attr_name="val_stresscib_${attr_node}"
 		attr_value=$(do_run_readhost)
 		echo "$time_stamp: do_run_readhost: ${attr_node} $attr_name $attr_value: RC=$?"
-	done >>$F_LOG 2>&1
+	done
 
 	time_stamp=$(/bin/date +%F_%H-%M-%S)
 	# read cluster specific attributes, $N_NODE times
 	attr_node=$HOSTNAME
 	attr_name="val_stresscib_cluster"
 	attr_value=$(do_run_readcluster | cut -d" " -f4 | cut -d"=" -f2)
-	echo "$time_stamp: do_run_readcluster: ${attr_node} $attr_name $attr_value: RC=$?" >>$F_LOG 2>&1
+	echo "$time_stamp: do_run_readcluster: ${attr_node} $attr_name $attr_value: RC=$?"
 }
 
 
@@ -152,10 +153,11 @@ function do_show() {
 
 function do_help() {
 	echo "usage: $(basename $0) [--help | --version | --init | --exit | --run ] "
+	echo "usage: $(basename $0) --run [123] "
 	echo
 	echo " --init		initialise cib stress cron job."
 	echo " --exit		stop cib stress cron job."
-	echo " --run		run cib stress."
+	echo " --run		run cib stress, reads optional argument for load."
 	echo " --show		show cib cron job stress log."
 	echo " --help		show help."
 	echo " --version	show version."
@@ -184,12 +186,17 @@ case $1 in
 		test -z $1 || LOAD=$1
 		case $LOAD in
 			1)
-				do_run
+				do_run >>$F_LOG 2>&1
 			;;
 			2)
-				do_run
-				do_run_cibadmin
-			;; 
+				do_run >>$F_LOG 2>&1
+				do_run_cibadmin >>$F_LOG 2>&1
+			;;
+			3)
+				do_run >>$F_LOG 2>&1
+				do_run_cibadmin >>$F_LOG 2>&1
+				# TODO what else?
+			;;
 		esac
 	;;
 	-s|show)

@@ -13,6 +13,7 @@ EXE="$0"
 # main()
 case $1 in
 	-h|--help)	
+		echo "usage:	$(basename $0) [OPTION]"
 		echo "usage:	$(basename $0)"
 		echo " --help		show help."	
 		echo " --version	show version."

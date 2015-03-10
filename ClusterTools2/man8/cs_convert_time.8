@@ -1,0 +1,56 @@
+.TH cs_convert_time 8 "10 Mar 2015" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_convert_time \- convert date/time string between Unix Epoch and wall clock
+.\"
+.SH SYNOPSIS
+.B cs_convert_time \fI<date/time string>\fR
+.br
+.\"
+.SH DESCRIPTION
+\fBcs_convert_time\fP converts date/time strings between Unix Epoch and wall clock.
+.br
+The scripts tries to figure out the desired direction from the format of the
+given argument.
+.br
+.\"
+.SH EXAMPLES
+.TP
+* convert Unix Epoch time into wall clock date/time
+.br
+# cs_convert_time 1425842100
+.TP
+* convert wall clock date/time into Unix Epoch time
+.br
+# cs_convert_time "Sun Mar 08 20:15:00 CET 2015"
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_convert_time
+	the program itself.
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBdate\fP(1), \fBtime\fP(7), \fBClusterTools2\fP(7), \fBcs_dmesg\fP(8)
+.br
+http://stackoverflow.com/questions/95492/how-do-i-convert-a-date-time-to-epoch-time-aka-unix-time-seconds-since-1970
+.\"
+.SH COPYRIGHT
+The main code is taken from the website mentioned above.
+.br
+cs_convert_time comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

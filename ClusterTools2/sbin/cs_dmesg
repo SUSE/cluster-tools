@@ -10,7 +10,6 @@
 
 EXE="$0"
 
-
 # main()
 case $1 in
 	-h|--help)	
@@ -30,17 +29,7 @@ case $1 in
 			awk '{f=split($3,a,":"); print 60*a[1]+a[2]}')
 			# TODO uptime with days
 		B=$[ $D - $U ]
-
-		# echo "boot time: $B"
-		# TODO convert T (since 1970) from seconds into default format
-		# dmesg | awk '{T=$2+'"$B"'; print T,$0}'
-		# 
-		dmesg | awk -F"]" '{f=split($1,a,"[");\
-			d=int(a[2]/60/60/24);
-			h=int(a[2]/60/60);
-			m=int(a[2]-h*60*60);\
-			s=a[2]-d*60*60*24-h*60*60-m*60;\
-			print "h":"m":"s , $0}'
+		dmesg | awk '{E=int($2+'"$B"'); system("T=$(cs_convert_time "E"); echo -n $T"); print "  "$0}'
 	;;
 esac
 #

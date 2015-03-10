@@ -2,7 +2,7 @@
 # spec file for package ClusterTools2
 #
 # Copyright (c) 2008-2010 SUSE LINUX GmbH, Germany.
-# Copyright (c) 2011-2014 SUSE LINUX Products GmbH, Germany.
+# Copyright (c) 2011-2015 SUSE LINUX Products GmbH, Germany.
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
@@ -17,7 +17,7 @@ Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.5.3
 #Release:      0.1
-Release:      17
+Release:      18
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch

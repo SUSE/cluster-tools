@@ -27,8 +27,8 @@ case $1 in
 	*)
 		D=$(date +%s)
 		U=$(uptime | tr -d "," |\
-			awk '{f=split($3,a,":"); print 60*a[1]+a[2]}')
-			# TODO uptime with days
+			awk 'NF==10{f=split($3,a,":"); print 60*60*a[1]+60*a[2]}
+				NF==12{f=split($5,a,":"); print 24*60*60*$3+60*60*a[1]+60*a[2]}')
 		B=$[ $D - $U ]
 		dmesg | awk '{E=int($2+'"$B"'); system("T=$(cs_convert_time "E"); echo -n $T"); print "  "$0}'
 	;;

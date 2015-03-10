@@ -1,6 +1,12 @@
 #!/usr/bin/perl -w
+# 
+# cs_convert_time
+#
+# Version: 2015-03-10
 #
 # http://stackoverflow.com/questions/95492/how-do-i-convert-a-date-time-to-epoch-time-aka-unix-time-seconds-since-1970
+#
+# TODO add cmdline opts --version, --help
 #
 
 use strict;

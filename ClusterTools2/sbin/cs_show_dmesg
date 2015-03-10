@@ -13,13 +13,11 @@ EXE="$0"
 
 D=$(date +%s)
 U=$(uptime |tr -d ","| awk '{f=split($3,a,":"); print 60*a[1]+a[2]}')
-
-# integer
 B=$[ $D - $U ]
 
-echo "boot time $B"
 # TODO 1. add this $B to each time stamp in dmesg output
 # TODO 2. convert dmesg output to wall clock time
+
 
 # main()
 case $1 in
@@ -35,7 +33,9 @@ case $1 in
 	exit
 	;;
 	*)
-		show_dmesg
+
+		echo "boot time: $B"
+#		dmesg | awk '{T=$2+'"$B"';  print T,$0}'
 	;;
 esac
 #

@@ -7,12 +7,8 @@
 #
 # Version: 2015-03-10
 #
-#set -x
 
 EXE="$0"
-
-# TODO 1. add this $B to each time stamp in dmesg output
-# TODO 2. convert dmesg output to wall clock time
 
 
 # main()
@@ -31,7 +27,8 @@ case $1 in
 	*)
 		D=$(date +%s)
 		U=$(uptime | tr -d "," |\
-			 awk '{f=split($3,a,":"); print 60*a[1]+a[2]}')
+			awk '{f=split($3,a,":"); print 60*a[1]+a[2]}')
+			# TODO uptime with days
 		B=$[ $D - $U ]
 
 		# echo "boot time: $B"

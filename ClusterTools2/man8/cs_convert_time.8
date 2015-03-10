@@ -14,6 +14,13 @@ The scripts tries to figure out the desired direction from the format of the
 given argument.
 .br
 .\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
 .SH EXAMPLES
 .TP
 * convert Unix Epoch time into wall clock date/time
@@ -23,13 +30,6 @@ given argument.
 * convert wall clock date/time into Unix Epoch time
 .br
 # cs_convert_time "Sun Mar 08 20:15:00 CET 2015"
-.\"
-.SH EXIT STATUS
-.B 0
-Successful program execution.
-.br
-.B >0 
-Usage, syntax or execution errors.
 .\"
 .SH FILES
 .TP

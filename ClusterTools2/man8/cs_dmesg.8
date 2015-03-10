@@ -1,0 +1,56 @@
+.TH cs_dmesg 8 "10 Mar 2015" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_dmesg \- show dmesg with converted time stamps
+.\"
+.SH SYNOPSIS
+.B cs_dmesg \fI[OPTION]\fR
+.br
+.\"
+.SH DESCRIPTION
+\fBcs_dmesg\fP shows dmesg output with converted time stamps.
+.br
+The output of dmesg is taken and a human readable date/time string is written in front of each line.
+The date/time string is calculated by adding the boot time to dmesg's time stamp. 
+.br
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+        show help.
+.HP
+\fB --version\fR
+        show version.
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_dmesg
+	the program itself.
+.TP
+/usr/sbin/cs_convert_time
+	the time conversion between Unix Epoch and wall clock.
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBdate\fP(1), \fBuptime\fP(1), \fBdmesg\fP(1), \fBtime\fP(7), \fBClusterTools2\fP(7),
+\fBcs_convert_time\fP(8)
+.\"
+.SH COPYRIGHT
+(c) 2015 L.Pinne, Germany.
+.br
+cs_dmesg comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

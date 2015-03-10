@@ -35,7 +35,12 @@ case $1 in
 		# TODO convert T (since 1970) from seconds into default format
 		# dmesg | awk '{T=$2+'"$B"'; print T,$0}'
 		# 
-		dmesg | awk '{T=$2+'"$B"'; print T,$0}'
+		dmesg | awk -F"]" '{f=split($1,a,"[");\
+			d=int(a[2]/60/60/24);
+			h=int(a[2]/60/60);
+			m=int(a[2]-h*60*60);\
+			s=a[2]-d*60*60*24-h*60*60-m*60;\
+			print "h":"m":"s , $0}'
 	;;
 esac
 #

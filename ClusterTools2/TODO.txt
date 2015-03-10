@@ -1,4 +1,5 @@
-TODO supportconfig plugin precheck_for_hana
+TODO script to calculate wallclock time for dmesg timestamps (bootup time + timestamp seconds)
+DONE supportconfig plugin precheck_for_hana
 TODO check vgs, see mail from d.hagen
 TODO check in sysconfig for HALD_IGNORE_STORAGE=yes
 TODO cs_precheck_for_saphana: improve

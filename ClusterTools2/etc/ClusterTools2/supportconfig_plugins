@@ -12,4 +12,5 @@ show_elevator
 #sum_base_config
 #hb_report
 #precheck_for_sap
+#precheck_for_hana
 #

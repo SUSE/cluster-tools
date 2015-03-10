@@ -1,4 +1,5 @@
-TODO script to calculate wallclock time for dmesg timestamps (bootup time + timestamp seconds)
+TODO finalize cs_convert_time. Should is be in /usr/bin insetad of /usr/sbin?
+TODO cs_dmesg to supporet uptime longer than one day. 
 DONE supportconfig plugin precheck_for_hana
 TODO check vgs, see mail from d.hagen
 TODO check in sysconfig for HALD_IGNORE_STORAGE=yes

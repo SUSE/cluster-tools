@@ -59,6 +59,12 @@ Usage, syntax or execution errors.
 # ssh root@nodep "cs_precheck_for_hana -b 2>/dev/null" >nodep.precheck.txt
 .br
 # diff --suppress-common-lines nodeq.precheck.txt nodep.precheck.txt
+.TP
+* Include findings of cs_precheck_for_hana with supportconfig file.
+.br
+# sed -i s/#precheck_for_hana/precheck_for_hana/ /etc/ClusterTools2/supportconfig_plugins
+.br
+# supportconfig
 .\"
 .SH FILES
 .TP
@@ -69,7 +75,7 @@ Usage, syntax or execution errors.
 	the configuration files.
 .\"
 .SH BUGS
-Formatting and content of this script's output will be changing, since this
+Formatting and content of this script's output will change, since this
 script is under development.
 Checks specific to the HANA application are currently not implemented.
 Feedback is welcome, please use the project page at
@@ -90,7 +96,24 @@ http://help.sap.com/hana_platform ,
 http://help.sap.com/hana/SAP_HANA_Installation_Guide_en.pdf ,
 .br
 http://help.sap.com/hana/SAP_HANA_Master_Guide_en.pdf
-.\"
+.br
+Some relevant SAP Notes are (list not complete):
+0171356,
+1310037,
+1514967,
+1523337,
+1557506,
+1758890,
+1824819,
+1824788,
+1855805,
+1888072,
+1890444,
+1944799,
+1954788,
+2001528,
+2055470,
+2131662
 .\"
 .SH COPYRIGHT
 (c) 2015 L.Pinne, Germany.

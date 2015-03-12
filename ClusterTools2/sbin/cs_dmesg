@@ -5,7 +5,7 @@
 # (c) 2013 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 2015-03-10
+# Version: 2015-03-12
 #
 
 EXE="$0"
@@ -30,7 +30,7 @@ case $1 in
 			awk 'NF==10{f=split($3,a,":"); print 60*60*a[1]+60*a[2]}
 				NF==12{f=split($5,a,":"); print 24*60*60*$3+60*60*a[1]+60*a[2]}')
 		B=$[ $D - $U ]
-		dmesg | awk '{E=int($2+'"$B"'); system("T=$(cs_convert_time "E"); echo -n $T"); print "  "$0}'
+		dmesg | awk '{E=int($2+'"$B"'); system("T=$(/bin/date -d @"E"); echo -n $T"); print "  "$0}'
 	;;
 esac
 #

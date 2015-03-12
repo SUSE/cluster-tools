@@ -2,10 +2,11 @@
 # 
 # cs_convert_time
 #
-# Version: 2015-03-10
+# Version: 2015-03-12
 #
 # http://stackoverflow.com/questions/95492/how-do-i-convert-a-date-time-to-epoch-time-aka-unix-time-seconds-since-1970
 #
+# TODO re-write in bash, simply "date -d $WALLCLOCK +%s" and "date -d @$EPOCH" 
 # TODO add cmdline opts --version, --help
 #
 

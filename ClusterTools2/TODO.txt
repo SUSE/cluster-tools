@@ -1,4 +1,4 @@
-TODO sle12: cs_show_supportconfig no NICs found 
+TODO sle12: cs_show_supportconfig no NICs found, no network info at all 
 TODO sle12: cs_show_supportconfig no chkconfig.txt
 TODO sle12: cs_show_supportconfig no basic-health-report.txt
 TODO finalize cs_convert_time. Should is be in /usr/bin insetad of /usr/sbin?

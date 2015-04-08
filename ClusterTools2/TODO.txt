@@ -1,3 +1,4 @@
+TODO sle12: cs_show_supportconfig no /boot/grub/menu.lst
 TODO sle12: cs_show_supportconfig no chk_services due to systemd
 TODO sle12: cs_show_supportconfig no NICs found, no network info at all 
 TODO sle12: cs_show_supportconfig no chkconfig.txt

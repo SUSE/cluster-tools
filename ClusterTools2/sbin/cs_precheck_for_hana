@@ -236,6 +236,7 @@ function prck_network(){
 	test -z "${FOUND}" && FOUND="NA"
 	### echo "network ${a} :      ${FOUND}"
 	# TODO look for 10gbit/s
+	# TODO look for MTU=9000
 
 	echo
 	echo "INFO: normal_end $EXE $FUNCNAME"

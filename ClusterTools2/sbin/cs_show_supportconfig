@@ -1092,6 +1092,8 @@ function chk_saphana(){
 #	Cisco: messages:  fioinf Fusion-io ioDrive 320GB 
 # TODO HANA does not allow dash "-" in hostnames
 # TODO /usr/sap 50GB, <hana-data> 3*RAM, <hana-shared> 1*RAM, <hana-log> 1*RAM max. 512GB 
+# TODO 10gb/s NIC for system replication
+# TODO MTU=9000 for system replication
 
 	test -z "${HANA_SAP_BOOTARG}" &&\
 	HANA_SAP_BOOTARG="

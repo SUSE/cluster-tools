@@ -5,7 +5,7 @@
 # (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2015-03-02 15:05
+# Version: 2015-05-26 13:10
 #
 
 EXE="$0"
@@ -237,6 +237,7 @@ function prck_network(){
 	### echo "network ${a} :      ${FOUND}"
 	# TODO look for 10gbit/s
 	# TODO look for MTU=9000
+	# TODO look for irq balancing
 
 	echo
 	echo "INFO: normal_end $EXE $FUNCNAME"

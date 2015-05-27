@@ -5,7 +5,7 @@
 # (c) 2011-2051 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.2 2015-03-02
+# Version: 0.2 2015-05-27
 #
 
 EXE="$0"
@@ -92,6 +92,7 @@ test -z "${ERROR_PATTERN}" &&\
 "net_ratelimit:"
 "Host.*is.not.allowed.to.talk.to.us!"
 "COMPLAIN.ACCEPT.*MAC"
+"POSSIBLE.BREAK-IN.ATTEMPT"
 "ntpd.*failed"
 "ntpd.*time.reset"
 "time.sync.status.changed"

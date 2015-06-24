@@ -1,4 +1,4 @@
-.TH cs_add_watchdog_to_initrd 8 "18 Feb 2015" "" "ClusterTools2"
+.TH cs_add_watchdog_to_initrd 8 "23 Jun 2015" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_add_watchdog_to_initrd \- add kernel module to initrd 
@@ -39,6 +39,16 @@ into the running kernel.
 * Add hpwdt.ko watchdog module to sysconfig kernel section and build new initrd.
 .br
 # cs_add_watchdog_to_initrd --create hpwdt
+.TP
+* Test, if freshly loaded watchdog works. This test will force a hard reboot of the system. Filesystems will get unclean. Do not do this on a productive system.
+.br
+# lsmod | grep -e wdt -e dog 
+.br
+# ls -l /dev/watchdog
+.br
+# lsof /dev/watchdog
+.br
+# cat /dev/watchdog
 .\"
 .SH EXIT STATUS
 .B 0

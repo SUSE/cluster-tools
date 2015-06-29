@@ -1442,6 +1442,7 @@ oracle.*
 	echo "sysconfig_oracle :"
         FIL="sysconfig.txt"
         split_file $FIL
+	# TODO fix test
         F=$(grep -l "# /etc/sysconfig/oracle" $TMP/$FIL/xx* |\
 		 tr -d ":#" | awk '{print $1}')
 	test -z $F ||\

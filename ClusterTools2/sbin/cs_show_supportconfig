@@ -1307,6 +1307,9 @@ HANA-Firewall
 	split_file $FIL
 
 	# TODO
+	echo
+	grep -A1 "^# /sys/kernel/mm/transparent_hugepage/enabled" memory.txt |\
+		tr -d "#"
 	echo "SAP recommended boot.local: echo never > /sys/kernel/mm/transparent_hugepage/enabled"
 	echo "# /etc/init.d/boot.local:"
 	F=$(grep -l "# /etc/init.d/boot.local" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')	
@@ -1457,6 +1460,9 @@ oracle.*
 	grep "^tmpfs" basic-health-check.txt | tr -s " "
 	echo		
 	grep "^vm.nr_hugepages.=" env.txt	
+	echo
+	grep -A1 "^# /sys/kernel/mm/transparent_hugepage/enabled" memory.txt |\
+		tr -d "#" 
 	echo
 	# TODO limits.conf: soft memlock, hard memlock
 	# TODO http://www.oracle-base.com/articles/linux/configuring-huge-pages-for-oracle-on-linux-64.php

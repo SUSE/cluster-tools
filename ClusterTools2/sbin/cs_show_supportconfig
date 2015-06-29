@@ -2,10 +2,10 @@
 #
 # cs_show_supportconfig
 #
-# (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.02 2014-11-26
+# Version: 0.02 2015-06-30
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -1799,6 +1799,7 @@ function chk_overview(){
 	grep --binary-file=text -A1 "#./etc/HOSTNAME" $FIL | tail -1
 	FIL="basic-health-report.txt"
 	echo "Supportconfig: " $DIR
+	test -r $FIL &&\
 	for p in "^Date.Checked:" "^Status:" "\[...Red...\]" "\[.Yellow..\]"; do
 		grep ${p} $FIL
 	done
@@ -1885,6 +1886,8 @@ function chk_sysload(){
 	
 	FIL="basic-health-report.txt"
 	echo "basic-health-report:"
+	# TODO replace basic-health-report.txt
+	test -r $FIL &&\
 	grep "^[A-Z].*\[....e....\]$" $FIL | grep -v "Kernel.Taint"
 	# TODO make dfull work
 	dfull="X"

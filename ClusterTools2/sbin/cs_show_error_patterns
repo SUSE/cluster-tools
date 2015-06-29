@@ -38,6 +38,7 @@ test -z "${ERROR_PATTERN}" &&\
 "qla.*err"
 "qla.*failed"
 "qlge.*error"
+"Ramping.down.queue"
 "hfcldd.*Err"
 "NMI.received"
 "NMI.*error"

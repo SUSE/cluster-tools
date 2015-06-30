@@ -236,6 +236,7 @@ function chk_memory(){
 	# TODO env.txt ...?
 	# TODO memory.txt: slabinfo?
 	# TODO cgroups, ulimit
+	# TODO memory.txt: /proc/meminfo cached active file and cache inactive M.Jedamzik
 
 	FIL="memory.txt"
 	split_file $FIL

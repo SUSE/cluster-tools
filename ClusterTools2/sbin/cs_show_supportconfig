@@ -1805,6 +1805,8 @@ function chk_overview(){
 	FIL="network.txt"
 	echo -n "Hostname: "
 	grep --binary-file=text -A1 "#./etc/HOSTNAME" $FIL | tail -1
+	# TODO replace basic-health-report.txt by basic-health-check.txt
+	# TODO D state, defunc (zombie), ...
 	FIL="basic-health-report.txt"
 	echo "Supportconfig: " $DIR
 	test -r $FIL &&\

@@ -46,13 +46,12 @@ test -z "${CONF_FILES}" &&\
 "
 # TODO: use common library with cs_sum_base_config and cs_show_supportconfig
 # TODO: exact grep patterns
-# TODO: /bin/dmesg | /usr/bin/grep -e governor -e cpupower -e cpuidle | awk '{print $2, $3 ,$4, $5, $6}'
 test -z "${CONF_CALLS}" &&\
 	 CONF_CALLS="
 '/usr/bin/grep "MHz:" /proc/cpuinfo'
 '/usr/bin/grep "model.name" /proc/cpuinfo'
 '/usr/bin/grep -e "MemTotal:" -e "SwapTotal:" -e "VmallocTotal:" /proc/meminfo'
-'/bin/dmesg | /usr/bin/grep -e governor -e cpupower -e cpuidle'
+'/bin/dmesg | /usr/bin/grep -e governor -e cpupower -e cpuidle | colrm 1 14'
 '/bin/cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
 '/bin/cat /sys/kernel/mm/transparent_hugepage/enabled'
 '/usr/bin/grep -v "^#" /etc/sysctl.conf'

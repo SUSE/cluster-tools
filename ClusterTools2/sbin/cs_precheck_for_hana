@@ -37,10 +37,14 @@ vm.pagecache_limit_ignore_dirty
 vm.overcommit_memory
 vm.swappiness
 vm.max_map_count
+vm.memory_failure_early_kill
+fs.aio-max-nr
+fs.file-max
 kernel.sem
 kernel.shmall
 kernel.shmmax
 net.ipv4.tcp_slow_start_after_idle
+net.ipv4.ip_local_port_range
 "
 test -z "${HANA_SUSE_SYSCTL}" &&\
 	HANA_SUSE_SYSCTL="

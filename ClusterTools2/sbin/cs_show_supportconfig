@@ -5,7 +5,7 @@
 # (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.02 2015-06-30
+# Version: 0.02 2015-08-05
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -1100,6 +1100,7 @@ function chk_saphana(){
 	HANA_SAP_BOOTARG="
 intel_idle.max_cstate=0
 processor.max_cstate=0
+transparent_hugepage=never
 "
 	test -z "${HANA_SUSE_BOOTARG}" &&\
 	HANA_SUSE_BOOTARG="
@@ -1211,6 +1212,7 @@ HANA-Firewall
 	for f in $HANA_VERS_MIN; do
 		FULL=$(echo $f | awk -F: '{print $1"-"$2}')
 		BASE=$(echo $f | awk -F: '{print $1}')
+		# TODO xfsprogs-3.1.8-0.5.1 : xfsprogs-3.1.8-0.5.1 Mon Aug
 		echo -n "$FULL : "
 		q="$FULL"
 		# TODO do search, if package is -32bit

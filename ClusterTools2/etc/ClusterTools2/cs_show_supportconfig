@@ -476,6 +476,7 @@ xfsprogs:3.1.8-0.5.1
 HANA_SAP_BOOTARG="
 intel_idle.max_cstate=0
 processor.max_cstate=0
+transparent_hugepage=never
 "
 #
 HANA_SUSE_BOOTARG="

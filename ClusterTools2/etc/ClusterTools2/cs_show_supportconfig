@@ -503,9 +503,11 @@ vm.dirty_background_bytes
 HANA_SAP_SVC_YES="
 boot.sysstat
 boot.sapinit
+boot.clock
+ntp
 "
 HANA_SAP_SVC_OFF="
-kdump
+boot.kdump
 "
 HANA_SUSE_PTRN="
 base

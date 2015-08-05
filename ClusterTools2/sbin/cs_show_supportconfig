@@ -1385,6 +1385,13 @@ HANA-Firewall
 	FIL="boot.txt"
 	grep "^\[.*System RAM: " $FIL | awk '{print $11,$12,$13}'
 
+	F="chkconfig.txt"
+	echo "SAP recommeded service OFF:"
+	for s in $HANA_SAP_SVC_OFF; do
+		echo $s
+		test -z $F ||\
+			grep $s ${F}
+	done
 }
 
 

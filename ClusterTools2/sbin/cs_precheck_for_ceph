@@ -27,35 +27,70 @@ transparent_hugepage=never
 intel_idle.max_cstate=0
 processor.max_cstate=0
 "
+
+# TODO LACP active/active bonding
+# TODO net.ipv4.tcp_low_latency net.ipv4.tcp_timestamps net.ipv4.conf.all.rp_filter
 test -z "${CEPH_SYSCTL}" &&\
 	CEPH_SYSCTL="
 vm.dirty_bytes
 vm.dirty_background_bytes
 vm.pagecache_limit_mb
 vm.pagecache_limit_ignore_dirty
-vm.overcommit_memory
 vm.swappiness
-vm.max_map_count
-vm.memory_failure_early_kill
+vm.zone_reclaim_mode
 fs.aio-max-nr
 fs.file-max
 kernel.sem
 kernel.shmall
 kernel.shmmax
+net.core.rmem_max
+net.core.wmem_max
+net.core.netdev_max_backlog
+net.ipv4.tcp_rmem
+net.ipv4.tcp_wmem
+net.ipv4.tcp_max_syn_backlog
+net.ipv4.tcp_max_tw_buckets
+net.ipv4.tcp_tw_reuse
+net.ipv4.tcp_fin_timeout
+net.ipv4.conf.all.rp_filter
 net.ipv4.tcp_slow_start_after_idle
-net.ipv4.ip_local_port_range
+net.core. somaxconn
 "
+
+# TODO Try slightly larger IO queues ( /sys/.../queue/nr_requests )?
+# TODO ulimits: 1 socket (open file), 2 threads (processes) for every client and every OSD
+# TODO /etc/security/limits.conf?
+# TODO XFS mkfs -i size=2048
+# TODO   inode64,noatime,logbufs=8,logbsize=256
+# TODO ceph.conf osd max backfill = 1, osd recovery max active = 1, osd max scrubs = 1
+# TODO rbd cache = true, rbd cache size = 32 MiB, rbd cache max dirty = 0
+# TODO rbd cache = true, rbd cache size = 32 MiB, rbd cache max dirty = 24 MiB
+# TODO rbd cache writethrough until flush = true
+
 
 test -z "${CEPH_SVC_YES}" &&\
 	CEPH_SVC_YES="
 boot.sysstat
 boot.clock
 ntp
+mcelog
+smartd
 "
+
+# TODO Try disabling irq_balancer, particularly for ixgbe NIC
+# TODO firewall
 test -z "${CEPH_SVC_OFF}" &&\
 	CEPH_SVC_OFF="
 boot.kdump
+auditd
+splash
+splash_early
+fbset
+alsasound
+boot.multipath
+multipathd
 "
+
 test -z "${CEPH_VERS_MIN}" &&\
 	CEPH_VERS_MIN="
 kernel-default:3.0.101-0.7.15.1
@@ -111,6 +146,10 @@ function prck_hardware(){
 	echo -n "cpu MHz:	"
 	/usr/bin/awk '$2=="MHz" {print $4}' /proc/cpuinfo | sort -u | tr "\n" " "
 	# TODO number of sockets
+	# TODO number of SSD, SATA, SCSI disks
+	# TODO network adpators, 1Gb/s 10 Gb/s 40GB/s, Infiniband
+	# TODO bondings active/active
+	# TODO NIC module parameters?
 	echo
 
 	/usr/bin/grep -e "MemTotal:" -e "SwapTotal:" -e "VmallocTotal:" /proc/meminfo
@@ -193,6 +232,8 @@ function prck_network(){
 	# TODO look for 10gbit/s
 	# TODO look for MTU=9000
 	# TODO look for irq balancing
+	# TODO network hardware see prck_hardware
+	# TODO iptables -L?
 
 	echo
 	echo "INFO: normal_end $EXE $FUNCNAME"

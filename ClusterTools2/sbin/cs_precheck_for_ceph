@@ -105,7 +105,6 @@ test -z "${CEPH_PTRN}" &&\
 	CEPH_PTRN="
 base
 Basis-Devel
-ha_sles
 "
 test -z "${CEPH_PKG_YES}" &&\
 	CEPH_PKG_YES="

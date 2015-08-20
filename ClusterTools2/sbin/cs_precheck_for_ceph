@@ -5,7 +5,7 @@
 # (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2015-08-18 09:30
+# Version: 2015-08-20 15:35
 #
 
 EXE="$0"
@@ -30,6 +30,7 @@ processor.max_cstate=0
 
 # TODO LACP active/active bonding
 # TODO net.ipv4.tcp_low_latency net.ipv4.tcp_timestamps net.ipv4.conf.all.rp_filter
+# TODO use bash array to hold variables' identifiers and values
 test -z "${CEPH_SYSCTL}" &&\
 	CEPH_SYSCTL="
 vm.dirty_bytes
@@ -328,6 +329,10 @@ function prck_basesoft(){
 	echo "INFO: start $EXE $FUNCNAME"
 	echo_msgsep $FUNCNAME
 
+	echo
+	zypper lr
+	echo
+
 	# TODO abort zypper, if server not reached
 	INSTALLED_PTRN=$(zypper -n se -t pattern | awk '$1=="i" {print $3}')
 	for a in ${CEPH_PTRN}; do
@@ -343,7 +348,7 @@ function prck_basesoft(){
 		test -z "${FOUND}" && FOUND="NA"
 		echo "${a} :      ${FOUND}"
 	done
-	# TODO also glibc HANA_VERS_MIN
+	# TODO also glibc CEPH_VERS_MIN
 
 	echo
 	echo "INFO: normal_end $EXE $FUNCNAME"

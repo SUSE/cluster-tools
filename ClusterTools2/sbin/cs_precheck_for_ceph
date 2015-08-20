@@ -55,7 +55,7 @@ net.ipv4.tcp_tw_reuse
 net.ipv4.tcp_fin_timeout
 net.ipv4.conf.all.rp_filter
 net.ipv4.tcp_slow_start_after_idle
-net.core. somaxconn
+net.core.somaxconn
 "
 
 # TODO Try slightly larger IO queues ( /sys/.../queue/nr_requests )?

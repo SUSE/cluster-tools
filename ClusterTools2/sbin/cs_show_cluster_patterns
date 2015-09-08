@@ -5,7 +5,7 @@
 # (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.1 2014-08-14
+# Version: 0.1 2015-09-08
 #
 
 EXE="$0"
@@ -69,6 +69,7 @@ test -z "${CLUSTR_PATTERN}" &&\
 "pengine.*LogActions:.Leave.*\(Stopped\)"
 "pengine.*LogActions:.Leave.*\(Started.unmanaged\)"
 "pengine.*LogActions:.Leave.*\(Stopped.unmanaged\)"
+"cib.*failed"
 "crm_resource.*Error"
 "crmd.*quorum.lost"
 "crmd.*our.DC.is.dead"

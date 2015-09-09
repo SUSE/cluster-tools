@@ -5,7 +5,7 @@
 # (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2015-07-06 12:30
+# Version: 2015-09-09 13:13
 #
 
 EXE="$0"
@@ -305,6 +305,14 @@ function prck_sysconf(){
 	echo
 	echo "INFO: normal_end $EXE $FUNCNAME"
 }
+
+
+# TODO function prck_timeres(){
+# TODO /etc/ntp.conf
+# TODO /etc/sysconfig/ntp: NTPD_FORCE_SYNC_ON_STARTUP=yes NTPD_OPTIONS=-g
+# TODO ntpq -p
+# TODO chkconfig ntp
+#}
 
 
 function prck_runlvl(){

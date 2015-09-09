@@ -99,6 +99,7 @@ test -z "${CLUSTR_PATTERN}" &&\
 "sbd.*Received.command"
 "sbd.*mbox.read.failed"
 "sbd.*Latency"
+"stonith-ng.*Failed"
 "
 
 # TODO: SAPInstance, SAPDatabase patterns, See /etc/ClusterTools2/cs_show_cluster_patterns

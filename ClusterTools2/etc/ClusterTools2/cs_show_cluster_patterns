@@ -71,6 +71,7 @@ CLUSTR_PATTERN="
 "sbd.*Received.command"
 "sbd.*mbox.read.failed"
 "sbd.*Latency"
+"stonith-ng.*Failed"
 "
 #
 RESRC_PATTERN="

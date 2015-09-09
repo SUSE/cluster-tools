@@ -44,6 +44,7 @@ test -z "${ERROR_PATTERN}" &&\
 "NMI.*error"
 "Error.DRAM"
 "kernel.*task.*abort"
+"kernel.*ACPI.Error"
 "double.fault:"
 "target.failure"
 "reservation.conflict"

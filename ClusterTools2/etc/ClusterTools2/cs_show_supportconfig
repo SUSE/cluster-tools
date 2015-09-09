@@ -20,6 +20,8 @@ tg3.ko
 igb.ko
 be2net.ko
 be2iscsi.ko
+fnic.ko
+enic.ko
 vmxnet3.ko
 vmw_balloon.ko
 vmw_pvscsi.ko

@@ -5,7 +5,7 @@
 # (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.2 2015-02-19
+# Version: 0.2 2015-09-29
 #
 
 EXE="$0"
@@ -41,7 +41,7 @@ case $1 in
 		rcopenais stop || exit
 
 		# 11sp2 || 11sp3
-		mv /var/lib/heartbeat/crm/cib.xml $BAK 2>$ERR ||\ 
+		mv /var/lib/heartbeat/crm/cib.xml $BAK 2>$ERR ||\
 		mv /var/lib/pacemaker/cib/cib.xml $BAK
 		for f in $FIL; do
 			rm -f $f

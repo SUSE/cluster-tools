@@ -1,4 +1,4 @@
-.TH cs_add_watchdog_to_initrd 8 "23 Jun 2015" "" "ClusterTools2"
+.TH cs_add_watchdog_to_initrd 8 "29 Sep 2015" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_add_watchdog_to_initrd \- add kernel module to initrd 
@@ -48,7 +48,15 @@ into the running kernel.
 .br
 # lsof /dev/watchdog
 .br
+# echo "do not do this on a productive system"
+.br
 # cat /dev/watchdog
+.TP
+* De-activate watchdog timer. Do not do this on a productive system.
+.br
+# echo "do not do this on a productive system"
+.br
+# echo V >/dev/watchdog
 .\"
 .SH EXIT STATUS
 .B 0

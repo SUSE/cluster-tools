@@ -44,6 +44,7 @@ test -z "${OSERR_PATTERN}" &&\
 # TODO: update config file from built-in pattern list
 test -z "${CLUSTR_PATTERN}" &&\
 	 CLUSTR_PATTERN="
+"CLM.*Members.Left:"
 "TOTEM.*FAILED.*RECEIVE"
 "TOTEM.*processor.failed"
 "TOTEM.*Incrementing.problem"

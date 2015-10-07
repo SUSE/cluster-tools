@@ -1368,7 +1368,7 @@ HANA-Firewall
 	echo
 
 	FIL="fs-diskio.txt"
-	test -f $FIL &&\ 
+	test -f $FIL &&\
 		split_file $FIL
 	
 	echo "SAP recommeded filesystem type: XFS"

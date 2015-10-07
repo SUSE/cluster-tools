@@ -181,6 +181,7 @@ hpwdt.ko
 hangcheck-timer.ko
 ibmasr.ko
 iTCO_wdt.ko
+i6300esb.ko
 cpu5wdt.ko
 advantechwdt.ko
 acquirewdt.ko
@@ -188,6 +189,8 @@ softdog.ko
 vmwatchdog.ko
 alim7101_wdt.ko
 iomemory-vsl.ko
+ibmveth.ko
+ibmvscsi.ko
 "
 	FIL="boot.txt"
 	for m in INITRD_MODULES MODULES_LOADED_ON_BOOT; do

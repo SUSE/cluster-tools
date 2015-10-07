@@ -470,8 +470,8 @@ HANA-Firewall
 "
 #
 HANA_VERS_MIN="
-kernel-default:3.0.101-0.7.15.1
-kernel-xen:3.0.101-0.7.15.1
+kernel-default:3.0.101-65
+kernel-xen:3.0.101-65
 glibc:2.11.3-17.56.2
 libgcc_s1:4.7.2_20130108-0.17.2
 libstdc++6:4.7.2_20130108-0.17.2

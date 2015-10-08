@@ -1,4 +1,4 @@
-# etc/ClusterTools2/cs_precheck_for_ceph
+# /etc/ClusterTools2/cs_precheck_for_ceph
 # For SES2 based on SLES12.
 #
 CEPH_BOOTARG="

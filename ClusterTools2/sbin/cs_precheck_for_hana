@@ -66,8 +66,8 @@ boot.kdump
 "
 test -z "${HANA_VERS_MIN}" &&\
 	HANA_VERS_MIN="
-kernel-default:3.0.101-0.7.15.1
-kernel-xen:3.0.101-0.7.15.1
+kernel-default:3.0.101-65
+kernel-xen:3.0.101-65
 glibc:2.11.3-17.56.2
 libgcc_s1:4.7.2_20130108-0.17.2
 libstdc++6:4.7.2_20130108-0.17.2
@@ -160,7 +160,7 @@ function prck_hardware(){
 	/usr/bin/grep "model.name" /proc/cpuinfo | sort -u
 	echo -n "cpu MHz:	"
 	/usr/bin/awk '$2=="MHz" {print $4}' /proc/cpuinfo | sort -u | tr "\n" " "
-	# TODO number of sockets
+	# TODO number of sockets, NUMA
 	echo
 
 	/usr/bin/grep -e "MemTotal:" -e "SwapTotal:" -e "VmallocTotal:" /proc/meminfo
@@ -243,6 +243,7 @@ function prck_network(){
 	# TODO look for 10gbit/s
 	# TODO look for MTU=9000
 	# TODO look for irq balancing
+	# TODO look for offload options
 
 	echo
 	echo "INFO: normal_end $EXE $FUNCNAME"

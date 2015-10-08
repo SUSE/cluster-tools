@@ -43,7 +43,7 @@ vmwatchdog.ko
 alim7101_wdt.ko
 iomemory-vsl.ko
 ibmveth.ko
-ibmvscsi.ko
+ibmvscsic.ko
 "
 #
 NIC_PTRN="

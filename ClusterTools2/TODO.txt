@@ -61,3 +61,4 @@ TODO cs_show_supportconfig: ulimit, lvm, multipath.conf
 TODO compare branches
 DONE neues openais start berücksichtigt sbd status
 TODO wow enqueue replication templates (cli, agents, scripts)
+TODO Check todo list :)

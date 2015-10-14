@@ -1,4 +1,4 @@
-.TH sbd 7 "18 Feb 2015" "" "cluster-glue"
+.TH sbd 7 "07 Oct 2015" "" "cluster-glue"
 .\"
 .SH NAME
 sbd \- Stonith Block Device
@@ -129,10 +129,10 @@ You must dedicate a small partition of each as the SBD device.
 This shared storage segment must not make use of host-based RAID, cLVM2,
 nor DRBD.
 
-The SBD device can be connected via Fibre Channel, Fibre Channel over
-Eterhnet, or even iSCSI. Thus, an iSCSI target can become a sort-of
-network-based quorum server; the advantage is that it does not require
-a smart host at your third location, just block storage.
+The SBD device can be connected via Fibre Channel, Fibre Channel over Ethernet,
+or even iSCSI. Thus, an iSCSI target can become a sort-of network-based quorum
+server; the advantage is that it does not require a smart host at your third
+location, just block storage.
 
 However, using storage-based RAID and multipathing is recommended for
 increased reliability.
@@ -186,18 +186,23 @@ SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
 # Watchdog support:
 .br
-SBD_OPTS="-W -P -S"
+SBD_OPTS="-W -P -S 1"
+.br
+# Start delay:
+.br
+SBD_DELAY_START=yes
 .br
 ===
 
-Note: If the SBD device becomes inaccessible from a node, this could
-cause the node to enter an infinite reboot cycle. That is technically
-correct, but depending on your administrative policies, might be 
-considered a nuisance. You may wish to not automatically start up
-openais on boot in such cases.
+Note: If the SBD device becomes inaccessible from a node, this could cause
+the node to enter an infinite reboot cycle. That is technically correct,
+but depending on your administrative policies, might be  considered a
+nuisance. The option "-S"  controls how sbd behaves if a reset request is
+found on startup in the node's sbd slot on disk. Alternatively vou may wish
+to not automatically start up openais on boot in such cases.
 
-Before proceeding, ensure that SBD has indeed started on all nodes
-through "rcopenais restart".
+Before proceeding, ensure that SBD has indeed started on all nodes through
+"rcopenais restart" (SLE-HA 11).
 Once the resource has started, your cluster is now successfully
 configured for shared-storage fencing, and will utilize this method in
 case a node needs to be fenced.
@@ -205,10 +210,44 @@ case a node needs to be fenced.
 The command sbd
 can be used to read and write the sbd device, see sbd(8) .
 
+\fB* SBD-related parameters inside the CIB\fR
+
 To complete the sbd setup, it is necessary to activate SBD as a
 STONITH/fencing mechanism in the CIB.
-The SBD mechanism is used instead of other fencing/stonith mechanisms;
-please disable any others you might have configured before.
+The SBD mechanism normally is used instead of other fencing/stonith
+mechanisms; please disable any others you might have configured before.
+
+A sbd device might be entered into the CIB like this:
+ 
+===
+.br
+primitive rsc_stonith_sbd stonith:external/sbd \\
+.br
+ op start interval="0" timeout="15" start-delay="10" \\
+.br
+ params pcmk_action_limit="-1"
+.br
+===
+
+The start-delay is needed before SLE-HA 11 SP3. Recent versions of sbd know
+the SBD_DELAY_START mentioned above.
+
+The pcmk_action_limit was introduced with SLE-HA 11 SP4 to allow parallel
+fencing of multiple nodes in clusters with more than two nodes. This is
+usefull f.e. for HANA scale-out systems. To make this work, an additional
+parameter concurrent-fencing is needed in the CIB's property section:
+
+===
+.br
+stonith-enabled="true" \\
+.br
+stonith-timeout="187" \\
+.br
+stonith-action="reboot" \\
+.br
+concurrent-fencing="true" \\
+.br
+===
 .\"
 .P
 \fB* Software Watchdog\fR
@@ -225,7 +264,9 @@ to use a watchdog. Please refer to the SLES manual for this step.
 This involves loading the proper watchdog driver on system boot. On HP
 hardware, this is the "hpwdt" module. For systems with an Intel TCO,
 "iTCO_wdt" can be used. Inside a VM on z/VM on an IBM mainframe, "vmwatchdog"
-might be used. Inside a Xen VM (aka DomU) "xen_wdt" is a good choice.
+might be used. Inside a Xen VM (aka DomU) "xen_wdt" is a good choice. Inside
+a KVM VM "i6300esb" might be used. The corresponding PCI device has to be
+emulated by the KVM host in that case.
 "softdog" is the most generic driver, but it is recommended that you use one
 with actual hardware integration. See
 /lib/modules/.../kernel/drivers/watchdog in the kernel package for a list
@@ -273,13 +314,13 @@ within the sbd loop timeout, see sbd(8).
 Putting it all together:
 .br
 - How long a cluster survives a storage outage depends on the watchdog
-  timeout and the sbd retry cycle. All other timeouts should be aligned with
-  this settings. That means they have to be longer.
+  timeout and the sbd retry cycle. All other timeouts should be aligned
+  with this settings. That means they have to be longer.
 .br
-- Storage resources - as Raid1, LVM, Filesystem - have operation timeouts.
-  Those should be aligned with the MPIO settings. This avoids non-needed failure
-  actions, but does not define how long the cluster will survive a storage
-  outage.
+- Storage resources - as Raid1, LVM, Filesystem - have operation
+  timeouts. Those should be aligned with the MPIO settings. This avoids
+  non-needed failure actions, but does not define how long the cluster
+  will survive a storage outage.
 .br
 - SBD must always be used together with a watchdog.
 .\"
@@ -310,20 +351,27 @@ Putting it all together:
 	the watchdog modules.
 .\"
 .SH BUGS
-To report bugs for a SUSE or Novell product component, please use
- http://support.novell.com/additional/bugreport.html .
+To report bugs for a SUSE product component, please use
+ https://www.suse.com/support/report-a-bug/ .
 .\"
 .SH SEE ALSO
 
-\fBsbd\fP(8), \fBcs_add_watchdog_to_initrd\fP(8), \fBcs_disable_other_watchdog\fP(8),
-\fBcs_make_sbd_devices\fP(8), \fBdasdfmt\fP(8),
+\fBsbd\fP(8), \fBcs_add_watchdog_to_initrd\fP(8),
+\fBcs_disable_other_watchdog\fP(8), \fBcs_make_sbd_devices\fP(8),
+\fBdasdfmt\fP(8), \fBSAPHanaSR-ScaleOut\fP(7),
+.br
 http://www.linux-ha.org/wiki/SBD_Fencing ,
 http://www.mail-archive.com/pacemaker@oss.clusterlabs.org/msg03849.html ,
+https://github.com/l-mb/sbd/blob/master/src/sbd.sysconfig ,
 http://www.suse.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/book_sleha/data/part_config.html ,
 https://www.suse.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/book_sleha/data/part_storage.html ,
 https://www.suse.com/documentation/sle_ha/book_sleha/data/sec_ha_storage_protect_fencing.html ,
+.br
+https://www.suse.com/support/kb/doc.php?id=7009485 ,
 https://www.suse.com/support/kb/doc.php?id=7011346 ,
-https://www.suse.com/support/kb/doc.php?id=7009485
+https://www.suse.com/support/kb/doc.php?id=7011426 ,
+https://www.suse.com/support/kb/doc.php?id=7016305 ,
+https://www.suse.com/support/kb/doc.php?id=7016880
 .\"
 .SH AUTHORS
 The content of this manual page was mostly derived from online documentation

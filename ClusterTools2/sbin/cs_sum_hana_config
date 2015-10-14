@@ -5,7 +5,7 @@
 # (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2015-03-01 22:00
+# Version: 2015-07-06 14:00
 #
 
 EXE="$0"
@@ -51,7 +51,7 @@ test -z "${CONF_CALLS}" &&\
 '/usr/bin/grep "MHz:" /proc/cpuinfo'
 '/usr/bin/grep "model.name" /proc/cpuinfo'
 '/usr/bin/grep -e "MemTotal:" -e "SwapTotal:" -e "VmallocTotal:" /proc/meminfo'
-'/bin/dmesg | /usr/bin/grep -e governor -e cpupower -e cpuidle'
+'/bin/dmesg | /usr/bin/grep -e governor -e cpupower -e cpuidle | colrm 1 14'
 '/bin/cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
 '/bin/cat /sys/kernel/mm/transparent_hugepage/enabled'
 '/usr/bin/grep -v "^#" /etc/sysctl.conf'

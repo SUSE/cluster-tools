@@ -2,10 +2,10 @@
 #
 # cs_show_supportconfig
 #
-# (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.02 2014-11-26
+# Version: 0.02 2015-08-05
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -167,6 +167,8 @@ tg3.ko
 igb.ko
 be2net.ko
 be2iscsi.ko
+fnic.ko
+enic.ko
 vmxnet3.ko
 vmw_balloon.ko
 vmw_pvscsi.ko
@@ -179,6 +181,7 @@ hpwdt.ko
 hangcheck-timer.ko
 ibmasr.ko
 iTCO_wdt.ko
+i6300esb.ko
 cpu5wdt.ko
 advantechwdt.ko
 acquirewdt.ko
@@ -186,6 +189,8 @@ softdog.ko
 vmwatchdog.ko
 alim7101_wdt.ko
 iomemory-vsl.ko
+ibmveth.ko
+ibmvscsic.ko
 "
 	FIL="boot.txt"
 	for m in INITRD_MODULES MODULES_LOADED_ON_BOOT; do
@@ -236,6 +241,7 @@ function chk_memory(){
 	# TODO env.txt ...?
 	# TODO memory.txt: slabinfo?
 	# TODO cgroups, ulimit
+	# TODO memory.txt: /proc/meminfo cached active file and cache inactive M.Jedamzik
 
 	FIL="memory.txt"
 	split_file $FIL
@@ -1092,11 +1098,14 @@ function chk_saphana(){
 #	Cisco: messages:  fioinf Fusion-io ioDrive 320GB 
 # TODO HANA does not allow dash "-" in hostnames
 # TODO /usr/sap 50GB, <hana-data> 3*RAM, <hana-shared> 1*RAM, <hana-log> 1*RAM max. 512GB 
+# TODO 10gb/s NIC for system replication
+# TODO MTU=9000 for system replication
 
 	test -z "${HANA_SAP_BOOTARG}" &&\
 	HANA_SAP_BOOTARG="
 intel_idle.max_cstate=0
 processor.max_cstate=0
+transparent_hugepage=never
 "
 	test -z "${HANA_SUSE_BOOTARG}" &&\
 	HANA_SUSE_BOOTARG="
@@ -1123,8 +1132,8 @@ vm.dirty_background_bytes
 "
 	test -z "${HANA_VERS_MIN}" &&\
 	HANA_VERS_MIN="
-kernel-default:3.0.101-0.7.15.1
-kernel-xen:3.0.101-0.7.15.1
+kernel-default:3.0.101-65
+kernel-xen:3.0.101-65
 glibc:2.11.3-17.56.2
 libgcc_s1:4.7.2_20130108-0.17.2
 libstdc++6:4.7.2_20130108-0.17.2
@@ -1208,6 +1217,7 @@ HANA-Firewall
 	for f in $HANA_VERS_MIN; do
 		FULL=$(echo $f | awk -F: '{print $1"-"$2}')
 		BASE=$(echo $f | awk -F: '{print $1}')
+		# TODO xfsprogs-3.1.8-0.5.1 : xfsprogs-3.1.8-0.5.1 Mon Aug
 		echo -n "$FULL : "
 		q="$FULL"
 		# TODO do search, if package is -32bit
@@ -1305,6 +1315,9 @@ HANA-Firewall
 	split_file $FIL
 
 	# TODO
+	echo
+	grep -A1 "^# /sys/kernel/mm/transparent_hugepage/enabled" memory.txt |\
+		tr -d "#"
 	echo "SAP recommended boot.local: echo never > /sys/kernel/mm/transparent_hugepage/enabled"
 	echo "# /etc/init.d/boot.local:"
 	F=$(grep -l "# /etc/init.d/boot.local" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')	
@@ -1358,7 +1371,7 @@ HANA-Firewall
 	echo
 
 	FIL="fs-diskio.txt"
-	test -f $FIL &&\ 
+	test -f $FIL &&\
 		split_file $FIL
 	
 	echo "SAP recommeded filesystem type: XFS"
@@ -1377,6 +1390,27 @@ HANA-Firewall
 	FIL="boot.txt"
 	grep "^\[.*System RAM: " $FIL | awk '{print $11,$12,$13}'
 
+	echo
+	F="chkconfig.txt"
+	echo "SAP recommeded service ON:"
+	for s in $HANA_SAP_SVC_YES; do
+		echo -n "$s: "
+		p=$(test -r $F && grep "${s}:" $F | cut -d: -f2)
+		# TODO
+		# p=$(test -r $F && grep "${s}.*0:" $F | cut -d: -f2-)
+		test -z "$p" && p="NA"
+		echo "${p}"
+	done
+	echo
+	echo "SAP recommeded service OFF:"
+	for s in $HANA_SAP_SVC_OFF; do
+		echo -n "$s: "
+		p=$(test -r $F && grep "${s}:" $F | cut -d: -f2)
+		# TODO
+		# p=$(test -r $F && grep "${s}.*0:" $F | cut -d: -f2-)
+		test -z "$p" && p="NA"
+		echo "${p}"
+	done
 }
 
 
@@ -1440,6 +1474,7 @@ oracle.*
 	echo "sysconfig_oracle :"
         FIL="sysconfig.txt"
         split_file $FIL
+	# TODO fix test
         F=$(grep -l "# /etc/sysconfig/oracle" $TMP/$FIL/xx* |\
 		 tr -d ":#" | awk '{print $1}')
 	test -z $F ||\
@@ -1454,6 +1489,9 @@ oracle.*
 	grep "^tmpfs" basic-health-check.txt | tr -s " "
 	echo		
 	grep "^vm.nr_hugepages.=" env.txt	
+	echo
+	grep -A1 "^# /sys/kernel/mm/transparent_hugepage/enabled" memory.txt |\
+		tr -d "#" 
 	echo
 	# TODO limits.conf: soft memlock, hard memlock
 	# TODO http://www.oracle-base.com/articles/linux/configuring-huge-pages-for-oracle-on-linux-64.php
@@ -1795,8 +1833,11 @@ function chk_overview(){
 	FIL="network.txt"
 	echo -n "Hostname: "
 	grep --binary-file=text -A1 "#./etc/HOSTNAME" $FIL | tail -1
+	# TODO replace basic-health-report.txt by basic-health-check.txt
+	# TODO D state, defunc (zombie), ...
 	FIL="basic-health-report.txt"
 	echo "Supportconfig: " $DIR
+	test -r $FIL &&\
 	for p in "^Date.Checked:" "^Status:" "\[...Red...\]" "\[.Yellow..\]"; do
 		grep ${p} $FIL
 	done
@@ -1883,6 +1924,8 @@ function chk_sysload(){
 	
 	FIL="basic-health-report.txt"
 	echo "basic-health-report:"
+	# TODO replace basic-health-report.txt
+	test -r $FIL &&\
 	grep "^[A-Z].*\[....e....\]$" $FIL | grep -v "Kernel.Taint"
 	# TODO make dfull work
 	dfull="X"

@@ -1,4 +1,4 @@
-.TH cs_show_error_patterns 8 "06 Mar 2011" "" "ClusterTools2"
+.TH cs_show_error_patterns 8 "10 Mar 2015" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_show_error_patterns \- search log files for known error patterns
@@ -29,6 +29,11 @@ Successful program execution.
 .B >0 
 Usage, syntax or execution errors.
 .\"
+.SH EXAMPLES
+.TP
+# cs_show_error_patterns | grep -v "= 0$"
+search in the current log files, show only patterns that match at least one time.
+.\"
 .SH FILES
 .TP
 /usr/sbin/cs_show_error_patterns
@@ -50,7 +55,7 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 .\"
 .\"
 .SH COPYRIGHT
-(c) 2011 L.Pinne, Germany.
+(c) 2011-2015 L.Pinne, Germany.
 .br
 cs_show_error_patterns comes with ABSOLUTELY NO WARRANTY.
 .br

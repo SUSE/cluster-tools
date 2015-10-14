@@ -5,7 +5,7 @@
 # (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.1 2014-08-14
+# Version: 0.1 2015-09-08
 #
 
 EXE="$0"
@@ -44,6 +44,7 @@ test -z "${OSERR_PATTERN}" &&\
 # TODO: update config file from built-in pattern list
 test -z "${CLUSTR_PATTERN}" &&\
 	 CLUSTR_PATTERN="
+"CLM.*Members.Left:"
 "TOTEM.*FAILED.*RECEIVE"
 "TOTEM.*processor.failed"
 "TOTEM.*Incrementing.problem"
@@ -69,6 +70,7 @@ test -z "${CLUSTR_PATTERN}" &&\
 "pengine.*LogActions:.Leave.*\(Stopped\)"
 "pengine.*LogActions:.Leave.*\(Started.unmanaged\)"
 "pengine.*LogActions:.Leave.*\(Stopped.unmanaged\)"
+"cib.*failed"
 "crm_resource.*Error"
 "crmd.*quorum.lost"
 "crmd.*our.DC.is.dead"
@@ -98,6 +100,7 @@ test -z "${CLUSTR_PATTERN}" &&\
 "sbd.*Received.command"
 "sbd.*mbox.read.failed"
 "sbd.*Latency"
+"stonith-ng.*Failed"
 "
 
 # TODO: SAPInstance, SAPDatabase patterns, See /etc/ClusterTools2/cs_show_cluster_patterns

@@ -20,6 +20,8 @@ tg3.ko
 igb.ko
 be2net.ko
 be2iscsi.ko
+fnic.ko
+enic.ko
 vmxnet3.ko
 vmw_balloon.ko
 vmw_pvscsi.ko
@@ -32,6 +34,7 @@ hpwdt.ko
 hangcheck-timer.ko
 ibmasr.ko
 iTCO_wdt.ko
+i6300esb.ko
 cpu5wdt.ko
 advantechwdt.ko
 acquirewdt.ko
@@ -39,6 +42,8 @@ softdog.ko
 vmwatchdog.ko
 alim7101_wdt.ko
 iomemory-vsl.ko
+ibmveth.ko
+ibmvscsic.ko
 "
 #
 NIC_PTRN="
@@ -465,8 +470,8 @@ HANA-Firewall
 "
 #
 HANA_VERS_MIN="
-kernel-default:3.0.101-0.7.15.1
-kernel-xen:3.0.101-0.7.15.1
+kernel-default:3.0.101-65
+kernel-xen:3.0.101-65
 glibc:2.11.3-17.56.2
 libgcc_s1:4.7.2_20130108-0.17.2
 libstdc++6:4.7.2_20130108-0.17.2
@@ -476,6 +481,7 @@ xfsprogs:3.1.8-0.5.1
 HANA_SAP_BOOTARG="
 intel_idle.max_cstate=0
 processor.max_cstate=0
+transparent_hugepage=never
 "
 #
 HANA_SUSE_BOOTARG="
@@ -502,9 +508,11 @@ vm.dirty_background_bytes
 HANA_SAP_SVC_YES="
 boot.sysstat
 boot.sapinit
+boot.clock
+ntp
 "
 HANA_SAP_SVC_OFF="
-kdump
+boot.kdump
 "
 HANA_SUSE_PTRN="
 base

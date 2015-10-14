@@ -5,6 +5,6 @@ SBD_INIT_OPTS="-4 130 -3 2 -1 30"
 #
 SBD_GUESS="/usr/lib/ClusterTools2/guess_sbd_devices"
 # SBD_DEVICE="/dev/xvdb1;/dev/xvdc1"
-SBD_OPTS="-W -t 60 -P"
+SBD_OPTS="-W -P"
 SBD_CONF="/etc/sysconfig/sbd"
 #

@@ -5,7 +5,7 @@
 # (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 2015-02-27 17:25
+# Version: 2015-11-11 16:25
 #
 
 EXE="$0"
@@ -117,7 +117,7 @@ test -z "${CONF_CALLS}" &&\
 '/usr/bin/grep -v "^#" /etc/security/limits.conf'
 '/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
-'/bin/lsmod'
+'/bin/lsmod | colrm 33-'
 '/bin/ls -l /boot/vmlinuz | colrm 27 39'
 '/bin/ls -l /boot/initrd | colrm 27 39'
 '/bin/ls -l /boot/vmlinuz-xen | colrm 27 39'

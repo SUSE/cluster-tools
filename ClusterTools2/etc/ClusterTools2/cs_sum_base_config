@@ -83,7 +83,7 @@ CONF_FILES="
 /etc/hp*.conf
 /etc/patrol.d/*.conf
 /etc/vmware-tools/tools.conf
-/etc/vmware-tools/plugins/*
+/etc/vmware-tools/plugins/*/*
 /etc/pam.d/vmtoolsd
 "
 #

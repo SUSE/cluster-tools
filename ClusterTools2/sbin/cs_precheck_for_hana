@@ -5,7 +5,7 @@
 # (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2015-09-09 13:13
+# Version: 2015-11-19 17:50
 #
 
 EXE="$0"
@@ -255,6 +255,7 @@ function prck_sysconf(){
 	echo "INFO: start $EXE $FUNCNAME"
 	echo_msgsep $FUNCNAME
 
+	# TODO ppc64: /etc/lilo.conf instead of /boot/grub/menu.lst
 	FIL="/boot/grub/menu.lst /etc/sysconfig/bootloader"
 	for f in $FIL; do
 		for a in ${HANA_SAP_BOOTARG} ${HANA_SUSE_BOOTARG}; do

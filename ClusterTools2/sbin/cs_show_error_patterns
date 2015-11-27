@@ -5,7 +5,7 @@
 # (c) 2011-2051 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.2 2015-09-08
+# Version: 0.2 2015-11-27
 #
 
 EXE="$0"
@@ -42,6 +42,7 @@ test -z "${ERROR_PATTERN}" &&\
 "hfcldd.*Err"
 "NMI.received"
 "NMI.*error"
+"irq.*nobody.cared"
 "Error.DRAM"
 "kernel.*task.*abort"
 "kernel.*ACPI.Error"

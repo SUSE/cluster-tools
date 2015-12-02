@@ -57,6 +57,8 @@ Common configuration for the widely used Simple Stack, as well as for
 SAP Enqueue Replication, SAP HANA System Replication scale-up, and IBM DB2 HADR.
 The cluster can be stretched across two sites.
 The stonith-timeout depends on the storage stack. 
+For stretched clusters, usually two SAN storages are used. Thus, at least two SBD
+devices are used.
 
 property $id="cib-bootstrap-options" \\
 .br
@@ -80,7 +82,9 @@ cluster node is needed. This makes it work in case one complete site fails at on
 This so called majority maker node does not need to run any application resources.
 Nevertheless, it needs access to all STONITH resources.
 The expected-quorum-votes number is two times the total number of nodes at one HANA
-site plus one. The stonith-timeout depends on the storage stack. 
+site plus one. The stonith-timeout depends on the storage stack. Usually two SAN
+storages, and thus at least two SBD devices are used. A third SBD device at the
+auxiliary site makes sense.
 
 property $id="cib-bootstrap-options" \\
 .br
@@ -100,7 +104,8 @@ Common configuration for a local cluster with OCFS2 cluster filesystem,
 f.e. some SAP BW Accelerator installations. In case of quorum loss, the cluster node
 commits suicide to clear the OCFS2 resources.
 For this setup with three nodes, it is assumed that not more than one node fails at once.
-The stonith-timeout depends on the storage stack. 
+The stonith-timeout depends on the storage stack. Usually one SAN storage, and thus
+one SBD device is used. 
 
 property $id="cib-bootstrap-options" \\
 .br

@@ -2,10 +2,10 @@
 #
 # cs_show_cluster_transition
 #
-# (c) 2011-2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.2 2014-09-03
+# Version: 0.2 2015-12-02
 #
 
 EXE="$0"
@@ -58,8 +58,7 @@ function show_sleha_release() {
 
 # TODO sort: As LC_TIME differs from LC_CTYPE, the results may be strange.
 # TODO better awk
-# TODO LARS, FABIAN: Implement other patterns
-function awk_transition() {
+function awk_transition_11-12() {
 	# for SLE-HA11 sp1,sp2
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
@@ -68,20 +67,43 @@ function awk_transition() {
 	awk '	$0~/crmd.*State.transition/ {print $1,$2,$3,$4,$11,"->",$13}
 		#	
 		#$0~/crmd.*abort_transition_graph/ {print $1,$2,$3,$4,$8}
-		#$0~/crmd.*do_dc_join_finalize/	   {print $1,$2,$3,$4,$8,$14}
+		#$0~/crmd.*do_dc_join_finalize/	{print $1,$2,$3,$4,$8,$14}
 		#$0~/crmd.*notice..crmd_peer_update/   {print $1,$2,$3,$4,$9,$12,$16}
 		#
 		$0~/syslog-ng.s...ting.[du][po]/ {print $1,$2,$3,$4,$6,$7,$8}
 		$0~/crmd.*cluster.nodes.*eligible/ {print $1,$2,$3,$4,$10,$11,$12,$14}
 		$0~/crmd.*status.\[o.*line\]/   {print $1,$2,$3,$4,$9,$12,$16}
-		$0~/crmd.*update_dc.*Unset.DC/ 	   {print $1,$2,$3,$4,$9,$10,$11}
-		$0~/crmd.*update_dc.*Set.DC.to/    {print $1,$2,$3,$4,$9,$10,$11,$12}' |\
+		$0~/crmd.*Executing.*fencing/   {print $1,$2,$3,$4,$10,$14}
+		$0~/crmd.*update_dc.*Unset.DC/	{print $1,$2,$3,$4,$9,$10,$11}
+		$0~/crmd.*update_dc.*Set.DC.to/	{print $1,$2,$3,$4,$9,$10,$11,$12}' |\
 	awk '$7=="S_IDLE"{print $0,"\n"}; $7!="S_IDLE"{print $0}'
 }
 
 
+function awk_transition_11-34() {
+	# for SLE-HA11 sp3,sp4
+	echo "logs: $LOG" >/dev/stderr
+	for f in ${LOG}; do
+		test -r $f && cat $f
+	done | sort -M -k1,3 |\
+	awk '	$0~/crmd.*State.transition/ {print $1,$2,$3,$4,$10,"->",$12}
+		$0~/syslog-ng.s...ting.[du][po]/ {print $1,$2,$3,$4,$6,$7,$8}
+		$0~/crmd.*cluster.nodes.*eligible/ {print $1,$2,$3,$4,$10,$11,$12,$14}
+		$0~/crmd.*status.\[o.*line\]/	{print $1,$2,$3,$4,$10,$14}
+		$0~/crmd.*Executing.*fencing/   {print $1,$2,$3,$4,$10,$14}
+		$0~/crmd.*update_dc.*Unset.DC/	{print $1,$2,$3,$4,$9,$10,$11,$12}
+		$0~/crmd.*update_dc.*Set.DC.to/	{print $1,$2,$3,$4,$9,$10,$11,$12}' |\
+	awk '$7=="S_IDLE"{print $0,"\n"}; $7!="S_IDLE"{print $0}'
+}
+
+# TODO SLE12 '$0~/crmd.*State.transition/ {print $1,$2,$3,$10,"->",$12}' 
+# TODO SLE12 '$0~/crmd.*cluster.nodes.*eligible/ {print $1,$2,$3,$7,$8,$9,$11,$13}'
+# TODO SLE12 '$0~/crmd.*Executing.*fencing/ {print $1,$2,$3,$8,$12}'
+
+
+# TODO LARS, FABIAN: Implement other patterns
 function filter_transition() {
-	# for SLE-HA11 sp3
+	# for SLE-HA11 sp3,sp4
         echo "logs: $LOG" >/dev/stderr
         for f in ${LOG}; do
                 test -r $f && cat $f
@@ -92,7 +114,7 @@ function filter_transition() {
                         if ( $4 eq "S_IDLE" ) { printf "\n"; }
                   }
                }'
-} 
+}
 
 
 function awk_crmd-error() {
@@ -125,7 +147,7 @@ case $1 in
 		done
 		# unzipped log has to be last in loop :-/
 		test -s ${CLUSTER_LOG} && LOG="${LOG} ${CLUSTER_LOG}"
-		#awk_transition
+		#awk_transition_11-12
 		echo noop	
 		exit
 	;;
@@ -137,10 +159,11 @@ case $1 in
 	*)
 		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
 		rel=$(show_sleha_release)
-		if [ "$rel" == "11.1" -o "$rel" == "11.2" ]; then
-			awk_transition
+		if [ "$rel" == "11.3" -o "$rel" == "11.4" ]; then
+			#filter_transition
+			awk_transition_11-34
 		else
-			filter_transition
+			awk_transition_11-12
 		fi
 		exit
 	;;

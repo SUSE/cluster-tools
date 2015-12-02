@@ -23,7 +23,7 @@ STONITH has to set up accordingly.
 With more than two nodes, the cluster must not ignore the quorum loss.
 For this multi-node clusters, an odd number of nodes is recommended.
 Different policies are available to handle the quorum loss.
-Nevertheless, STONITH has to be set up as well. 
+Nevertheless, STONITH has to be set up as well.
 
 The following policies are available:
 
@@ -51,7 +51,11 @@ It wont try to shoot the nodes it can't see.
 .\"
 .SH EXAMPLES
 .P
-\fB* Two node cluster\fR
+\fB* Two-node cluster\fR
+
+Common configuration for the widely used Simple Stack, as well as for
+SAP Enqueue Replication, and SAP HANA System Replication scale-up.
+The stonith-timeout depends on the storage stack. 
 
 property $id="cib-bootstrap-options" \\
 .br
@@ -66,9 +70,15 @@ default-resource-stickiness="1000" \\
 stonith-enabled="true" \\
 .br
 stonith-timeout="150s"
-
 .P
-\fB* Multi-node cluster across two sites\fR
+\fB* Multi-node cluster across two sites, with auxiliary node on third site\fR
+
+Configuration for SAP HANA System Replication scale-out.
+Since this setup is symmetrical across two sites, a third site with an auxiliary
+cluster node is needed. This makes it work in case one complete site fails at once.
+This so called majority maker node does not need to run any application resources.
+Nevertheless, it needs access to all STONITH resources.
+The stonith-timeout depends on the storage stack. 
 
 property $id="cib-bootstrap-options" \\
 .br
@@ -76,7 +86,7 @@ expected-quorum-votes="31" \\
 .br
 no-quorum-policy="stop" \\
 .br
-dc-deadtime="30s" \\
+dc-deadtime="25s" \\
 .br
 stonith-enabled="true" \\
 .br

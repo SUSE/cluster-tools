@@ -88,6 +88,7 @@ test -z "${CLUSTR_PATTERN}" &&\
 "crmd.*ERROR:"
 "crmd.*Updating.failcount.*stop"
 "crmd.*Updating.failcount.*start"
+"crmd.*cluster.nodes.*eligible"
 "lrmd.*probe"
 "lrmd.*RA.output.*failed"
 "lrmd.*RA.output.*error"

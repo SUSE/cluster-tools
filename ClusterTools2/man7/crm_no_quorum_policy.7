@@ -55,6 +55,7 @@ It wont try to shoot the nodes it can't see.
 
 Common configuration for the widely used Simple Stack, as well as for
 SAP Enqueue Replication, SAP HANA System Replication scale-up, and IBM DB2 HADR.
+The cluster can be stretched across two sites.
 The stonith-timeout depends on the storage stack. 
 
 property $id="cib-bootstrap-options" \\
@@ -92,7 +93,26 @@ dc-deadtime="25s" \\
 stonith-enabled="true" \\
 .br
 stonith-timeout="150s
+.P
+\fB* Three-node cluster at single site\fR
 
+Common configuration for a local cluster with OCFS2 cluster filesystem,
+f.e. some SAP BW Accelerator installations. In case of quorum loss, the cluster node
+commits suicide to clear the OCFS2 resources.
+For this setup with three nodes, it is assumed that not more than one node fails at once.
+The stonith-timeout depends on the storage stack. 
+
+property $id="cib-bootstrap-options" \\
+.br
+expected-quorum-votes="3" \\
+.br
+no-quorum-policy="suicide" \\
+.br
+dc-deadtime="20s" \\
+.br
+stonith-enabled="true" \\
+.br
+stonith-timeout="150s
 .\"
 .SH FILES
 .TP

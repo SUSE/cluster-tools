@@ -78,6 +78,7 @@ Since this setup is symmetrical across two sites, a third site with an auxiliary
 cluster node is needed. This makes it work in case one complete site fails at once.
 This so called majority maker node does not need to run any application resources.
 Nevertheless, it needs access to all STONITH resources.
+The expected-quorum-votes number is two times the total number of nodes on one HANA site.
 The stonith-timeout depends on the storage stack. 
 
 property $id="cib-bootstrap-options" \\

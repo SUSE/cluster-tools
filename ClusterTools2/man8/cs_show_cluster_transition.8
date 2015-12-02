@@ -79,8 +79,10 @@ Usage, syntax or execution errors.
 	the default log file.
 .\"
 .SH BUGS
-Currently SLES11 SP1 and SP2 are handled.
-For SLES11 SP3 only a sub-set of patterns is shown, because fields differ.
+Currently SLES11 SP1 and SP2 are handled correctly.
+For SLES11 SP3 and SP4 only a sub-set of patterns is shown, because fields differ.
+Only /var/log/messages is parsed correctly.
+The optional corosync log has a different format.
 Feedback is welcome, please use the project page at
 .br
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel

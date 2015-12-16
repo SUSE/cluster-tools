@@ -1,25 +1,28 @@
-.TH ClusterTools2 7 "22 Jun 2015" "" "ClusterTools2"
+.TH ClusterTools2 7 "16 Dec 2015" "" "ClusterTools2"
 .\"
 .SH NAME
 ClusterTools2 \- Tools for setting up and managing pacemaker HA clusters
 .\"
 .SH DESCRIPTION
-The \fBClusterTools2\fP package provides tools for setting up and managing pacemaker HA clusters. 
-The tools are aimed to make tasks easy around the pacemaker HA cluster manager and the Linux
-storage stack.
+The \fBClusterTools2\fP package provides tools for setting up and managing
+pacemaker HA clusters.  The tools are aimed to make tasks easy around the
+pacemaker HA cluster manager and the Linux storage stack.
 
-Main command for managing a running cluster is \fBClusterService\fP. This ASCII-terminal based
-menu system allows to perform common administrative tasks. It can be used instead of crm_gui or
-Hawk if no webservice and no X desktop is available.
+Main command for managing a running cluster is \fBClusterService\fP. This
+ASCII-terminal based menu system allows to perform common administrative tasks.
+It can be used instead of crm_gui or Hawk if no webservice and no X desktop is
+available.
 
-Tools like \fBcs_list_failcounts\fP and \fBcs_show_cluster_transistion\fP help to analyse the
-cluster behaviour. A set of tools based on \fBwow\fP allows to make configuration of clusters
-reproduceable and efficiant.
+Tools like \fBcs_list_failcounts\fP and \fBcs_show_cluster_transistion\fP help
+to analyse the cluster behaviour. A set of tools based on \fBwow\fP allows to
+make configuration of clusters reproduceable and efficiant.
 
-Currently the tools are mainly used to setup and manage high-availability cluster for following 
-workloads:
+Currently the tools are mainly used to setup and manage high-availability
+cluster for following workloads:
 
 - SAP application servers, SAP central instances, SAP database servers
+
+- SAP HANA System Replication automation
 
 - XEN virtual machine hosts
 
@@ -44,8 +47,6 @@ Read information about the needed resources from file sap_C11.wow . Write output
 .TP
 # ClusterService
 start ASCII-terminal based menu to perform administrative tasks on a running cluster.
-# make_hb_backup
-start cluster configuration backup tool
 .\"
 .SH FILES
 .TP
@@ -71,18 +72,30 @@ start cluster configuration backup tool
 	samples of config files and scripts.
 .\"
 .SH BUGS
+Currently, most tools are tested with SLE-HA 11 only.
 Feedback is welcome, please use the project page at
 .br
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
 .\"
 .SH SEE ALSO
-\fBwow\fP(8), \fBmake_hb_backup\fP(8), \fBcs_precheck_for_sap\fP(8), \fBClusterService\fP(8),
-\fBcs_list_failcounts\fP(8), \fBcs_show_cluster_transition\fP(8), \fBcs_clusterstate\fP(8),
-\fBcs_reset_failcounts\fP(8), \fBcs_show_scores\fP(8), \fBcs_delcib\fP(8),
-\fBcs_show_error_patterns\fP(8), \fBcs_show_supportconfig\fP(8), \fBmenueng2\fP(8),
-\fBmenueng2\fP(5).
+\fBwow\fP(8), \fBcs_precheck_for_sap\fP(8), \fBClusterService\fP(8),
+\fBcs_sum_base_config\fP(8),
+\fBcs_list_failcounts\fP(8), \fBcs_show_cluster_transition\fP(8), 
+\fBcs_clusterstate\fP(8), \fBcs_reset_failcounts\fP(8),
+\fBcs_show_scores\fP(8), \fBcs_delcib\fP(8), \fBcs_show_error_patterns\fP(8),
+\fBcs_show_supportconfig\fP(8), \fBmenueng2\fP(8), \fBmenueng2\fP(5),
 .br
-https://www.suse.com/products/highavailability/ , http://clusterlabs.org/wiki/Main_Page
+https://www.suse.com/products/highavailability/ , 
+.br
+https://www.suse.com/releasenotes/x86_64/SLE-HA/11-SP4/ ,
+.br
+https://www.suse.com/documentation/sle_ha/ ,
+.br
+https://www.suse.com/promo/sap/high-availability.html ,
+.br
+https://www.suse.com/support/kb/doc.php?id=7007613 ,
+.br
+http://clusterlabs.org/wiki/Main_Page
 .\"
 .SH AUTHORS
 M.Guertler, F.Herschel, L.Pinne

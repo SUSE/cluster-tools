@@ -1,0 +1,314 @@
+.TH SUSE_TIDs 7 "16 Dec 2015" "" "ClusterTools2"
+.\"
+.SH NAME
+SUSE TIDs - selection of SUSE Technical Information Documents
+.\"
+.SH DESCRIPTION
+This manual page shows SUSE Technical Information Documents (TIDs) related to
+high availability topics.
+
+The mentioned documents, and others, are stored with the SUSE Knowledgebase at
+\fBhttps://www.suse.com/support/kb/\fP .
+.TP
+Useful keywords for searching are
+.B <number_of_TID>
+.br
+.B openais
+.br
+.B corosync
+.br
+.B pacemaker
+.br
+.B hae
+.br
+.B sle-ha
+.br
+.B sbd
+.br
+.B stonith
+.br
+.B fencing
+.br
+.B ocf
+.\".B ocfs2
+.br
+.B rear
+.br
+.B mpio
+.br
+.B multipath
+.TP
+Product to select is usually one of
+.B <empty_string>
+.br
+.B SUSE Linux Enterprise High Availability Extension
+.br
+.B SUSE Linux Enterprise Server
+.br
+.B SUSE Linux Enterprise Server for SAP Applications
+.\"
+.SH EXAMPLES
+.\"
+.B * General information:
+.br
+SLES 11 High Availability Extension (HAE) Master TID, FAQ and Common Issues (7007613) 
+.br
+Updating a SLES11 Cluster to the latest Service Pack (7007261) 
+.br
+Usage of hb_report for SLES HAE (7007262) 
+.br
+
+.\"
+.B * Cluster basics, timing, fencing, communication:
+.br
+SLES 11 HAE - Send cluster update and changes through email (7007619)
+.br
+pacemaker default behavior changed (7014282)
+.br
+iTCO_wdt does not accept Watchdog Timeout bigger 63 seconds (7011426) 
+.br
+Generating a Kernel Core Dump running cluster HAE (High Availability Extension) (7015029) 
+.br
+SBD Stonith fails despite seemingly correct setup (OPENAIS STONITH) (7008921) 
+.br
+SBD Operation Guidelines for HAE Clusters (7011346) 
+.br
+SBD setup - debug and verify (OPENAIS) (7009485) 
+.br
+enabling STONITH requires STONITH device (OPENAIS) (7004817)
+.br
+STONITH Clone Set configured on HAE 11 (7012124)
+.br
+Invalid /etc/sysconfig/sbd SBD_DEVICE format (7010931)
+.br
+SBD Stonith fails silently (OPENAIS HEARTBEAT CLUSTER) (7004306) 
+.br
+Use only one sbd_device instanace attribute for SBD partitions (7010925) 
+.br
+Stonith unreliable (HEARTBEAT, COROSYNC) (7007731) 
+.br
+Disk latency may cause unwanted node fencing (7011350) 
+.br
+Stalling I/O triggers HAE Cluster (7010781) 
+.br
+Cluster SBD partition fails from mismatched metadata (7010933) 
+.br
+Create a SBD partition for HAE (High Availability) and XML example (7007616) 
+.br
+HAE: How to create an SBD on local storage for VirtualBox guests (7009737) 
+.br
+HP iLO not able to trigger a kernel crashdump (7013475) 
+.br
+HAE (High Availability) rilo V2 setup (7007614) 
+.br
+default action timeout and op default timeout (OPENAIS) (7009584) 
+.br
+OpenAIS/Corosync daemon fails to start (7010879) 
+.br
+Number of Rings with openais/corosync (7006345) 
+.br
+Cluster Services fail on boot because of Firewall (HEARTBEAT, OPENAIS) (7007820)
+.br
+One HAE node fails to start at boot with openais showing help screen (7011300) 
+.br
+external/riloe fails on ILO3 (OPENAIS HEARTBEAT COROSYNC STONITH) (7008802) 
+.br
+Odd cluster membership changes in HAE cluster (7015215) 
+.br
+Generating a Kernel Core Dump running cluster HAE (High Availability Extension) (7015029) 
+.br
+crm_ipc_prepare: Message exceeds the configured ipc limit (PACEMAKER COROSYNC) (7013215) 
+.br
+All HAE nodes fail to start clustering after reboot (7011302) 
+.br
+Cannot contact other cluster node (7006864) 
+.br
+Corosync crashed if node has more then one device in the same subnet. (7008804) 
+.br
+Number of Rings with openais/corosync (7006345) 
+.br
+clones don't show identification numbers after update (PACEMAKER COROSYNC) (7015095) 
+.br
+cluster update failed in cib checksum (COROSYNC, HEARTBEAT) (7012127) 
+.br
+crm_ipc_prepare: Message exceeds the configured ipc limit (PACEMAKER COROSYNC) (7013215) 
+.br
+ERROR: fencing_topology not supported by the RNG schema (COROSYNC) (7012682) 
+.br
+Implement a fencing topology on SLES 11 SP3 / 12 High Availabilty Extension (7016042) 
+.br
+cib write disabled (COROSYNC) (7012126) 
+.br
+Incorrect TOTEM Configuration for Cluster (7012121) 
+.br
+One HAE node fails to start at boot with openais showing help screen (7011300) 
+.br
+All HAE nodes fail to start clustering after reboot (7011302) 
+.br
+corosync-cfgtool -r hangs in loop while resetting faulty ring (7006774) 
+.br
+Troubleshooting HAE Cluster Membership (7015225) 
+.br
+Cannot contact other cluster node (7006864) 
+.br
+HAE no quorum policy for various numbers of nodes (7012110) 
+.br
+HAE requires IPv6 to be enabled (7012111) 
+.br
+dlm: cannot start dlm lowcomms -107 (7012160) 
+.br
+Increasing the number of lrmd children (7006863) 
+.br
+Failed cluster actions in crm_mon (7012145) 
+.br
+HA node unable to join AD domain after applying HA SP3 (7014642) 
+.br
+
+.\"
+.B * Cluster resources:
+.br
+Corosync/CTDB and LVS performance issues (7006849) 
+.br
+unable to export file-system on HAE, due to size of rmtab (7008514) 
+.br
+All Cloned Filesystems Remount When One Node is Rebooted (7011322) 
+.br
+Apache won't start in SLES11 SP1 HAE Cluster (7007396) 
+.br
+Cluster resources failing on stop take too long to recover (7012355) 
+.br
+HAE Resources are not managed and won't failover (7012114) 
+.br
+umount of NFS exported Filesystem fails in cluster during stop (PACEMAKER COROSYNC) (7014619) 
+.br
+Changing Resource Attributes without Resource Restart (PACEMAKER COROSYNC) (7012872) 
+.br
+oracle resource agent fails silently to start Database (COROSYNC) (7012627)
+.br
+Cluster mount succeeds but resource shows as failed (OPENAIS, OCFS2, CLUSTER) (7004243) 
+.br
+OCFS2 mount fails during boot (OPENAIS) (7015438) 
+.br
+pingd constraint is not adhered to sporadically (OPENAIS HEARTBEAT) (7008656) 
+.br
+Disabling of LVM Monitor in Cluster (OPENAIS HEARTBEAT) (7008620) 
+.br
+drbd online verify stalls (DRBD OPENAIS) (7009306) 
+.br
+umount of NFS exported Filesystem fails in cluster during stop (PACEMAKER COROSYNC) (7014619) 
+.br
+OCFS2 volume with more than 16TB fails to mount due to missing block64 option (7009624) 
+.br
+Cannot Perform a Filesystem Check on OCFS2 (7005238) 
+.br
+OCFS2 Partition Fails to Mount with No Free Slots Error (7005236) 
+.br
+howto automatically rebuild a broken md with HAE (7008537) 
+.br
+Migrating an FTP resource results in connection reset (7012188) 
+.br
+Configuring additional block disks for XEN Virtual Machines on an HAE cluster. (7012165) 
+.br
+LVM cluster resources should be cluster aware (7012115) 
+.br
+OCFS2 File System Hanging or Mounting Read Only (7008776) 
+.br
+tunefs.ocfs2 does not handle symbolic link (7005445) 
+.br
+Deprecated '-O' option used in MySQL-OCF-Script (7006533) 
+.br
+How to create a KVM resource into HAE using ssh transport (7008168) 
+.br
+Dead IP Address resource fails to restart or migrate (7012073) 
+.br
+LVM RA reports "Improper setup detected" with exclusive (PACEMAKER COROSYNC) (7014216) 
+.br
+How To Configure DRBD on HA (3299772) 
+.br
+Linux Heartbeat bladehpi resource agent fails (7001102) 
+.br
+Getting stale NFS file handle errors after cluster fail over (3714483) 
+.br
+Joining a CTDB cluster into a domain (7006496) 
+.br
+The OCF_ROOT is set to the wrong path when using the XEN live template (7002527)
+.br
+pingd constraint is not adhered to sporadically (OPENAIS HEARTBEAT) (7008656) 
+.br
+howto automatically rebuild a broken md with HAE (7008537) 
+.br
+OCFS2 cluster node support statement and requirements (3828044) 
+.br
+OCFS2 volume with more than 16TB fails to mount due to missing block64 option (7009624) 
+.br
+Fencing, crashes and hangs on system with Mulitpath and OCFS2 (7000097)
+.br
+SLES 11 HAE - LSB resource will not start (7007617) 
+.br
+Cluster resources are not migrating when paths are lost to the SAN when using multipathing (7003637) 
+.br
+
+.\"
+.B * Related operating system settings and components:
+.br
+How to load the correct watchdog kernel module (7016880) 
+.br
+Can't open watchdog device: /dev/watchdog: Device or resource busy (7008216)
+.br
+Estimate Multipath Timeouts (7016305) 
+.\".br
+.\"Understanding the use of Direct_IO (7003996) 
+.br
+Troubleshooting SLES Multipathing (MPIO) problems (3231766) 
+.br
+Using LVM on Multipath (DM MPIO) Devices (7007498)
+.br
+HOWTO: Add, Resize and Remove LUN without restarting SLES or OES Linux (7009660)
+.br
+Fixes and workaround to avoid issues caused by Leap Second 2015 (7016150) 
+.br
+Leap second issues - June 30, 2012 (7010351) 
+.br
+Patch recommendations to avoid issues caused by Leap Second 2015 (7016150) 
+.br
+Hardware Clock having wrong time on cluster node (7011375) 
+.br
+Software repositories in SUSE Linux Enterprise 11 Service Pack 2 (7010225) 
+.br
+Packages from one version of SLES to another are missing (7003311) 
+.br
+Possible reasons for suse_register to return improper code (7014777) 
+.br
+.\"Cannot apply a SLES 11 HA (High Availability) bundle (7008777)
+
+.\"
+.B * Relax and Recover:
+.br
+ReaR does not support servers with SAN-attached storage/SAN boot (7008030) 
+.br
+ReaR rescue environment fails to load on Blade Hardware (7008029) 
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
+erschel
+.\"
+.SH SEE ALSO
+ClusterTools2(7) , cs_show_cluster_patterns(8),
+.br
+https://www.suse.com/products/highavailability/ , 
+.br
+https://www.suse.com/releasenotes/x86_64/SLE-HA/11-SP4/ ,
+.br
+https://www.suse.com/documentation/sle_ha/ ,
+.br
+https://www.suse.com/promo/sap/high-availability.html
+.\"
+.SH COPYRIGHT
+(c) 2015 SUSE Linux GmbH, Germany.
+ClusterTools2 comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

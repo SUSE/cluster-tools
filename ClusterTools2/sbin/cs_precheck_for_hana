@@ -102,6 +102,10 @@ krb5-client
 nfs-client
 sensors
 "
+test -z "${HANA_SAP_PKG_NOT}" &&\
+        HANA_SAP_PKG_NOT="
+ulimit
+"
 test -z "${HANA_SUSE_PTRN}" &&\
 	HANA_SUSE_PTRN="
 base
@@ -364,7 +368,7 @@ function prck_basesoft(){
 		echo "${a} :      ${FOUND}"
 	done
 	# TODO also glibc HANA_VERS_MIN
-
+	# TODO check HANA_SAP_PKG_NOT
 	echo
 	echo "INFO: normal_end $EXE $FUNCNAME"
 }

@@ -82,6 +82,10 @@ nfs-client
 sensors
 "
 #
+HANA_SAP_PKG_NOT="
+ulimit
+"
+#
 HANA_SUSE_PTRN="
 base
 x11

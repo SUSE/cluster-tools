@@ -100,7 +100,7 @@ CONF_CALLS="
 '/usr/bin/grep -v "^#" /etc/services'
 '/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
-'/bin/lsmod | colrm 33-'
+'/bin/lsmod | colrm 33- | sort'
 '/bin/ls -l /boot/vmlinuz | colrm 27 39'
 '/bin/ls -l /boot/initrd | colrm 27 39'
 '/bin/ls -l /boot/vmlinuz-xen | colrm 27 39'

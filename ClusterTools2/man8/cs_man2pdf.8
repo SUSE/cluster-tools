@@ -1,0 +1,69 @@
+.TH cs_man2pdf 8 "29 Jan 2016" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_man2pdf \- create pdf from man page
+.\"
+.SH SYNOPSIS
+.P
+.B cs_man2pdf \fI[OPTION]\fR
+.B cs_man2pdf \fI<man page>\fR \fI<section>\fR
+.br
+.\"
+.SH DESCRIPTION
+\fBcs_man2pdf\fP creates a pdf file from an man page.
+.br
+The output of man is converted into pdf format and written to a file.
+Basically man -Tps | ps2pdf - .
+.br
+.\"
+.SH BUGS
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+        show help.
+.HP
+\fB --version\fR
+        show version.
+.\"
+.SH EXAMPLES
+.TP
+* convert this man page into pdf and wirte the output file into the current work directory.
+.br 
+# cs_man2pdf cs_man2pdf 8
+.\".TP
+.\"#
+.\".TP
+.\"# rpm -ql ClusterTools2-doc | grep man
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_man2pdf
+	the program itself.
+.TP
+$PWD/<man_page>.<n>.pdf
+	the output file.
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBman\fP(8), \fBps2pdf\fP(8), \fBapropos\fP(8)
+.\"
+.SH COPYRIGHT
+(c) 2016 L.Pinne, Germany.
+.br
+cs_dmesg comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

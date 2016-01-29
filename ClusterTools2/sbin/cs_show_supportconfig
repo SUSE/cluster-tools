@@ -2,10 +2,10 @@
 #
 # cs_show_supportconfig
 #
-# (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.02 2015-08-05
+# Version: 0.02 2016-01-29
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -36,7 +36,7 @@ function split_file(){
 	cd ${TMP}/$F
 #	csplit $F /^#==\[ [a-zA-Z] ^C \]==*#$/ {*}
 	csplit $F /^#==..Co.*===========================#$/ {*} >>$ERR
-	cd $OLDPWD
+	cd "${OLDPWD}"
 }
 
 

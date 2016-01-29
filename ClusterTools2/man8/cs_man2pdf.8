@@ -4,9 +4,9 @@
 cs_man2pdf \- create pdf from man page
 .\"
 .SH SYNOPSIS
-.P
 .B cs_man2pdf \fI[OPTION]\fR
-.B cs_man2pdf \fI<man page>\fR \fI<section>\fR
+.br
+.B cs_man2pdf \fI<man_page>\fR \fI<section>\fR
 .br
 .\"
 .SH DESCRIPTION
@@ -34,7 +34,9 @@ Basically man -Tps | ps2pdf - .
 .TP
 * generate pdf files from man pages for all ocf resource agents.
 .br
-# apropos ocf | awk '{print $1,"7"}' | while read; do cs_man2pdf $REPLY; done
+# apropos ocf | awk '{print $1,"7"}' |\\
+.br
+  while read; do cs_man2pdf $REPLY; done
 .\"
 .SH EXIT STATUS
 .B 0

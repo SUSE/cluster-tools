@@ -35,7 +35,7 @@ case $1 in
 	*)
 		# TODO better checks
 		test $# -eq 2 || show_help
-		man -Tps $2 $1 2>/dev/null | ps2pdf - >$2.$1.pdf 2>/dev/null
+		man -Tps $2 $1 2>/dev/null | ps2pdf - >$1.$2.pdf 2>/dev/null
 		exit
 	;;
 esac

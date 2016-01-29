@@ -1,19 +1,20 @@
 .TH cs_man2pdf 8 "29 Jan 2016" "" "ClusterTools2"
 .\"
 .SH NAME
-cs_man2pdf \- create pdf from man page
+cs_man2pdf \- create PDF file from manual page
 .\"
 .SH SYNOPSIS
-.B cs_man2pdf \fI[OPTION]\fR
+.B cs_man2pdf \fIOPTION\fR
 .br
 .B cs_man2pdf \fI<man_page>\fR \fI<section>\fR
 .br
 .\"
 .SH DESCRIPTION
-\fBcs_man2pdf\fP creates a pdf file from an man page.
+\fBcs_man2pdf\fP creates a PDF file from an manual page.
 .br
-The output of man is converted into pdf format and written to a file.
-Basically man -Tps | ps2pdf - .
+Basically the command "man -Tps ... | ps2pdf - >..." is used.
+The resulting PDFs could be read with any PDF viewer on eBook devices,
+smartphones, or gaming console. 
 .br
 .\"
 .SH BUGS
@@ -28,13 +29,19 @@ Basically man -Tps | ps2pdf - .
 .\"
 .SH EXAMPLES
 .TP
-* generate pdf from this man page and write the output into a file in the current working directory.
+* generate PDF from manual page sbd(7) and write the output into a file in the current working directory.
 .br
-# cs_man2pdf cs_man2pdf 8
+# cs_man2pdf sbd 7
 .TP
-* generate pdf files from man pages for all ocf resource agents.
+* generate PDF files from manual pages for OCF resource agents.
 .br
-# apropos ocf | awk '{print $1,"7"}' |\\
+# apropos ocf_ | awk '$2~/7/ {print $1,"7"}' |\\
+.br
+  while read; do cs_man2pdf $REPLY; done
+.TP
+* generate PDF files from manual pages for cluster tools.
+.br
+# apropos ^cs_ | awk '$2~/8/ {print $1,"8"}' |\\
 .br
   while read; do cs_man2pdf $REPLY; done
 .\"
@@ -59,12 +66,12 @@ Feedback is welcome, please use the project page at
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
 .\"
 .SH SEE ALSO
-\fBman\fP(8), \fBps2pdf\fP(8), \fBapropos\fP(8)
+\fBman\fP(1), \fBapropos\fP(1), \fBwhatis\fP(1), \fBmandb\fP(8), \fBps2pdf\fP(1)
 .\"
 .SH COPYRIGHT
 (c) 2016 L.Pinne, Germany.
 .br
-cs_dmesg comes with ABSOLUTELY NO WARRANTY.
+cs_man2pdf comes with ABSOLUTELY NO WARRANTY.
 .br
 For details see the GNU General Public License at
 http://www.gnu.org/licenses/gpl.html

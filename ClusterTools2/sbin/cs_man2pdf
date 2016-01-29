@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+# cs_man2pdf
+#
+# (c) 2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU General Public License. No warranty.
+#
+# Version: 2016-01-29
+#
+
+EXE="$0"
+ERR="/dev/null"
+
+function show_help(){
+	echo "usage: $(basename $0) [OPTION]"
+	echo "usage: $(basename $0) <man_page> <section>"
+	echo
+	echo " --help		show help."
+	echo " --version	show version."
+}
+
+
+# main()
+
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-h|--help)
+		show_help
+		exit
+	;;
+	*)
+		# TODO better checks
+		test $# -eq 2 || show_help
+		man -Tps $2 $1 2>/dev/null | ps2pdf - >$2.$1.pdf 2>/dev/null
+		exit
+	;;
+esac
+#

@@ -28,13 +28,13 @@ Basically man -Tps | ps2pdf - .
 .\"
 .SH EXAMPLES
 .TP
-* convert this man page into pdf and wirte the output file into the current work directory.
-.br 
+* generate pdf from this man page and write the output into a file in the current working directory.
+.br
 # cs_man2pdf cs_man2pdf 8
-.\".TP
-.\"#
-.\".TP
-.\"# rpm -ql ClusterTools2-doc | grep man
+.TP
+* generate pdf files from man pages for all ocf resource agents.
+.br
+# apropos ocf | awk '{print $1,"7"}' | while read; do cs_man2pdf $REPLY; done
 .\"
 .SH EXIT STATUS
 .B 0

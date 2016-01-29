@@ -14,10 +14,8 @@ cs_man2pdf \- create PDF file from manual page
 .br
 Basically the command "man -Tps ... | ps2pdf - >..." is used.
 The resulting PDFs could be read with any PDF viewer on eBook devices,
-smartphones, or gaming console. 
+smartphones, or gaming consoles. 
 .br
-.\"
-.SH BUGS
 .\"
 .SH OPTIONS
 .HP
@@ -29,21 +27,23 @@ smartphones, or gaming console.
 .\"
 .SH EXAMPLES
 .TP
-* generate PDF from manual page sbd(7) and write the output into a file in the current working directory.
+* create PDF from manual page sbd(7) and write the output into a file in the current working directory.
 .br
 # cs_man2pdf sbd 7
 .TP
-* generate PDF files from manual pages for OCF resource agents.
+* create PDF files from manual pages for OCF resource agents.
 .br
 # apropos ocf_ | awk '$2~/7/ {print $1,"7"}' |\\
 .br
   while read; do cs_man2pdf $REPLY; done
 .TP
-* generate PDF files from manual pages for cluster tools.
+* create PDF files from manual pages for cluster tools.
 .br
 # apropos ^cs_ | awk '$2~/8/ {print $1,"8"}' |\\
 .br
   while read; do cs_man2pdf $REPLY; done
+.\"
+.\" * create PDFs from manual pages of an RPM
 .\"
 .SH EXIT STATUS
 .B 0

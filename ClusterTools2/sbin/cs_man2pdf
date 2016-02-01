@@ -5,18 +5,34 @@
 # (c) 2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 2016-01-29
+# Version: 2016-02-01
 #
 
 EXE="$0"
 ERR="/dev/null"
 
 function show_help(){
-	echo "usage: $(basename $0) [OPTION]"
+	echo "usage: $(basename $0) --help | --version"
+	echo "usage: $(basename $0) --rpm <rpm>"
 	echo "usage: $(basename $0) <man_page> <section>"
 	echo
+	echo " --rpm <rpm>	convert man pages from RPM."
 	echo " --help		show help."
 	echo " --version	show version."
+}
+
+
+function from_rpm(){
+	R=$1
+	rpm -ql $R | grep "/man/" | while read; do basename $REPLY; done |\
+	awk -F"." '{print $1,$2}' | while read; do do_man2pdf $REPLY; done
+}
+
+
+function do_man2pdf(){
+	M=$1
+	S=$2
+	man -Tps $M $S 2>/dev/null | ps2pdf - >$M.$S.pdf 2>/dev/null
 }
 
 
@@ -32,10 +48,14 @@ case $1 in
 		show_help
 		exit
 	;;
+	-r|--rpm)
+		from_rpm $2
+		exit
+	;;
 	*)
 		# TODO better checks
 		test $# -eq 2 || show_help
-		man -Tps $2 $1 2>/dev/null | ps2pdf - >$1.$2.pdf 2>/dev/null
+		do_man2pdf $1 $2
 		exit
 	;;
 esac

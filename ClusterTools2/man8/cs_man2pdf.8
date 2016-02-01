@@ -1,12 +1,14 @@
-.TH cs_man2pdf 8 "29 Jan 2016" "" "ClusterTools2"
+.TH cs_man2pdf 8 "01 Feb 2016" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_man2pdf \- create PDF file from manual page
 .\"
 .SH SYNOPSIS
-.B cs_man2pdf \fIOPTION\fR
+.B cs_man2pdf --help \fP|\fB --version
 .br
-.B cs_man2pdf \fI<man_page>\fR \fI<section>\fR
+.B cs_man2pdf --rpm \fI<rpm>\fR
+.br
+.B cs_man2pdf \fI<man_page> <section>\fR
 .br
 .\"
 .SH DESCRIPTION
@@ -24,26 +26,26 @@ smartphones, or gaming consoles.
 .HP
 \fB --version\fR
         show version.
+.HP
+\fB --rpm \fI<rpm>\fR
+        convert man pages from RPM.
 .\"
 .SH EXAMPLES
 .TP
-* create PDF from manual page sbd(7) and write the output into a file in the current working directory.
+* create PDF for manual page sbd(7) and write the output into a file in the current working directory.
 .br
 # cs_man2pdf sbd 7
 .TP
-* create PDF files from manual pages for OCF resource agents.
+* create PDF files for manual pages of OCF resource agents.
 .br
 # apropos ocf_ | awk '$2~/7/ {print $1,"7"}' |\\
 .br
   while read; do cs_man2pdf $REPLY; done
 .TP
-* create PDF files from manual pages for cluster tools.
+* create PDF files for manual pages from RPM ClusterTools2-doc.
 .br
-# apropos ^cs_ | awk '$2~/8/ {print $1,"8"}' |\\
-.br
-  while read; do cs_man2pdf $REPLY; done
+# cs_man2pdf -r ClusterTools2-doc 
 .\"
-.\" * create PDFs from manual pages of an RPM
 .\"
 .SH EXIT STATUS
 .B 0

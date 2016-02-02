@@ -42,7 +42,11 @@ smartphones, or gaming consoles.
 .br
   while read; do cs_man2pdf $REPLY; done
 .TP
-* create PDF files for manual pages from RPM ClusterTools2-doc.
+* create PDF files for manual pages in diretory ./mandir.
+.br
+# cs_man2pdf -d mandir
+.TP
+* create PDF files for manual pages from installed RPM ClusterTools2-doc.
 .br
 # cs_man2pdf -r ClusterTools2-doc 
 .\"
@@ -63,6 +67,7 @@ $PWD/<man_page>.<n>.pdf
 	the output file.
 .\"
 .SH BUGS
+This script can only handle manual pages that with one single dot in the filename.
 Feedback is welcome, please use the project page at
 .br
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel

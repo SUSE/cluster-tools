@@ -5,7 +5,7 @@
 # (c) 2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 2016-02-01
+# Version: 2016-02-02
 #
 
 EXE="$0"
@@ -16,9 +16,17 @@ function show_help(){
 	echo "usage: $(basename $0) --rpm <rpm>"
 	echo "usage: $(basename $0) <man_page> <section>"
 	echo
-	echo " --rpm <rpm>	convert man pages from RPM."
+	echo " --dir <dir>	convert man pages from files in directory."
+	echo " --rpm <rpm>	convert man pages from installed RPM."
 	echo " --help		show help."
 	echo " --version	show version."
+}
+
+
+function from_dir(){
+	R=$1
+#	| while read; do basename $REPLY; done |\
+#        awk -F"." '{print $1,$2}' | while read; do do_man2pdf $REPLY; done
 }
 
 
@@ -46,6 +54,10 @@ case $1 in
 	;;
 	-h|--help)
 		show_help
+		exit
+	;;
+	-d|--dir)
+		from_dir $2
 		exit
 	;;
 	-r|--rpm)

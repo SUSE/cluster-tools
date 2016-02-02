@@ -13,10 +13,11 @@ ERR="/dev/null"
 
 function show_help(){
 	echo "usage: $(basename $0) --help | --version"
+	echo "usage: $(basename $0) --dir <dir>"
 	echo "usage: $(basename $0) --rpm <rpm>"
 	echo "usage: $(basename $0) <man_page> <section>"
 	echo
-	echo " --dir <dir>	convert man pages from files in directory."
+	echo " --dir <dir>	convert man pages from directory."
 	echo " --rpm <rpm>	convert man pages from installed RPM."
 	echo " --help		show help."
 	echo " --version	show version."
@@ -25,8 +26,9 @@ function show_help(){
 
 function from_dir(){
 	R=$1
-#	| while read; do basename $REPLY; done |\
-#        awk -F"." '{print $1,$2}' | while read; do do_man2pdf $REPLY; done
+	ls "${1}"/ | while read; do echo $REPLY |\
+	awk -F"." '{print $1,$2}'; done |\
+	while read; do do_man2pdf $REPLY; done
 }
 
 

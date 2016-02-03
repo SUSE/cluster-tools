@@ -25,9 +25,12 @@ function show_help(){
 
 
 function from_dir(){
+	# TODO common awk sub-function for all from_ functions
 	R=$1
 	ls "${1}"/ | while read; do echo $REPLY |\
-	awk -F"." '{print $1,$2}'; done |\
+	awk -F"." 'NF==3 && $3=="gz" {print $1,$2}
+		   NF==4 && $4=="gz" {print $1"."$2,$3}
+		   NF==3 && $3!="gz" {print $1"."$2,$3}'; done |\
 	while read; do do_man2pdf $REPLY; done
 }
 
@@ -35,7 +38,10 @@ function from_dir(){
 function from_rpm(){
 	R=$1
 	rpm -ql $R | grep "/man/" | while read; do basename $REPLY; done |\
-	awk -F"." '{print $1,$2}' | while read; do do_man2pdf $REPLY; done
+	awk -F"." 'NF==3 && $3=="gz" {print $1,$2}
+		   NF==4 && $4=="gz" {print $1"."$2,$3}
+		   NF==3 && $3!="gz" {print $1"."$2,$3}' |\
+	while read; do do_man2pdf $REPLY; done
 }
 
 

@@ -1,0 +1,73 @@
+#!/bin/bash
+#
+# cs_delcib
+#
+# (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU General Public License. No warranty.
+#
+# Version: 0.2 2015-09-29
+#
+
+EXE="$0"
+ERR="/dev/null"
+
+CFG="/etc/ClusterTools2/cs_delcib"
+test -s $CFG && source $CFG
+
+# TODO check current pathes
+test -z "${FIL}" &&\
+	FIL="
+/var/lib/corosync/*
+/var/lib/heartbeat/cores/*/*
+/var/lib/heartbeat/crm/*
+/var/lib/pengine/*
+/var/lib/pacemaker/cib/*
+/var/lib/pacemaker/pengine/*
+"
+
+test -z "${BAK}" &&\
+	BAK="/var/adm/backup/cib.xml-$(date +%Y%m%d-%H%M%S)"
+
+
+# main()
+
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+        	head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-f|--force)
+		rcopenais stop || exit
+
+		# 11sp2 || 11sp3
+		mv /var/lib/heartbeat/crm/cib.xml $BAK 2>$ERR ||\
+		mv /var/lib/pacemaker/cib/cib.xml $BAK
+		for f in $FIL; do
+			rm -f $f
+		done
+		exit
+	;;
+	-o|--offline)
+		rcopenais status 2>/dev/null
+		test $? -eq  "7" || exit
+
+		# 11sp2 or 11sp3
+		mv /var/lib/heartbeat/crm/cib.xml $BAK 2>$ERR ||\
+		mv /var/lib/pacemaker/cib/cib.xml $BAK 2>$ERR
+		for f in $FIL; do
+			rm -f $f
+		done
+		exit
+	;;
+	*)
+		echo "usage: $(basename $0) [OPTION]"
+		echo
+		echo " --offline	remove CIB and PE logs."
+		echo " --force	stop cluster service and resources, remove CIB and PE logs."
+		echo " --help		show help."
+		echo " --version	show version."
+		exit
+	;;
+esac
+#

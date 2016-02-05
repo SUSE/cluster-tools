@@ -1,0 +1,70 @@
+.TH cs_delcib 8 "17 Mar 2014" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_delcib \- remove cluster information base from cluster node
+.\"
+.SH SYNOPSIS
+.B cs_delcib \fIOPTION\fR
+.\"
+.SH DESCRIPTION
+\fBcs_delcib\fP cleans up a pacemaker HA cluster node. 
+It removes the cluster information base, the policy engine logs, the ring status and core files
+that a cluser node has generated during its operation.
+Only the basic cluster configuration in /etc will be left.
+To entirely remove a configuration from a cluster, cs_delcib has to be called on each node.
+.br
+Calling this command will shut down the cluster service and all resources on the node.
+It also will remove the complete cluster resource configuration and cluster history on that node.
+.\"
+.SH OPTIONS
+.HP
+\fB --offline\fR
+	remove CIB and PE logs.
+.HP
+\fB --force\fR
+	stop cluster service and resources, remove CIB and PE logs.
+.HP
+\fB --help\fR
+	show help.
+.HP
+\fB --version\fR
+	show version.
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_delcib
+	the program itself.
+.TP
+/etc/ClusterTools2/cs_delcib
+	the configuration.
+.TP
+/var/lib/corosync/, /var/lib/heartbeat/cores/, /var/lib/heartbeat/crm/, /var/lib/pacemaker/cib/, /var/lib/pengine/
+	the directories to be cleaned up, SP2 and SP3 differ.
+.TP
+/var/adm/backup/
+	the directory to backup the cib.xml.
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBhb_report\fP(8), \fBmake_hb_backup\fP(8)
+.\"
+.\"
+.SH COPYRIGHT
+(c) 2011-2014 L.Pinne, Germany.
+.br
+cs_delcib comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

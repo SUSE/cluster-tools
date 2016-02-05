@@ -1,0 +1,42 @@
+.TH ClusterTools2 5 "04 Feb 2016" "" "ClusterTools2"
+.\"
+.SH NAME
+/etc/ClusterTools2/ \- configuration for ClusterTools2 commands
+.\"
+.SH DESCRIPTION
+\fB/etc/ClusterTools2/\fP contains configuration for ClusterTools2 commands.
+For each command there is one config file. The config file is named exactly as the command itself. Each config file contains a set of variables, filled with one or more lines of values. 
+.\"
+.SH SYNTAX
+Each variable name should start at the first character of a line. Values are assigend with an equal sign "=". 
+.br
+The config files can contain comments, masked with an hash "#" as first character of the line.
+.br
+See individual manual pages for command specific formats.
+.\"
+.SH EXAMPLES
+.\"
+.SH FILES
+.TP
+/etc/ClusterTools2/
+	the directory with various configuration files.
+.TP
+/usr/sbin/
+	the directory with various program files (mostly shell scripts).
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBClusterTools2\fP(7)
+.\"
+.SH COPYRIGHT
+(c) 2016 L.Pinne, Germany.
+.br
+ClusterTools2 comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

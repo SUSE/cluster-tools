@@ -1,0 +1,41 @@
+.TH supportconfig_plugins 5 "30 Aug 2011" "" "ClusterTools2"
+.\"
+.SH NAME
+supportconfig_plugins \- configuration for supportconfig plugins from ClusterTools2  
+.\"
+.SH DESCRIPTION
+\fBsupportconfig_plugins\fP contains configuration for supportconfig plugins from ClusterTools2. 
+.\"
+.SH SYNTAX
+The file contains one line per plugin. Each active line is formed as:
+.br
+.B ^plugin-name$ 
+
+Each plugin checks for a line containing only its name. If this line is not found, the pluging exits without further action.
+
+Implicitely a hash "#" as the first character of a line marks it as comment and makes it to be ignored. 
+.\"
+.SH FILES
+.TP
+/usr/lib/supportconfig/plugins/
+	the plugin directory.
+.TP
+/etc/ClusterTools2/supportconfig_plugins
+	the plugin configuration files.
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBsupportconfig\fP(8), \fBClusterTools2\fP(7)
+.\"
+.SH COPYRIGHT
+(c) 2011 L.Pinne, Germany.
+.br
+supportconfig_plugins comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

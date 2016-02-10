@@ -426,7 +426,7 @@ VMW_ETC="
 #
 HANA_SAP_PKG_YES="
 gtk2
-java-1_6_0-ibm
+java-1_7_0-ibm
 libicu
 mozilla-xulrunner192
 ntp
@@ -451,6 +451,10 @@ nfs-client
 sensors
 "
 #
+HANA_SAP_PKG_NOT="
+ulimit
+"
+#
 HANA_SUSE_PGK_YES="
 rear
 sysstat
@@ -470,8 +474,8 @@ HANA-Firewall
 "
 #
 HANA_VERS_MIN="
-kernel-default:3.0.101-65
-kernel-xen:3.0.101-65
+kernel-default:3.0.101-68
+kernel-xen:3.0.101-68
 glibc:2.11.3-17.56.2
 libgcc_s1:4.7.2_20130108-0.17.2
 libstdc++6:4.7.2_20130108-0.17.2
@@ -495,10 +499,14 @@ vm.pagecache_limit_ignore_dirty
 vm.overcommit_memory
 vm.swappiness
 vm.max_map_count
+vm.memory_failure_early_kill
+fs.aio-max-nr
+fs.file-max
 kernel.sem
 kernel.shmall
 kernel.shmmax
 net.ipv4.tcp_slow_start_after_idle
+net.ipv4.ip_local_port_range
 "
 #
 HANA_SUSE_SYSCTL="

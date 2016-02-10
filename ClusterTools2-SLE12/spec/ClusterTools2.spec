@@ -27,10 +27,6 @@ Requires:     perl-TermReadLine-Gnu >= 1.16
 Requires:     cron
 Requires:     logrotate
 
-%package doc
-Summary: Cluster Tools to control some functions easy
-Group:   Productivity/Clustering/HA
-	
 %description
 ClusterTools2 provides tools for setting up and managing a corosync/
 pacemaker cluster.

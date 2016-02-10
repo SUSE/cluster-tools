@@ -4,12 +4,12 @@
 HANA_SAP_BOOTARG="
 intel_idle.max_cstate=0
 processor.max_cstate=0
+transparent_hugepage=never
 "
 #
 HANA_SUSE_BOOTARG="
 elevator=noop
 cgroup_disable=memory
-transparent_hugepage=never
 "
 #
 HANA_SAP_SYSCTL="
@@ -45,8 +45,8 @@ boot.kdump
 "
 #
 HANA_VERS_MIN="
-kernel-default:3.0.101-65
-kernel-xen:3.0.101-65
+kernel-default:3.0.101-68
+kernel-xen:3.0.101-68
 glibc:2.11.3-17.56.2
 libgcc_s1:4.7.2_20130108-0.17.2
 libstdc++6:4.7.2_20130108-0.17.2
@@ -57,7 +57,7 @@ HANA_SAP_PKG_YES="
 hal
 gtk2
 iptraf
-java-1_6_0-ibm
+java-1_7_0-ibm
 libicu
 mozilla-xulrunner192
 ntp
@@ -80,6 +80,10 @@ krb5-32bit
 krb5-client
 nfs-client
 sensors
+"
+#
+HANA_SAP_PKG_NOT="
+ulimit
 "
 #
 HANA_SAP_PKG_NOT="

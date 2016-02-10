@@ -2,10 +2,10 @@
 #
 # cs_prepare_esxvm
 #
-# (c) 2014 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2014-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 2014-05-08 14:17
+# Version: 2016-02-10 14:25
 #
 
 EXE=${0}
@@ -103,6 +103,7 @@ drbd-udev
 drbd-bash-completion
 sbd
 ClusterTools2
+ClusterTools2-doc
 "
 # TODO with and w/o cluster
 test -z "${PCKG_NO}" &&\

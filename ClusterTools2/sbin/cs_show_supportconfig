@@ -1120,10 +1120,14 @@ vm.pagecache_limit_ignore_dirty
 vm.overcommit_memory
 vm.swappiness
 vm.max_map_count
+vm.memory_failure_early_kill
+fs.aio-max-nr
+fs.file-max
 kernel.sem
 kernel.shmall
 kernel.shmmax
 net.ipv4.tcp_slow_start_after_idle
+net.ipv4.ip_local_port_range
 "
 	test -z "${HANA_SUSE_SYSCTL}" &&\
 	HANA_SUSE_SYSCTL="
@@ -1132,8 +1136,8 @@ vm.dirty_background_bytes
 "
 	test -z "${HANA_VERS_MIN}" &&\
 	HANA_VERS_MIN="
-kernel-default:3.0.101-65
-kernel-xen:3.0.101-65
+kernel-default:3.0.101-68
+kernel-xen:3.0.101-68
 glibc:2.11.3-17.56.2
 libgcc_s1:4.7.2_20130108-0.17.2
 libstdc++6:4.7.2_20130108-0.17.2
@@ -1144,7 +1148,7 @@ xfsprogs:3.1.8-0.5.1
 hal
 gtk2
 iptraf
-java-1_6_0-ibm
+java-1_7_0-ibm
 libicu
 mozilla-xulrunner192
 ntp
@@ -1167,6 +1171,10 @@ krb5-32bit
 krb5-client
 nfs-client
 sensors
+"
+	test -z "${HANA_SAP_PKG_NOT}" &&\
+	HANA_SAP_PKG_NOT="
+ulimit
 "
 	test -z "${HANA_SAP_SVC_YES}" &&\
 	HANA_SAP_SVC_YES="
@@ -1245,6 +1253,13 @@ HANA-Firewall
 	for f in $HANA_SUSE_PKG_YES; do
 		echo -n "$f : "
 		# TODO do search, if package is -32bit
+		grep -v -- "-32bit" $FIL | grep "^${f}-[0-9]" || echo "NO"
+	done | awk '{print $1,":",$3}' | sort
+	echo
+	# TODO HANA_SAP_PKG_NOT. -32bit?
+	echo "RPMs forbidden by SAP:"
+	for f in $HANA_SAP_PKG_NOT; do
+		echo -n "$f : "
 		grep -v -- "-32bit" $FIL | grep "^${f}-[0-9]" || echo "NO"
 	done | awk '{print $1,":",$3}' | sort
 	echo

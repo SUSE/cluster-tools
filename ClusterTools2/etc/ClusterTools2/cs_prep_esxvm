@@ -80,7 +80,6 @@ drbd-udev
 drbd-bash-completion
 sbd
 ClusterTools2
-ClusterTools2-doc
 "
 #
 PCKG_NO="

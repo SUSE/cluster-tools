@@ -1437,6 +1437,7 @@ HANA-Firewall
 		test -z "$p" && p="NA"
 		echo "${p}"
 	done
+	echo
 }
 
 

@@ -15,9 +15,9 @@ License:      GPL-2.0
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      2.5.4
+Version:      3.0.0
 #Release:      0.1
-Release:      27
+Release:      1
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
@@ -45,12 +45,6 @@ There are some other commandline tools to make life easier.
 
 An additional package ClusterTools2-doc contains documentation,
 including manual pages.
-
-%description doc
-ClusterTools2 provides tools for setting up and managing a corosync/
-pacemaker cluster.
-
-This Subpackage includes the manual pages and documentation.
 
 %prep
 %setup -c -T -a 0
@@ -122,9 +116,6 @@ cp /usr/lib/ClusterTools2/supportconfig/plugins/* /usr/lib/supportconfig/plugins
 %config(noreplace) /etc/ClusterTools2
 %config(noreplace) /etc/cron.d/*
 %config(noreplace) /etc/logrotate.d/*
-
-%files doc
-%defattr(-,root,root)
 %doc /usr/share/man/man5/*.gz
 %doc /usr/share/man/man7/*.gz
 %doc /usr/share/man/man8/*.gz

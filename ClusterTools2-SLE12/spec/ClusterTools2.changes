@@ -1,0 +1,86 @@
+* Thu Sep 06 2013 - lars.pinne@suse.com
+  - added cs_show_wwpn, cs_check_lsbinit first alpha
+* Mon May 06 2013 - fabian.herschel@suse.com
+  - upstream fixes for sap simpelstack to be more flexible
+* Fri Apr 20 2012 - fabian.herschel@suse.com
+  - tools, manpages and config files now renamed for ship with SLES for SAP Applications
+* Wed Apr 04 2012 - fabian.herschel@suse.com
+  - first changes to get package technical preview ready
+* Fri Mar 23 2012 - lars.pinne@suse.com
+  - grep_supportconfig for Oracle and s390x  
+* Fri Feb 10 2012 - lars.pinne@suse.com
+  - eDir back again
+* Tue Nov 15 2011 - lars.pinne@suse.com
+  - more grep patterns, minor fixes
+* Fri Nov 11 2011 - fabian.herschel@suse.com
+  2.2.11 st martin package version (11.11.2011)
+* Wed Nov 02 2011 - fabian.herschel@suse.com
+  2.2.10 package version
+* Fri Oct 21 2011 - lars.pinne@novell.com
+  - added lsoflog, merged separate crontab and logrotate to one ClusterTools2, fixed grep_supportconfig
+* Thu Oct 05 2011 - lars.pinne@novell.com
+  - added grep_cluster_transition
+* Thu Sep 29 2011 - lars.pinne@novell.com
+  - moved add_softdog_to_initrd to add_watchdog_to_initrd, added grep_cluster_patterns, various fixes and updates
+* Thu Sep 22 2011 - lars.pinne@novell.com
+  - added xmstat, various fixes and updates
+* Tue Aug 30 2011 - lars.pinne@novell.com
+  - added wow on-fail-block, added supportconfig plugins
+* Fri Aug 26 2011 - fabian.herschel@suse.com
+  2.2.9 package version
+* Tue Jul 18 2011 - lars.pinne@novell.com
+  - added man page, fixed config scripts, 2nd ring in make_corosync_conf, set config (noreplace)
+* Wed Jul 06 2011 - fabian.herschel@suse.com
+  2.2.8 fixed node status (CSN)
+* Tue Jul 05 2011 - fabian.herschel@suse.com
+  2.2.7 fixed command line option
+  - fixed missing groups in resource list
+* Tue Jul 05 2011 - fabian.herschel@suse.com
+  2.2.6 new package version for opensuse.org
+  - You could (only recommended for test scenarious) switchoff STONITH by setting STONITH_ENABLED=false in your WOW file
+  - corrected error in samples (uninitialized SAPsid)
+* Tue Jun 14 2011 - fabian.herschel@suse.com
+  2.2.5-1 added corrections/improvements from lars.pinne@novell.com
+  - changed menueng2, wow and ClusterService to display better help (program name now matches the use case)
+* Sat May 14 2011 - fabian.herschel@suse.com
+  2.2.4-1 added fhcrmedit to have a batch-able editor - fhcrmedit will be renamed in the future and is only a draft for internal tests
+* Fri May 13 2011 - fabian.herschel@suse.com
+  2.2.3-1 simple stack now has now the option to skip the SFEX device resource (just let SFEX_DEVICE be empty)
+* Tue May 10 2011 - lars.pinne@novell.com
+  2.2.2-1 added sum and error patterns, fixed minor bugs, added some man pages, updated ClusterService
+* Tue Apr 29 2011 - fabian.herschel@novell.com
+  2.2.1-1 fixed package spec to get it build (added precheck_for_sap)
+* Tue Apr 29 2011 - lars.pinne@novell.com
+  2.2.0-1 added psauxlog
+* Tue Apr 12 2011 - fabian.herschel@novell.com
+  2.2.0-1 now supports command mode (--cmd CMD options)
+* Thu Apr 12 2011 - lars.pinne@novell.com
+  2.1.10-1 update and cleanup 
+  - sum_base_config
+* Mon Mar 07 2011 - lars.pinne@novell.com
+  2.1.9-1 update and cleanup 
+  - grep_error_patterns
+* Mon Mar 07 2011 - fabian.herschel@novell.com
+  2.1.8-1 prepare_wowfile (lp)
+  - RAID1 devices resources could be named more flexible (fh)
+* Tue Feb 22 2011 - lars.pinne@novell.com
+  2.1.7-1 Updated files
+  - Manpages: sbd.8, sleha_cleanup.8
+  - grep-error-patterns
+  - sleha_cleanup
+  - whbsaprecheck
+* Tue Feb 01 2011 - fabian.herschel@novell.com
+  2.1.6-1 added sleha_cleanup and grep-error-patterns from Lars Pinne
+* Mon Nov 15 2010 - fabian.herschel@novell.com
+  2.1.5-1 added new man pages from Lars
+* Mon Oct 25 2010 - fabian.herschel@novell.com
+  2.1.4-1 added new use case for fs only stack
+* Thu Oct 14 2010 - fabian.herschel@novell.com
+  2.1.3-1 menueng2 now supports multiple menues and additional control commands
+  - use case specific sample CS_SAPNA0
+* Tue Oct 12 2010 - fabian.herschel@novell.com
+  2.1.2-1 name scheme for wow and submenus
+* Thu Oct 07 2010 - fabian.herschel@novell.com
+  2.1.0-1 reintegrated wow to ClusterTools2
+* Wed Oct 06 2010 - fabian.herschel@novell.com
+  2.0.0-1 initial package

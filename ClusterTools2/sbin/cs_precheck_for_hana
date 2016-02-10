@@ -2,10 +2,10 @@
 #
 # cs_precheck_for_hana
 #
-# (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2015-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2015-11-19 17:50
+# Version: 2016-02-10 10:50
 #
 
 EXE="$0"
@@ -23,12 +23,12 @@ test -z "${HANA_SAP_BOOTARG}" &&\
 	HANA_SAP_BOOTARG="
 intel_idle.max_cstate=0
 processor.max_cstate=0
+transparent_hugepage=never
 "
 test -z "${HANA_SUSE_BOOTARG}" &&\
 	HANA_SUSE_BOOTARG="
 elevator=noop
 cgroup_disable=memory
-transparent_hugepage=never
 "
 test -z "${HANA_SAP_SYSCTL}" &&\
 	HANA_SAP_SYSCTL="
@@ -66,8 +66,8 @@ boot.kdump
 "
 test -z "${HANA_VERS_MIN}" &&\
 	HANA_VERS_MIN="
-kernel-default:3.0.101-65
-kernel-xen:3.0.101-65
+kernel-default:3.0.101-68
+kernel-xen:3.0.101-68
 glibc:2.11.3-17.56.2
 libgcc_s1:4.7.2_20130108-0.17.2
 libstdc++6:4.7.2_20130108-0.17.2
@@ -369,6 +369,7 @@ function prck_basesoft(){
 	done
 	# TODO also glibc HANA_VERS_MIN
 	# TODO check HANA_SAP_PKG_NOT
+
 	echo
 	echo "INFO: normal_end $EXE $FUNCNAME"
 }

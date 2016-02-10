@@ -136,6 +136,7 @@ UPDT_PTRN="
 "SLE11-SP1-SAP-AIO-"
 "SLE11-SP2-SAP-"
 "SLE11-SP3-SAP-"
+"SLE11-SP4-SAP-"
 "
 #
 STOR_PKG="
@@ -422,6 +423,10 @@ VMW_ETC="
 "/etc/vmware-tools/plugins"
 "/etc/pam.d/vmtoolsd"
 "/etc/ld.so.conf.d/vmware-tools-libraries.conf"
+"
+#
+SAP_SAP_PKG_NOT="
+ulimit
 "
 #
 HANA_SAP_PKG_YES="

@@ -1005,6 +1005,10 @@ function chk_sap(){
 
 	echo_msgsep $FUNCNAME
 
+        test -z "${SAP_SAP_PKG_NOT}" &&\
+        SAP_SAP_PKG_NOT="
+ulimit
+"
 	# TODO check /etc/sysconfig/sapconf
 	echo "sysconfig :"
 	FIL=etc.txt
@@ -1068,6 +1072,13 @@ function chk_sap(){
 #vm.pagecache_limit_ignore_dirty
 # If there is a lot of local writes and it is OK to throttle them by limiting the writeback caching, we recommended that you set the value to 0. If writing mainly happens to NFS filesystems, the default 1 should be left untouched.(A value of 2 would be a middle ground, not limiting local write back caching as much, but potentially resulting in some paging.)
 
+	# TODO -32bit?
+	echo "RPMs forbidden by SAP:"
+	for f in $SAP_SAP_PKG_NOT; do
+		echo -n "$f : "
+		grep -v -- "-32bit" $FIL | grep "^${f}-[0-9]" || echo "NO"
+	done | awk '{print $1,":",$3}' | sort
+	echo
 }
 
 
@@ -1682,6 +1693,7 @@ function chk_updates(){
 "SLE11-SP1-SAP-AIO-"
 "SLE11-SP2-SAP-"
 "SLE11-SP3-SAP-"
+"SLE11-SP4-SAP-"
 "
 	for p in ${UPDT_PTRN}; do
 		grep "|.*|.${p}.*|.*|" $FIL | sort -u

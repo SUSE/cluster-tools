@@ -5,7 +5,7 @@
 # (c) 2015-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2016-02-10 10:50
+# Version: 2016-02-24 14:50
 #
 
 EXE="$0"
@@ -56,9 +56,10 @@ vm.dirty_background_bytes
 test -z "${HANA_SAP_SVC_YES}" &&\
 	HANA_SAP_SVC_YES="
 boot.sysstat
-boot.sapinit
 boot.clock
+boot.sapconf
 ntp
+sapinit
 "
 test -z "${HANA_SAP_SVC_OFF}" &&\
 	HANA_SAP_SVC_OFF="
@@ -330,7 +331,7 @@ function prck_runlvl(){
 	test -z "${FOUND}" && FOUND="NA"
 	echo "default runlevel (3):	${FOUND}"
 
-	# TODO boot.sapinit?
+	# TODO sapinit?
 	for a in ${HANA_SAP_SVC_YES} ${HANA_SUSE_SVC_YES}; do
 		FOUND=$(chkconfig -A | grep $a | awk '{print $2}')
 		test -z "${FOUND}" && FOUND="NA"

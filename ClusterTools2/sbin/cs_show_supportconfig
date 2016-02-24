@@ -1190,9 +1190,10 @@ ulimit
 	test -z "${HANA_SAP_SVC_YES}" &&\
 	HANA_SAP_SVC_YES="
 boot.sysstat
-boot.sapinit
+boot.sapconf
 boot.clock
 ntp
+sapinit
 "
 	test -z "${HANA_SAP_SVC_OFF}" &&\
 	HANA_SAP_SVC_OFF="

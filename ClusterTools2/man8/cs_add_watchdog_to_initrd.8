@@ -1,4 +1,4 @@
-.TH cs_add_watchdog_to_initrd 8 "05 Oct 2015" "" "ClusterTools2"
+.TH cs_add_watchdog_to_initrd 8 "24 Feb 2016" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_add_watchdog_to_initrd \- add kernel module to initrd 
@@ -32,7 +32,9 @@ into the running kernel.
 .SH EXAMPLES
 .br
 .TP
-* Add watchdog to sysconfig kernel section and build new initrd, use built-in default.
+* Add watchdog to sysconfig kernel section and build new initrd, use built-in default. Already loaded modules have to be removed manually. 
+.br
+# lsmod | grep -e wdt -e dog | while read; do rmmod $REPLY; done
 .br
 # cs_add_watchdog_to_initrd -c
 .TP
@@ -95,7 +97,7 @@ https://www.suse.com/support/kb/doc.php?id=7016880 ,
 https://www.suse.com/support/kb/doc.php?id=7008216
 .\"
 .SH COPYRIGHT
-(c) 2011-2015 L.Pinne, Germany.
+(c) 2011-2016 L.Pinne, Germany.
 .br
 cs_add_watchdog_to_initrd comes with ABSOLUTELY NO WARRANTY.
 .br

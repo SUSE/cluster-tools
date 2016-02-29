@@ -103,7 +103,6 @@ drbd-udev
 drbd-bash-completion
 sbd
 ClusterTools2
-ClusterTools2-doc
 "
 # TODO with and w/o cluster
 test -z "${PCKG_NO}" &&\

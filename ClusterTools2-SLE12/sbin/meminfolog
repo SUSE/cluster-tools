@@ -1,0 +1,14 @@
+#!/bin/bash
+# meminfolog
+# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU General Public License. No warranty.
+# Version: 0.1 2011-10-21
+#
+
+D=$(date +"%F %T")
+L=${1:-"/var/log/meminfo.log"}
+
+cat /proc/meminfo | while read; do
+	echo $D: $REPLY
+done >>$L
+#

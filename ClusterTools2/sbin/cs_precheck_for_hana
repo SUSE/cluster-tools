@@ -385,10 +385,9 @@ function prck_apps() {
 	#	1. sapcontrol/sapstartsrv 
 	#		/usr/sap/$SID/$InstanceName/exe/sapstartsrv
 	#		/usr/sap/$SID/$InstanceName/exe/sapcontrol
-	#	2. landscapeHostConfiguration
-	#		
+	#	2. landscapeHostConfiguration.py
 	#	3. hdbnsutil
-	#	4. was hdbsql, not needed anymore
+	#	4. systemReplicationStatus.py
 	#	5. saphostctrl
 	# TODO check for disk space for HANA
 	#	50GB	/usr/sap/
@@ -398,6 +397,11 @@ function prck_apps() {
 	# TODO instance name, site name, virt. ho0stname for detailled checks
 	# TODO see HWCCT output for other interesting points
 	# TODO loop, "NA"
+	# TODO for SAPHanaSR-ScaleOut
+	#	/etc/sudoers
+	#	/hana/shared/$SID/.../global.ini
+	#	/hana/shared/.../SAPHanaSR.pyo
+	# TODO grep sapsys /etc/groups, grep [a-z]??adm /etc/passwd		
 	/bin/ls -al /hana/data/ | awk '{print $1,$2,$3,$4,$5,$9}'
 	/bin/ls -al /hana/log/ | awk '{print $1,$2,$3,$4,$5,$9}'
 	/bin/ls -al /hana/shared/ | awk '{print $1,$2,$3,$4,$5,$9}'

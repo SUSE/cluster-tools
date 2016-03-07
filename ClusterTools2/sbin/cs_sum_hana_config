@@ -84,8 +84,8 @@ test -z "${APPS_FILES}" &&\
 /etc/rc.d/sapinit
 /usr/sap/sapservices
 /etc/sysconfig/saphaws
-/usr/shared/SAPHanaSR-ScaleOut/SAPHanaSR.pyo
-/hana/shared/srhook/SAPHanaSR.pyo
+/usr/shared/SAPHanaSR-ScaleOut/SAPHanaSR.pyc
+/hana/shared/srhook/SAPHanaSR.pyc
 /hana/shared/???/global/hdb/custom/config/global.ini
 "
 #

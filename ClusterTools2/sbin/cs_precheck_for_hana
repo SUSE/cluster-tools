@@ -400,7 +400,7 @@ function prck_apps() {
 	# TODO for SAPHanaSR-ScaleOut
 	#	/etc/sudoers
 	#	/hana/shared/$SID/.../global.ini
-	#	/hana/shared/.../SAPHanaSR.pyo
+	#	/hana/shared/.../SAPHanaSR.pyc
 	# TODO grep sapsys /etc/groups, grep [a-z]??adm /etc/passwd		
 	/bin/ls -al /hana/data/ | awk '{print $1,$2,$3,$4,$5,$9}'
 	/bin/ls -al /hana/log/ | awk '{print $1,$2,$3,$4,$5,$9}'

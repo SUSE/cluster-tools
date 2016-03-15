@@ -5,7 +5,7 @@
 # (c) 2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 2016-02-02
+# Version: 2016-03-12
 #
 # TODO handle perl man pages with "::" in filenames
 
@@ -28,9 +28,10 @@ function show_help(){
 
 function from_dir(){
 	# TODO common awk sub-function for all from_ functions
-	R=$1
-	ls "${1}"/ | while read; do echo $REPLY |\
-	awk -F"." 'NF==3 && $3=="gz" {print $1,$2}
+	R=${1}
+	ls "${R}"/ | while read; do echo $REPLY |\
+	awk -F"." 'NF==2 && $2!="gz" {print $1,$2}
+		   NF==3 && $3=="gz" {print $1,$2}
 		   NF==4 && $4=="gz" {print $1"."$2,$3}
 		   NF==3 && $3!="gz" {print $1"."$2,$3}'; done |\
 	while read; do do_man2pdf $REPLY; done
@@ -38,9 +39,10 @@ function from_dir(){
 
 
 function from_rpm(){
-	R=$1
-	rpm -ql $R | grep "/man/" | while read; do basename $REPLY; done |\
-	awk -F"." 'NF==3 && $3=="gz" {print $1,$2}
+	R=${1}
+	rpm -ql ${R} | grep "/man/" | while read; do basename $REPLY; done |\
+	awk -F"." 'NF==2 && $2!="gz" {print $1,$2}
+		   NF==3 && $3=="gz" {print $1,$2}
 		   NF==4 && $4=="gz" {print $1"."$2,$3}
 		   NF==3 && $3!="gz" {print $1"."$2,$3}' |\
 	while read; do do_man2pdf $REPLY; done
@@ -48,9 +50,9 @@ function from_rpm(){
 
 
 function do_man2pdf(){
-	M=$1
-	S=$2
-	man -Tps $M $S 2>/dev/null | ps2pdf - >$M.$S.pdf 2>/dev/null
+	M=${1}
+	S=${2}
+	man -Tps ${M} ${S} 2>/dev/null | ps2pdf - >${M}.${S}.pdf 2>/dev/null
 }
 
 

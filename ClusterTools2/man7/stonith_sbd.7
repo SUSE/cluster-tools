@@ -1,4 +1,4 @@
-.TH stonith_sbd 7 "11 Feb 2016" "" "ClusterTools2"
+.TH stonith_sbd 7 "14 Mar 2016" "" "ClusterTools2"
 .\"
 .SH NAME
 stonith_sbd \- Stonith Block Device
@@ -184,7 +184,7 @@ following to /etc/sysconfig/sbd:
 .br
 SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
-# Watchdog support:
+# Watchdog, pacemaker snooping, startup:
 .br
 SBD_OPTS="-W -P -S 1"
 .br
@@ -194,13 +194,25 @@ SBD_DELAY_START=yes
 .br
 ===
 
-Note: If the SBD device becomes inaccessible from a node, this could cause
+Some notes on SBD_OPTS:
+
+-W: SBD always needs a watchdog to be save. Therefor "-W" is required, which
+tells the sbd daemon to start the watchdog timer.
+
+-P: The SBD fencing is not needed as long as the corosync communication is
+working and pacemaker has control over all nodes. In that situation a
+cluster node not self-fence just because a short outage of the SBD devices.
+This behaviour is choosen with "-P".
+
+-S 1: If the SBD device becomes inaccessible from a node, this could cause
 the node to enter an infinite reboot cycle. That is technically correct,
 but depending on your administrative policies, might be  considered a
 nuisance. The option "-S"  controls how sbd behaves if a reset request is
-found on startup in the node's sbd slot on disk. Alternatively vou may wish
+found on startup in the node's sbd slot on disk. "-S 1" tells sbd not to start
+if a reset message is found in the node's slot. Alternatively vou may wish
 to not automatically start up openais on boot in such cases.
-
+.\"
+.PP
 Before proceeding, ensure that SBD has indeed started on all nodes through
 "rcopenais restart" (SLE-HA 11).
 Once the resource has started, your cluster is now successfully
@@ -229,8 +241,11 @@ primitive rsc_stonith_sbd stonith:external/sbd \\
 .br
 ===
 
-The start-delay is needed before SLE-HA 11 SP3. Recent versions of sbd know
-the SBD_DELAY_START mentioned above.
+The start-delay is needed before SLE-HA 11 SP3. In case of split-brain
+this makes the DC winning the fencing race. Recent versions of SLE-HA
+know an alternative timing option pcmk_delay_max. This adds a random delay
+for STONITH actions on the fencing device. Recent versions of sbd also
+know the SBD_DELAY_START mentioned above.
 
 The pcmk_action_limit was introduced with SLE-HA 11 SP4 to allow parallel
 fencing of multiple nodes in clusters with more than two nodes. This is
@@ -250,7 +265,7 @@ concurrent-fencing="true" \\
 ===
 .\"
 .P
-\fB* Software Watchdog\fR
+\fB* Hardware Watchdog\fR
 
 Increased protection is offered through watchdog support. Modern
 systems support a "hardware watchdog" that has to be updated by the

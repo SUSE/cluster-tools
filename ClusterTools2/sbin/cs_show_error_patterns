@@ -2,10 +2,10 @@
 #
 # cs_show_error_patterns
 #
-# (c) 2011-2051 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.2 2015-11-27
+# Version: 0.2 2016-03-30
 #
 
 EXE="$0"
@@ -146,6 +146,7 @@ test -z "${CLUERR_PATTERN}" &&\
 "TOTEM.*FAILED.*RECEIVE"
 "TOTEM.*processor.failed"
 "TOTEM.*Incrementing.problem"
+"TOTEM.*Retransmit.List"
 "quorum.lost"
 "fenced.because.*.un-expectedly.down"
 "stonith.*Device.*not.fond"

@@ -35,6 +35,7 @@ case $1 in
 		exit
 	*)
 		/usr/sbin/cs_make_sbd_devices -d
+		exit $?
 	;;
 esac
 #

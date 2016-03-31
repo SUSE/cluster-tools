@@ -33,6 +33,7 @@ case $1 in
 	-h|--help)
 		help
 		exit
+	;;
 	*)
 		/usr/sbin/cs_make_sbd_devices -d
 		exit $?

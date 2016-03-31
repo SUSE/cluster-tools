@@ -2,10 +2,10 @@
 #
 # cs_clusterstate 
 #
-# (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.1 2015-02-27
+# Version: 0.1 2016-03-31
 #
 
 EXE="$0"
@@ -28,21 +28,31 @@ DAT=$(date +"%Y-%m-%d %T")
 function help() {
 	echo "usage:    $(basename $0) [OPTION]"
 	echo
-	echo " --help           show help."
-	echo " --all        show all info."
-	echo " --basics        show basic info."
-	echo " --network        show network info."
-	echo " --storage        show storage info."
+	echo " --help		show help."
+	echo " --all	show all info."
+	echo " --basics		show basic info."
+	echo " --idle		show te idle info."
+	echo " --network	show network info."
+	echo " --storage	show storage info."
+	echo " --version	show version info."
+}
+
+
+function get_idle() {
+ s_state=$(crmadmin -q -S $(crmadmin -Dq 2>&1 1>/dev/null ) 2>&1 1>/dev/null)
+ echo "Cluster state: $s_state"
 }
 
 
 function get_basics() {
-s_state=$(crmadmin -q -S $(crmadmin -Dq 2>&1 1>/dev/null ) 2>&1 1>/dev/null)
+#s_state=$(crmadmin -q -S $(crmadmin -Dq 2>&1 1>/dev/null ) 2>&1 1>/dev/null)
 crm_mon -r1 |\
  awk '$1=="Current"||$1=="Online:"||$1=="OFFLINE:"||$3=="UNCLEAN"{print $0}'
 # TODO: show [standby] as well
 # TODO: efficient awk
-echo "Cluster state: $s_state"
+#echo "Cluster state: $s_state"
+get_idle
+#
 echo -n "Stopped/FAILED resources: "
 crm_mon -r1 | awk '$3=="Stopped"||$0~/FAILED/{print $0}' | wc -l
 echo -n "Started resources: "
@@ -175,6 +185,10 @@ case $1 in
 	-b|--basics|*)
 		echo "### $HST - $DAT ###"
 		get_basics
+		exit
+	;;
+	-i--idle)
+		get_idle
 		exit
 	;;
 	# TODO get_hana_scaleup (master-slave + clone)

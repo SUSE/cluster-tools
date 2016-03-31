@@ -26,11 +26,13 @@ DAT=$(date +"%Y-%m-%d %T")
 
 
 function help() {
-	echo "usage:    $(basename $0) [OPTION]"
+	echo "usage:    $(basename $0)"
+	echo "usage:    $(basename $0) OPTION"
 	echo
+	echo "OPTION:"
 	echo " --help		show help."
-	echo " --all	show all info."
-	echo " --basics		show basic info."
+	echo " --all		show all info."
+	echo " --basics	show basic info."
 	echo " --idle		show te idle info."
 	echo " --network	show network info."
 	echo " --storage	show storage info."
@@ -188,6 +190,7 @@ case $1 in
 		exit
 	;;
 	-i--idle)
+		echo "### $HST - $DAT ###"
 		get_idle
 		exit
 	;;

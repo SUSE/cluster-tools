@@ -182,14 +182,14 @@ case $1 in
 		get_storage
 		exit
 	;;
-	-b|--basics|*)
-		echo "### $HST - $DAT ###"
-		get_basics
-		exit
-	;;
 	-i|--idle)
 		echo "### $HST - $DAT ###"
 		get_idle
+		exit
+	;;
+	-b|--basics|*)
+		echo "### $HST - $DAT ###"
+		get_basics
 		exit
 	;;
 	# TODO get_hana_scaleup (master-slave + clone)

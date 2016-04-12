@@ -5,7 +5,7 @@
 # (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.1 2016-03-31
+# Version: 0.1 2016-04-12
 #
 
 EXE="$0"
@@ -47,12 +47,10 @@ function get_idle() {
 
 
 function get_basics() {
-#s_state=$(crmadmin -q -S $(crmadmin -Dq 2>&1 1>/dev/null ) 2>&1 1>/dev/null)
 crm_mon -r1 |\
  awk '$1=="Current"||$1=="Online:"||$1=="OFFLINE:"||$3=="UNCLEAN"{print $0}'
 # TODO: show [standby] as well
 # TODO: efficient awk
-#echo "Cluster state: $s_state"
 get_idle
 #
 echo -n "Stopped/FAILED resources: "
@@ -189,7 +187,7 @@ case $1 in
 		get_basics
 		exit
 	;;
-	-i--idle)
+	-i|--idle)
 		echo "### $HST - $DAT ###"
 		get_idle
 		exit

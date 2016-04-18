@@ -1,0 +1,61 @@
+.TH cs_show_sbd_devices 8 "31 Mar 2016" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_show_sbd_devices \- show content of SBD devices 
+.\"
+.SH SYNOPSIS
+.P
+.B cs_show_sbd_devices \fI[OPTION]\fR
+.\"
+.SH DESCRIPTION
+\fBcs_show_sbd_devices\fP shows the content of SBD devices.
+This script is simply a wrapper around cs_make_sbd_devices.
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+	show help.
+.HP
+\fB --version\fR
+	show version.
+.\"
+.SH EXAMPLES
+.TP
+* Show content of SBD devices.
+.br
+# cs_show_sbd_devices
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_show_sbd_devices
+	the program itself.
+.TP
+/etc/sysconfig/sbd
+	the SBD configuration.
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBcs_make_sbd_devices\fP(8), \fBstonith_sbd\fP(7), \fBsbd\fP(8),
+\fBClusterTools2\fP(7),
+https://www.suse.com/support/kb/doc.php?id=7016305
+.\"
+.\"
+.SH COPYRIGHT
+(c) 2016 L.Pinne, Germany.
+.br
+cs_show_sbd_devices comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

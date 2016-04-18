@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+# cs_show_sbd_devices
+#
+# (c) 2016 SUSE Linux GmbH, Germany.
+# GNU General Public License. No warranty.
+# Author: L.Pinne
+#
+# Version: 2016-03-31
+#
+
+EXE="$0"
+
+function help() {
+	echo "usage: $(basename $0)"
+	echo "usage: $(basename $0) OPTION"
+	echo
+	echo "OPTION:"
+	echo " --help           show help."
+	echo " --version        show version."
+	echo
+}
+
+
+# function main()
+
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-h|--help)
+		help
+		exit
+	;;
+	*)
+		/usr/sbin/cs_make_sbd_devices -d
+		exit $?
+	;;
+esac
+#

@@ -1,0 +1,14 @@
+#!/bin/bash
+# psauxlog
+# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU General Public License. No warranty.
+# Version: 0.1 2011-04-29
+#
+
+D=$(date +"%F %T")
+L=${1:-"/var/log/psaux.log"}
+
+ps aux | while read; do
+	echo $D: $REPLY
+done >>$L
+#

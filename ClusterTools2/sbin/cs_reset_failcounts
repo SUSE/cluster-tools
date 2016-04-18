@@ -2,9 +2,9 @@
 #
 # cs_reset_failcounts
 #
-# Version: 1.1 2011-04-14
+# Version: 1.1 2016-03-02
 #
-# (c) 2009-2011 SUSE Linux GmbH, Germany. Author: F.Herschel.
+# (c) 2009-2016 SUSE Linux GmbH, Germany. Author: F.Herschel.
 # GNU General Public License. No warranty.
 #
 
@@ -27,7 +27,8 @@ function do_reset() {
 	CRM_NODE=/usr/sbin/crm_node
 	#NODES=`cl_status listnodes -n`
 	NODES=$( $CRM_NODE -A -l | awk '/member/ { print $2 }')
-	RESOURCE=$( $CRM_RESOURCE -l )
+	RESOURCE=$( $CRM_RESOURCE -l | awk -F: '{ print $1 }' | sort -u )
+
 
 	for node in $NODES
         	do
@@ -36,6 +37,7 @@ function do_reset() {
         	echo
         	for resource in $RESOURCE
                 	do
+                        resource=${resource%:*}
                 	echo -n "Resource $resource: "
 			failcount=$($CRM_FAILCOUNT -G -U $node -r $resource | awk -F= '{ for(i=1; i<NF; i++) { if ( $i ~ /value/ ) { i++; print $i; }}}')
                 	echo "==" $failcount

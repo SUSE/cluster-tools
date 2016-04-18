@@ -2,10 +2,10 @@
 #
 # cs_sum_hana_config
 #
-# (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2015-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU Public License. No warranty.
 #
-# Version: 2015-07-06 14:00
+# Version: 2016-03-07 12:00
 #
 
 EXE="$0"
@@ -36,6 +36,7 @@ test -z "${CONF_FILES}" &&\
 /etc/sysconfig/ulimit
 /etc/security/limits.conf
 /etc/sysctl.conf
+/etc/sudoers
 /etc/modprobe.conf.local
 /etc/modprobe.d/*
 /etc/corosync/corosync.conf
@@ -83,6 +84,9 @@ test -z "${APPS_FILES}" &&\
 /etc/rc.d/sapinit
 /usr/sap/sapservices
 /etc/sysconfig/saphaws
+/usr/shared/SAPHanaSR-ScaleOut/SAPHanaSR.pyc
+/hana/shared/srhook/SAPHanaSR.pyc
+/hana/shared/???/global/hdb/custom/config/global.ini
 "
 #
 # TODO SAP HANA calls

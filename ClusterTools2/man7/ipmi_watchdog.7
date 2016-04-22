@@ -6,18 +6,74 @@ ipmi_watchdog \- IPMI watchdog
 .SH DESCRIPTION
 .br
 
+.SH EXAMPLES
+
+* prepare IPMI watchdog, 1st try
+
+# chkconfig ipmi on
+
+# vi /etc/sysconfig/bootloader
+.br
+...
+.br
+INITRD_MODULES="... ipmi_watchdog"
+
+# vi /etc/modprobe.d/ipmi_watchdog
+.br
+options ipmi_watchdog nowayout=0 timeout=30 action=reset_power
+.br
+blacklist iTCO_wdt
+.br
+blacklist iTCO_vendor_support
+
+# shutdown -r now
+
+
+* prepare IPMI watchdog, 2nd try
+
+# chkconfig ipmi on
+
+# vi /etc/sysconfig/ipmi
+.br
+\...
+.br
+IPMI_WATCHDOG=yes
+.br
+IPMI_WATCHDOG_OPTIONS="nowayout=0 action=reset_power timeout=30"
+.br
+\...
+
+
+* show
+
+# rcipmi status
+
+# ipmitool mc watchdog get 
+
+# modinfo ipmi_watchdog
+
+# ls -l /dev/watchdog
 
 .\"
 .SH FILES
 .TP
 /dev/watchdog
-        the watchdog device node.
+	the watchdog device node.
 .TP
 /lib/modules/<kernel-version>/kernel/drivers/char/ipmi/ipmi_watchdog.ko
-        the IPMI watchdog module.
+	the IPMI watchdog module.
 .TP
 /etc/init.d/ipmi
 	the IPMI service start script.
+.TP
+/etc/sysconfig/ipmi
+	the IPMI related configuration.
+.TP
+/etc/modprobe.d/ipmi_watchdog
+	the kernel module configuration.
+.TP
+/etc/sysconfig/bootloader
+	the bootloader and initrd configuration.
 
 .\"
 .SH BUGS

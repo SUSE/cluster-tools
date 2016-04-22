@@ -1,4 +1,4 @@
-.TH stonith_sbd 7 "14 Mar 2016" "" "ClusterTools2"
+.TH stonith_sbd 7 "22 Apr 2016" "" "ClusterTools2"
 .\"
 .SH NAME
 stonith_sbd \- Stonith Block Device
@@ -276,11 +276,13 @@ dieing, or becoming stuck on an IO error.
 It is highly recommended that you set up your Linux system
 to use a watchdog. Please refer to the SLES manual for this step.
 
-This involves loading the proper watchdog driver on system boot. On HP
-hardware, this is the "hpwdt" module. For systems with an Intel TCO,
-"iTCO_wdt" can be used. Inside a VM on z/VM on an IBM mainframe, "vmwatchdog"
-might be used. Inside a Xen VM (aka DomU) "xen_wdt" is a good choice. Inside
-a KVM VM "i6300esb" might be used. The corresponding PCI device has to be
+This involves loading the proper watchdog driver on system boot.
+On HP hardware, this is the "hpwdt" module.
+For systems with an Intel TCO, "iTCO_wdt" can be used.
+Some machines use the "ipmi_watchdog".
+Inside a VM on z/VM on an IBM mainframe, "vmwatchdog" might be used.
+Inside a Xen VM (aka DomU) "xen_wdt" is a good choice.
+Inside a KVM VM "i6300esb" might be used. The corresponding PCI device has to be
 emulated by the KVM host in that case.
 "softdog" is the most generic driver, but it is recommended that you use one
 with actual hardware integration. See

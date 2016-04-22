@@ -279,7 +279,9 @@ to use a watchdog. Please refer to the SLES manual for this step.
 This involves loading the proper watchdog driver on system boot.
 On HP hardware, this is the "hpwdt" module.
 For systems with an Intel TCO, "iTCO_wdt" can be used.
-Some machines use the "ipmi_watchdog".
+Dell and Fujitsu machines usually fall into this category.
+Machines with an IPMI based watchdog need the "ipmi_watchdog".
+This might apply for recent Lenovo machines.
 Inside a VM on z/VM on an IBM mainframe, "vmwatchdog" might be used.
 Inside a Xen VM (aka DomU) "xen_wdt" is a good choice.
 Inside a KVM VM "i6300esb" might be used. The corresponding PCI device has to be

@@ -43,8 +43,9 @@ into the running kernel.
 # cs_add_watchdog_to_initrd --create hpwdt
 .TP
 * Test, if freshly loaded watchdog works. This test will force a hard reboot of the system. Filesystems will get unclean. Do not do this on a productive system.
+Some watchdogs do not release the reading process.
 .br
-# lsmod | grep -e wdt -e dog 
+# lsmod | grep -e wdt -e dog
 .br
 # ls -l /dev/watchdog
 .br
@@ -52,8 +53,8 @@ into the running kernel.
 .br
 # echo "do not do this on a productive system"
 .br
-.\" # cat /dev/watchdog
-# echo 1 >/dev/watchdog
+# cat /dev/watchdog
+.\" # echo 1 >/dev/watchdog
 .TP
 * De-activate watchdog timer. Do not do this on a productive system.
 .br
@@ -83,15 +84,16 @@ Usage, syntax or execution errors.
 	the watchdog device file (if a module is loaded).
 .\"
 .SH BUGS
-Feedback is welcome, please use the project page at
+The ipmi_watchdog is not handled correctly.
 This script does not work inside Xen para-virtualised virtual machines. 
+Feedback is welcome, please use the project page at
 .br
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
 .\"
 .SH SEE ALSO
 \fBmkinitrd\fP(8), \fBmodinfo\fP(8), \fBSuSEconfig\fP(8), \fBsbd\fP(8),
 \fBstonith_sbd\fP(8), \fBcs_disable_other_watchdog\fP(8),
-\fBClusterTools2\fP(7),
+\fBipmi_watchdog\fP(7), \fBClusterTools2\fP(7),
 /usr/src/linux/Documentation/watchdog/watchdog-api.txt ,
 http://www.clusterlabs.org/doc/crm_fencing.html ,
 http://code.metager.de/source/xref/linux/stable/drivers/s390/char/vmwatchdog.c ,

@@ -5,7 +5,7 @@
 # (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.1 2016-03-30
+# Version: 0.1 2016-06-01
 #
 
 EXE="$0"
@@ -57,6 +57,7 @@ test -z "${CLUSTR_PATTERN}" &&\
 "stonith.*Found.[01].matching.devices"
 "stonith.*failed"
 "stonith.*timed.out"
+"error.executing.ipmitool"
 "pengine.fenced.because.*.un-expectedly.down"
 "pengine.*Node.*unclean"
 "pengine.*fenced.*resource.failure"

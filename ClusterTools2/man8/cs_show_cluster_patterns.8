@@ -41,9 +41,11 @@ Please note that most cluster components do logging to their local node only.
 .br
 # cs_show_cluster_patterns -m
 .TP
-* count occurance of patterns, show non-null only
-.br
 # cs_show_cluster_patterns -c | grep -v "=.0$"
+count occurance of patterns, show non-null only
+.TP
+# cs_show_cluster_patterns -s | grep "^Jan"
+show whole lines, but only for January. Useful if logs contain December as well.
 .\"
 .SH EXIT STATUS
 .B 0

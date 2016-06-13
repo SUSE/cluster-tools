@@ -5,7 +5,7 @@
 # (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.02 2016-01-29
+# Version: 0.02 2016-06-13
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -265,6 +265,8 @@ thp_collapse_alloc_failed
 		grep $m $f
 	done
 	echo
+	awk 'NF==2 && $0~/^numa_miss/ {print $0}' $FIL
+	echo
 	echo "# /sbin/sysctl -a"
 	# TODO what else?
 	test -z "${MEM_SYSCTL}" &&\
@@ -286,6 +288,7 @@ vm.drop_caches
 vm.min_free_kbytes
 vm.vfs_cache_pressure
 vm.memory_failure_early_kill
+vm.zone_reclaim_mode
 "
 	f=$(grep -l "^# /sbin/sysctl -a 2>/dev/null | grep ^vm$" ${TMP}/${FIL}/xx*)
 	test -z "$f" ||\

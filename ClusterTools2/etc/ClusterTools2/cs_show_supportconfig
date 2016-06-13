@@ -210,6 +210,7 @@ vm.drop_caches
 vm.min_free_kbytes
 vm.vfs_cache_pressure
 vm.memory_failure_early_kill
+vm.zone_reclaim_mode
 "
 #
 ORA_SFT_PTRN="

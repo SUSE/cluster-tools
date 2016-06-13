@@ -1,4 +1,4 @@
-.TH cs_show_cluster_patterns 8 "13 Mar 2013" "" "ClusterTools2"
+.TH cs_show_cluster_patterns 8 "13 Jun 2016" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_show_cluster_patterns \- search log files for cluster patterns
@@ -68,6 +68,8 @@ Usage, syntax or execution errors.
 .\"
 .SH BUGS
 This script depends on LC_MESSAGES respective RC_LANG set to en_US or C.
+Furthermore the scripts sort output by month. This results in wrong order of lines, if a logfile
+f.e. contains December and January.
 Feedback is welcome, please use the project page at
 .br
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
@@ -78,7 +80,7 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 \fBClusterTools2\fP(7)
 .\"
 .SH COPYRIGHT
-(c) 2011-2013 L.Pinne, Germany.
+(c) 2011-2016 L.Pinne, Germany.
 .br
 cs_show_cluster_patterns comes with ABSOLUTELY NO WARRANTY.
 .br

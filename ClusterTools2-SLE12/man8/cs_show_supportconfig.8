@@ -1,0 +1,98 @@
+.TH cs_show_supportconfig 8 "09 Sep 2015" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_show_supportconfig \- collect information from supportconfig files
+.\"
+.SH SYNOPSIS
+.B cs_show_supportconfig \fIOPTION\fR
+.br
+.B cs_show_supportconfig --generic \fIDIR\fR
+.br
+.B cs_show_supportconfig --function \fIDIR\fR \fIFUNC\fR ...
+.\"
+.SH DESCRIPTION
+\fBcs_show_supportconfig\fP collects information from supportconfig files.
+This version should work for supportconfig files from SLES11. 
+The supportconfig archive has to be extracted. 
+.PP
+Note: This script does not try to replace the experienced user by artificial
+intelligence. It just is aimed to help users focussing on the more interesting 
+pieces of supportconfig archives.
+.br
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+        show help.
+.HP
+\fB --version\fR
+        show version.
+.HP
+\fB --listfunc\fR
+        show available functions.
+.HP
+\fB --generic\fR
+        show info from all generic functions.
+.HP
+\fB --function\fR
+        show info from selected function.
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH EXAMPLES
+.TP
+# tar --no-same-owner -xjf nts_node0_111010_1101.tbz
+extract a supportconfig archive as youself.
+.TP
+# cs_show_supportconfig -g nts_node0_111010_1101
+show generic infos for extracted supportconfig archive nts_node0_111010_1101.
+.TP
+# cs_show_supportconfig -f nts_node0_111010_1101 chk_overview chk_veritas
+show overview info, than search for Veritas Cluster Services.
+.TP
+# cs_show_supportconfig -f nts_node0_111010_1101 chk_sap chk_saphana
+search for SAP HANA related informations.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_show_supportconfig
+	the program itself.
+.TP
+/etc/ClusterTools2/cs_show_supportconfig
+	the main configuration.
+.TP
+/etc/ClusterTools2/cs_show_error_patterns
+	the default error patterns.
+.TP
+/etc/ClusterTools2/cs_prepare_esxvm
+	the VMware related default patterns.
+.\"
+.SH BUGS
+The error summary depends on supportconfig's messages.txt file which contains
+only a short trunc of the real messages file. To fix this, supportconfig could
+be called with the -I <line_count> option.
+.br
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBsupportconfig\fP(8), \fBtar\fP(1),
+\fBcs_show_error_patterns\fP(8), \fBcs_show_cluster_patterns\fP(8), \fBcs_show_cluster_transition\fP(8),
+\fBcs_prepare_esxvm\fP(8), \fBcs_precheck_for_sap\fP(8), \fBcs_precheck_for_hana\fP(8), \fBcs_sum_base_config\fP(8), \fBcs_sum_hana_config\fP(8), 
+\fBClusterTools2\fP(7), \fBha_related_suse_tids\fP(7),
+http://support.novell.com/advisor/ , https://build.opensuse.org/project/show/Novell:NTS:SCA
+.\"
+.SH COPYRIGHT
+(c) 2011-2015 L.Pinne, Germany.
+.br
+cs_show_supportconfig comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

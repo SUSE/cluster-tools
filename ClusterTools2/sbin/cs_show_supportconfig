@@ -369,6 +369,10 @@ function chk_services(){
 	test -r "$FIL" &&\
 		awk '$1~/\.service/ && $2=="disabled" {print}' $FIL
 	echo
+	# TODO split systemd.txt "# /bin/ls -alR /etc/systemd/" 
+	test -r "$FIL" &&\
+		awk '$9=="default.target" && $10=="->" {print $9,"->",$11}' $FIL
+	echo
 
 # TODO precheck_for_sap
 	test -z "${SVC_YES}" &&\

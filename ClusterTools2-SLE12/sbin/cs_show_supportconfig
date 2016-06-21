@@ -355,12 +355,19 @@ function chk_services(){
 	grep "INIT: Entering runlevel:" $FIL | sort -u
 	echo
 
-	# TODO no chkconfig.txt in SLES12
+	# TODO SLES12
 	FIL="chkconfig.txt"
+	test -r "$FIL" &&\
 	for p in "3:on" "3:off"; do
 		echo -n "${p} : "
 		grep -c "${p}" $FIL
 	done
+	# TODO split systemd.txt @ "# /bin/systemctl --no-pager --all list-units"
+	# TODO single+better awk for SLES12
+	test -r "$FIL" &&\
+		awk '$1~/\.service/ && $2=="enabled" {print}' $FIL
+	test -r "$FIL" &&\
+		awk '$1~/\.service/ && $2=="disabled" {print}' $FIL
 	echo
 
 # TODO precheck_for_sap
@@ -392,6 +399,8 @@ smartd
 sapinit
 uuidd
 "
+	# TODO SLES12
+	FIL="chkconfig.txt"
 	echo "service should be on:"
 	for s in $SVC_YES; do
 		grep "${s}:..on" $FIL
@@ -447,6 +456,7 @@ sfmh-discovery
 xprtld
 eccmad
 "
+	# TODO SLES12
 	FIL="chkconfig.txt"
 	for s in $VRT_SVC_YES; do
 		grep "${s}:..on" $FIL
@@ -713,6 +723,7 @@ sbd:
         echo
 	echo
 
+	# TODO SLES12
 	FIL="chkconfig.txt"
 	split_file $FIL
 	f=$(grep -l "^# /sbin/chkconfig.--list$" ${TMP}/${FIL}/xx*)
@@ -969,6 +980,7 @@ xendomains
 	echo
 	# TODO common function for services, see chk_services, chk_sap, chk_oracle
 	echo "- service should be on:"
+	# TODO SLES12
 	FIL="chkconfig.txt"
 	for s in $VMW_SVC_YES; do
 		grep "${s}:..on" $FIL
@@ -1422,6 +1434,7 @@ HANA-Firewall
 	grep "^\[.*System RAM: " $FIL | awk '{print $11,$12,$13}'
 
 	echo
+	# TODO SLES12
 	F="chkconfig.txt"
 	echo "SAP recommeded service ON:"
 	for s in $HANA_SAP_SVC_YES; do
@@ -1593,6 +1606,7 @@ slpd
 smartd
 sapinit
 "
+	# TODO SLES12
 	FIL="chkconfig.txt"
 	echo "service needed :"
 	for s in $ORA_SVC_YES; do

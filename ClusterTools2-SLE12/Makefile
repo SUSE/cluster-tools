@@ -1,4 +1,5 @@
-# Version: 2012-02-10 
+# Version: 2016-06-22
+# ClusterTools2 3 for SLES12
 
 PKT=ClusterTools2
 
@@ -22,12 +23,13 @@ test:
 	
 
 tar:	
-	tar -cvzf ${PKT}-${VERS}.tgz man? share sbin spec agents lib scripts samples cli etc plugins
+	#tar -cvzf ${PKT}-${VERS}.tgz man? share sbin spec agents lib scripts samples cli etc plugins
+	tar -cvzf ${PKT}-${VERS}.tgz man? share sbin spec lib samples etc plugins
 
 rpm:	tar
 	mv ${PKT}-${VERS}.tgz /usr/src/packages/SOURCES
 	cp spec/${PKT}.spec /usr/src/packages/SPECS
-	( cd /usr/src/packages;  sudo rpmbuild -ba --target noarch SPECS/${PKT}.spec )
+	( cd /usr/src/packages; sudo rpmbuild -ba --target noarch SPECS/${PKT}.spec )
 
 all:	tar rpm
 	echo building ${PKT}-${VERS}-${REL}

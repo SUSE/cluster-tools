@@ -1,0 +1,17 @@
+#!/bin/bash
+# lsoflog
+# (c) 2011 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU General Public License. No warranty.
+# Version: 0.1 2011-10-17
+#
+
+D=$(date +"%F %T")
+E="/dev/null"
+L=${1:-"/var/log/lsof.log"}
+P=${2:-"+D/opt +D/srv"}
+T=${3:-"42"}
+
+lsof -n -P -X -w -S $T +fg +x ${P} 2>$E | while read; do
+	echo $D: $REPLY
+done >>$L
+#

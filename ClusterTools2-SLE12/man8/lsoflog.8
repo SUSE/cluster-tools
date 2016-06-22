@@ -1,0 +1,91 @@
+.TH lsoflog 8 "14 Oct 2011" "" "ClusterTools2"
+.\"
+.SH NAME
+lsoflog \- log the open file list with timestamp
+.\"
+.SH SYNOPSIS
+.B lsoflog \fI[ logfile [ pathlist [ timeout ]]]\fR
+.\"
+.SH DESCRIPTION
+\fBlsoflog\fP logs the open file list with timestamp.
+Basically the script puts the output of "date +%F %T" in front of each line for the output of "lsof -n -P -X -w -S42 +fg +x +D...". 
+
+Default pathlist is "+D/opt +D/srv".
+A proper pathlist keeps the logfile reasonably small.
+Non-existing directories cause lsoflog to fail.
+lsof consumes a noticeable amount of CPU cycles. It should only be activated
+when needed.
+Default timeout is 42 seconds.
+.\"
+.SH EXAMPLES
+.TP
+To run lsoflog every 10 minutes, the crontab entry could look like this:
+.br
+-02-57/10 * * * * root /usr/sbin/lsoflog /var/log/lsof.log "+D/db2/data"
+.TP
+To rotate and compress the log from time to time, the logrotate entry could look like this:
+.br
+/var/log/lsof.log {
+    compress
+    dateext
+    maxage 365
+    rotate 99
+    size +20M
+    notifempty
+    missingok
+    copytruncate
+.br
+}
+.TP
+To find all IO to /ora/data that was not done with O_DIRECT just do:
+.br
+awk '$11~/\\/ora\\/data/ && $8 !~/DIR/ {print $1,$2,$3,$8,$11}' /var/log/lsof.log | sort -u
+.TP
+To see which processes have done ASYNC IO to /ora/data just do:
+.br
+awk '$11~/\\/ora\\/data/ && $8 ~/AIO/ {print $1,$2,$3,$8,$11}' /var/log/lsof.log | sort -u
+.\" #lsof -b +fg -d "^/var/,^/tmp/,^/dev/,^/root/,^/opt/"  2>/dev/null |\
+.\" awk '($3=="root" && $6 !~/AIO/)||($3=="root" && $6 !~/DIR/){print $1,$3,$6,$10}' |\
+.\"  sort -u
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/lsoflog
+	the script itself.
+.TP
+/var/log/lsof.log
+	the default logfile.
+.TP
+/etc/cron.d/ClusterTools2
+	the cron entry.
+.TP
+/etc/logrotate.d/ClusterTools2
+	the logrotate entry.
+.\"
+.SH BUGS
+Non-existing directories cause lsoflog to fail.
+.br
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBlsof\fP(1), \fBcrontab\fP(5), \fBlogrotate\fP(8), \fBopen\fP(2),
+\fBfcntl\fP(2), \fBClusterTools2\fP(7)
+.\"
+.\"
+.SH COPYRIGHT
+(c) 2011 L.Pinne, Germany.
+.br
+lsoflog comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

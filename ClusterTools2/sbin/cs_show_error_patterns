@@ -196,7 +196,7 @@ function run_grep() {
 	echo "logs: $LOG" >/dev/stderr
 
 	dmesg >$DMSG
-	test -x $(type -p journalctl) && journalctl -a -k --no-pager >$JCTL
+	test -x $(type -p journalctl) && journalctl --no-pager >$JCTL
 
 	# TODO: more efficient loop
 	for e in ${ERROR_PATTERN} ${CLUERR_PATTERN} ${APPERR_PATTERN}; do

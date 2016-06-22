@@ -349,29 +349,31 @@ function chk_services(){
 	echo_msgsep $FUNCNAME
 
 	FIL="boot.txt"
+	# TODO SLES12 what to look for? 
 	grep "exits with status" $FIL | grep -v "exits with status 0$"
  	grep "Skipped.features:" $FIL | sort -u
 	echo
 	grep "INIT: Entering runlevel:" $FIL | sort -u
 	echo
-
-	# TODO SLES12
-	FIL="chkconfig.txt"
-	test -r "$FIL" &&\
-	for p in "3:on" "3:off"; do
-		echo -n "${p} : "
-		grep -c "${p}" $FIL
-	done
-	# TODO split systemd.txt @ "# /bin/systemctl --no-pager --all list-units"
-	# TODO single+better awk for SLES12
-	test -r "$FIL" &&\
-		awk '$1~/\.service/ && $2=="enabled" {print}' $FIL
-	test -r "$FIL" &&\
-		awk '$1~/\.service/ && $2=="disabled" {print}' $FIL
-	echo
 	# TODO split systemd.txt "# /bin/ls -alR /etc/systemd/" 
+	FIL="systemd.txt"
 	test -r "$FIL" &&\
 		awk '$9=="default.target" && $10=="->" {print $9,"->",$11}' $FIL
+	echo
+	FIL="chkconfig.txt"
+	if $(test -r "$FIL"); then
+		for p in "3:on" "3:off"; do
+			echo -n "${p} : "
+			grep -c "${p}" $FIL
+		done
+	fi
+	# TODO split systemd.txt @ "# /bin/systemctl --no-pager --all list-units"
+	# TODO single+better awk for SLES12
+	FIL="systemd.txt"
+	if $(test -r "$FIL"); then
+		awk '$1~/\.service/ && $2=="enabled" {print}' $FIL
+		awk '$1~/\.service/ && $2=="disabled" {print}' $FIL
+	fi
 	echo
 
 # TODO precheck_for_sap
@@ -403,23 +405,29 @@ smartd
 sapinit
 uuidd
 "
-	# TODO SLES12
 	FIL="chkconfig.txt"
-	echo "service should be on:"
-	for s in $SVC_YES; do
-		grep "${s}:..on" $FIL
-		grep "${s}:..off" $FIL
-		grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
-		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
-	done
-	echo
-	echo "service should be off:"
-	for s in $SVC_OFF; do
-		grep "${s}:..off" $FIL
-		grep "${s}:..on" $FIL
-		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
-		grep "^${s}.*0.*3:on" $FIL | grep -v "boot\."
-	done
+	if $(test -r "$FIL"); then
+		echo "service should be on:"
+		for s in $SVC_YES; do
+			grep "${s}:..on" $FIL
+			grep "${s}:..off" $FIL
+			grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
+			grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+		done
+		echo
+		echo "service should be off:"
+		for s in $SVC_OFF; do
+			grep "${s}:..off" $FIL
+			grep "${s}:..on" $FIL
+			grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+			grep "^${s}.*0.*3:on" $FIL | grep -v "boot\."
+		done
+	fi
+	FIL="systemd.txt"
+	if $(test -r "$FIL"); then
+		# TODO SLES12
+		echo
+	fi
 	echo
 }
 
@@ -460,14 +468,20 @@ sfmh-discovery
 xprtld
 eccmad
 "
-	# TODO SLES12
 	FIL="chkconfig.txt"
-	for s in $VRT_SVC_YES; do
-		grep "${s}:..on" $FIL
-		grep "${s}:..off" $FIL
-		grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
-		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+	if $(test -r "$FIL"); then
+		for s in $VRT_SVC_YES; do
+			grep "${s}:..on" $FIL
+			grep "${s}:..off" $FIL
+			grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
+			grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
 	done
+	fi
+	FIL="systemd.txt"
+	if $(test -r "$FIL"); then
+		# TODO SLES12
+		echo
+	fi
 	echo
 #
 #VRT_MOD="
@@ -573,6 +587,7 @@ function chk_nameres(){
 
 	echo_msgsep $FUNCNAME
 
+	# TODO SLES12
 	FIL="network.txt"
 	( grep --binary-file=text -A1 "^# /etc/HOSTNAME" $FIL
 	grep --binary-file=text -A1 "^# /bin/hostname" $FIL
@@ -618,6 +633,7 @@ function chk_timeres(){
 		grep ${p} $FIL
 	done
 	echo
+	# TODO SLES12
 	echo "service:"
 	grep -A1 "^# /sbin/chkconfig" $FIL
 	grep -A5 "# /usr/sbin/ntpq -p" $FIL | grep -v "====="
@@ -727,24 +743,30 @@ sbd:
         echo
 	echo
 
-	# TODO SLES12
 	FIL="chkconfig.txt"
-	split_file $FIL
-	f=$(grep -l "^# /sbin/chkconfig.--list$" ${TMP}/${FIL}/xx*)
-	echo "/sbin/chkconfig --list:"
-	test -z $f ||\
-		grep -e "^openais.*0:" -e "^hp-asrd.*0:" $f
-	echo
-	f=$(grep -l "^/etc/init.d/rc3.d:$" ${TMP}/${FIL}/xx*)
-        echo "/etc/init.d/rc3.d:"
-        test -z $f ||\
-		grep -e "K..openais" -e "S..hp-asrd" $f
-	echo
-	f=$(grep -l "^/etc/init.d/rc5.d:$" ${TMP}/${FIL}/xx*)
-        echo "/etc/init.d/rc5.d:"
-        test -z $f ||\
-		grep -e "K..openais" -e "S..hp-asrd" $f
-	echo
+	if $(test -r "$FIL"); then
+		split_file $FIL
+		f=$(grep -l "^# /sbin/chkconfig.--list$" ${TMP}/${FIL}/xx*)
+		echo "/sbin/chkconfig --list:"
+		test -z $f ||\
+			grep -e "^openais.*0:" -e "^hp-asrd.*0:" $f
+		echo
+		f=$(grep -l "^/etc/init.d/rc3.d:$" ${TMP}/${FIL}/xx*)
+        	echo "/etc/init.d/rc3.d:"
+       		test -z $f ||\
+			grep -e "K..openais" -e "S..hp-asrd" $f
+		echo
+		f=$(grep -l "^/etc/init.d/rc5.d:$" ${TMP}/${FIL}/xx*)
+        	echo "/etc/init.d/rc5.d:"
+        	test -z $f ||\
+			grep -e "K..openais" -e "S..hp-asrd" $f
+		echo
+	fi
+	FIL="systemd.txt"
+	if $(test -r "$FIL"); then
+		# TODO SLES12
+		echo
+	fi
 
 	FIL="sysconfig.txt"
         split_file $FIL
@@ -984,22 +1006,28 @@ xendomains
 	echo
 	# TODO common function for services, see chk_services, chk_sap, chk_oracle
 	echo "- service should be on:"
-	# TODO SLES12
 	FIL="chkconfig.txt"
-	for s in $VMW_SVC_YES; do
-		grep "${s}:..on" $FIL
-		grep "${s}:..off" $FIL
-		grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
-		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
-	done
-	echo
-	echo "- service should be off:"
-	for s in $VMW_SVC_OFF; do
-		grep "${s}:..off" $FIL
-		grep "${s}:..on" $FIL
-		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
-		grep "^${s}.*0.*3:on" $FIL | grep -v "boot\."
-	done
+	if $(test -r "$FIL"); then
+		for s in $VMW_SVC_YES; do
+			grep "${s}:..on" $FIL
+			grep "${s}:..off" $FIL
+			grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
+			grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+		done
+		echo
+		echo "- service should be off:"
+		for s in $VMW_SVC_OFF; do
+			grep "${s}:..off" $FIL
+			grep "${s}:..on" $FIL
+			grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+			grep "^${s}.*0.*3:on" $FIL | grep -v "boot\."
+		done
+	fi
+	FIL="systemd.txt"
+	if $(test -r "$FIL"); then
+		# TODO SLES12
+		echo
+	fi
 	echo
 	echo -n "- vmtoolsd running: "
 	FIL="basic-health-check.txt"
@@ -1438,27 +1466,34 @@ HANA-Firewall
 	grep "^\[.*System RAM: " $FIL | awk '{print $11,$12,$13}'
 
 	echo
-	# TODO SLES12
-	F="chkconfig.txt"
-	echo "SAP recommeded service ON:"
-	for s in $HANA_SAP_SVC_YES; do
-		echo -n "$s: "
-		p=$(test -r $F && grep "${s}:" $F | cut -d: -f2)
-		# TODO
-		# p=$(test -r $F && grep "${s}.*0:" $F | cut -d: -f2-)
-		test -z "$p" && p="NA"
-		echo "${p}"
-	done
-	echo
-	echo "SAP recommeded service OFF:"
-	for s in $HANA_SAP_SVC_OFF; do
-		echo -n "$s: "
-		p=$(test -r $F && grep "${s}:" $F | cut -d: -f2)
-		# TODO
-		# p=$(test -r $F && grep "${s}.*0:" $F | cut -d: -f2-)
-		test -z "$p" && p="NA"
-		echo "${p}"
-	done
+
+	FIL="chkconfig.txt"
+	if $(test -r "$FIL"); then
+		echo "SAP recommeded service ON:"
+		for s in $HANA_SAP_SVC_YES; do
+			echo -n "$s: "
+			p=$(test -r $FIL && grep "${s}:" $FIL | cut -d: -f2)
+			# TODO
+			# p=$(test -r $FIL && grep "${s}.*0:" $FIL | cut -d: -f2-)
+			test -z "$p" && p="NA"
+			echo "${p}"
+		done
+		echo
+		echo "SAP recommeded service OFF:"
+		for s in $HANA_SAP_SVC_OFF; do
+			echo -n "$s: "
+			p=$(test -r $FIL && grep "${s}:" $FIL | cut -d: -f2)
+			# TODO
+			# p=$(test -r $FIL && grep "${s}.*0:" $FIL | cut -d: -f2-)
+			test -z "$p" && p="NA"
+			echo "${p}"
+		done
+	fi
+	FIL="systemd.txt"
+	if $(test -r "$FIL"); then
+		# TODO SLES12
+		echo
+	fi
 	echo
 }
 
@@ -1610,28 +1645,34 @@ slpd
 smartd
 sapinit
 "
-	# TODO SLES12
 	FIL="chkconfig.txt"
-	echo "service needed :"
-	for s in $ORA_SVC_YES; do
-		echo $s
-	done
-	echo
-	echo "service found :"
-	for s in $ORA_SVC_YES; do
-		grep "${s}:..on" $FIL
-		grep "${s}:..off" $FIL
-		grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
-		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
-	done
-	echo
-	echo "service should be off :"
-	for s in $ORA_SVC_OFF; do
-		grep "${s}:..off" $FIL
-		grep "${s}:..on" $FIL
-		grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
-		grep "^${s}.*0.*3:on" $FIL | grep -v "boot\."
-	done
+	if $(test -r "$FIL"); then
+		echo "service needed :"
+		for s in $ORA_SVC_YES; do
+			echo $s
+		done
+		echo
+		echo "service found :"
+		for s in $ORA_SVC_YES; do
+			grep "${s}:..on" $FIL
+			grep "${s}:..off" $FIL
+			grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
+			grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+		done
+		echo
+		echo "service should be off :"
+		for s in $ORA_SVC_OFF; do
+			grep "${s}:..off" $FIL
+			grep "${s}:..on" $FIL
+			grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+			grep "^${s}.*0.*3:on" $FIL | grep -v "boot\."
+		done
+	fi
+	FIL="systemd.txt"
+	if $(test -r "$FIL"); then
+		# TODO SLES12
+		echo
+	fi
         echo
 	# TODO rpm.txt /usr/local/bin: coraenv, dbhome, oraenv
 	echo "proc :"

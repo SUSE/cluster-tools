@@ -1,0 +1,19 @@
+#!/bin/bash
+# /usr/lib/supportconfig/plugins/cat_psauxlog
+# Version: 2013-04-23
+
+PLUG="cat_psauxlog"
+CONF="/etc/ClusterTools2/supportconfig_plugins"
+LOGF="/var/log/psaux.log"
+ZLOG="/var/log/psaux.log*bz2"
+
+grep "^${PLUG}$" $CONF >/dev/null || exit 0 
+
+echo "### $LOGF ###"
+test -r $LOGF && cat $LOGF
+for f in $ZLOG; do
+	echo "### $f ###"
+	test -r $f && bzcat $f
+done
+echo "Completed"
+#

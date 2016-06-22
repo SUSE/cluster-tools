@@ -1,0 +1,57 @@
+# /etc/logrotate.d/ClusterTools2
+#
+/var/log/lsof.log {
+    compress
+    dateext
+    maxage 365
+    rotate 99
+    size +20M
+    notifempty
+    missingok
+    copytruncate
+}
+#
+/var/log/meminfo.log {
+    compress
+    dateext
+    maxage 365
+    rotate 99
+    size +2M
+    notifempty
+    missingok
+    copytruncate
+}
+#
+/var/log/psaux.log {
+    compress
+    dateext
+    maxage 365
+    rotate 99
+    size +4M
+    notifempty
+    missingok
+    copytruncate
+}
+#
+/var/log/xmstat.log {
+    compress
+    dateext
+    maxage 365
+    rotate 99
+    size +2M
+    notifempty
+    missingok
+    copytruncate
+}
+#
+/var/log/cs_stresscib.log {
+    compress
+    dateext
+    maxage 365
+    rotate 99
+    size +4M
+    notifempty
+    missingok
+    copytruncate	
+}
+#

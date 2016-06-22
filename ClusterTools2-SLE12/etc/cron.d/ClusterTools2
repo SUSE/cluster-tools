@@ -1,0 +1,10 @@
+# /etc/cron.d/ClusterTools2
+#
+## -01-56/10 * * * * root /usr/sbin/meminfolog /var/log/meminfo.log
+#
+## -02-57/10 * * * * root /usr/sbin/lsoflog /var/log/lsof.log "+D/opt +D/srv +D/home"
+#
+## -03-58/10 * * * * root /usr/sbin/psauxlog /var/log/psaux.log
+#
+## -04-59/10 * * * * root /usr/sbin/xmstat /var/log/xmstat.log
+#

@@ -24,7 +24,7 @@ test:
 
 tar:	
 	#tar -cvzf ${PKT}-${VERS}.tgz man? share sbin spec agents lib scripts samples cli etc plugins
-	tar -cvzf ${PKT}-${VERS}.tgz man? sbin spec etc plugins
+	tar -cvzf ${PKT}-${VERS}.tgz man? share sbin spec samples etc plugins
 
 rpm:	tar
 	mv ${PKT}-${VERS}.tgz /usr/src/packages/SOURCES

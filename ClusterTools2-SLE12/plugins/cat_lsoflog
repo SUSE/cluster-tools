@@ -1,0 +1,20 @@
+#!/bin/bash
+# /usr/lib/supportconfig/plugins/cat_lsoflog
+# Version: 2013-05-08
+set -xv
+
+PLUG="cat_lsoflog"
+CONF="/etc/ClusterTools2/supportconfig_plugins"
+LOGF="/var/log/lsof.log"
+ZLOG="/var/log/lsof.log*bz2"
+
+grep "^${PLUG}$" $CONF >/dev/null || exit 0 
+
+echo "### $LOGF ###"
+test -r $LOGF && cat $LOGF
+for f in $ZLOG; do
+	echo "### $f ###"
+	test -r $f && bzcat $f
+done
+echo "Completed"
+#

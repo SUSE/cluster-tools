@@ -1,0 +1,139 @@
+#!/bin/bash
+#
+# cs_make_sbd_devices
+#
+# (c) 2011-2013 SUSE Linux GmbH, Germany.
+# GNU General Public License. No warranty.
+# Author: L.Pinne
+#
+# Version: 0.02 2013-02-07 18:51
+#
+#set -x
+
+EXE="$0"
+CFG="/etc/ClusterTools2/cs_make_sbd_devices"
+test -s $CFG && source $CFG
+
+test -z "${TEMP}" &&\
+	TEMP="/dev/shm/cltl.$RANDOM"
+
+function help() {
+	echo "usage: $(basename $0) OPTION"
+	echo "usage: $(basename $0) --init [<SBD_OPTS> [<SBD_CONF>]]"
+	echo
+	echo "OPTION:"
+	echo " --dump		show content of SBD devices."
+	echo " --guess	guess SBD config file."
+	echo " --help		show help."
+	echo " --version	show version."
+	echo " --init		initialise SBD devices."
+	echo
+}
+
+
+function guess_sysconfig_sbd() {
+	echo "INFO: start $EXE $FUNCNAME"
+	
+	CFI=${SBD_CONF}
+	CFO=${SBD_CONF}.guess
+
+	#grep "^SBD_DEVICE=\"/dev/.*\"$" $CFI >/dev/null 2>&1 &&\
+	#echo "WARN: $SBD_CONF already exists" # && return 2
+	#cp -a $CFI $CFI.bak 2>/dev/null
+
+	test -z "${SBD_DEVICE}" || SBDEV=${SBD_DEVICE}
+	test -z "$SBDEV" || test -s $SBD_GUESS || exit 6
+	SBDEV=$( exec $SBD_GUESS 2>/dev/null )
+	#echo "INFO: SBD_DEVICE=$SBDEV"
+	test -z "$SBDEV" &&\
+	{	# TODO do this better
+		SBDEV=$( multipath -ll | grep -B1 -P "^size=\d(\d|\.\d)M" |\
+		awk '$2~/dm-/ {print "/dev/disk/by-id/scsi-"$1";"}' |\
+		head -3 | sort | tr -d "\n" | sed s/\;$// )
+	}
+	test -z "${SBD_OPTS}" || SBDOPT=${SBD_OPTS}
+	test -z "${SBDOPT}" || SBDOPT="-W -t 210 -P"
+	{ 
+	echo "# $CFI"
+	echo "# please check SBD_DEVICE for correct pathes and order"
+	echo  "SBD_DEVICE=\"${SBDEV}\""
+	echo "# watchdog support"
+	# TODO use start opts from defaults
+	echo "SBD_OPTS=\"${SBDOPT}\""
+	echo "#"
+	} >$CFO &&
+
+	echo "INFO: wrote $CFO"
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+function make_sbd_devices() {
+	echo "INFO: start $EXE $FUNCNAME"
+	CFI=${SBD_CONF}
+	test -s $CFI || exit 4
+	grep "^SBD_DEVICE=" $CFI >/dev/null || exit 5
+	awk -F"=" '$1=="SBD_DEVICE" {print $2}' $CFI |tr -d "\""|tr ";" "\n"|\
+	while read; do
+		sbd -d $REPLY ${SBD_INIT_OPTS} create
+	done
+	echo "INFO: end $EXE $FUNCNAME"
+}
+
+
+function dump_sbd_devices() {
+	CFI=${SBD_CONF}
+	
+	RC=0
+	test -r $CFI; RC=$?
+	if [ $RC -ne 0 ]; then
+		echo "ERR: config not found: $CFI"
+	else
+		awk -F"=" '$1=="SBD_DEVICE" {print $2}' $CFI |tr -d "\""|tr ";" "\n"|\
+		while read; do
+			sbd -d $REPLY dump 2>/dev/null; RC=$?
+			sbd -d $REPLY list 2>/dev/null; RC=$[ $RC + $? ]
+		done
+	fi
+}
+
+
+# function main()
+
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-d|--dump)
+		dump_sbd_devices
+	;;
+	-g|--guess)
+		echo "INFO: start $EXE"
+		guess_sysconfig_sbd
+		echo "INFO: normal_end $EXE"
+	;;
+	-i|--init)
+		echo "INFO: start $EXE"
+		# TODO: more checks
+		RC=$(rcopenais status >/dev/null; echo $?) 
+		if [ $RC -eq 0 ]; then
+			echo "ERR: openais already running."
+			exit 7 
+		fi
+		test -z "${2}" || SBD_INIT_OPTS="${2}"
+		test -z "${3}" || SBD_CONF="${3}"
+		test -z "${SBD_INIT_OPTS}" &&\
+			SBD_INIT_OPTS="-4 130 -3 2 -1 30"
+		test -z "${SBD_CONF}" &&\
+			 SBD_CONF="/etc/sysconfig/sbd"
+		make_sbd_devices
+		echo "INFO: normal_end $EXE"
+	;;
+	*)
+		help
+		exit
+	;;
+esac
+#

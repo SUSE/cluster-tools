@@ -3,6 +3,7 @@
 #
 # Copyright (c) 2008-2010 SUSE LINUX GmbH, Germany.
 # Copyright (c) 2011-2014 SUSE LINUX Products GmbH, Germany.
+# Copyright (c) 2015-2016 SUSE LINUX GmbH, Germany.
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
@@ -37,8 +38,7 @@ snipsets to be inserted into the cluster).
 - ClusterService is the main tool for managing a Linux-ha cluster.
 There are some other commandline tools to make life easier.
 
-An additional package ClusterTools2-doc contains documentation,
-including manual pages.
+The version 2 is for SLES11, version 3 for SLES12.
 
 %prep
 %setup -c -T -a 0

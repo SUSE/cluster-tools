@@ -74,6 +74,7 @@ case $1 in
 	# TODO compare etc file from initrd with systems etc
 	# TODO calculate md5sum for initrd file list, like cs_sum_base_config
 	-c|--compare)
+		# TODO SLES12 is /etc/dracut.donf.d/*.conf
 		# TODO put this into fucntion
 		SYSCONFMODS=$(awk -F"=" '$1=="INITRD_MODULES"{print $2}' /etc/sysconfig/kernel |\
 				 tr -d \" | tr " " "\n" | sort)

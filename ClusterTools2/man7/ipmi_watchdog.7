@@ -1,10 +1,14 @@
-.TH ipmi_watchdog 7 "22 Apr 2016" "" "ClusterTools2"
+.TH ipmi_watchdog 7 "22 Jun 2016" "" "ClusterTools2"
 .\"
 .SH NAME
 ipmi_watchdog \- IPMI watchdog
 .\"
 .SH DESCRIPTION
 .br
+The kernel module \fBipmi_watchdog\fP is used on systems that provide hardware
+watchdog functionality through an IPMI board.
+F.e. the Lenovo Integrated Management Module is such a board.
+In difference to other watchdog modules, the ipmi_watchdog needs a running daemon.
 
 .SH EXAMPLES
 
@@ -81,7 +85,7 @@ Feedback is welcome. To report bugs for a SUSE product component, please use
  https://www.suse.com/support/report-a-bug/ .
 .\"
 .SH SEE ALSO
-\fBsbd\fP(8), \fBstonith_sbd\fP(7), \fBcs_add_watchdog_to_initrd\fP(8),
+\fBsbd\fP(8), \fBstonith_sbd\fP(7), \fBcs_add_watchdog_to_initrd\fP(8), \fBlsinitrd\fP(8),
 \fBipmitool\fP(1), \fBmodinfo\fP(8),
 .br
 /usr/src/linux/Documentation/watchdog/watchdog-api.txt ,
@@ -90,7 +94,11 @@ https://www.suse.com/documentation/sle_ha/book_sleha/data/sec_ha_storage_protect
 .br
 https://www.suse.com/support/kb/doc.php?id=7016880 ,
 .br
-https://www.suse.com/support/kb/doc.php?id=7008216
+https://www.suse.com/support/kb/doc.php?id=7008216 ,
+.br
+http://download.lenovo.com/ibmdl/pub/pc/pccbbs/thinkservers/imm_userguide.pdf ,
+.\" .br
+.\" https://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=2113568
 .\"
 .SH AUTHORS
 S.Erdenberger, L.Pinne

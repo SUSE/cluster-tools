@@ -30,14 +30,8 @@ Requires:     logrotate
 %description
 ClusterTools2 provides tools for setting up and managing a corosync/
 pacemaker cluster.
-
-- wow helps you to create Linux-ha system resources.
-The wow package countains some agents (which are used to figure out
-config values) and templates (which are used to create the crm-
-snipsets to be inserted into the cluster).
-
-- ClusterService is the main tool for managing a Linux-ha cluster.
 There are some other commandline tools to make life easier.
+The version 2 is for SLES11, version 3 for SLES12.
 
 %prep
 %setup -c -T -a 0

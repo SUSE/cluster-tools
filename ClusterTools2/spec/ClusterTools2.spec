@@ -39,6 +39,8 @@ snipsets to be inserted into the cluster).
 - ClusterService is the main tool for managing a Linux-ha cluster.
 There are some other commandline tools to make life easier.
 
+The version 2 is for SLES11, version 3 for SLES12.
+
 %prep
 %setup -c -T -a 0
 

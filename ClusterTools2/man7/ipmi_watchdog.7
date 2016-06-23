@@ -76,8 +76,8 @@ IPMI_WATCHDOG_OPTIONS="nowayout=0 action=reset_power timeout=30"
 /etc/modprobe.d/ipmi_watchdog
 	the kernel module configuration.
 .TP
-/etc/sysconfig/bootloader
-	the bootloader and initrd configuration.
+/etc/sysconfig/kernel
+	the related initrd configuration.
 
 .\"
 .SH BUGS
@@ -97,7 +97,8 @@ https://www.suse.com/support/kb/doc.php?id=7016880 ,
 https://www.suse.com/support/kb/doc.php?id=7008216 ,
 .br
 http://download.lenovo.com/ibmdl/pub/pc/pccbbs/thinkservers/imm_userguide.pdf ,
-.\" .br
+.br
+ftp://ftp.software.ibm.com/systems/support/system_x_pdf/88y7599.pdf
 .\" https://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=2113568
 .\"
 .SH AUTHORS

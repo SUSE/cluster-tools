@@ -1969,6 +1969,7 @@ vm.overcommit_memory
 vm.max_map_count
 vm.hugetlb_shm_group
 vm.pagecache_limit_*
+vm.vfs_cache_pressure
 "
 	# TODO get really active settings
 #	FIL="proc.txt"

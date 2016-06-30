@@ -25,6 +25,7 @@ enic.ko
 vmxnet3.ko
 vmw_balloon.ko
 vmw_pvscsi.ko
+hpsa.ko
 cciss.ko
 mptbase.ko
 dm_multipath.ko

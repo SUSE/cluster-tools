@@ -57,6 +57,7 @@ test -z "${ERROR_PATTERN}" &&\
 "Error.DRAM"
 "kernel.*task.*abort"
 "kernel.*ACPI.Error"
+"kernel.*page.allocation.failure"
 "double.fault:"
 "target.failure"
 "reservation.conflict"

@@ -259,6 +259,8 @@ function chk_memory(){
 MEM_VMSTAT="
 nr_anon_transparent_hugepages
 thp_collapse_alloc_failed
+compact_pagemigrate_failed
+compact_fail
 "
 	f=$(grep -l "^# /proc/vmstat$" ${TMP}/${FIL}/xx*)
 	test -z "$f" ||\
@@ -2175,6 +2177,7 @@ function chk_errors(){
 	# TODO find start and end time for each log files
 
 	FIL="messages.txt"
+	# TODO fix messages.txt starts <NUL>
 	FRST=$(grep -A1 "# /var/log/messages - Last.*Lines" $FIL |\
 		tail -1 | awk '{print $1,$2,$3}')
 	echo "$FIL starts $FRST"

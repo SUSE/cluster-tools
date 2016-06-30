@@ -192,6 +192,8 @@ vm.vfs_cache_pressure
 MEM_VMSTAT="
 nr_anon_transparent_hugepages
 thp_collapse_alloc_failed
+compact_pagemigrate_failed
+compact_fail
 "
 #
 MEM_SYSCTL="

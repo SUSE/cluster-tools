@@ -1,0 +1,19 @@
+#!/bin/bash
+# /usr/lib/supportconfig/plugins/cat_meminfolog
+# Version: 2016-06-30
+
+PLUG="cat_meminfolog"
+CONF="/etc/ClusterTools2/supportconfig_plugins"
+LOGF="/var/log/meminfo.log"
+ZLOG="/var/log/meminfo.log*bz2"
+
+grep "^${PLUG}$" $CONF >/dev/null || exit 0 
+
+echo "### $LOGF ###"
+test -r $LOGF && cat $LOGF
+for f in $ZLOG; do
+	echo "### $f ###"
+	test -r $f && bzcat $f
+done
+echo "Completed"
+#

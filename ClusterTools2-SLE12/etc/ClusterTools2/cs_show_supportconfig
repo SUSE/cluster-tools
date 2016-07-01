@@ -25,6 +25,7 @@ enic.ko
 vmxnet3.ko
 vmw_balloon.ko
 vmw_pvscsi.ko
+hpsa.ko
 cciss.ko
 mptbase.ko
 dm_multipath.ko
@@ -185,11 +186,14 @@ vm.overcommit_memory
 vm.max_map_count
 vm.hugetlb_shm_group
 vm.pagecache_limit_*
+vm.vfs_cache_pressure
 "
 #
 MEM_VMSTAT="
 nr_anon_transparent_hugepages
 thp_collapse_alloc_failed
+compact_pagemigrate_failed
+compact_fail
 "
 #
 MEM_SYSCTL="

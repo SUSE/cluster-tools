@@ -5,7 +5,7 @@
 # (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.02 2016-06-21
+# Version: 0.02 2016-06-30
 #
 # For SLES11, for Supportconfig Script Version: 2.25-237
 #
@@ -172,6 +172,7 @@ enic.ko
 vmxnet3.ko
 vmw_balloon.ko
 vmw_pvscsi.ko
+hpsa.ko
 cciss.ko
 mptbase.ko
 dm_multipath.ko
@@ -258,6 +259,8 @@ function chk_memory(){
 MEM_VMSTAT="
 nr_anon_transparent_hugepages
 thp_collapse_alloc_failed
+compact_pagemigrate_failed
+compact_fail
 "
 	f=$(grep -l "^# /proc/vmstat$" ${TMP}/${FIL}/xx*)
 	test -z "$f" ||\
@@ -1968,6 +1971,7 @@ vm.overcommit_memory
 vm.max_map_count
 vm.hugetlb_shm_group
 vm.pagecache_limit_*
+vm.vfs_cache_pressure
 "
 	# TODO get really active settings
 #	FIL="proc.txt"
@@ -2173,6 +2177,7 @@ function chk_errors(){
 	# TODO find start and end time for each log files
 
 	FIL="messages.txt"
+	# TODO fix messages.txt starts <NUL>
 	FRST=$(grep -A1 "# /var/log/messages - Last.*Lines" $FIL |\
 		tail -1 | awk '{print $1,$2,$3}')
 	echo "$FIL starts $FRST"

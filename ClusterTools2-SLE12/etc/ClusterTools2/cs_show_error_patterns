@@ -1,45 +1,7 @@
-#!/bin/bash
+# /etc/ClusterTools2/cs_show_error_patterns
+# For SLES11.
 #
-# cs_show_error_patterns
-#
-# (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
-# GNU General Public License. No warranty.
-#
-# Version: 0.2 2016-06-22
-#
-
-EXE="$0"
-
-CFG="/etc/ClusterTools2/cs_show_error_patterns"
-test -s $CFG && source $CFG
-
-RDM=$RANDOM
-DMSG="/tmp/dmesg.$RDM"
-JCTL=""
-
-test -z "${SYSTEM_LOG}" &&\
-	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0"
-
-# TODO SLES12 bond ...?
-if test -x $(type -p journalctl); then
-	JCTL="/tmp/journalctl.$RDM"
-	test -z "${SYSTEM_LOG}" &&\
-		SYSTEM_LOG="/var/log/messages /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0"
-fi
-SYSTEM_LOG="${SYSTEM_LOG} ${DMSG} ${JCTL}"
-
-test -z "/etc/corosync/corosync.conf" &&\
-test -z "${CLUSTER_LOG}" &&\
-	 CLUSTER_LOG=$(grep "logfile:.*/" /etc/corosync/corosync.conf |\
-		 tr -d "    " | cut -d":" -f2)
-
-test -z "${ZIPPED_LOG}" &&\
-	ZIPPED_LOG="/var/log/messages*bz2"
-	ZIPPED_LOG="${ZIPPED_LOG} ${CLUSTER_LOG}*bz2"
-
-# TODO add more HBA errors: hpsa cciss
-test -z "${ERROR_PATTERN}" &&\
-	 ERROR_PATTERN="
+ERROR_PATTERN="
 "taint.flag"
 "no.device.*found"
 "be2net.*Error"
@@ -146,16 +108,8 @@ test -z "${ERROR_PATTERN}" &&\
 "Hangcheck.*clock"
 "pagecache.limit.set"
 "
-# TODO: separate variable for application patterns (annot.open..rofile" ... "Hangcheck.*clock"
-# TODO: raid.set.*active.with.2.out.of.2.mirrors ?
-# TODO: check for un-matched userfreindly names (mpath[a-z])
-# TODO: pattern for failed module (could not load)
-# TODO: async IO from grep kio /proc/slabinfo ?
-# TODO: direct IO from grep ...,DIR, /proc/slabinfo ?
-# TODO: verify cluster log msgs. maybe more generic possible ?
-
-test -z "${CLUERR_PATTERN}" &&\
-	 CLUERR_PATTERN="
+#
+CLUERR_PATTERN="
 "TOTEM.*FAILED.*RECEIVE"
 "TOTEM.*processor.failed"
 "TOTEM.*Incrementing.problem"
@@ -176,68 +130,15 @@ test -z "${CLUERR_PATTERN}" &&\
 "sbd.*Latency"
 "SoftDog.*not"
 "
-
-test -z "${APPERR_PATTERN}" &&\
-	APPERR_PATTERN="
+#
+APPERR_PATTERN="
 "vasd.will.not.synchronize.time"
 "vascache.*error"
 "
-
-
-function help() {
-	echo "usage:	$(basename $0)"
-	echo "	$(basename $0) [OPTION]"
-	echo
-	echo " --help		show help."
-	echo " --version	show version."
-	echo " --zip		search compressed logs, too."
-}
-
-
-function run_grep() {
-	echo "logs: $LOG" >/dev/stderr
-
-	dmesg >$DMSG
-	test -x $(type -p journalctl) && journalctl --no-pager >$JCTL
-
-	# TODO: more efficient loop
-	for e in ${ERROR_PATTERN} ${CLUERR_PATTERN} ${APPERR_PATTERN}; do
-        	echo -n "$e = "
-		for f in ${LOG}; do
-			test -r $f && cat $f
-		done | zgrep -ic $e
-	done
-
-	rm $DMSG $JCTL
-}
-
-
-# main()
-
-case $1 in
-	-v|--version)
-		echo -n "$(basename $EXE) "
-        	head -11 $EXE | grep "^# Version: "
-		exit
-	;;
-	-h|--help)
-		help
-		exit
-	;;
-	-z|--zip)
-		LOG="${SYSTEM_LOG}"
-		test -s ${CLUSTER_LOG} && LOG="${LOG} ${CLUSTER_LOG}"
-		for z in ${ZIPPED_LOG}; do
-			test -s $z && LOG="${LOG} ${z}"
-		done
-		run_grep
-		exit
-	;;
-	*)
-		LOG="${SYSTEM_LOG}"
-		test -s ${CLUSTER_LOG} && LOG="${LOG} ${CLUSTER_LOG}"
-		run_grep
-		exit		
-	;;
-esac
+#
+CLUSTER_LOG="/var/log/corosync.log"
+#
+SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0"
+#
+ZIPPED_LOG="/var/log/messages*bz2"
 #

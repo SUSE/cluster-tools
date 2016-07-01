@@ -1,0 +1,7 @@
+# /etc/ClusterTools2/cs_stresscib
+# For SLES11.
+#
+L_NODE="vm01 vm02 vm03 vm04 vm06 vm07"
+F_CRON="/etc/cron.d/cs_stresscib"
+F_LOG="/var/log/cs_stresscib.log"
+#

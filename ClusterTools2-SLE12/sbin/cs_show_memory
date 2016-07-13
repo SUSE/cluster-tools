@@ -5,12 +5,22 @@
 # (c) 2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 2016-06-22 09:20
+# Version: 2016-07-13 11:20
 #
 
 EXE="$0"
 #CFG="/etc/ClusterTools2/cs_show_memory"
 #test -s $CFG && source $CFG
+JCTL=""
+if test -x $(type -p journalctl); then
+	JCTL="/tmp/journalctl.$RDM"
+	test -z "${SYSTEM_LOG}" &&\
+		SYSTEM_LOG="/var/log/messages
+fi
+SYSTEM_LOG="${SYSTEM_LOG} ${DMSG} ${JCTL}"
+test -z "${ZIPPED_LOG}" &&\
+        ZIPPED_LOG="/var/log/messages*bz2"
+
 
 VM_CONFIG_MEMINFO="
 MemTotal:
@@ -64,6 +74,15 @@ SwapFree:
 HugePages_Free:
 "
 
+MEMLOG_PATTERN="
+"Error.DRAM"
+"kernel.*page.allocation.failure"
+"kernel.*segfault.at"
+"Out.of.memory"
+"invoked.oom-killer"
+"pagecache.limit.set"
+"
+
 
 function help() {
 	echo "usage:	$(basename $0)"
@@ -73,6 +92,7 @@ function help() {
 	echo " --version	show version"
 	echo " --all		show memory configuration and utilisation"
 	echo " --configured	show memory configuration"
+	echo " --logs		show memory related log messages"
 	echo " --utilised	show memory utilisation"
 	echo " --workload	estimate memory needed for workload"
 	echo
@@ -144,6 +164,22 @@ function show_utilised() {
 }
 
 
+function show_logs() {
+	echo "### $FUNCNAME"
+
+	echo "logs: $LOG" >/dev/stderr
+	test -x $(type -p journalctl) && journalctl --no-pager >$JCTL
+	# TODO: more efficient loop
+        for e in ${MEMLOG_PATTERN}; do
+		echo -n "$e = "
+		for f in ${LOG}; do
+			test -r $f && cat $f
+		done | zgrep -ic $e
+	done
+	rm $JCTL
+}
+
+
 function show_workload() {
 	# Commited_AS + KernelStack + SUnreclaim + Shmem + tmpfs ?
 
@@ -175,11 +211,15 @@ case $1 in
 	-w|--workload)
 		show_workload
 		exit
+	-l|--logs)
+		show_logs
+		exit
 	;;
 	-a|--all|*)
 		show_configured
 		show_utilised
 		show_workload
+		show_logs
 	exit
 	;;
 esac

@@ -24,6 +24,9 @@ Global options are:
 \fB --all\fR
 	show memory configuration and utilisation.
 .HP
+\fB --logs\fR
+	show memory related log messages.
+.HP
 \fB --configured\fR
 	show memory configuration.
 .HP
@@ -57,6 +60,9 @@ Usage, syntax or execution errors.
 .TP
 /sys/devices/system/node/*/numastat
 	basic infos on NUMA nodes.
+.TP
+/var/log/messages
+	basic system log.
 .\"
 .SH BUGS
 Formatting and content of this script's output will change, since this

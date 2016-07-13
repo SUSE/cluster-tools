@@ -11,13 +11,14 @@
 EXE="$0"
 #CFG="/etc/ClusterTools2/cs_show_memory"
 #test -s $CFG && source $CFG
+RDM=$RANDOM
 JCTL=""
 if test -x $(type -p journalctl); then
 	JCTL="/tmp/journalctl.$RDM"
 	test -z "${SYSTEM_LOG}" &&\
-		SYSTEM_LOG="/var/log/messages
+		SYSTEM_LOG="/var/log/messages"
 fi
-SYSTEM_LOG="${SYSTEM_LOG} ${DMSG} ${JCTL}"
+SYSTEM_LOG="${SYSTEM_LOG} ${JCTL}"
 test -z "${ZIPPED_LOG}" &&\
         ZIPPED_LOG="/var/log/messages*bz2"
 
@@ -52,10 +53,10 @@ VM_UTILISE_MEMINFO="
 Buffers:
 Cached:
 SwapCached:
-Active(anon):
-Inactive(anon):
-Active(file):
-Inactive(file):
+Active.anon.:
+Inactive.anon.:
+Active.file.:
+Inactive.file.:
 Mlocked:
 Dirty:
 Shmem:
@@ -75,12 +76,12 @@ HugePages_Free:
 "
 
 MEMLOG_PATTERN="
-"Error.DRAM"
-"kernel.*page.allocation.failure"
-"kernel.*segfault.at"
-"Out.of.memory"
-"invoked.oom-killer"
-"pagecache.limit.set"
+Error.DRAM
+kernel.*page.allocation.failure
+kernel.*segfault.at
+Out.of.memory
+invoked.oom-killer
+pagecache.limit.set
 "
 
 
@@ -168,7 +169,7 @@ function show_logs() {
 	echo "### $FUNCNAME"
 
 	echo "logs: $LOG" >/dev/stderr
-	test -x $(type -p journalctl) && journalctl --no-pager >$JCTL
+	which journalctl 2>/dev/null && journalctl --no-pager >$JCTL
 	# TODO: more efficient loop
         for e in ${MEMLOG_PATTERN}; do
 		echo -n "$e = "
@@ -211,6 +212,7 @@ case $1 in
 	-w|--workload)
 		show_workload
 		exit
+	;;
 	-l|--logs)
 		show_logs
 		exit

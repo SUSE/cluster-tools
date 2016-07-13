@@ -21,7 +21,7 @@ test -z "${SYSTEM_LOG}" &&\
 	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0"
 
 # TODO SLES12 bond ...?
-if test -x $(type -p journalctl); then
+if which journalctl 2>/dev/null; then
 	JCTL="/tmp/journalctl.$RDM"
 	test -z "${SYSTEM_LOG}" &&\
 		SYSTEM_LOG="/var/log/messages /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0"
@@ -198,7 +198,7 @@ function run_grep() {
 	echo "logs: $LOG" >/dev/stderr
 
 	dmesg >$DMSG
-	test -x $(type -p journalctl) && journalctl --no-pager >$JCTL
+	which journalctl 2>/dev/null && journalctl --no-pager >$JCTL
 
 	# TODO: more efficient loop
 	for e in ${ERROR_PATTERN} ${CLUERR_PATTERN} ${APPERR_PATTERN}; do

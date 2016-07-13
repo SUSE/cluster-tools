@@ -168,6 +168,7 @@ function show_utilised() {
 function show_logs() {
 	echo "### $FUNCNAME"
 
+	LOG="$SYSTEM_LOG $ZIPPED_LOG"
 	echo "logs: $LOG" >/dev/stderr
 	which journalctl 2>/dev/null && journalctl --no-pager >$JCTL
 	# TODO: more efficient loop
@@ -177,7 +178,7 @@ function show_logs() {
 			test -r $f && cat $f
 		done | zgrep -ic $e
 	done
-	rm $JCTL
+	rm -f $JCTL
 }
 
 

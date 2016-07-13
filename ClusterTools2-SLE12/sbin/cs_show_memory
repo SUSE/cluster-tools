@@ -21,6 +21,7 @@ fi
 SYSTEM_LOG="${SYSTEM_LOG} ${JCTL}"
 test -z "${ZIPPED_LOG}" &&\
         ZIPPED_LOG="/var/log/messages*bz2"
+# TODO mcelog
 
 
 VM_CONFIG_MEMINFO="

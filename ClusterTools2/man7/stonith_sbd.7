@@ -1,4 +1,4 @@
-.TH stonith_sbd 7 "22 Apr 2016" "" "ClusterTools2"
+.TH stonith_sbd 7 "18 Jul 2016" "" "ClusterTools2"
 .\"
 .SH NAME
 stonith_sbd \- Stonith Block Device
@@ -188,10 +188,6 @@ SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
 SBD_OPTS="-W -P -S 1"
 .br
-# Start delay:
-.br
-SBD_DELAY_START=yes
-.br
 ===
 
 Some notes on SBD_OPTS:
@@ -235,17 +231,15 @@ A sbd device might be entered into the CIB like this:
 .br
 primitive rsc_stonith_sbd stonith:external/sbd \\
 .br
- op start interval="0" timeout="15" start-delay="10" \\
-.br
- params pcmk_action_limit="-1"
+ params pcmk_action_limit="-1" pcmk_delay_max="15"
 .br
 ===
 
-The start-delay is needed before SLE-HA 11 SP3. In case of split-brain
-this makes the DC winning the fencing race. Recent versions of SLE-HA
-know an alternative timing option pcmk_delay_max. This adds a random delay
-for STONITH actions on the fencing device. Recent versions of sbd also
-know the SBD_DELAY_START mentioned above.
+Instead of the parameter pcmk_delay_max, an option start-delay is needed
+before SLE-HA 11 SP3.
+In case of split-brain this makes the DC winning the fencing race.
+Recent versions of SLE-HA know the option pcmk_delay_max.
+This adds a random delay for STONITH actions on the fencing device.
 
 The pcmk_action_limit was introduced with SLE-HA 11 SP4 to allow parallel
 fencing of multiple nodes in clusters with more than two nodes. This is

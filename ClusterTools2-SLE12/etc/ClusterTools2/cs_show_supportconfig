@@ -9,6 +9,7 @@ ixgbe.ko
 netxen_nic.ko
 nx_nic.ko
 mlx4_en.ko
+i40e.ko
 bfa.ko
 lpfc.ko
 qlge.ko

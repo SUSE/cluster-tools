@@ -155,6 +155,7 @@ function chk_modules(){
 ixgbe.ko
 netxen_nic.ko
 nx_nic.ko
+mlx4_en.ko
 bfa.ko
 lpfc.ko
 qlge.ko

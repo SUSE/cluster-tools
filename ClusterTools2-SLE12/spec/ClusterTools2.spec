@@ -95,6 +95,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 %post
 mkdir -p /usr/lib/supportconfig/plugins
 cp /usr/lib/ClusterTools2/supportconfig/plugins/* /usr/lib/supportconfig/plugins
+for f in /usr/lib/man/man/man8/cs_* /usr/lib/man/man8{ClusterService,psauxlog,meminfolog,lsoflog,wow} /usr/lib/man/man7/ha_related_*; do mandb -q $f; done
 
 %files
 %defattr(-,root,root)

@@ -56,7 +56,7 @@
 }
 # 
 # Example for HANA log backup. Please adapt to your needs.
-# /hana/shared/<SID>/HDB<nr>/backup/log/log_backup_* {
+# /hana/shared/<SID>/HDB<nr>/backup/log/log_backup_*[0-9][0-9][0-9] {
 #    su <sid>adm sapsys 
 #    rotate 0
 #    maxage 7

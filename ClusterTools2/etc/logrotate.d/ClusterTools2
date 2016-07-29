@@ -58,8 +58,8 @@
 # Example for HANA log backup. Please adapt to your needs.
 # /hana/shared/<SID>/HDB<nr>/backup/log/log_backup_* {
 #    su <sid>adm sapsys 
-#    rotate 1
-#    maxage 4
+#    rotate 0
+#    maxage 7
 #    size 0
 #    ifempty
 #    compress
@@ -73,7 +73,7 @@
 # Example for HANA traces. Please adapt to your needs.
 # /hana/shared/<SID>/HDB<nr>/<host>/trace/*.trc {
 #    su <sid>adm sapsys 
-#    rotate 1
+#    rotate 0 
 #    maxage 99
 #    size 0
 #    ifempty

@@ -54,4 +54,34 @@
     missingok
     copytruncate	
 }
+# 
+# Example for HANA log backup. Please adapt to your needs.
+# /hana/shared/<SID>/HDB<nr>/backup/log/log_backup_* {
+#    su <sid>adm sapsys 
+#    rotate 1
+#    maxage 4
+#    size 0
+#    ifempty
+#    compress
+#    nodateext
+#    nocreate
+#    nocopytruncate
+#    noshred
+#    nomail
+#}
+#
+# Example for HANA traces. Please adapt to your needs.
+# /hana/shared/<SID>/HDB<nr>/<host>/trace/*.trc {
+#    su <sid>adm sapsys 
+#    rotate 1
+#    maxage 99
+#    size 0
+#    ifempty
+#    compress
+#    nodateext
+#    nocreate
+#    nocopytruncate
+#    noshred
+#    nomail
+#}
 #

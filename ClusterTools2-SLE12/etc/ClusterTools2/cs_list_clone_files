@@ -1,0 +1,19 @@
+# /etc/ClusterTools2/cs_list_clone_files
+# For SLES11.
+#
+CLONE_FILES="
+/boot/grub/menu.lst
+/etc/HOSTNAME
+/etc/udev/rules.d/70-persistent-net.rules
+/etc/sysconfig/network/ifcfg-*
+/etc/fstab
+/etc/iscsi/initiatorname.iscsi
+/etc/machine-id
+/etc/rhn/rhn.conf
+/etc/sysconfig/rhn/systemid
+/etc/sshd/ssh_host_*
+/etc/zypp/credentials.d/NCCcredentials
+/etc/zypp/services.d/*
+/root/.ssh/*
+"
+#

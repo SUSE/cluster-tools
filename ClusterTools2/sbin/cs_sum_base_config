@@ -5,7 +5,7 @@
 # (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 2016-01-27 11:25
+# Version: 2016-08-01 18:45
 #
 
 EXE="$0"
@@ -194,7 +194,6 @@ test -z "${APPS_CALLS}" &&\
 '/bin/ls -al /hana/data/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /hana/shared/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 "
-# TODO: HANA
 # TODO: samba
 # TODO: ndstat and other edir checking
 # TODO: generic script to strip "#" from conf files 
@@ -212,6 +211,7 @@ function help() {
 	echo " --files	checksum base files only."
 	echo " --calls	checksum base calls only."
 	echo " --apps 	checksum apps config files and calls only."
+	echo " --might 	checksum files than might not be cloned."
 	echo
 	test $UID -gt 0 && echo "please call as root."
 }
@@ -233,6 +233,37 @@ function sum_files() {
 	f=$CFG
 	sum_config
 	# TODO: better loop
+	for f in ${CONF_FILES}; do
+		(( nf++ ))
+		S="NA"
+		test -r "$f" && S=$(md5sum "$f" | awk '{print $1}')
+        	echo "$f = $S"
+	done
+	echo "INFO: $nf files" >>/dev/stderr
+}
+
+
+function sum_might() {
+	nf=1
+	CFIL="/etc/ClusterTools2/cs_list_clone_file"
+	test -s $CFG && source $CFG
+	test -z "${CLONE_FILES}" &&\
+	CLONE_FILES="
+/boot/grub/menu.lst
+/etc/HOSTNAME
+/etc/udev/rules.d/70-persistent-net.rules
+/etc/sysconfig/network/ifcfg-*
+/etc/fstab
+/etc/iscsi/initiatorname.iscsi
+/etc/machine-id
+/etc/rhn/rhn.conf
+/etc/sysconfig/rhn/systemid
+/etc/sshd/ssh_host_*
+/etc/zypp/credentials.d/NCCcredentials
+/etc/zypp/services.d/*
+/root/.ssh/*
+"
+	CONF_FILES="${CLONE_FILES}"
 	for f in ${CONF_FILES}; do
 		(( nf++ ))
 		S="NA"
@@ -320,6 +351,11 @@ case $1 in
 	-a|--apps)
 		test $UID -gt 0 && echo "please call as root." && exit
 		sum_apps
+		exit
+	;;
+	-m|--might)
+		test $UID -gt 0 && echo "please call as root." && exit
+		sum_might
 		exit
 	;;
 	*)

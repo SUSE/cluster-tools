@@ -18,11 +18,11 @@ Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      3.0.0
 #Release:      0.1
-Release:      2 
+Release:      3
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
-Vendor:	      SUSE Linux Products GmbH
+Vendor:	      SUSE Linux GmbH
 Requires:     pacemaker > 1.1.1
 Requires:     perl-TermReadLine-Gnu >= 1.16
 Requires:     cron

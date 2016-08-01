@@ -1,0 +1,66 @@
+.TH cs_list_clone_files 8 "01 Aug 2016" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_list_clone_files \- list files that should not be cloned
+.\"
+.SH SYNOPSIS
+.B cs_list_clone_files \fI[OPTION]\fR
+.\"
+.SH DESCRIPTION
+\fBcs_list_clone_files\fP shows files that usually should not be identical,
+after an VM image has been cloned.
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+	show help.
+.HP
+\fB --version\fR
+	show version.
+.HP
+\fB --content\fR
+	show content of files.
+.HP
+\fB --md5sum\fR
+	show md5sum of files.
+.\"
+.SH EXAMPLES
+.br
+.TP
+* Write checksums for common config files to stdout.
+# cs_list_clone_files -m
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_list_clone_files
+	the program itself.
+.TP
+/etc/ClusterTools2/cs_list_clone_files
+	the configuration.
+.\"
+.SH BUGS
+Lines starting with a hash (#) are silently dropped when displaying the content of files.
+.br
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBmd5sum\fP(1), \fBcs_sum_base_config\fP(8), \fBClusterTools2\fP(7),
+
+.\"
+.SH COPYRIGHT
+(c) 2016 L.Pinne, Germany.
+.br
+cs_list_clone_files comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

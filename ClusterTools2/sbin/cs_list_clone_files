@@ -1,0 +1,112 @@
+#!/bin/bash
+#
+# cs_list_clone_files
+#
+# (c) 2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU General Public License. No warranty.
+#
+# Version: 2016-08-01
+#
+
+EXE="$0"
+
+CFG="/etc/ClusterTools2/cs_list_clone_files"
+test -s $CFG && source $CFG
+
+test -z "${CLONE_FILES}" &&\
+	CLONE_FILES="
+/boot/grub/menu.lst
+/etc/HOSTNAME
+/etc/udev/rules.d/70-persistent-net.rules
+/etc/sysconfig/network/ifcfg-*
+/etc/fstab
+/etc/iscsi/initiatorname.iscsi
+/etc/machine-id
+/etc/rhn/rhn.conf
+/etc/sysconfig/rhn/systemid
+/etc/sshd/ssh_host_*
+/etc/zypp/credentials.d/NCCcredentials
+/etc/zypp/services.d/*
+/root/.ssh/*
+"
+# TODO double check list above
+# TODO application files, f.e. /etc/oraInst.loc or even /etc/smt.conf
+
+
+function help() {
+	echo "usage:	$(basename $0) [OPTION]"
+	echo
+	echo " --help		show help"
+	echo " --version	show version"
+	echo " --content	show content of files"
+	echo " --md5sum 	show md5sum of files"
+	echo
+}
+
+
+# TODO call cs_sum_base_config instead of having own function
+function sum_config() {
+	S="NA"
+	test -r $f && S=$(md5sum $f | awk '{print $1}')
+	echo "$f = $S"
+}
+
+
+# TODO call cs_sum_base_config instead of having own function
+function sum_files() {
+	nf=1
+	f=$CFG
+	sum_config
+	# TODO: better loop
+	for f in ${CONF_FILES}; do
+		(( nf++ ))
+		S="NA"
+		test -r "$f" && S=$(md5sum "$f" | awk '{print $1}')
+		echo "$f = $S"
+	done
+	echo "INFO: $nf files" >>/dev/stderr
+}
+
+
+function show_files() {
+	nf=1
+	f=$CFG
+	for f in ${CONF_FILES}; do
+		(( nf++ ))
+		S="NA"
+		echo "#########################################################"
+		# TODO remove comments containing leading blanks
+		test -r $f && S=$(grep -v "#" $f | tr -s \n)
+		echo "# $f :"
+		echo "$S"
+		echo
+	done
+	echo "INFO: $nf files" >>/dev/stderr
+}
+
+
+# main()
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-c|--content)
+		test $UID -gt 0 && echo "please call as root." && exit
+		CONF_FILES="${CLONE_FILES}"
+		show_files
+		exit
+	;;
+	-m|--md5sum)
+		test $UID -gt 0 && echo "please call as root." && exit
+		CONF_FILES="${CLONE_FILES}"
+		sum_files
+		exit
+	;;
+	*)
+		help
+		exit
+	;;
+esac
+#

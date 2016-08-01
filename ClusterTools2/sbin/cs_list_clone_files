@@ -75,8 +75,7 @@ function show_files() {
 		(( nf++ ))
 		S="NA"
 		echo "#########################################################"
-		# TODO remove comments containing leading blanks
-		test -r $f && S=$(grep -v "#" $f | tr -s \n)
+		test -r $f && S=$(grep -v "^[[:blank:]]*#" $f | tr -s "\n")
 		echo "# $f :"
 		echo "$S"
 		echo

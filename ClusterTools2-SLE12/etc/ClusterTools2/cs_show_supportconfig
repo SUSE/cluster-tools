@@ -1,5 +1,5 @@
 #/etc/ClusterTools2/cs_show_supportconfig
-# For SLES11.
+# For SLES12.
 # The variable names and contents are under development.
 #
 ERRCFG="/etc/ClusterTools2/cs_show_error_patterns"
@@ -74,7 +74,7 @@ hp-asrd
 ipmi
 mdadmd
 oracle
-openais
+pacemaker
 powerd
 slpd
 smartd
@@ -133,13 +133,11 @@ not.our.package:
 "
 #
 UPDT_PTRN="
-"SLES11-"
-"SLES11-SP"
-"SLE11-HAE-SP"
-"SLE11-SP1-SAP-AIO-"
-"SLE11-SP2-SAP-"
-"SLE11-SP3-SAP-"
-"SLE11-SP4-SAP-"
+"SLES12-"
+"SLES12-SP"
+"SLE12-HAE-SP"
+"SLE12-SP1-SAP-"
+"SLE12-SP2-SAP-"
 "
 #
 STOR_PKG="
@@ -326,7 +324,6 @@ libcorosync4
 libglue2
 libpacemaker3
 ldirectord
-openais
 pacemaker
 pacemaker-mgmt
 pacemaker-mgmt-client
@@ -437,13 +434,13 @@ ulimit
 "
 #
 HANA_SAP_PKG_YES="
-gtk2
+libgtk-2_0-0
 java-1_7_0-ibm
 libicu
 mozilla-xulrunner192
 ntp
 sudo
-syslog-ng
+rsyslog
 tcsh
 libssh2-1
 libstdc++6

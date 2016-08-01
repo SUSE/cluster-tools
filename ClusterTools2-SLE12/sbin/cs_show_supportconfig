@@ -5,9 +5,9 @@
 # (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
 #
-# Version: 0.02 2016-06-30
+# Version: 0.03 2016-08-01
 #
-# For SLES11, for Supportconfig Script Version: 2.25-237
+# For SLES12, for Supportconfig Script Version: 2.25-237
 #
 
 EXE=$0
@@ -403,7 +403,7 @@ hp-asrd
 ipmi
 mdadmd
 oracle
-openais
+pacemaker
 powerd
 slpd
 smartd
@@ -708,7 +708,6 @@ libcorosync4
 libglue2
 libpacemaker3
 ldirectord
-openais
 pacemaker
 pacemaker-mgmt
 pacemaker-mgmt-client
@@ -1754,16 +1753,14 @@ function chk_updates(){
 	
 	FIL="updates.txt"
 	# TODO sles-for-sap
-	# TODO fix doubled entries artefact "SLES11-*"
+	# TODO fix doubled entries artefact "SLES12-*"
 	test -z "${UPDT_PTRN}" &&\
 	UPDT_PTRN="
-"SLES11-"
-"SLES11-SP"
-"SLE11-HAE-SP"
-"SLE11-SP1-SAP-AIO-"
-"SLE11-SP2-SAP-"
-"SLE11-SP3-SAP-"
-"SLE11-SP4-SAP-"
+"SLES12-"
+"SLES12-SP"
+"SLE12-HAE-SP"
+"SLE12-SP1-SAP-"
+"SLE12-SP2-SAP-"
 "
 	for p in ${UPDT_PTRN}; do
 		grep "|.*|.${p}.*|.*|" $FIL | sort -u

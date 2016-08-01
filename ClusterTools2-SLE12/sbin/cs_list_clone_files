@@ -55,8 +55,6 @@ function sum_config() {
 # TODO call cs_sum_base_config instead of having own function
 function sum_files() {
 	nf=1
-	f=$CFG
-	sum_config
 	# TODO: better loop
 	for f in ${CONF_FILES}; do
 		(( nf++ ))

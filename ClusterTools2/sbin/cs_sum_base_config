@@ -3,9 +3,9 @@
 # cs_sum_base_config
 #
 # (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
-# GNU General Public License. No warranty.
+# GNU General Public License 2.0. No warranty.
 #
-# Version: 2016-08-01 18:45
+# Version: 2016-08-02 10:40
 #
 
 EXE="$0"
@@ -259,9 +259,13 @@ function sum_might() {
 /etc/rhn/rhn.conf
 /etc/sysconfig/rhn/systemid
 /etc/sshd/ssh_host_*
-/etc/zypp/credentials.d/NCCcredentials
+/etc/SUSEConnect
+/etc/zmd/deviceid
+/etc/zmd/secret
+/etc/zypp/credentials.d/*credentials
 /etc/zypp/services.d/*
 /root/.ssh/*
+/var/cache/SuseRegister/lastzmdconfig.cache
 "
 	CONF_FILES="${CLONE_FILES}"
 	for f in ${CONF_FILES}; do

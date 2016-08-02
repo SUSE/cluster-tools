@@ -1,5 +1,5 @@
 # /etc/ClusterTools2/cs_list_clone_files
-# For SLES11.
+# For SLES11,12.
 #
 CLONE_FILES="
 /boot/grub/menu.lst
@@ -12,8 +12,12 @@ CLONE_FILES="
 /etc/rhn/rhn.conf
 /etc/sysconfig/rhn/systemid
 /etc/sshd/ssh_host_*
-/etc/zypp/credentials.d/NCCcredentials
+/etc/SUSEConnect
+/etc/zmd/deviceid
+/etc/zmd/secret
+/etc/zypp/credentials.d/*credentials
 /etc/zypp/services.d/*
 /root/.ssh/*
+/var/cache/SuseRegister/lastzmdconfig.cache
 "
 #

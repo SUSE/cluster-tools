@@ -21,7 +21,7 @@ installation of the SLE-HA add-on.
 	show version.
 .HP
 \fB --detect\fR
-	shown number of hints, return code will also be that number.
+	shown number of traces, return code will also be that number.
 .HP
 \fB --installed\fR
 	show installed base RPMs.
@@ -36,23 +36,29 @@ installation of the SLE-HA add-on.
 	show common files.
 .HP
 \fB --pedantic\fR
-	show even minimal hints on SLE-HA.
+	show even minimal traces of SLE-HA.
 .HP
 \fB --removeall\fR
-	remove files and RPMs of SLE-HA, as opposite to renewal.
+	remove RPMs, files, and repos of SLE-HA, as opposite to renewal.
 .HP
+\fB --uninstall\fR
+	uninstall RPMs of SLE-HA.
+
 .\"
 .SH EXAMPLES
 .br
 .TP
-* Search for files and RPMs that might indicate components of SLE-HA are installed. Be pedantic with the search, but just print number of findings.
-# cs_detect_sleha
+* Search for files and RPMs that might indicate components of SLE-HA are installed. Be pedantic with the search, but just print number of findings. A return code of "0" means "search went well, no traces of SLE-HA found".
+# cs_detect_sleha ; echo $?
 .TP
 * Search for files and RPMs that might indicate components of SLE-HA are installed. Be pedantic with the search and print all findings.
 # cs_detect_sleha --pedantic
 .TP
 * Search for components that might run without SLE-HA, but are supported only together with SLE-HA - f.e. DRBD, OCFS2, ReaR.
 # cs_detect_sleha -s
+.TP
+* Uninstall substantial RPMs of SLE-HA. Some RPMs that are fetched as dependecies during installation will remain on the system. Also all files that are not handled by the RPM post-scripts will remain.
+# cs_detect_sleha --uninstall
 .\"
 .SH EXIT STATUS
 .B 0
@@ -62,7 +68,7 @@ Successful program execution.
 Usage, syntax or execution errors.
 .br
 When called without any option, or with option "--detect", the return
-code equals the number of found indications.
+code equals the number of indications found.
 .\"
 .SH FILES
 .TP
@@ -71,6 +77,9 @@ code equals the number of found indications.
 .TP
 /etc/ClusterTools2/cs_detect_sleha
         the configuration.
+.TP
+/usr/sbin/cs_delcib
+        the program to remove CIB and cluster history.
 .\"
 .SH BUGS
 The remove-all function might damage the system - use it with caution. 
@@ -79,7 +88,7 @@ Feedback is welcome, please use the project page at
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
 .\"
 .SH SEE ALSO
-\fBzypper\fP(8), 
+\fBzypper\fP(8), \fBcs_delcib\fP(8), 
 .\"
 .SH COPYRIGHT
 (c) 2016 L.Pinne, Germany.
@@ -89,4 +98,3 @@ cs_detect_sleha comes with ABSOLUTELY NO WARRANTY.
 For details see the GNU General Public License at
 http://www.gnu.org/licenses/gpl.html
 .\"
-

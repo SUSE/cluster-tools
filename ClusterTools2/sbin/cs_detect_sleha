@@ -84,7 +84,6 @@ rear
 rear116
 "
 
-# TODO --kern (drbd, ocfs2, evtl. ldirectord, aka runs without SLE-HA)
 # TODO show RPM list from pattern file
 
 function help(){
@@ -92,13 +91,14 @@ function help(){
 	echo
 	echo " --help		show help"
 	echo " --version	show version"
-	echo " --detect	shown number of hints"
+	echo " --detect	shown number of traces"
 	echo " --installed	show installed base RPMs"
 	echo " --available	show available base RPMs"
 	echo " --standalone	show standalone services"
 	echo " --files	show common files"
-	echo " --pedantic	show even minimal tracks of SLE-HA"
-	echo " --removeall	remove files and RPMs of SLE-HA"
+	echo " --pedantic	show even minimal traces of SLE-HA"
+	echo " --removeall	remove RPMs, files, and repos of SLE-HA"
+	echo " --uninstall	uninstall RPMs of SLE-HA"
 	echo
 }
 
@@ -125,6 +125,13 @@ function remove_repos(){
 	echo "INFO: ### $FUNCNAME $1 start ###"
 	# TODO zypper rs (removeservice)
 	# TODO zypper rr (removerepo)
+	echo "INFO: ### $FUNCNAME $1 end ###"
+}
+
+
+function remove_cib(){
+	echo "INFO: ### $FUNCNAME $1 start ###"
+	test -x /usr/sbin/cs_delcib && /usr/sbin/cs_delcib --offline
 	echo "INFO: ### $FUNCNAME $1 end ###"
 }
 
@@ -227,19 +234,30 @@ case $1 in
 		exit
 		# TODO better grep, maybe positive filter function
 	;;
-	-p|--pedantic|--paranoid)
+	-p|--pedantic|--paranoid|--penetrant)
 		detect_files base
 		detect_files misc
-		detect_files kern 
+		detect_files kern
 		( detect_rpms base
 		detect_rpms misc
 		detect_rpms kern ) | grep -v "in.*\.\.\.$"
 		exit
 	;;
+	-u|--uninstall)
+		YESNO=no
+		read -p "Uninstall RPMs of SLE-HA? [yes/no]: " YESNO
+		[[ $YESNO == "yes" ]] || exit
+		echo remove_rpms
+		exit
+	;;
 	-r|--removeall)
-		read
+		YESNO=no
+		read -p "Remove RPMs, files, and repos of SLE-HA? [yes/no]: " YESNO
+		[[ $YESNO == "yes" ]] || exit
 		echo remove_files
 		echo remove_rpms
+		echo remove_cib
+		# TODO remove_repos
 		exit
 	;;
 	-d|--detect|*)

@@ -24,6 +24,7 @@ test -z "${SLEHA_MISC_FIL}" &&\
 /etc/products.d/sle-hae.prod
 /etc/corosync/authkey
 /var/lib/corosync/ringid_*
+/var/lib/pacemaker/pengine/*
 /etc/csync2/csync2.cfg
 /etc/drbd.conf
 /var/cache/zypp/raw/*/suse/setup/descr/ha_sles*.pat.gz
@@ -33,6 +34,7 @@ test -z "${SLEHA_KERN_FIL}" &&\
 /etc/drbd.conf
 /etc/ocfs2/cluster.conf
 /etc/sysconfig/o2cb
+/etc/rear/local.conf
 "
 test -z "${SLEHA_BASE_RPM}" &&\
 	SLEHA_BASE_RPM="
@@ -41,6 +43,11 @@ corosync
 crmsh
 pacemaker
 resource-agents
+cluster-glue
+libglue2
+libcorosync4
+libpacemaker3
+libopenais3
 "
 test -z "${SLEHA_MISC_RPM}" &&\
 	SLEHA_MISC_RPM="
@@ -73,6 +80,8 @@ ocfs2-kmp-xen
 drbd-utils
 drbd-kmp-default
 drbd-kmp-xen
+rear
+rear116
 "
 
 # TODO --kern (drbd, ocfs2, evtl. ldirectord, aka runs without SLE-HA)
@@ -114,7 +123,6 @@ function remove_rpms(){
 
 function remove_repos(){
 	echo "INFO: ### $FUNCNAME $1 start ###"
-	# TODO detect repos
 	# TODO zypper rs (removeservice)
 	# TODO zypper rr (removerepo)
 	echo "INFO: ### $FUNCNAME $1 end ###"
@@ -171,10 +179,12 @@ function detect_rpms(){
 
 
 function detect_repos(){
+	echo "INFO: ### $FUNCNAME $1 start ###"
+	# TODO detect repos
 #	case $1 in
 	#zypper ... --with-repos --sort-by-priority --details --uri
-	exit		
 #	esac
+	echo "INFO: ### $FUNCNAME $1 start ###"
 }
 
 

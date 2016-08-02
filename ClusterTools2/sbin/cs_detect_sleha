@@ -203,6 +203,7 @@ case $1 in
 	-f|--files)
 		detect_files base
 		detect_files misc
+		detect_files kern 
 		exit
 	;;
 	-s|--standalone)

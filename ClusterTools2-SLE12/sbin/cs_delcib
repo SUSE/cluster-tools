@@ -2,10 +2,10 @@
 #
 # cs_delcib
 #
-# (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
-# GNU General Public License. No warranty.
+# (c) 2011-2016 SUSE Linux GmbH, Germany. Authors: I.Manyugin, L.Pinne.
+# GNU General Public License 2. No warranty.
 #
-# Version: 0.2 2015-09-29
+# Version: SLES11 0.2 2016-08-01
 #
 
 EXE="$0"
@@ -29,6 +29,19 @@ test -z "${BAK}" &&\
 	BAK="/var/adm/backup/cib.xml-$(date +%Y%m%d-%H%M%S)"
 
 
+function clear_cib(){
+	local CIB_HBT="/var/lib/heartbeat/crm/cib.xml"
+	local CIB_PCM="/var/lib/pacemaker/cib/cib.xml"
+	( mv $CIB_HBT $BAK 2>$ERR &&\
+		 echo "Moved $CIB_HBT to $BAK" >/dev/stderr) ||\
+	( mv $CIB_PCM $BAK 2>$ERR &&\
+		 echo "Moved $CIB_PCM to $BAK" >/dev/stderr)
+	for f in $FIL; do
+		rm -f $f
+	done
+}
+
+
 # main()
 
 case $1 in
@@ -38,26 +51,16 @@ case $1 in
 		exit
 	;;
 	-f|--force)
+		# 11sp2...
 		rcopenais stop || exit
-
-		# 11sp2 || 11sp3
-		mv /var/lib/heartbeat/crm/cib.xml $BAK 2>$ERR ||\
-		mv /var/lib/pacemaker/cib/cib.xml $BAK
-		for f in $FIL; do
-			rm -f $f
-		done
+		clear_cib
 		exit
 	;;
 	-o|--offline)
+		# 11sp2...
 		rcopenais status 2>/dev/null
 		test $? -eq  "7" || exit
-
-		# 11sp2 or 11sp3
-		mv /var/lib/heartbeat/crm/cib.xml $BAK 2>$ERR ||\
-		mv /var/lib/pacemaker/cib/cib.xml $BAK 2>$ERR
-		for f in $FIL; do
-			rm -f $f
-		done
+		clear_cib
 		exit
 	;;
 	*)

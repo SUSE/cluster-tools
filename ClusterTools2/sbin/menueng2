@@ -5,7 +5,7 @@
 # (c) 2009-2010 SUSE Linux GmbH, Germany
 # (c) 2011-2014 SUSE Linux Products GmbH, Germany 
 # Author: F.Herschel
-# GNU General Public License. No warranty.
+# GNU General Public License v2. No warranty.
 #
 
 #use strict;

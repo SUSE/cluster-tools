@@ -3,7 +3,7 @@
 # cs_add_watchdog_to_initrd
 #
 # (c) 2011-2014 SUSE Linux GmbH, Germany.
-# GNU General Public License. No warranty.
+# GNU General Public License v2. No warranty.
 # Author: A.Rehg, L.Pinne
 # 
 # Version: 0.02 2014-09-03 13:25

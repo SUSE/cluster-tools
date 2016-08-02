@@ -27,8 +27,14 @@ after an VM image has been cloned.
 .SH EXAMPLES
 .br
 .TP
-* Write checksums for common config files to stdout.
+* List names of files that usually should not be identical on cloned systems. 
+# grep "^/" /etc/ClusterTools2/cs_list_clone_files
+.TP
+* Calculate checksums for config files that might not appear on a freshly cloned system.
 # cs_list_clone_files -m
+.TP
+* Count existing config files that might not appear on a freshly cloned system.
+# cs_sum_base_config -m 2>/dev/null | grep -v "=.NA$" | wc -l
 .\"
 .SH EXIT STATUS
 .B 0

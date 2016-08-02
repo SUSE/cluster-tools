@@ -1,0 +1,247 @@
+#!/bin/bash
+#
+# cs_detect_sleha
+#
+# (c) 2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU General Public License v2. No warranty.
+#
+# Version: SLES11 2016-08-02
+#
+
+EXE="$0"
+ERR="/dev/null"
+
+CFG="/etc/ClusterTools2/cs_detect_sleha"
+test -s $CFG && source $CFG
+
+test -z "${SLEHA_BASE_FIL}" &&\
+	SLEHA_BASE_FIL="
+/etc/corosync/corosync.conf
+/var/lib/pacemaker/cib/cib.xml
+"
+test -z "${SLEHA_MISC_FIL}" &&\
+	SLEHA_MISC_FIL="
+/etc/products.d/sle-hae.prod
+/etc/corosync/authkey
+/var/lib/corosync/ringid_*
+/etc/csync2/csync2.cfg
+/etc/drbd.conf
+/var/cache/zypp/raw/*/suse/setup/descr/ha_sles*.pat.gz
+"
+test -z "${SLEHA_KERN_FIL}" &&\
+	SLEHA_KERN_FIL="
+/etc/drbd.conf
+/etc/ocfs2/cluster.conf
+/etc/sysconfig/o2cb
+"
+test -z "${SLEHA_BASE_RPM}" &&\
+	SLEHA_BASE_RPM="
+openais
+corosync
+crmsh
+pacemaker
+resource-agents
+"
+test -z "${SLEHA_MISC_RPM}" &&\
+	SLEHA_MISC_RPM="
+sle-hae-release
+release-notes-hae
+ocfs2-tools
+csync2
+pacemaker-mgmt
+pacemaker-mgmt-client
+hawk
+drbd
+yast2-cluster
+yast2-drbd
+yast2-iplb
+ldirectord
+lvm2-clvm
+cmirrord
+conntrack-tools
+pssh
+python-pssh
+python-dateutil
+sleha-bootstrap
+ctdb
+"
+test -z "${SLEHA_KERN_RPM}" &&\
+	SLEHA_KERN_RPM="
+ocfs2-tools-o2cb
+ocfs2-kmp-default
+ocfs2-kmp-xen
+drbd-utils
+drbd-kmp-default
+drbd-kmp-xen
+"
+
+# TODO --installed | --available
+# TODO --base | --misc
+# TODO --kern (drbd, ocfs2, evtl. ldirectord, aka runs without SLE-HA)
+# TODO --pedantic = --available --misc --kern
+# TODO show RPM list from pattern file
+
+function help(){
+	echo "usage:	$(basename $0) [OPTION]"
+	echo
+	echo " --help		show help"
+	echo " --version	show version"
+	echo " --detect	shown number of hints"
+	echo " --installed	show installed base RPMs"
+	echo " --available	show available base RPMs"
+	echo " --standalone	show standalone services"
+	echo " --files	show common files"
+	echo " --pedantic	show even minimal tracks of SLE-HA"
+	echo " --removeall	remove files and rpms of SLE-HA"
+	echo
+}
+
+
+function remove_files(){
+	echo "INFO: ### $FUNCNAME $1 start ###"
+	for f in $SLEHA_BASE_FIL $SLEHA_MISC_FIL $SLEHA_KERN_FIL; do
+		rm -rf $f
+	done
+	echo "INFO: ### $FUNCNAME $1 end ###"
+}
+
+
+function remove_rpms(){
+	echo "INFO: ### $FUNCNAME $1 start ###"
+	for f in $SLEHA_BASE_RPM $SLEHA_MISC_RPM $SLEHA_KERN_RPM; do
+		zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f
+	done
+	echo "INFO: ### $FUNCNAME $1 end ###"
+}
+
+
+function remove_repos(){
+	echo "INFO: ### $FUNCNAME $1 start ###"
+	# TODO detect repos
+	# TODO zypper rs (removeservice)
+	# TODO zypper rr (removerepo)
+	echo "INFO: ### $FUNCNAME $1 end ###"
+}
+
+
+function detect_files(){
+	# TODO read variable name from call, avoid case
+	echo "INFO: ### $FUNCNAME $1 start ###"
+	case $1 in
+		base)
+		for f in $SLEHA_BASE_FIL; do
+			ls -l $f 2>$ERR
+		done
+		;;
+		misc)
+		for f in $SLEHA_MISC_FIL; do
+			ls -l $f 2>$ERR
+		done
+		;;
+		kern)
+		for f in $SLEHA_KERN_FIL; do
+			ls -l $f 2>$ERR
+		done
+		;;
+	esac
+	echo "INFO: ### $FUNCNAME $1 end ###"
+}
+
+
+function detect_rpms(){
+	# TODO read variable name from call, avoid case
+	echo "INFO: $FUNCNAME $1 start ###"
+	zypper ref
+	case $1 in
+		base)
+		for r in $SLEHA_BASE_RPM; do
+			zypper se -s $r 2>$ERR
+		done
+		;;
+		misc)
+		for r in $SLEHA_MISC_RPM; do
+			zypper se -s $r 2>$ERR
+		done
+		;;
+		kern)
+		for r in $SLEHA_KERN_RPM; do
+			zypper se -s $r 2>$ERR
+		done
+		;;
+	esac
+	echo "INFO: ### $FUNCNAME $1 end ###"
+}
+
+
+function detect_repos(){
+#	case $1 in
+	#zypper ... --with-repos --sort-by-priority --details --uri
+	exit		
+#	esac
+}
+
+
+# main()
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-h|--help)
+		help
+		exit
+	;;
+	-a|--available)
+		detect_rpms base | grep -v "in.*\.\.\.$"
+		exit
+	;;
+	-i|--installed)
+		echo "INFO: ### detect_rpms base start ###"
+		echo "S | Name             | Type       | Version      | Arch   | Repository "
+		echo "-----------------------------------------------------------------------"
+		detect_rpms base | grep -e "^i" -e "INFO:.*end"
+		exit
+	;;
+	-f|--files)
+		detect_files base
+		detect_files misc
+		exit
+	;;
+	-s|--standalone)
+		detect_files kern
+		detect_rpms kern | grep -v "in.*\.\.\.$"
+		exit
+	;;
+	-p|--pedantic|--paranoid)
+		detect_files base
+		detect_files misc
+		detect_files kern 
+		( detect_rpms base
+		detect_rpms misc
+		detect_rpms kern ) | grep -v "in.*\.\.\.$"
+		exit
+	;;
+	-r|--removeall)
+		read
+		echo remove_files
+		echo remove_rpms
+		exit
+	;;
+	-d|--detect|*)
+		RC=0
+		RC=$(
+		( detect_files base
+                  detect_files misc
+                  detect_files kern
+                  ( detect_rpms base
+                    detect_rpms misc
+                    detect_rpms kern ) | grep -v "in.*\.\.\.$" )|\
+		grep -v "^INFO:.*###" | grep -v "^S.\|.Name" | grep -v -- "^--+" |\
+	 	grep -v "^Repository" | grep -v "^All.repositories" | grep -v "^No.packages.found" |\
+		tr -s "\n" 2>$ERR | wc -l )
+		echo "${EXE}: Found $RC hints on SLE-HA" >/dev/stderr
+		exit $RC
+	;;
+esac
+#

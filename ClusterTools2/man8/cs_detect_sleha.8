@@ -1,0 +1,92 @@
+.TH cs_detect_sleha 8 "02 Aug 2016" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_detect_sleha \- looks for indicators of SLE-HA add-on
+.\"
+.SH SYNOPSIS
+.B cs_detect_sleha
+.br
+.B cs_detect_sleha \fI[OPTION]\fR
+.\"
+.SH DESCRIPTION
+\fBcs_detect_sleha\fP looks for files and packages that might indicate an
+installation of the SLE-HA add-on.
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+	show help.
+.HP
+\fB --version\fR
+	show version.
+.HP
+\fB --detect\fR
+	shown number of hints, return code will also be that number.
+.HP
+\fB --installed\fR
+	show installed base RPMs.
+.HP
+\fB --available\fR
+	show available base RPMs.
+.HP
+\fB --standalone\fR
+	show standalone services.
+.HP
+\fB --files\fR
+	show common files.
+.HP
+\fB --pedantic\fR
+	show even minimal tracks of SLE-HA.
+.HP
+\fB --removeall\fR
+	remove files and RPMs of SLE-HA, as opposite to renewal.
+.HP
+.\"
+.SH EXAMPLES
+.br
+.TP
+* Search for files and RPMs that might indicate components of SLE-HA are installed. Be pedantic with the search, but just print number of indicators found.
+# cs_detect_sleha
+.TP
+* Search for files and RPMs that might indicate components of SLE-HA are installed. Be pedantic with the search and print all items.
+# cs_detect_sleha --pedantic
+.TP
+* Search for components that might run without SLE-HA, but are supported only togther with SLE-HA.
+# cs_detect_sleha -s
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0
+Usage, syntax or execution errors.
+.br
+When called without any option, or with option "--detect", the return
+code equals the number of found indications.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_detect_sleha
+        the program itself.
+.TP
+/etc/ClusterTools2/cs_detect_sleha
+        the configuration.
+.\"
+.SH BUGS
+The remove-all function might damage the system - use it with caution. 
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBzypper\fP(8), 
+.\"
+.SH COPYRIGHT
+(c) 2016 L.Pinne, Germany.
+.br
+cs_list_clone_files comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"
+

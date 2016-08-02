@@ -14,7 +14,7 @@ ERR="/dev/null"
 CFG="/etc/ClusterTools2/cs_delcib"
 test -s $CFG && source $CFG
 
-# TODO check current pathes
+# TODO check current paths
 test -z "${FIL}" &&\
 	FIL="
 /var/lib/corosync/*

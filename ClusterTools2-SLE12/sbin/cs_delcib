@@ -3,9 +3,9 @@
 # cs_delcib
 #
 # (c) 2011-2016 SUSE Linux GmbH, Germany. Authors: I.Manyugin, L.Pinne.
-# GNU General Public License 2. No warranty.
+# GNU General Public License v2. No warranty.
 #
-# Version: SLES11 0.2 2016-08-01
+# Version: SLES12 0.2 2016-08-0i2
 #
 
 EXE="$0"
@@ -14,7 +14,7 @@ ERR="/dev/null"
 CFG="/etc/ClusterTools2/cs_delcib"
 test -s $CFG && source $CFG
 
-# TODO check current pathes
+# TODO check current paths
 test -z "${FIL}" &&\
 	FIL="
 /var/lib/corosync/*
@@ -51,15 +51,18 @@ case $1 in
 		exit
 	;;
 	-f|--force)
-		# 11sp2...
-		rcopenais stop || exit
+		# 12sp1...
+		/usr/bin/systemctl stop pacemaker || exit
 		clear_cib
 		exit
 	;;
 	-o|--offline)
-		# 11sp2...
-		rcopenais status 2>/dev/null
-		test $? -eq  "7" || exit
+		# 12sp1...
+		/usr/bin/systemctl is-active pacemaker 2>/dev/null 2>&1
+		if [[ $? -eq  0 ]]; then
+			echo "Pacemaker is active, exiting."
+			exit
+		fi
 		clear_cib
 		exit
 	;;

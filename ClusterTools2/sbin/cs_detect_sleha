@@ -208,8 +208,14 @@ case $1 in
 	;;
 	-s|--standalone)
 		detect_files kern
-		detect_rpms kern | grep -v "in.*\.\.\.$"
+		echo "INFO: ### detect_rpms kern start ###"
+		echo "S | Name             | Type       | Version      | Arch   | Repository "
+		echo "-----------------------------------------------------------------------"
+		detect_rpms kern | grep -v "^INFO:.*start.###" | grep -v "in.*\.\.\.$" | grep -v "^S.\|.Name" |\
+	 		grep -v "^Repository" | grep -v "^All.repositories" | grep -v "^No.packages.found" |\
+			grep -v -- "^--+" | tr -s "\n"
 		exit
+		# TODO better grep, maybe positive filter function
 	;;
 	-p|--pedantic|--paranoid)
 		detect_files base
@@ -240,6 +246,7 @@ case $1 in
 		tr -s "\n" 2>$ERR | wc -l )
 		echo "${EXE}: Found $RC hints on SLE-HA" >/dev/stderr
 		exit $RC
+		# TODO better grep, maybe positive filter function
 	;;
 esac
 #

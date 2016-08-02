@@ -75,10 +75,7 @@ drbd-kmp-default
 drbd-kmp-xen
 "
 
-# TODO --installed | --available
-# TODO --base | --misc
 # TODO --kern (drbd, ocfs2, evtl. ldirectord, aka runs without SLE-HA)
-# TODO --pedantic = --available --misc --kern
 # TODO show RPM list from pattern file
 
 function help(){
@@ -92,7 +89,7 @@ function help(){
 	echo " --standalone	show standalone services"
 	echo " --files	show common files"
 	echo " --pedantic	show even minimal tracks of SLE-HA"
-	echo " --removeall	remove files and rpms of SLE-HA"
+	echo " --removeall	remove files and RPMs of SLE-HA"
 	echo
 }
 

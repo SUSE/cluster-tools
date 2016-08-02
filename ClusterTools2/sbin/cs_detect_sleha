@@ -75,10 +75,7 @@ drbd-kmp-default
 drbd-kmp-xen
 "
 
-# TODO --installed | --available
-# TODO --base | --misc
 # TODO --kern (drbd, ocfs2, evtl. ldirectord, aka runs without SLE-HA)
-# TODO --pedantic = --available --misc --kern
 # TODO show RPM list from pattern file
 
 function help(){

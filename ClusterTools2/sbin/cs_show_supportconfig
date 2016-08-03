@@ -2280,12 +2280,12 @@ case $1 in
 		echo "usage: $BEX --function <DIR> <FUNC>"
 		echo
 		echo "OPTION:"
-                echo " --help		show help."
-                echo " --listfunc	show available functions."
-                echo " --version	show version."
+		echo " --help		show help."
+		echo " --listfunc	show available functions."
+		echo " --version	show version."
 		echo " --writecfg	show some internal variables."
-                echo " --generic	show generic info."
-                echo " --function	show info from selected function."
+		echo " --generic	show generic info."
+		echo " --function	show info from selected function."
 		exit
 	;;
 	--version|-v)

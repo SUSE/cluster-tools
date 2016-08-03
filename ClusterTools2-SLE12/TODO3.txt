@@ -9,8 +9,6 @@ TODO sle12: cs_show_supportconfig no NICs found, no network info at all
 TODO sle12: cs_show_supportconfig no chkconfig.txt
 TODO sle12: cs_show_supportconfig no basic-health-report.txt
 TODO finalize cs_convert_time. Should is be in /usr/bin insetad of /usr/sbin?
-DONE cs_dmesg to support uptime longer than one day. 
-DONE supportconfig plugin precheck_for_hana
 TODO check vgs, see mail from d.hagen
 TODO check in sysconfig for HALD_IGNORE_STORAGE=yes
 TODO cs_precheck_for_saphana: improve
@@ -27,7 +25,6 @@ TODO cs_sum_base_config check if newly added test for /var/lib/sdb/ works
 TODO cs_show_cluster_transition: sort order Dec Jan around new year
 TODO check max limit for CIB size and for num resources
 TODO check that corosync rings not on same subnet
-TODO man sbd(7): cib snippet for sbd stonith, including start timout, see 05_...
 TODO cs_show_supportconfig s390 network, disk (net: iucv, qeth. disk ccm...)  
 TODO see HAWS_SMT_NEEDED_OS HAWS_SMT_NEEDED_HA HAWS_SMT_NEEDED_SAP HAWS_SMT_NEEDED_ORA
 TODO check service multipathd on
@@ -44,11 +41,7 @@ DONE cs_sum_base_config awk: cmd. line:1: fatal: cannot open file `/etc/sysconfi
 TODO fix --help output - menueng2 --help. -usage ClusterService: --rscFile rscFile | --help
 TODO configure/update mode: till now we only can add a prmitive or a group but could not update it. see UPDATE.txt
 TODO help for top level menueng2
-TODO wow output crm instead of cli ?
-TODO man page wow2
-TODO make_hb_backup update
 TODO cs_precheck_for_sap: tests seem to be to static we need to test at least equal and newer...
-TODO man watchdog.7
 TODO linkstate
 TODO cs_precheck_for_sap: soll laufen, auch wenn parameter in wow file nicht gesetzt
 TODO cs_precheck_for_sap: modular checks aligned with sap-notes, f.e. a subdir with one module per sap-note
@@ -58,7 +51,6 @@ TODO dmesg eurwdt: can't misc_register on minor=130
 TODO dmesg smsc37b787_wdt: Unable to register miscdev on minor 130
 TODO dmesg advantechwdt: Unexpected close, not stopping watchdog!
 TODO make disabled supportconfig plugins return "Skipped" instead of "Error"
-TODO wow master-slave ERS
 TODO cs_show_error_patterns -d <directory>   for off-site analysis of logs
 TODO supportconfig_plugin for all files needed by cs_show_error_patterns
 TODO get & test http://hg.clusterlabs.org/pacemaker/stable-1.0/file/tip/cts/cluster_test
@@ -68,11 +60,6 @@ TODO cs_precheck_for_sap: grep 127.0 etc/hosts nur 127.0.0.1, nicht 127.0.0.2
 TODO cs_precheck_for_sap: remove "des" 
 TODO cs_precheck_for_sap: /etc/pam.d/sapstartsrv
 TODO post-processing SAP installation script 
-DONE openais-stop  ignoriert ein start und ruft ansonsten rcopenais auf
-TODO man page multipath: formula to calc timings (s. PIKS)
-TODO rc-script stopopenais to prevent system from being fenced at shutdown
 TODO cs_show_supportconfig: ulimit, lvm, multipath.conf
 TODO compare branches
-DONE neues openais start berücksichtigt sbd status
 TODO wow enqueue replication templates (cli, agents, scripts)
-TODO Check todo list and adapt for SLE-HA 12

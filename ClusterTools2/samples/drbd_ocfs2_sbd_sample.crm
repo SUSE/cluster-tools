@@ -24,7 +24,7 @@ primitive rsc_ocfs2_app1 ocf:heartbeat:Filesystem \
 	op monitor interval="90" timeout="100" \
 	op stop interval="0" timeout="300" on_fail="fence"
 primitive rsc_stonith_sbd stonith:external/sbd \
-	op start interval="0" timeout="15" start-delay="15"
+	params pcmk_delay_max="15"
 group grp_o2cb rsc_controld rsc_o2cb
 ms msl_drbd_app1 rsc_drbd_app1 \
 	meta master-max="2" clone-max="2" notify="true" target-role="Master"

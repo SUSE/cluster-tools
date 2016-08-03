@@ -257,6 +257,8 @@ stonith-action="reboot" \\
 concurrent-fencing="true" \\
 .br
 ===
+
+For two-node clusters, the no-quorum-policy="ignore" has to be set as well. 
 .\"
 .P
 \fB* Hardware Watchdog\fR
@@ -369,7 +371,7 @@ To report bugs for a SUSE product component, please use
 .\"
 .SH SEE ALSO
 
-\fBsbd\fP(8), \fBcs_add_watchdog_to_initrd\fP(8),
+\fBsbd\fP(8), \fBcs_add_watchdog_to_initrd\fP(8), \fBcrm_no_quorum_policy\fP(7),
 \fBcs_disable_other_watchdog\fP(8), \fBcs_make_sbd_devices\fP(8),
 \fBdasdfmt\fP(8), \fBSAPHanaSR-ScaleOut\fP(7), \fBha_related_acronyms\fP(7),
 .br

@@ -5,9 +5,9 @@
 # (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License 2. No warranty.
 #
-# Version: SLES11 0.02 2016-08-02
+# Version: SLES11 0.02 2016-08-03
 #
-# For SLES11, for Supportconfig Script Version: 2.25-237
+# For Supportconfig Script Version: 2.25-237
 #
 
 EXE=$0
@@ -22,6 +22,61 @@ test -z "${TEMP}" && TMP="$TEMP}"
 DIR=${2:-$PWD}
 FUN=${3:-"chk_overview"}
 OWD=$PWD
+
+# grep "=\"$" /etc/ClusterTools2/cs_show_supportconfig | tr -d "=\""
+# grep "[A-Z]=\"" /etc/ClusterTools2/cs_show_supportconfig | tr -d "=\""
+CFGVAR="
+ERRCFG
+TEMP
+HARDW_MOD
+NIC_PTRN
+SVC_YES
+SVC_OFF
+NETW_PTRN
+TIME_ERR
+TIME_PTRN
+SOFTW_PTRN
+UPDT_PTRN
+STOR_PKG
+STOR_MOD
+SYSC_PTRN
+MEM_VMSTAT
+MEM_SYSCTL
+ORA_SFT_PTRN
+ORA_SVC_YES
+ORA_SVC_OFF
+VRT_SVC_YES
+VRT_ERR_PTRN
+CLUSTER_PKG
+CLUSTER_PRCS
+VMW_PKG
+VMW_MODUL
+VMW_SVC_YES
+VMW_SVC_OFF
+VMW_ETC
+SAP_SAP_PKG_NOT
+HANA_SAP_PKG_YES
+HANA_SAP_PKG_NOT
+HANA_SUSE_PGK_YES
+HANA_VERS_MIN
+HANA_SAP_BOOTARG
+HANA_SUSE_BOOTARG
+HANA_SAP_SYSCTL
+HANA_SUSE_SYSCTL
+HANA_SAP_SVC_YES
+HANA_SAP_SVC_OFF
+HANA_SUSE_PTRN
+"
+
+function writecfg(){
+	echo -e "# $CFG \n# For SLES11.\n#"
+	for c in $CFGVAR; do
+		echo "${c}=\""
+		echo ${!c} | tr " " "\n"
+		echo "\""
+		echo "#"
+	done
+}
 
 
 function echo_msgsep(){
@@ -2228,6 +2283,7 @@ case $1 in
                 echo " --help		show help."
                 echo " --listfunc	show available functions."
                 echo " --version	show version."
+		echo " --writecfg	show some internal variables."
                 echo " --generic	show generic info."
                 echo " --function	show info from selected function."
 		exit
@@ -2277,6 +2333,10 @@ case $1 in
 		fi
 
 		rm -rf $TMP
+		exit
+	;;
+	--writecfg|-w)
+		writecfg
 		exit
 	;;
 	--test|-t)

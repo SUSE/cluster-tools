@@ -3,7 +3,7 @@
 # cs_sum_hana_config
 #
 # (c) 2015-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
-# GNU Public License. No warranty.
+# GNU General Public License. No warranty.
 #
 # Version: 2016-03-07 12:00
 #
@@ -12,6 +12,14 @@ EXE="$0"
 
 CFG="/etc/ClusterTools2/cs_sum_hana_config"
 test -s $CFG && source $CFG
+
+CFGVAR="
+TEMP
+CONF_FILES
+CONF_CALLS
+APPS_FILES
+APPS_CALLS
+"
 
 test -z "${TEMP}" &&\
 	TEMP="/dev/shm/cltl.$RANDOM"
@@ -101,13 +109,17 @@ test -z "${APPS_CALLS}" &&\
 '/usr/sbin/cs_precheck_for_hana -a'
 "
 
+# TODO: function to collect relevant files and output
+# TODO: find reason for error on repos.d/ (line 136 ?)
+# TODO: generic function for sum_calls and sum_files
 
-function help() {
+function help(){
 	echo "usage:	$(basename $0)"
 	echo "	$(basename $0) [OPTION]"
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
+	echo " --writecfg	show some internal variables."
 	echo " --base 	checksum base files and calls only."
 	echo " --apps 	checksum HANA apps files and calls only."
 	echo
@@ -117,18 +129,35 @@ function help() {
 }
 
 
-# TODO: function to collect relevant files and output
-# TODO: find reason for error on repos.d/ (line 136 ?)
-# TODO: generic function for sum_calls and sum_files
+function writecfg(){
+	echo -e "# $CFG \n# For SLES11.\n#"
+	for c in $CFGVAR; do
+		case $c in
+		*_CALLS)
+			echo "${c}=\""
+			echo ${!c} | sed s/\'\ \'/\'\\n\'/g 
+			echo "\""
+			echo "#"	
+		;;
+		*_FILES)
+			echo "${c}=\""
+			echo ${!c} | tr " " "\n"
+			echo "\""
+			echo "#"	
+		;;
+		esac
+	done
+}
 
-function sum_config() {
+
+function sum_config(){
 	S="NA"
 	test -r $f && S=$(md5sum $f | awk '{print $1}')
 	echo "$f = $S"
 }
 
 
-function sum_files() {
+function sum_files(){
 	nf=1
 	f=$CFG
 	sum_config
@@ -143,7 +172,7 @@ function sum_files() {
 }
 
 
-function sum_calls() {
+function sum_calls(){
 	# TODO: replace errors by "$REPLY = NA" as above
 	# TODO: array instead of list, to avoid ugly "'" handling
 	mkdir $TEMP
@@ -165,7 +194,7 @@ function sum_calls() {
 }
 
 
-function sum_apps() {
+function sum_apps(){
 	nf=1
 	f=$CFG
 	sum_config
@@ -205,6 +234,10 @@ case $1 in
 	;;
 	-h|--help)
 		help
+		exit
+	;;
+	-w|--writecfg)
+		writecfg
 		exit
 	;;
 	-b|--base)

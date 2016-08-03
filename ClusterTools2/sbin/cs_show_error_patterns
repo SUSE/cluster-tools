@@ -5,7 +5,7 @@
 # (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 0.2 2016-06-22
+# Version: 0.2 2016-08-03
 #
 
 EXE="$0"
@@ -16,6 +16,15 @@ test -s $CFG && source $CFG
 RDM=$RANDOM
 DMSG="/tmp/dmesg.$RDM"
 JCTL=""
+
+CFGVAR="
+ERROR_PATTERN
+CLUERR_PATTERN
+APPERR_PATTERN
+CLUSTER_LOG
+SYSTEM_LOG
+ZIPPED_LOG
+"
 
 test -z "${SYSTEM_LOG}" &&\
 	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0"
@@ -186,14 +195,25 @@ test -z "${APPERR_PATTERN}" &&\
 "vascache.*error"
 "
 
-
 function help() {
 	echo "usage:	$(basename $0)"
 	echo "	$(basename $0) [OPTION]"
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
+	echo " --writecfg	show some internal variables."
 	echo " --zip		search compressed logs, too."
+}
+
+
+function writecfg(){
+	echo -e "# $CFG \n# For SLES11.\n#"
+	for c in $CFGVAR; do
+		echo "${c}=\""
+		echo ${!c} | tr " " "\n"
+		echo "\""
+		echo "#"
+	done
 }
 
 
@@ -216,7 +236,6 @@ function run_grep() {
 
 
 # main()
-
 case $1 in
 	-v|--version)
 		echo -n "$(basename $EXE) "
@@ -225,6 +244,10 @@ case $1 in
 	;;
 	-h|--help)
 		help
+		exit
+	;;
+	-w|--writecfg)
+		writecfg
 		exit
 	;;
 	-z|--zip)

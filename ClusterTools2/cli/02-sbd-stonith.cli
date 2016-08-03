@@ -1,2 +1,2 @@
-configure primitive $UUID stonith::external/sbd \
-op start interval="0" timeout="15" start-delay="5"
+configure primitive $UUID stonith:external/sbd \
+params pcmk_delay_max="15"

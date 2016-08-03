@@ -1,0 +1,13 @@
+configure \
+        primitive rsc_ping ocf:pacemaker:ping \
+        op start timeout=60			\
+        op monitor interval=120 timeout=60 start-delay=60 \
+        params pidfile="/var/run/ping.pid" dampen="10s" multiplier="1000" \
+        host_list="192.168.178.25 192.168.178.251 192.168.178.252" name="pingval" \
+        meta target-role="Stopped"
+configure \
+        clone cln_ping rsc_ping \
+	meta target-role="Stopped"
+configure \
+        location loc_fsc1_on_connected_node grp_fsc1 \
+        rule $id="rul_fsc1_on_connected_node" -inf: pingval lt 2000

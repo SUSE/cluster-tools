@@ -386,14 +386,14 @@ function patterns() {
 	# TODO $RC
 	# TODO check
 
-	zypper -n se -t pattern | grep "^i" >/root/zypper-se-tpattern.$SFX || exit 1
+	timeout 5 zypper -n se -t pattern | grep "^i" >/root/zypper-se-tpattern.$SFX || exit 1
 	for f in $PTRN_OK; do
-			zypper -n in -t pattern $f 
+			timeout 5 zypper -n in -t pattern $f 
 	done
  ;;
  list)
 	echo "=== $FUNCNAME ==="
-	zypper -n se -t pattern | grep "^i"
+	timeout 5 zypper -n se -t pattern | grep "^i"
  ;;
  esac
 }
@@ -405,15 +405,15 @@ function packages() {
 	# TODO $RC
 	# TODO check
 	rpm -qa >/root/rpm-qa.$SFX || exit 1
-	zypper -n refs -r | exit 1
+	timeout 5 zypper -n refs -r | exit 1
 	# TODO -y ?
-	zypper -n -q --no-gpg-checks in -l --no-recommends $PCKG_OK
-	zypper -n -q --no-gpg-checks in -l --no-recommends $PCLT_OK
+	timeout 5 zypper -n -q --no-gpg-checks in -l --no-recommends $PCKG_OK
+	timeout 5 zypper -n -q --no-gpg-checks in -l --no-recommends $PCLT_OK
  ;;
  list)
 	echo "=== $FUNCNAME ==="
-	zypper -n se $PCKG_OK 2>$ERR #| grep "|.package$" 
-	zypper -n se $PCLT_OK 2>$ERR #| grep "|.package$"
+	timeout 5 zypper -n se $PCKG_OK 2>$ERR #| grep "|.package$" 
+	timeout 5 zypper -n se $PCLT_OK 2>$ERR #| grep "|.package$"
  ;;
  esac
 }
@@ -428,7 +428,7 @@ function backup() {
 	/sbin/sysctl -e -a >${TMP}/sysctl-a.$SFX 2>$ERR
 	/sbin/runlevel >${TMP}/runlevel.$SFX
 	rpm -qa >${TMP}/rpm-qa.$SFX
-	zypper se -t pattern | grep "^i" >${TMP}/zypper-se-tpattern.$SFX
+	timeout 5 zypper se -t pattern | grep "^i" >${TMP}/zypper-se-tpattern.$SFX
 	cp -a /boot/grub/menu.lst ${TMP}/
 	tar czf ${TMP}/etc.tgz /etc/ >$ERR 2>&1
 

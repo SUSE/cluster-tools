@@ -1,0 +1,112 @@
+.TH cs_prepare_esxvm 8 "30 Jun 2016" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_prepare_esxvm \- prepare or check guest OS settings in ESX VMs 
+.\"
+.SH SYNOPSIS
+.B cs_prepare_esxvm
+\fIOPTION\fR
+.br
+.\" 
+.SH DESCRIPTION
+\fBcs_prepare_esxvm\fP applies configuration settings in order to optimise a
+(SUSE) Linux operating system as guest inside an ESX VM.   
+Settings and checks are done according to the best practices described in
+several SUSE TIDs and VMware knowlegde base articles.
+.\"
+.SH OPTIONS
+Global options are:
+.HP
+\fB --help\fR
+	show help.
+.HP
+\fB --version\fR
+	show version.
+.HP
+\fB --save\fR
+	save current settings, call first of all.
+.HP
+\fB --list\fR
+	list current settings (only partly implemented yet).
+.HP
+\fB --preview\fR
+	preview recommended settings.
+.HP
+\fB --apply\fR
+	apply recommended settings, call only once.
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH EXAMPLES
+.TP
+# cs_prepare_esxvm --help 
+show help.
+.TP
+# cs_prepare_esxvm --save
+save current settings.
+.TP
+# cs_prepare_esxvm --preview
+show most of the settings that would be applied.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_prepare_esxvm
+	the program itself.
+.TP
+/etc/ClusterTools2/cs_prepare_esxvm
+	the configuration file.
+.TP
+/var/adm/backup/cs_prepare_esxvm-yyyymmdd-hhmmss.tgz
+	the backup archive.
+.\"
+.SH BUGS
+This script could apply changes only once on each VM.
+The preview does not show all changes.
+The preview needs all activated software repositories online.
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBsupportconfig\fP(8), \fBcs_sum_base_config\fP(8), \fBcs_show_error_patterns\fP(8),
+\fBcs_show_supportconfig\fP(8), \fBcs_precheck_for_sap\fP(8), \fBcs_precheck_for_hana\fP(8), \fBClusterTools2\fP(7),
+.br
+https://www.suse.com/support/kb/doc.php?id=7008544 ,
+.br
+https://www.suse.com/support/kb/doc.php?id=7008844 ,
+.br
+https://www.suse.com/support/kb/doc.php?id=7015964 ,
+.br
+https://www.suse.com/support/kb/doc.php?id=7015086 ,
+.br
+https://www.suse.com/support/kb/doc.php?id=7016096 ,
+.br
+https://www.suse.com/support/kb/doc.php?id=3858673 ,
+.br
+http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=1006427 ,
+.br
+http://kb.vmware.com/kb/1006427 , 
+.br
+http://www.vmware.com/resources/techresources/1039 ,
+.br
+http://www.vmware.com/resources/techresources/10220 ,
+.br
+http://kb.vmware.com/selfservice/microsites/search.do?cmd=displayKC&externalId=340 ,
+.br
+http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=1003497 ,
+.br
+http://scn.sap.com/docs/DOC-60470
+.\"
+.SH COPYRIGHT
+(c) 2014-2016 L.Pinne, Germany.
+.br
+cs_prepare_esxvm comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

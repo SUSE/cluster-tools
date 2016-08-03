@@ -1,0 +1,225 @@
+.TH cs_precheck_for_hana 8 "30 May 2016" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_precheck_for_hana \- check pre-requisites for SAP HANA System Replication and automation with SLE-HA cluster
+.\"
+.SH SYNOPSIS
+.br
+.B cs_precheck_for_hana
+[\fIOPTION\fR]
+.br
+.\"
+.SH DESCRIPTION
+\fBcs_precheck_for_hana\fP checks if a Linux system is prepared for running
+SAP HANA in general. It also checks pre-requisites for SAP HANA System Replication automation with a SLE-HA cluster.
+The check is done according to the concept described in the setup guide
+\fISAP HANA System Replication on SLES for SAP Applications\fR . 
+.\"
+.\" A check could be done on one of two areas:
+.\" TODO
+.br
+All nodes of a cluster should be checked. The output of \fBcs_precheck_for_hana\fP
+could be re-directed into a file. Output files from different hosts might be
+compared to ensure all nodes of a cluster are set up identically. This is
+helpful particularly in scale-out scenarios.
+.\"
+.SH OPTIONS
+Global options are:
+.HP
+\fB --help\fR
+	show help information.
+.HP
+\fB --version\fR
+	show version.
+.HP
+\fB --base\fR
+	show basic OS configuration, related to SAP HANA and its System Replication.
+.HP
+\fB --apps\fR
+	show basic HANA application configuration, and more specific related OS settings.
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH EXAMPLES
+.TP
+* Show help.
+# cs_precheck_for_hana -h
+.TP
+* Check for basic OS pre-requisites needed to install SAP HANA. Items needed to set up automation for System Replication are also checked.
+# cs_precheck_for_hana -b
+.TP
+* Find differences between nodep and nodeq.
+# cs_precheck_for_hana -b >nodeq.precheck.txt 2>/dev/null
+.br
+# ssh root@nodep "cs_precheck_for_hana -b 2>/dev/null" >nodep.precheck.txt
+.br
+# diff --suppress-common-lines nodeq.precheck.txt nodep.precheck.txt
+.TP
+* Include findings of cs_precheck_for_hana with supportconfig file.
+.br
+# sed -i s/#precheck_for_hana/precheck_for_hana/ /etc/ClusterTools2/supportconfig_plugins
+.br
+# supportconfig
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_precheck_for_hana
+	the program itself.
+.TP
+/etc/ClusterTools2/cs_precheck_for_hana, /etc/ClusterTools2/cs_show_supportconfig
+	the configuration files.
+.\"
+.SH BUGS
+Formatting and content of this script's output will change, since this
+script is under development.
+Checks specific to the HANA application are currently not implemented.
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBhb_report\fP(8), \fBsupportconfig\fP(8), \fBcs_sum_hana_config\fP(8),
+\fBcs_sum_base_config\fP(8), \fBcs_show_error_patterns\fP(8), \fBcs_show_memory\fP(8),
+\fBcs_show_supportconfig\fP(8), \fBcs_show_initrd\fP(8), \fBClusterTools2\fP(7),
+\fBSAPHanaSR\fP(7), \fBSAPHanaSR-ScaleOut\fP(7),
+.br
+http://saphanawiki.com/2015/09/2000003-faq-sap-hana/ ,
+.br
+https://www.suse.com/promo/saphana-replication.html ,
+.br
+https://www.suse.com/products/sles-for-sap/resource-library/sap-best-practices.html ,
+.br
+https://www.susecon.com/doc/2015/sessions/TUT19921.pdf ,
+.br
+http://help.sap.com/hana/sap_hana_technical_operations_manual_en.pdf ,
+.br
+http://help.sap.com/hana_platform ,
+.br
+http://help.sap.com/hana/SAP_HANA_Installation_Guide_en.pdf ,
+.br
+http://help.sap.com/hana/SAP_HANA_Master_Guide_en.pdf ,
+.br
+https://websmp108.sap-ag.de/~sapidb/011000358700000050632013E ,
+.br
+http://scn.sap.com/docs/DOC-60334 ,
+.br
+http://scn.sap.com/docs/DOC-65899 ,
+.br
+http://scn.sap.com/docs/DOC-59920 ,
+.br
+http://scn.sap.com/docs/DOC-61091 ,
+.br
+http://scn.sap.com/docs/DOC-52522 ,
+.br
+http://scn.sap.com/docs/DOC-63221 ,
+.br
+http://scn.sap.com/docs/DOC-56044 ,
+.br
+http://scn.sap.com/docs/DOC-47702 ,
+.br
+http://wiki.scn.sap.com/wiki/display/ITP/List+of+IT+Planning+Documents ,
+.br
+http://service.sap.com/quicksizer ,
+.br
+http://scn.sap.com/community/hana-in-memory/blog/2013/01/17/sap-hana-sizing ,
+.br
+http://global.sap.com/community/ebook/2014-09-02-hana-hardware/enEN/index.html ,
+.br
+http://saphanatutorial.com/sap-hana-sizing/ ,
+.br
+https://support.wdf.sap.corp/sap/support/message/002007974700000929222015 ,
+.br
+https://www.suse.com/support/kb/doc.php?id=7016707 ,
+.br
+.\" https://www-03.ibm.com/support/techdocs/atsmastr.nsf/WebIndex/WP102502
+.\" http://www8.hp.com/us/en/business-solutions/converged-systems/big-data-solutions/sap-hana.html
+.\" http://www.fujitsu.com/fts/solutions/infrastructure/dynamic-infrastructure/hana/
+.\" http://www.cisco.com/c/en/us/solutions/data-center-virtualization/high-performance-analytic-appliance/index.html
+.\" http://www.hds.com/assets/pdf/hitachi-solution-profile-ucp-select-for-sap.pdf 
+.\"
+.br
+Some relevant SAP Notes are (list not complete):
+0045827,
+0061136,
+0171356,
+0618104,
+0784391,
+0962334,
+0989963,
+1056161,
+1100926,
+1102124,
+1122387,
+1275776,
+1310037,
+1382721,
+1492000,
+1501701,
+1514966,
+1514967,
+1522993,
+1523337,
+1557506,
+1599888,
+1606643,
+1635304,
+1637145,
+1681092,
+1730999,
+1731000,
+1736976,
+1758890,
+1774566,
+1788665,
+1793345,
+1813548,
+1824788,
+1824819,
+1855805,
+1872170,
+1876398,
+1888072,
+1890444,
+1900823,
+1903576,
+1943937,
+1944415,
+1944799,
+1950470,
+1954788,
+1995460,
+1999880,
+1999993,
+2000003,
+2001528,
+2024433,
+2055470,
+2081065,
+2086829,
+2123714,
+2130682,
+2131662,
+2133369,
+2157587,
+2161344,
+2188482,
+2218464,
+2222200,
+2227464,
+2235581,
+2240716,
+2284516
+.\"
+.SH COPYRIGHT
+(c) 2015-2016 L.Pinne, Germany.
+.br
+cs_precheck_for_hana comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

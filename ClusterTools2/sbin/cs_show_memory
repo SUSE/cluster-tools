@@ -5,12 +5,12 @@
 # (c) 2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 2016-07-13 11:20
+# Version: 2016-08-03 11:40
 #
 
 EXE="$0"
-#CFG="/etc/ClusterTools2/cs_show_memory"
-#test -s $CFG && source $CFG
+CFG="/etc/ClusterTools2/cs_show_memory"
+test -s $CFG && source $CFG
 RDM=$RANDOM
 JCTL=""
 if test -x $(type -p journalctl); then
@@ -22,7 +22,6 @@ SYSTEM_LOG="${SYSTEM_LOG} ${JCTL}"
 test -z "${ZIPPED_LOG}" &&\
         ZIPPED_LOG="/var/log/messages*bz2"
 # TODO mcelog
-
 
 VM_CONFIG_MEMINFO="
 MemTotal:
@@ -85,6 +84,13 @@ invoked.oom-killer
 pagecache.limit.set
 "
 
+CFGVAR="
+VM_CONFIG_MEMINFO
+VM_CONFIG_SYSCTL
+VM_UTILISE_MEMINFO
+VM_UTILISE_MEMINFO_CALC
+MEMLOG_PATTERN
+"
 
 function help() {
 	echo "usage:	$(basename $0)"
@@ -92,12 +98,24 @@ function help() {
 	echo
 	echo " --help		show help"
 	echo " --version	show version"
+	echo " --writecfg	show some internal variables"
 	echo " --all		show memory configuration and utilisation"
 	echo " --configured	show memory configuration"
 	echo " --logs		show memory related log messages"
 	echo " --utilised	show memory utilisation"
-	echo " --workload	estimate memory needed for workload"
+	echo " --payload	estimate memory needed for payload"
 	echo
+}
+
+
+function writecfg(){
+	echo -e "# $CFG \n# For SLES11,12.\n#"
+	for c in $CFGVAR; do
+		echo "${c}=\""
+		echo ${!c} | tr " " "\n"
+		echo "\""
+		echo "#"
+	done
 }
 
 
@@ -183,7 +201,7 @@ function show_logs() {
 }
 
 
-function show_workload() {
+function show_payload() {
 	# Commited_AS + KernelStack + SUnreclaim + Shmem + tmpfs ?
 
 	echo "### $FUNCNAME"
@@ -203,6 +221,10 @@ case $1 in
 		help
 		exit
 	;;
+	-w|--writecfg)
+		writecfg
+		exit
+	;;
 	-c|--configured)
 		show_configured
 		exit
@@ -211,8 +233,8 @@ case $1 in
 		show_utilised
 		exit
 	;;
-	-w|--workload)
-		show_workload
+	-p|--payload)
+		show_payload
 		exit
 	;;
 	-l|--logs)
@@ -222,9 +244,9 @@ case $1 in
 	-a|--all|*)
 		show_configured
 		show_utilised
-		show_workload
+		show_payload
 		show_logs
-	exit
+		exit
 	;;
 esac
 #

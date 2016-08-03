@@ -1,4 +1,4 @@
-.TH cs_show_cluster_patterns 8 "13 Jun 2016" "" "ClusterTools2"
+.TH cs_show_cluster_patterns 8 "03 Aug 2016" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_show_cluster_patterns \- search log files for cluster patterns
@@ -19,14 +19,17 @@ Please note that most cluster components do logging to their local node only.
 \fB --version\fR
         show version.
 .HP
+\fB --writecfg\fR
+	show some internal variables.
+.HP
 \fB --show\fR
-        show all.
+        show all patterns.
 .HP
 \fB --fencing\fR
-        show fencing.
+        show fencing patterns.
 .HP
 \fB --migration\fR
-        show migration.
+        show migration patterns.
 .HP
 \fB --count\fR
         count total for each pattern.

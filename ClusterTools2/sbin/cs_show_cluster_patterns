@@ -136,22 +136,41 @@ test -z "${RESRC_PATTERN}" &&\
 "DANGER.*NOT.cluster-aware"
 "
 
+CFGVAR="
+CLUSTER_LOG
+OSERR_PATTERN
+CLUSTR_PATTERN
+RESRC_PATTERN
+"
 
-function help() {
+
+function help(){
 	echo "	$(basename $0) OPTION"
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
-	echo " --show		show all."
-	echo " --fencing	show fencing."
-	echo " --migration	show migration."
+	echo " --writecfg	show some internal variables."
+	echo " --show		show all patterns."
+	echo " --fencing	show fencing patterns."
+	echo " --migration	show migration patterns."
 	echo
 	echo " --count	count total for each pattern."
 	echo " --zip		count from compressed logs, too."
 }
 
 
-function run_grep_show() {
+function writecfg(){
+	echo -e "# $CFG \n# For SLES11.\n#"
+	for c in $CFGVAR; do
+		echo "${c}=\""
+		echo ${!c} | tr " " "\n"
+		echo "\""
+		echo "#"
+	done
+}
+
+
+function run_grep_show(){
 	echo "logs: $LOG" >/dev/stderr
 
         # TODO: more efficient loop
@@ -165,7 +184,7 @@ function run_grep_show() {
 }
 
 
-function run_grep_count() {
+function run_grep_count(){
 	echo "logs: $LOG" >/dev/stderr
 
 	# TODO: more efficient loop
@@ -180,7 +199,7 @@ function run_grep_count() {
 
 # TODO: resources move success, fail
 #Sep 26 16:57:22 ext2300s pengine: [1079]: notice: LogActions: Move    rsc_fs_NFS_host     (Started ext2301s -> ext2300s)
-function awk_migration() {
+function awk_migration(){
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
 		test -r $f && cat $f
@@ -193,7 +212,7 @@ function awk_migration() {
 #Sep 27 16:07:14 ext2300s pengine: [1079]: WARN: pe_fence_node: Node ext2301s will be fenced because it is un-expectedly down
 #Sep 27 16:08:15 ext2300s stonith: [18720]: CRIT: external_run_cmd: Calling '/usr/lib64/stonith/plugins/external/sbd reset ext2301s' returned 
 # TODO: evtl. "stonith-ng:.*succe"
-function awk_fencing() {
+function awk_fencing(){
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
 		test -r $f && cat $f
@@ -204,11 +223,14 @@ function awk_fencing() {
 # TODO: reading from pipe
 
 # main()
-
 case $1 in
 	-v|--version)
 		echo -n "$(basename $EXE) "
         	head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-w|--writecfg)
+		writecfg
 		exit
 	;;
 	-z|--zip)

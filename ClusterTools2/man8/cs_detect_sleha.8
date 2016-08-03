@@ -10,6 +10,8 @@ cs_detect_sleha \- looks for indicators of SLE-HA add-on
 .\"
 .SH DESCRIPTION
 \fBcs_detect_sleha\fP looks for RPMs, files, and repositories which might indicate an installation of the SLE-HA add-on.
+.br
+Un-installating all RPMs of SLE-HA is another function. Nevertheless, RPMs which were installed by dependency may remain on the system. Finally the script can remove almost all files and detach zypper repos which are related to SLE-HA.
 .\"
 .SH OPTIONS
 .HP
@@ -42,7 +44,9 @@ cs_detect_sleha \- looks for indicators of SLE-HA add-on
 .HP
 \fB --uninstall\fR
 	uninstall RPMs of SLE-HA.
-
+.HP
+\fB --writecfg\fR
+	show internal variables, f.e. lists of RPMs and files.
 .\"
 .SH EXAMPLES
 .br
@@ -56,7 +60,10 @@ cs_detect_sleha \- looks for indicators of SLE-HA add-on
 * Search for components that might run without SLE-HA, but are supported only together with SLE-HA - f.e. DRBD, OCFS2, ReaR.
 # cs_detect_sleha -s
 .TP
-* Uninstall substantial RPMs of SLE-HA. Some RPMs that are fetched as dependecies during installation will remain on the system. Also all files that are not handled by the RPM post-scripts will remain.
+* Show what RPMs and files are known to this script.
+# cs_detect_sleha -w
+.TP
+* Uninstall substantial RPMs of SLE-HA. Some RPMs that are fetched as dependecy during installation will remain on the system. Also all files that are not handled by the RPM post-scripts will remain.
 # cs_detect_sleha --uninstall
 .\"
 .SH EXIT STATUS
@@ -74,14 +81,12 @@ code equals the number of indications found.
 /usr/sbin/cs_detect_sleha
         the program itself.
 .TP
-/etc/ClusterTools2/cs_detect_sleha
+/etc/ClusterTools2/cs_detect_sleha, /usr/ClusterTools2/cs_delcib
         the configuration.
-.TP
-/usr/sbin/cs_delcib
-        the program to remove CIB and cluster history.
 .\"
 .SH BUGS
-The remove-all function might damage the system - use it with caution. 
+The "--removeall" function might damage the system - use it with caution. 
+Detaching repositories from zypper is currently not implemented.
 Feedback is welcome, please use the project page at
 .br
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel

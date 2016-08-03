@@ -5,7 +5,7 @@
 # (c) 2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License 2. No warranty.
 #
-# Version: 2016-08-02
+# Version: 2016-08-03
 #
 
 EXE="$0"
@@ -36,20 +36,35 @@ test -z "${CLONE_FILES}" &&\
 # TODO double check list above
 # TODO application files, f.e. /etc/oraInst.loc or even /etc/smt.conf
 
+CFGVAR="
+CLONE_FILES
+"
 
-function help() {
+function help(){
 	echo "usage:	$(basename $0) [OPTION]"
 	echo
 	echo " --help		show help"
 	echo " --version	show version"
+	echo " --writecfg	show some internal variables"
 	echo " --content	show content of files"
 	echo " --md5sum 	show md5sum of files"
 	echo
 }
 
 
+function writecfg(){
+	echo -e "# $CFG \n# For SLES11,12.\n#"
+	for c in $CFGVAR; do
+		echo "${c}=\""
+		echo ${!c} | tr " " "\n"
+		echo "\""
+		echo "#"
+	done
+}
+
+
 # TODO call cs_sum_base_config instead of having own function
-function sum_config() {
+function sum_config(){
 	S="NA"
 	test -r $f && S=$(md5sum $f | awk '{print $1}')
 	echo "$f = $S"
@@ -57,7 +72,7 @@ function sum_config() {
 
 
 # TODO call cs_sum_base_config instead of having own function
-function sum_files() {
+function sum_files(){
 	nf=1
 	# TODO: better loop
 	for f in ${CONF_FILES}; do
@@ -70,7 +85,7 @@ function sum_files() {
 }
 
 
-function show_files() {
+function show_files(){
 	nf=1
 	f=$CFG
 	for f in ${CONF_FILES}; do
@@ -91,6 +106,10 @@ case $1 in
 	-v|--version)
 		echo -n "$(basename $EXE) "
 		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-w|--writecfg)
+		writecfg
 		exit
 	;;
 	-c|--content)

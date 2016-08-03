@@ -5,17 +5,33 @@
 # (c) 2014-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 2016-02-10 14:25
+# Version: SLES11 2016-08-03 19:56
 #
 
 EXE=${0}
 
-CFG="/etc/ClusterTools2/cs_prep_esxvm"
+CFG="/etc/ClusterTools2/cs_prepare_esxvm"
 test -s $CFG && source $CFG
 
 TMP="/tmp/$RANDOM"
 ERR="/dev/null"
 SFX=$(basename $EXE)
+
+CFGVAR="
+SRVC_OK
+SRVC_NO
+RLVL_OK
+PROD_OK
+PROD_NO
+PTRN_OK
+PTRN_NO
+PCKG_OK
+PCKG_NO
+PCLT_OK
+ELVT_OK
+ELVT_NO
+SYCT_OK
+"
 
 test -z "${BAK}" &&\
 	BAK="/var/adm/backup/${SFX}-$(date +%Y%m%d-%H%M%S)"
@@ -119,6 +135,16 @@ vm.dirty_bytes=1073741824
 vm.dirty_background_bytes=134217728
 vm.zone_reclaim_mode=0
 "
+
+function writecfg(){
+	echo -e "# $CFG \n# For SLES11.\n#"
+	for c in $CFGVAR; do
+		echo "${c}=\""
+		echo ${!c} | tr " " "\n"
+		echo "\""
+		echo "#"
+	done
+}
 
 
 function filesystem() {
@@ -434,12 +460,14 @@ function hardware() {
 function help() {
 	echo "usage: $(basename $0) [OPTION]"
 	echo
+	echo " --help		show help"
+	echo " --version	show version"
+	echo " --writecfg	show some internal variables"
+	echo
 	echo " --save		save current settings, call first of all"
 	echo " --list		list current settings, not fully implemented"
 	echo " --preview	preview recommended settings"
 	echo " --apply	apply recommended settings, call only once"
-	echo " --help		show help"
-	echo " --version	show version"
 	echo
 	echo "This script could apply changes only once on each VM."
 	exit
@@ -447,11 +475,14 @@ function help() {
 
 
 # main()
-
 case $1 in
 	-v|--version)
 		echo -n "$(basename $EXE) "
 		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-w|--writecfg)
+		writecfg
 		exit
 	;;
 	-a|--apply)

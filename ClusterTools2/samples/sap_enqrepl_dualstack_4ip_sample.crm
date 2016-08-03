@@ -54,7 +54,7 @@ primitive rsc_sapinst_SO1_SCS01_sapso1cs ocf:heartbeat:SAPInstance \
 	op start interval="0" timeout="180s" \
 	op stop interval="0" timeout="240s" on_fail="block"
 primitive rsc_stonith_sbd stonith:external/sbd \
-	op start interval="0" timeout="15" start-delay="5"
+	params pcmk_delay_max="15"
 group grp_sapas_so1 rsc_ip_SO1_sapso1as
 group grp_sapci_so1 rsc_ip_SO1_sapso1ci rsc_sapinst_SO1_DVEBMGS20_sapso1ci
 group grp_sapcs_so1 rsc_ip_SO1_sapso1cs

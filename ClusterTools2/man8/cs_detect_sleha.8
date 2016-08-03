@@ -60,7 +60,7 @@ Un-installating all RPMs of SLE-HA is another function. Nevertheless, RPMs which
 * Search for components that might run without SLE-HA, but are supported only together with SLE-HA - f.e. DRBD, OCFS2, ReaR.
 # cs_detect_sleha -s
 .TP
-* Show what RPMs and files are known to this script.
+* Show what RPMs and files are known to this script. The output might be used for preparing a custom config file /etc/ClusterTools2/cs_detect_sleha.
 # cs_detect_sleha -w
 .TP
 * Uninstall substantial RPMs of SLE-HA. Some RPMs that are fetched as dependecy during installation will remain on the system. Also all files that are not handled by the RPM post-scripts will remain.

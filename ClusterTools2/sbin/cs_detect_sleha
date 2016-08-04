@@ -257,9 +257,28 @@ function remove_files(){
 
 function remove_rpms(){
 	echo "INFO: ### $FUNCNAME $1 start ###"
-	for f in $SLEHA_REPO_RPM; do
-		timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR
-	done
+	case $1 in
+		base)
+		for f in $SLEHA_BASE_RPM; do
+			timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR
+		done
+		;;
+		misc)
+		for f in $SLEHA_MISC_RPM; do
+			timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR
+		done
+		;;
+		kern)
+		for f in $SLEHA_KERN_RPM; do
+			timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR
+		done
+		;;
+		repo)
+		for f in $SLEHA_REPO_RPM; do
+			timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR
+		done
+		;;
+	esac
 	echo "INFO: ### $FUNCNAME $1 end ###"
 }
 
@@ -313,17 +332,26 @@ function detect_rpms(){
 	case $1 in
 		base)
 		for r in $SLEHA_BASE_RPM; do
-			timeout 5 zypper se -s $r 2>$ERR
+			timeout 5 zypper se -s $r 2>$ERR ||\
+			rpm -qa 2>$ERR | grep $r
 		done
 		;;
 		misc)
 		for r in $SLEHA_MISC_RPM; do
-			timeout 5 zypper se -s $r 2>$ERR
+			timeout 5 zypper se -s $r 2>$ERR ||\
+			rpm -qa 2>$ERR | grep $r
 		done
 		;;
 		kern)
 		for r in $SLEHA_KERN_RPM; do
-			timeout 5 zypper se -s $r 2>$ERR
+			timeout 5 zypper se -s $r 2>$ERR ||\
+			rpm -qa 2>$ERR | grep $r
+		done
+		;;
+		repo)
+		for r in $SLEHA_REPO_RPM; do
+			timeout 5 zypper se -s $r 2>$ERR ||\
+			rpm -qa 2>$ERR | grep $r
 		done
 		;;
 	esac
@@ -388,16 +416,14 @@ case $1 in
 		detect_files base
 		detect_files misc
 		detect_files kern
-		( detect_rpms base
-		detect_rpms misc
-		detect_rpms kern ) | grep -v "in.*\.\.\.$"
+		detect_rpms repo | grep -v "in.*\.\.\.$"
 		exit
 	;;
 	-u|--uninstall)
 		YESNO=no
 		read -p "Uninstall RPMs of SLE-HA? [yes/no]: " YESNO
 		[[ $YESNO == "yes" ]] || exit
-		remove_rpms
+		remove_rpms repo
 		exit
 	;;
 	-r|--removeall)
@@ -417,9 +443,7 @@ case $1 in
 		( detect_files base
                   detect_files misc
                   detect_files kern
-                  ( detect_rpms base
-                    detect_rpms misc
-                    detect_rpms kern ) | grep -v "in.*\.\.\.$" )|\
+                  detect_rpms repo | grep -v "in.*\.\.\.$" )|\
 		grep -v "^INFO:.*###" | grep -v "^S.\|.Name" |\
 		grep -v -- "^--+" | grep -v "^Repository" |\
 		grep -v "^All.repositories" | grep -v "^No.packages.found" |\

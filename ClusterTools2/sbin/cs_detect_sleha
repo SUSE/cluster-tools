@@ -227,7 +227,7 @@ function help(){
 	echo " --files	show common files"
 	echo " --pedantic	show even minimal traces of SLE-HA"
 	echo " --removeall	remove RPMs, files, and repos of SLE-HA"
-	echo " --uninstall	uninstall RPMs of SLE-HA"
+	echo " --uninstall	uninstall substantial RPMs of SLE-HA"
 	echo
 }
 
@@ -423,15 +423,20 @@ case $1 in
 		YESNO=no
 		read -p "Uninstall RPMs of SLE-HA? [yes/no]: " YESNO
 		[[ $YESNO == "yes" ]] || exit
-		remove_rpms repo
+		# remove_rpm repo # NOT: libgnutls, ligthttpd, rubygems
+		remove_rpms base
+		remove_rpms misc 
+		remove_rpms kern 
 		exit
 	;;
 	-r|--removeall)
 		YESNO=no
 		read -p "Remove RPMs, files, and repos of SLE-HA? [yes/no]: " YESNO
 		[[ $YESNO == "yes" ]] || exit
-		echo remove_files
-		echo remove_rpms
+		echo remove_files base
+		echo remove_files misc 
+		echo remove_files kern
+		echo remove_rpms repo
 		echo remove_cib
 		# TODO remove_repos
 		exit
@@ -443,7 +448,9 @@ case $1 in
 		( detect_files base
                   detect_files misc
                   detect_files kern
-                  detect_rpms repo | grep -v "in.*\.\.\.$" )|\
+                  ( detect_rpms base
+		    detect_rpms misc
+		    detect_rpms kern ) | grep -v "in.*\.\.\.$" )|\
 		grep -v "^INFO:.*###" | grep -v "^S.\|.Name" |\
 		grep -v -- "^--+" | grep -v "^Repository" |\
 		grep -v "^All.repositories" | grep -v "^No.packages.found" |\

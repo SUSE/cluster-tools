@@ -12,6 +12,8 @@ cs_detect_sleha \- looks for indicators of SLE-HA add-on
 \fBcs_detect_sleha\fP looks for RPMs, files, and repositories which might indicate an installation of the SLE-HA add-on.
 .br
 Un-installating all RPMs of SLE-HA is another function. Nevertheless, RPMs which were installed by dependency may remain on the system. Finally the script can remove almost all files and detach zypper repos which are related to SLE-HA.
+.br
+When detecting or removing SLE-HA, it is good to know that some RPMs are delivered with other products as well. F.e. libgnutls-extra26 with SLES, lighttpd and rubygems with SLE-SDK.
 .\"
 .SH OPTIONS
 .HP
@@ -43,7 +45,7 @@ Un-installating all RPMs of SLE-HA is another function. Nevertheless, RPMs which
 	remove RPMs, files, and repos of SLE-HA, as opposite to renewal.
 .HP
 \fB --uninstall\fR
-	uninstall RPMs of SLE-HA.
+	uninstall substantial RPMs of SLE-HA.
 .HP
 \fB --writecfg\fR
 	show internal variables, f.e. lists of RPMs and files.

@@ -396,8 +396,12 @@ function detect_avail_rpms(){
 			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
 		done
 		;;
-	esac ) | sort -u | sed s/"Abort..retry..ignore.*options...a.."//
+	esac ) | sort -u | sed s/"Abort..retry..ignore.*options...a.."// |\
+	grep -v "in.*\.\.\.$" | grep -v "^S.\|.Name" | grep -v -- "^--+" |\
+	grep -v "^Repository" | grep -v "^All.repositories" |\
+	grep -v "^No.packages.found" | grep -v "srcpackage"
 	echo "INFO: ### $FUNCNAME $1 end ###"
+	# TODO better grep, maybe positive filter function
 }
 
 
@@ -458,8 +462,8 @@ case $1 in
 		[[ $YESNO == "yes" ]] || exit
 		# remove_rpm repo # but NOT: libgnutls, ligthttpd, rubygems
 		remove_rpms base
-		remove_rpms misc 
-		remove_rpms kern 
+		remove_rpms misc
+		remove_rpms kern
 		exit
 	;;
 	-r|--removeall)
@@ -467,7 +471,7 @@ case $1 in
 		read -p "Remove RPMs, files, repos of SLE-HA? (DANGER) [yes/no]: " YESNO
 		[[ $YESNO == "yes" ]] || exit
 		echo remove_files base
-		echo remove_files misc 
+		echo remove_files misc
 		echo remove_files kern
 		echo remove_rpms repo
 		echo remove_cib
@@ -478,23 +482,18 @@ case $1 in
 		#set -x
 		RC=0
 		RC=$(
-		( detect_files base
-                  detect_files misc
-                  detect_files kern
-                  ( detect_avail_rpms base
-		    detect_avail_rpms misc
-		    detect_avail_rpms kern ) |\
-		grep -v "in.*\.\.\.$" )| grep -v "^INFO:.*###" |\
-		grep -v "^S.\|.Name" | grep -v -- "^--+" |\
-		grep -v "^Repository" | grep -v "^All.repositories" |\
-		grep -v "^No.packages.found" |\
-		grep -v -- "-devel" | grep -v "sdksp.*-" |\
-		grep -v "srcpackage" | tr -s "\n" 2>$ERR | wc -l )
+		 ( detect_files base
+                   detect_files misc
+                   detect_files kern
+                   ( detect_avail_rpms base
+		     detect_avail_rpms misc
+		     detect_avail_rpms kern
+		   ) | grep -v -- "-devel" | grep -v "sdksp.*-"
+		 )   | grep -v "^INFO:.*###" | tr -s "\n" 2>$ERR | wc -l )
 		echo "${EXE}: Found $RC hints on SLE-HA" >/dev/stderr
 		exit $RC
 		# TODO add function's real rc ($?) to RC as well
 		# TODO better excluding for RPMs from SDK (-devel)
-		# TODO better grep, maybe positive filter function
 	;;
 esac
 #

@@ -234,8 +234,8 @@ function help(){
 	echo " --version	show version"
 	echo " --writecfg	show some internal variables"
 	echo
-	echo " --detect	shown number of traces"
-	echo " --installed	show installed base RPMs"
+	echo " --detect	shown number of installed substantial RPMs, files "
+	echo " --installed	show installed substantial RPMs"
 	echo " --available	show available base RPMs"
 	echo " --standalone	show installed standalone RPMs, files"
 	echo " --files	show common files"
@@ -495,9 +495,9 @@ case $1 in
 		 ( detect_files base
                    detect_files misc
                    detect_files kern
-                   ( detect_avail_rpms base
-		     detect_avail_rpms misc
-		     detect_avail_rpms kern
+                   ( detect_inst_rpms base
+		     detect_inst_rpms misc
+		     detect_inst_rpms kern
 		   ) | grep -v -- "-devel" | grep -v "sdksp.*-"
 		 )   | grep -v "^INFO:.*###" | tr -s "\n" 2>$ERR | wc -l )
 		echo "${EXE}: Found $RC hints on SLE-HA" >/dev/stderr

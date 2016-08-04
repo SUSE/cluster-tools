@@ -1,0 +1,67 @@
+.TH cs_clusterstate 8 "18 Aug 2011" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_clusterstate \- show status of pacemaker HA cluster 
+.\"
+.SH SYNOPSIS
+.B cs_clusterstate \fI[OPTION]\fR
+.\"
+.SH DESCRIPTION
+\fBcs_clusterstate\fP TODO
+.br
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+	show help.
+.HP
+\fB --version\fR
+	show version.
+.HP
+\fB --all\fR
+	show all info .
+.HP
+\fB --basics\fR
+	show basics info .
+.HP
+\fB --network\fR
+	show network info .
+.HP
+\fB --storage\fR
+	show storage info .
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/clusterstate
+	the program itself.
+.TP
+/etc/ClusterTools2/clusterstate
+	the configuration.
+.\"
+.SH BUGS
+Currently very limited functionality.
+No other STONITH than SBD is known.
+No other data mirroring than MD RAID is known.
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBClusterTools2\fP(7), \fBcrm_mon\fP(8),  \fBcorosync-cfgtool\fP(8), \fBethtool\fP(8),  \fBsbd\fP(8), \fBmdadm\fP(8), \fBClusterService\fP(8)
+.\"
+.\"
+.SH COPYRIGHT
+(c) 2011 L.Pinne, Germany.
+.br
+cs_clusterstate comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

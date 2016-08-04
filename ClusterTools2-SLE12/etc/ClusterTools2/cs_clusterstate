@@ -1,0 +1,8 @@
+# /etc/ClusterTools2/cs_clusterstate
+# For SLES11.
+#
+ETH="bond0 eth3"
+SCF="/etc/sysconfig/sbd"
+# SBD device is determined automatically from SBD Config File
+#SBD="/dev/sdb1"
+#

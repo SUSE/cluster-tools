@@ -500,7 +500,7 @@ case $1 in
 		     detect_inst_rpms kern
 		   ) | grep -v -- "-devel" | grep -v "sdksp.*-"
 		 )   | grep -v "^INFO:.*###" | tr -s "\n" 2>$ERR | wc -l )
-		echo "${EXE}: Found $RC hints on SLE-HA" >/dev/stderr
+		echo "${EXE}: Found $RC hints on installed SLE-HA" >/dev/stderr
 		exit $RC
 		# TODO add function's real rc ($?) to RC as well
 		# TODO better excluding for RPMs from SDK (-devel)

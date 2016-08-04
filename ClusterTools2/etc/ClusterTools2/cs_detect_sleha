@@ -35,6 +35,7 @@ libglue2
 libcorosync4
 libpacemaker3
 libopenais3
+sbd
 "
 #
 SLEHA_MISC_RPM="
@@ -46,6 +47,7 @@ pacemaker-mgmt
 pacemaker-mgmt-client
 hawk
 drbd
+drbd-pacemaker
 yast2-cluster
 yast2-drbd
 yast2-iplb
@@ -58,6 +60,7 @@ python-pssh
 python-dateutil
 sleha-bootstrap
 ctdb
+libdlm3
 "
 #
 SLEHA_KERN_RPM="

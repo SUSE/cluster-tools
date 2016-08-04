@@ -51,6 +51,7 @@ libglue2
 libcorosync4
 libpacemaker3
 libopenais3
+sbd
 "
 test -z "${SLEHA_MISC_RPM}" &&\
 	SLEHA_MISC_RPM="
@@ -62,6 +63,7 @@ pacemaker-mgmt
 pacemaker-mgmt-client
 hawk
 drbd
+drbd-pacemaker
 yast2-cluster
 yast2-drbd
 yast2-iplb
@@ -74,6 +76,7 @@ python-pssh
 python-dateutil
 sleha-bootstrap
 ctdb
+libdlm3
 "
 test -z "${SLEHA_KERN_RPM}" &&\
 	SLEHA_KERN_RPM="
@@ -260,22 +263,26 @@ function remove_rpms(){
 	case $1 in
 		base)
 		for f in $SLEHA_BASE_RPM; do
-			timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR
+			#timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR ||\
+			rpm -e --allmatches --nodeps $f 2>$ERR
 		done
 		;;
 		misc)
 		for f in $SLEHA_MISC_RPM; do
-			timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR
+			#timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR ||\
+			rpm -e --allmatches --nodeps $f 2>$ERR
 		done
 		;;
 		kern)
 		for f in $SLEHA_KERN_RPM; do
-			timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR
+			#timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR ||\
+			rpm -e --allmatches --nodeps $f 2>$ERR
 		done
 		;;
 		repo)
 		for f in $SLEHA_REPO_RPM; do
-			timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR
+			#timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR ||\
+			rpm -e --allmatches --nodeps $f 2>$ERR
 		done
 		;;
 	esac

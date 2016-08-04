@@ -2,10 +2,11 @@
 #
 # cs_list_failcounts
 #
-# Version: 1.1 2011-07-12
-#
 # (c) 2009-2011 SUSE Linux GmbH, Germany. Author: F.Herschel.
 # GNU General Public License v2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
+#
+# Version: 2011-07-12 SLES11
 #
 
 EXE=$0

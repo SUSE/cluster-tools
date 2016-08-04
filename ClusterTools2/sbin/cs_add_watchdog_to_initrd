@@ -2,11 +2,11 @@
 #
 # cs_add_watchdog_to_initrd
 #
-# (c) 2011-2014 SUSE Linux GmbH, Germany.
+# (c) 2011-2014 SUSE Linux GmbH, Germany. Author: A.Rehg, L.Pinne
 # GNU General Public License v2. No warranty.
-# Author: A.Rehg, L.Pinne
+# http://www.gnu.org/licenses/gpl.html
 # 
-# Version: 0.02 2014-09-03 13:25
+# Version: 2014-09-03 13:25 SLES11
 #
 
 EXE="$0"

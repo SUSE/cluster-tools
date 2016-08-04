@@ -2,11 +2,11 @@
 #
 # cs_make_iscsi_conf
 #
-# (c) 2011 SUSE Linux GmbH, Germany.
+# (c) 2011 SUSE Linux GmbH, Germany. Author: A.Rehg, H.Bertram, L.Pinne.
 # GNU General Public License v2. No warranty.
-# Author: A.Rehg, H.Bertram, L.Pinne.
+# http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2012-02-12
+# Version: 2012-02-12 SLES11
 #
 
 EXE="$0"

@@ -2,12 +2,12 @@
 #
 # cs_reset_failcounts
 #
-# Version: 1.1 2016-03-02
-#
-# (c) 2009-2016 SUSE Linux GmbH, Germany. Author: F.Herschel.
+# (c) 2009-2016 SUSE Linux GmbH, Germany. Author: F.Herschel
 # GNU General Public License v2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
 #
-
+#  Version: 2016-03-02 SLES11
+#
 
 EXE=$0
 

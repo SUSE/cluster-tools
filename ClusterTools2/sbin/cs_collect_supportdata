@@ -2,11 +2,11 @@
 #
 # cs_collect_supportdata
 #
-# (c) 2011-2013 SUSE Linux GmbH, Germany.
+# (c) 2011-2013 SUSE Linux GmbH, Germany. Author: M.Brookhuis
 # GNU General Public License v2. No warranty.
-# Author: M.Brookhuis
+# http://www.gnu.org/licenses/gpl.html
 #
-# Version: 0.01 2013-04-22 
+# Version: 2013-04-22 SLES11
 #
 #set -xv
 

@@ -4,8 +4,9 @@
 #
 # (c) 2015-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License. No warranty.
+# http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2016-03-07 12:00
+# Version: 2016-03-07 12:00 SLES11
 #
 
 EXE="$0"

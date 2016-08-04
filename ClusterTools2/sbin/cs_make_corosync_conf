@@ -2,11 +2,11 @@
 #
 # cs_make_corosync_conf
 #
-# (c) 2011 SUSE Linux GmbH, Germany.
+# (c) 2011 SUSE Linux GmbH, Germany. Author: A.Rehg, L.Pinne
 # GNU General Public License v2. No warranty.
-# Author: A.Rehg, L.Pinne
+# http://www.gnu.org/licenses/gpl.html
 #
-# Version: 0.03 2011-07-21 12:12
+# Version: 2011-07-21 12:12 SLES11
 #
 
 EXE="$0"

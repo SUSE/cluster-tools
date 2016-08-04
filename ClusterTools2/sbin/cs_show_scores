@@ -1,7 +1,10 @@
 #!/bin/bash
+#
 # cs_show_scores
-# Apr 2009, Dominik Klein
+#
+# (c) Apr 2009, Author: Dominik Klein
 # Display scores of Linux-HA resources
+#
 
 if [ "$1" = "--help" -o "$1" = "-h" ]
 then
@@ -131,4 +134,4 @@ else
 fi
 
 rm $tmpfile $tmpfile2
-
+#

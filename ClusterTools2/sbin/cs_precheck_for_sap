@@ -4,10 +4,10 @@
 #
 # (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
 #
-# Version: 0.2.10 2015-03-02
+# Version: 2015-03-02 SLES11
 #
-# For SLES11.
 
 COMD=$(basename $0)
 CFIL=${2:-wowconfig}

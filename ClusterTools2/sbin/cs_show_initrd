@@ -4,8 +4,9 @@
 #
 # (c) 2014-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2016-06-22 12:18
+# Version: 2016-06-22 12:18 SLES11
 #
 
 EXE="$0"
@@ -13,7 +14,7 @@ EXE="$0"
 #test -s $CFG && source $CFG
 
 
-function help() {
+function help(){
 	echo "usage:	$(basename $0)"
 	echo "	$(basename $0) [OPTION]"
 	echo
@@ -27,7 +28,7 @@ function help() {
 }
 
 
-function show_initrd() {
+function show_initrd(){
 	# TODO verbose, f.e.: cpio -itv 2>/dev/null | colrm 43 54
 	file $1 | awk '$2=="gzip"' >/dev/null &&\
 		/usr/bin/zcat $1 | cpio -it 2>/dev/null
@@ -37,7 +38,7 @@ function show_initrd() {
 }
 
 
-function list_modules() {
+function list_modules(){
 	INITRDMODS=$(show_initrd $1 | grep "lib/modules.*.ko" |\
 		while read; do
 			basename $REPLY .ko

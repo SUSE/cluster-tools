@@ -2,10 +2,11 @@
 #
 # cs_delcib
 #
-# (c) 2011-2016 SUSE Linux GmbH, Germany. Authors: I.Manyugin, L.Pinne.
+# (c) 2011-2016 SUSE Linux GmbH, Germany. Author: I.Manyugin, L.Pinne.
 # GNU General Public License v2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
 #
-# Version: SLES11 0.2 2016-08-01
+# Version: 2016-08-01 SLES11
 #
 
 EXE="$0"

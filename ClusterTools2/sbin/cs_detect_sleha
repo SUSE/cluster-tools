@@ -17,6 +17,9 @@ test -s $CFG && source $CFG
 DELCIBCFG="/etc/ClusterTools2/cs_delcib"
 test -s $DELCIBCFG && source $DELCIBCFG
 
+test -z "${ZYPTMO}" &&\
+	ZYPTMO="5"
+
 test -z "${SLEHA_BASE_FIL}" &&\
 	SLEHA_BASE_FIL="
 /etc/corosync/corosync.conf
@@ -207,6 +210,7 @@ test -z "${BAK}" &&\
 #
 
 CFGVAR="
+ZYPTMO
 SLEHA_BASE_FIL
 SLEHA_MISC_FIL
 SLEHA_KERN_FIL
@@ -265,25 +269,25 @@ function remove_rpms(){
 	case $1 in
 		base)
 		for f in $SLEHA_BASE_RPM; do
-			#timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR ||\
+			#timeout $ZYPTMO zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR ||\
 			rpm -e --allmatches --nodeps $f 2>$ERR
 		done
 		;;
 		misc)
 		for f in $SLEHA_MISC_RPM; do
-			#timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR ||\
+			#timeout $ZYPTMO zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR ||\
 			rpm -e --allmatches --nodeps $f 2>$ERR
 		done
 		;;
 		kern)
 		for f in $SLEHA_KERN_RPM; do
-			#timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR ||\
+			#timeout $ZYPTMO zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR ||\
 			rpm -e --allmatches --nodeps $f 2>$ERR
 		done
 		;;
 		repo)
 		for f in $SLEHA_REPO_RPM; do
-			#timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR ||\
+			#timeout $ZYPTMO zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR ||\
 			rpm -e --allmatches --nodeps $f 2>$ERR
 		done
 		;;
@@ -294,8 +298,8 @@ function remove_rpms(){
 
 function remove_repos(){
 	echo "INFO: ### $FUNCNAME $1 start ###"
-	# TODO timeout 5 zypper rs (removeservice)
-	# TODO timeout 5 zypper rr (removerepo)
+	# TODO timeout $ZYPTMO zypper rs (removeservice)
+	# TODO timeout $ZYPTMO zypper rr (removerepo)
 	echo "INFO: ### $FUNCNAME $1 end ###"
 }
 
@@ -369,34 +373,35 @@ function detect_avail_rpms(){
 	# TODO read variable name from call, avoid case
 	echo "INFO: ### $FUNCNAME $1 start ###"
 	local ALL_RPM=$(rpm -qa 2>$ERR)
-	timeout 5 zypper ref 2>$ERR 1>$ERR
+	timeout $ZYPTMO zypper ref 2>$ERR 1>$ERR
 
 	( case $1 in
 		base)
 		for r in $SLEHA_BASE_RPM; do
-			timeout 5 zypper se -s $r 2>$ERR ||\
+			timeout $ZYPTMO zypper se -s $r 2>$ERR ||\
 			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
 		done
 		;;
 		misc)
 		for r in $SLEHA_MISC_RPM; do
-			timeout 5 zypper se -s $r 2>$ERR ||\
+			timeout $ZYPTMO zypper se -s $r 2>$ERR ||\
 			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
 		done
 		;;
 		kern)
 		for r in $SLEHA_KERN_RPM; do
-			timeout 5 zypper se -s $r 2>$ERR ||\
+			timeout $ZYPTMO zypper se -s $r 2>$ERR ||\
 			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
 		done
 		;;
 		repo)
 		for r in $SLEHA_REPO_RPM; do
-			timeout 5 zypper se -s $r 2>$ERR ||\
+			timeout $ZYPTMO zypper se -s $r 2>$ERR ||\
 			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
 		done
 		;;
-	esac ) | sort -u | sed s/"Abort..retry..ignore.*options...a.."// |\
+	esac ) | tr -s " " | sort -u |\
+	sed s/"Abort..retry..ignore.*options...a.."// |\
 	grep -v "in.*\.\.\.$" | grep -v "^S.\|.Name" | grep -v -- "^--+" |\
 	grep -v "^Repository" | grep -v "^All.repositories" |\
 	grep -v "^No.packages.found" | grep -v "srcpackage"
@@ -409,7 +414,7 @@ function detect_repos(){
 	echo "INFO: ### $FUNCNAME $1 start ###"
 	# TODO detect repos
 	#case $1 in
-	#timeout 5 zypper ... --with-repos --sort-by-priority --details --uri
+	#timeout $ZYPTMO zypper ... --with-repos --sort-by-priority --details --uri
 	#esac
 	echo "INFO: ### $FUNCNAME $1 start ###"
 }

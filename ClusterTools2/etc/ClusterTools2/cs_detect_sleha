@@ -1,6 +1,8 @@
 # /etc/ClusterTools2/cs_detect_sleha 
 # For SLES11.
 #
+ZYPTMO="5"
+#
 SLEHA_BASE_FIL="
 /etc/corosync/corosync.conf
 /var/lib/pacemaker/cib/cib.xml

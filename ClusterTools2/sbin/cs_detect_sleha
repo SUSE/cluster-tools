@@ -24,10 +24,11 @@ test -z "${SLEHA_BASE_FIL}" &&\
 "
 test -z "${SLEHA_MISC_FIL}" &&\
 	SLEHA_MISC_FIL="
+/etc/sysconfig/sbd
 /etc/products.d/sle-hae.prod
 /etc/corosync/authkey
 /var/lib/corosync/ringid_*
-/var/lib/pacemaker/pengine/*
+/var/lib/pacemaker/pengine/*last
 /etc/csync2/csync2.cfg
 /etc/drbd.conf
 /var/cache/zypp/raw/*/suse/setup/descr/ha_sles*.pat.gz
@@ -51,7 +52,6 @@ libglue2
 libcorosync4
 libpacemaker3
 libopenais3
-sbd
 "
 test -z "${SLEHA_MISC_RPM}" &&\
 	SLEHA_MISC_RPM="
@@ -78,6 +78,7 @@ sleha-bootstrap
 ctdb
 libdlm3
 scsires
+sbd
 "
 test -z "${SLEHA_KERN_RPM}" &&\
 	SLEHA_KERN_RPM="
@@ -227,11 +228,11 @@ function help(){
 	echo " --detect	shown number of traces"
 	echo " --installed	show installed base RPMs"
 	echo " --available	show available base RPMs"
-	echo " --standalone	show standalone services"
+	echo " --standalone	show installed standalone RPMs, files"
 	echo " --files	show common files"
 	echo " --pedantic	show even minimal traces of SLE-HA"
-	echo " --removeall	remove RPMs, files, and repos of SLE-HA"
 	echo " --uninstall	uninstall substantial RPMs of SLE-HA"
+	echo " --removeall	remove RPMs, files, repos of SLE-HA (DANGER)"
 	echo
 }
 
@@ -333,36 +334,69 @@ function detect_files(){
 }
 
 
-function detect_rpms(){
+function detect_inst_rpms(){
 	# TODO read variable name from call, avoid case
 	echo "INFO: ### $FUNCNAME $1 start ###"
-	timeout 5 zypper ref 2>$ERR
-	case $1 in
+	local ALL_RPM=$(rpm -qa 2>$ERR)
+
+	( case $1 in
+		base)
+		for r in $SLEHA_BASE_RPM; do
+			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
+		done
+		;;
+		misc)
+		for r in $SLEHA_MISC_RPM; do
+			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
+		done
+		;;
+		kern)
+		for r in $SLEHA_KERN_RPM; do
+			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
+		done
+		;;
+		repo)
+		for r in $SLEHA_REPO_RPM; do
+			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
+		done
+		;;
+	esac ) | sort -u
+	echo "INFO: ### $FUNCNAME $1 end ###"
+}
+
+
+function detect_avail_rpms(){
+	# TODO read variable name from call, avoid case
+	echo "INFO: ### $FUNCNAME $1 start ###"
+	local ALL_RPM=$(rpm -qa 2>$ERR)
+	timeout 5 zypper ref 2>$ERR 1>$ERR
+
+	( case $1 in
 		base)
 		for r in $SLEHA_BASE_RPM; do
 			timeout 5 zypper se -s $r 2>$ERR ||\
-			rpm -qa 2>$ERR | grep $r
+			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
 		done
 		;;
 		misc)
 		for r in $SLEHA_MISC_RPM; do
 			timeout 5 zypper se -s $r 2>$ERR ||\
-			rpm -qa 2>$ERR | grep $r
+			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
 		done
 		;;
 		kern)
 		for r in $SLEHA_KERN_RPM; do
 			timeout 5 zypper se -s $r 2>$ERR ||\
-			rpm -qa 2>$ERR | grep $r
+			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
 		done
 		;;
 		repo)
 		for r in $SLEHA_REPO_RPM; do
 			timeout 5 zypper se -s $r 2>$ERR ||\
-			rpm -qa 2>$ERR | grep $r
+			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
 		done
 		;;
-	esac
+	esac ) | sort -u | sed s/"Abort..retry..ignore.*options...a.."//
 	echo "INFO: ### $FUNCNAME $1 end ###"
 }
 
@@ -370,9 +404,9 @@ function detect_rpms(){
 function detect_repos(){
 	echo "INFO: ### $FUNCNAME $1 start ###"
 	# TODO detect repos
-#	case $1 in
+	#case $1 in
 	#timeout 5 zypper ... --with-repos --sort-by-priority --details --uri
-#	esac
+	#esac
 	echo "INFO: ### $FUNCNAME $1 start ###"
 }
 
@@ -393,45 +427,36 @@ case $1 in
 		exit
 	;;
 	-a|--available)
-		detect_rpms base | grep -v "in.*\.\.\.$"
+		detect_avail_rpms base
 		exit
 	;;
 	-i|--installed)
-		echo "INFO: ### detect_rpms base start ###"
-		echo "S | Name             | Type       | Version      | Arch   | Repository "
-		echo "-----------------------------------------------------------------------"
-		detect_rpms base | grep -e "^i" -e "INFO:.*end"
+		detect_inst_rpms base
 		exit
 	;;
 	-f|--files)
 		detect_files base
 		detect_files misc
-		detect_files kern 
+		detect_files kern
 		exit
 	;;
 	-s|--standalone)
 		detect_files kern
-		echo "INFO: ### detect_rpms kern start ###"
-		echo "S | Name             | Type       | Version      | Arch   | Repository "
-		echo "-----------------------------------------------------------------------"
-		detect_rpms kern | grep -v "^INFO:.*start.###" | grep -v "in.*\.\.\.$" | grep -v "^S.\|.Name" |\
-	 		grep -v "^Repository" | grep -v "^All.repositories" | grep -v "^No.packages.found" |\
-			grep -v -- "^--+" | tr -s "\n"
+		detect_inst_rpms kern
 		exit
-		# TODO better grep, maybe positive filter function
 	;;
 	-p|--pedantic|--paranoid|--penetrant)
 		detect_files base
 		detect_files misc
 		detect_files kern
-		detect_rpms repo | grep -v "in.*\.\.\.$"
+		detect_avail_rpms repo
 		exit
 	;;
 	-u|--uninstall)
 		YESNO=no
 		read -p "Uninstall RPMs of SLE-HA? [yes/no]: " YESNO
 		[[ $YESNO == "yes" ]] || exit
-		# remove_rpm repo # NOT: libgnutls, ligthttpd, rubygems
+		# remove_rpm repo # but NOT: libgnutls, ligthttpd, rubygems
 		remove_rpms base
 		remove_rpms misc 
 		remove_rpms kern 
@@ -439,7 +464,7 @@ case $1 in
 	;;
 	-r|--removeall)
 		YESNO=no
-		read -p "Remove RPMs, files, and repos of SLE-HA? [yes/no]: " YESNO
+		read -p "Remove RPMs, files, repos of SLE-HA? (DANGER) [yes/no]: " YESNO
 		[[ $YESNO == "yes" ]] || exit
 		echo remove_files base
 		echo remove_files misc 
@@ -456,12 +481,13 @@ case $1 in
 		( detect_files base
                   detect_files misc
                   detect_files kern
-                  ( detect_rpms base
-		    detect_rpms misc
-		    detect_rpms kern ) | grep -v "in.*\.\.\.$" )|\
-		grep -v "^INFO:.*###" | grep -v "^S.\|.Name" |\
-		grep -v -- "^--+" | grep -v "^Repository" |\
-		grep -v "^All.repositories" | grep -v "^No.packages.found" |\
+                  ( detect_avail_rpms base
+		    detect_avail_rpms misc
+		    detect_avail_rpms kern ) |\
+		grep -v "in.*\.\.\.$" )| grep -v "^INFO:.*###" |\
+		grep -v "^S.\|.Name" | grep -v -- "^--+" |\
+		grep -v "^Repository" | grep -v "^All.repositories" |\
+		grep -v "^No.packages.found" |\
 		grep -v -- "-devel" | grep -v "sdksp.*-" |\
 		grep -v "srcpackage" | tr -s "\n" 2>$ERR | wc -l )
 		echo "${EXE}: Found $RC hints on SLE-HA" >/dev/stderr

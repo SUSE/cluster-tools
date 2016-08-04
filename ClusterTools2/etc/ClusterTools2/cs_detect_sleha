@@ -7,10 +7,11 @@ SLEHA_BASE_FIL="
 "
 #
 SLEHA_MISC_FIL="
+/etc/sysconfig/sbd
 /etc/products.d/sle-hae.prod
 /etc/corosync/authkey
 /var/lib/corosync/ringid_*
-/var/lib/pacemaker/pengine/*
+/var/lib/pacemaker/pengine/*last
 /etc/csync2/csync2.cfg
 /etc/drbd.conf
 /var/cache/zypp/raw/SLE11-SP4-SAP-DVD/suse/setup/descr/ha_sles-12-0.11.14.x86_64.pat.gz
@@ -35,7 +36,6 @@ libglue2
 libcorosync4
 libpacemaker3
 libopenais3
-sbd
 "
 #
 SLEHA_MISC_RPM="
@@ -62,6 +62,7 @@ sleha-bootstrap
 ctdb
 libdlm3
 scsires
+sbd
 "
 #
 SLEHA_KERN_RPM="

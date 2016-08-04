@@ -42,11 +42,13 @@ libopenais3
 #
 SLEHA_MISC_RPM="
 sle-hae-release
+sle-hae-release-cd
 release-notes-hae
 ocfs2-tools
 csync2
 pacemaker-mgmt
 pacemaker-mgmt-client
+pacemaker-cli
 hawk
 drbd
 drbd-pacemaker
@@ -63,6 +65,9 @@ python-dateutil
 sleha-bootstrap
 ctdb
 libdlm3
+libdlm
+cluster-network-kmp-default
+hawk-templates
 scsires
 sbd
 "

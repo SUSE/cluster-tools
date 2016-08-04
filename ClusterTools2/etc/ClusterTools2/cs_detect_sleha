@@ -61,6 +61,7 @@ python-dateutil
 sleha-bootstrap
 ctdb
 libdlm3
+scsires
 "
 #
 SLEHA_KERN_RPM="

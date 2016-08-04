@@ -6,7 +6,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2016-08-04 SLES11
+# Version: 2016-08-04 12:00 SLES11
 #
 
 EXE="$0"
@@ -258,7 +258,7 @@ function remove_files(){
 function remove_rpms(){
 	echo "INFO: ### $FUNCNAME $1 start ###"
 	for f in $SLEHA_REPO_RPM; do
-		timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f
+		timeout 5 zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR
 	done
 	echo "INFO: ### $FUNCNAME $1 end ###"
 }
@@ -308,8 +308,8 @@ function detect_files(){
 
 function detect_rpms(){
 	# TODO read variable name from call, avoid case
-	echo "INFO: $FUNCNAME $1 start ###"
-	timeout 5 zypper ref
+	echo "INFO: ### $FUNCNAME $1 start ###"
+	timeout 5 zypper ref 2>$ERR
 	case $1 in
 		base)
 		for r in $SLEHA_BASE_RPM; do
@@ -397,7 +397,7 @@ case $1 in
 		YESNO=no
 		read -p "Uninstall RPMs of SLE-HA? [yes/no]: " YESNO
 		[[ $YESNO == "yes" ]] || exit
-		echo remove_rpms
+		remove_rpms
 		exit
 	;;
 	-r|--removeall)
@@ -411,6 +411,7 @@ case $1 in
 		exit
 	;;
 	-d|--detect|*)
+		#set -x
 		RC=0
 		RC=$(
 		( detect_files base
@@ -419,11 +420,15 @@ case $1 in
                   ( detect_rpms base
                     detect_rpms misc
                     detect_rpms kern ) | grep -v "in.*\.\.\.$" )|\
-		grep -v "^INFO:.*###" | grep -v "^S.\|.Name" | grep -v -- "^--+" |\
-	 	grep -v "^Repository" | grep -v "^All.repositories" | grep -v "^No.packages.found" |\
-		tr -s "\n" 2>$ERR | wc -l )
+		grep -v "^INFO:.*###" | grep -v "^S.\|.Name" |\
+		grep -v -- "^--+" | grep -v "^Repository" |\
+		grep -v "^All.repositories" | grep -v "^No.packages.found" |\
+		grep -v -- "-devel" | grep -v "sdksp.*-" |\
+		grep -v "srcpackage" | tr -s "\n" 2>$ERR | wc -l )
 		echo "${EXE}: Found $RC hints on SLE-HA" >/dev/stderr
 		exit $RC
+		# TODO add function's real rc ($?) to RC as well
+		# TODO better excluding for RPMs from SDK (-devel)
 		# TODO better grep, maybe positive filter function
 	;;
 esac

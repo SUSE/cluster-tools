@@ -51,20 +51,23 @@ Un-installating all RPMs of SLE-HA is another function. Nevertheless, RPMs which
 .SH EXAMPLES
 .br
 .TP
-* Search for files and RPMs that might indicate components of SLE-HA are installed. Be pedantic with the search, but just print number of findings. A return code of "0" means "search went well, no traces of SLE-HA found".
-# cs_detect_sleha ; echo $?
+* Search for files and RPMs that might indicate components of SLE-HA are installed. Be pedantic with the search, but just print number of findings. A return code of "0" means "search went well, no traces of SLE-HA found". Return codes below "5" indicate some spoor, but usually not a functional SLE-HA installation. 
+# \fBcs_detect_sleha 2>/dev/null; echo $?\fR
 .TP
-* Search for files and RPMs that might indicate components of SLE-HA are installed. Be pedantic with the search and print all findings.
-# cs_detect_sleha --pedantic
+* Search for files and RPMs that might indicate components of SLE-HA are installed. Be pedantic with the search and print all findings. This might help, if the above search returned something obscure.
+# \fBcs_detect_sleha --pedantic\fR
 .TP
-* Search for components that might run without SLE-HA, but are supported only together with SLE-HA - f.e. DRBD, OCFS2, ReaR.
-# cs_detect_sleha -s
+* Search for components that might run without SLE-HA, but are supported only together with SLE-HA - f.e. DRBD, OCFS2, ReaR. This might help, if a few hints were detected.
+# \fBcs_detect_sleha -s\fR
 .TP
-* Show what RPMs and files are known to this script. The output might be used for preparing a custom config file /etc/ClusterTools2/cs_detect_sleha.
-# cs_detect_sleha -w
+* Search for config and status files. This might help finding out whether SLE-HA was in use. 
+# \fBcs_detect_sleha -f\fR
 .TP
 * Uninstall substantial RPMs of SLE-HA. Some RPMs that are fetched as dependecy during installation will remain on the system. Also all files that are not handled by the RPM post-scripts will remain.
-# cs_detect_sleha --uninstall
+# \fBcs_detect_sleha --uninstall\fR
+.TP
+* Show what RPMs and files are known to this script. The output might be used for preparing a custom config file /etc/ClusterTools2/cs_detect_sleha.
+# \fBcs_detect_sleha -w\fR
 .\"
 .SH EXIT STATUS
 .B 0
@@ -75,6 +78,18 @@ Usage, syntax or execution errors.
 .br
 When called without any option, or with option "--detect", the return
 code equals the number of indications found.
+.br
+0     : no SLE-HA
+.br
+<5    : some spoor, but no functional SLE-HA
+.br
+<10   : maybe standalone function installed (f.e. DRBD, OCFS2, ReaR)
+.br
+10-90 : maybe functional SLE-HA installed
+.br
+90>   : certainly functional SLE-HA installed, maybe used
+.br
+99>   : certainly functional SLE-HA installed and used
 .\"
 .SH FILES
 .TP

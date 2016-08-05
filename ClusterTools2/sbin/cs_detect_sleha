@@ -6,7 +6,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2016-08-04 12:00 SLES11
+# Version: 2016-08-05 11:11 SLES11
 #
 
 EXE="$0"
@@ -99,8 +99,16 @@ drbd-kmp-xen
 rear
 rear116
 "
+# some RPMs are delviered by SLES or SLE-SDK as well
+test -z "${SLEHA_EXTR_RPM}" &&\
+	SLEHA_EXTR_RPM="
+libgnutls-extra26
+rubygems
+lighttpd
+"
 # find . -name "*.rpm" | while read; do rpm -qip $REPLY |\
 # awk '$1=="Name" {print $3}'; done | sort
+# remove SLEHA_EXTR_RPM from the list
 test -z "${SLEHA_REPO_RPM}" &&\
         SLEHA_REPO_RPM="
 cluster-glue
@@ -139,7 +147,6 @@ libdlm3
 libdlm-devel
 libglue2
 libglue-devel
-libgnutls-extra26
 libnetfilter_conntrack3
 libnetfilter_conntrack-devel
 libnfnetlink-devel
@@ -150,7 +157,6 @@ libpacemaker-devel
 libqb0
 libqb-devel
 librsync
-lighttpd
 lvm2-clvm
 nagios-plugins-metadata
 ocfs2console
@@ -178,7 +184,6 @@ rear-SUSE
 release-notes-hae
 resource-agents
 rubygem-bundler
-rubygems
 sbd
 scsires
 sleha-bootstrap
@@ -223,6 +228,7 @@ SLEHA_BASE_RPM
 SLEHA_MISC_RPM
 SLEHA_KERN_RPM
 SLEHA_REPO_RPM
+SLEHA_EXTR_RPM
 "
 
 # TODO show RPM list from pattern file
@@ -260,6 +266,31 @@ function writecfg(){
 }
 
 
+function get_inst_rpmall(){
+	RC=0
+	ALL_RPM=$(timeout $ZYPTMO rpm -qa 2>$ERR; RC=$?)
+	if [[ $RC -ne 0 ]]; then
+		echo "ERR: Could not get RPM list from rpm. RC=$RC"
+		exit $RC
+	fi
+}
+
+
+function get_avail_rpmall(){
+	RC=0
+	timeout $ZYPTMO zypper ref 2>$ERR 1>$ERR
+	ALL_RPM=$( (timeout $ZYPTMO zypper se -s 2>$ERR ; RC=$?) |\
+		awk -F"|" '$1!~/\.\.\./ {print $2,$4}' | tr -s " " |\
+		cut -b2- | sed -e s/" "$//g -e s/" "/"-"/g | sort -u )
+		# TODO above lines in one awk and one sed
+	if [[ $RC -ne 0 ]]; then
+		echo "ERR: Could not get RPM list from zypper. RC=$RC"
+		get_inst_rpmall
+		exit $RC
+	fi
+}
+
+
 function remove_files(){
 	echo "INFO: ### $FUNCNAME $1 start ###"
 	for f in $SLEHA_BASE_FIL $SLEHA_MISC_FIL $SLEHA_KERN_FIL; do
@@ -274,25 +305,21 @@ function remove_rpms(){
 	case $1 in
 		base)
 		for f in $SLEHA_BASE_RPM; do
-			#timeout $ZYPTMO zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR ||\
 			rpm -e --allmatches --nodeps $f 2>$ERR
 		done
 		;;
 		misc)
 		for f in $SLEHA_MISC_RPM; do
-			#timeout $ZYPTMO zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR ||\
 			rpm -e --allmatches --nodeps $f 2>$ERR
 		done
 		;;
 		kern)
 		for f in $SLEHA_KERN_RPM; do
-			#timeout $ZYPTMO zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR ||\
 			rpm -e --allmatches --nodeps $f 2>$ERR
 		done
 		;;
 		repo)
 		for f in $SLEHA_REPO_RPM; do
-			#timeout $ZYPTMO zypper rm --no-force-resolution --no-clean-deps --quiet --yes $f 2>$ERR ||\
 			rpm -e --allmatches --nodeps $f 2>$ERR
 		done
 		;;
@@ -346,8 +373,6 @@ function detect_files(){
 function detect_inst_rpms(){
 	# TODO read variable name from call, avoid case
 	echo "INFO: ### $FUNCNAME $1 start ###"
-	local ALL_RPM=$(rpm -qa 2>$ERR)
-
 	( case $1 in
 		base)
 		for r in $SLEHA_BASE_RPM; do
@@ -377,31 +402,24 @@ function detect_inst_rpms(){
 function detect_avail_rpms(){
 	# TODO read variable name from call, avoid case
 	echo "INFO: ### $FUNCNAME $1 start ###"
-	local ALL_RPM=$(rpm -qa 2>$ERR)
-	timeout $ZYPTMO zypper ref 2>$ERR 1>$ERR
-
 	( case $1 in
 		base)
 		for r in $SLEHA_BASE_RPM; do
-			timeout $ZYPTMO zypper se -s $r 2>$ERR ||\
 			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
 		done
 		;;
 		misc)
 		for r in $SLEHA_MISC_RPM; do
-			timeout $ZYPTMO zypper se -s $r 2>$ERR ||\
 			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
 		done
 		;;
 		kern)
 		for r in $SLEHA_KERN_RPM; do
-			timeout $ZYPTMO zypper se -s $r 2>$ERR ||\
 			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
 		done
 		;;
 		repo)
 		for r in $SLEHA_REPO_RPM; do
-			timeout $ZYPTMO zypper se -s $r 2>$ERR ||\
 			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
 		done
 		;;
@@ -441,11 +459,15 @@ case $1 in
 		exit
 	;;
 	-a|--available)
+		get_avail_rpmall
 		detect_avail_rpms base
+		detect_inst_rpms kern 
 		exit
 	;;
 	-i|--installed)
+		get_inst_rpmall
 		detect_inst_rpms base
+		detect_inst_rpms kern 
 		exit
 	;;
 	-f|--files)
@@ -456,6 +478,7 @@ case $1 in
 	;;
 	-s|--standalone)
 		detect_files kern
+		get_inst_rpmall
 		detect_inst_rpms kern
 		exit
 	;;
@@ -463,6 +486,7 @@ case $1 in
 		detect_files base
 		detect_files misc
 		detect_files kern
+		get_avail_rpmall
 		detect_avail_rpms repo
 		exit
 	;;
@@ -495,6 +519,7 @@ case $1 in
 		 ( detect_files base
                    detect_files misc
                    detect_files kern
+		   get_inst_rpmall
                    ( detect_inst_rpms base
 		     detect_inst_rpms misc
 		     detect_inst_rpms kern

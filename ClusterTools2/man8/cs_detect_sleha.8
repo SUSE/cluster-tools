@@ -10,7 +10,7 @@ cs_detect_sleha \- looks for indicators of SLE-HA add-on
 .\"
 .SH DESCRIPTION
 \fBcs_detect_sleha\fP looks for RPMs, files, and repositories which might indicate an installation of the SLE-HA add-on.
-Un-installating all RPMs of SLE-HA is another function. Nevertheless, RPMs which were installed by dependency may remain on the system. Finally the script can remove almost all files and detach zypper repos which are related to SLE-HA.
+Un-installing all RPMs of SLE-HA is another function. Nevertheless, RPMs which were installed by dependency may remain on the system. Finally the script can remove almost all files and detach zypper repos which are related to SLE-HA.
 
 When detecting or removing SLE-HA, it is good to know that some RPMs are delivered with other products as well. F.e. libgnutls-extra26 with SLES, lighttpd and rubygems with SLE-SDK. Further, the number of RPMs seen depends on available repositories. Thus, if no repository is connected, a functional SLE-HA might show up with less than 30 RPMs. The same system might show 120 RPMs, if pool and update channels are available.
 

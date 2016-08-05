@@ -99,12 +99,19 @@ drbd-kmp-xen
 rear
 rear116
 "
-# some RPMs are delviered by SLES or SLE-SDK as well
+# some RPMs are in SLES or SLE-SDK as well
 test -z "${SLEHA_EXTR_RPM}" &&\
 	SLEHA_EXTR_RPM="
 libgnutls-extra26
 rubygems
 lighttpd
+"
+# some RPMs are in SLES-for-SAP only
+test -z "${SLEHA_4SAP_RPM}" &&\
+        SLEHA_4SAP_RPM="
+SAPHanaSR
+SAPHanaSR-ScaleOut
+sap_suse_cluster_connector
 "
 # find . -name "*.rpm" | while read; do rpm -qip $REPLY |\
 # awk '$1=="Name" {print $3}'; done | sort
@@ -268,9 +275,9 @@ function writecfg(){
 
 function get_inst_rpmall(){
 	RC=0
-	ALL_RPM=$(timeout $ZYPTMO rpm -qa 2>$ERR; RC=$?)
-	if [[ $RC -ne 0 ]]; then
-		echo "ERR: Could not get RPM list from rpm. RC=$RC"
+	ALL_RPM=$(timeout $ZYPTMO rpm -qa 2>$ERR | sort; RC=$?)
+	if [ $RC -ne 0 ]; then
+		echo "ERR: Can not read from rpm. RC=$RC"
 		exit $RC
 	fi
 }
@@ -278,16 +285,21 @@ function get_inst_rpmall(){
 
 function get_avail_rpmall(){
 	RC=0
+	ALL_RPM=""
 	timeout $ZYPTMO zypper ref 2>$ERR 1>$ERR
 	ALL_RPM=$( (timeout $ZYPTMO zypper se -s 2>$ERR ; RC=$?) |\
 		awk -F"|" '$1!~/\.\.\./ {print $2,$4}' | tr -s " " |\
 		cut -b2- | sed -e s/" "$//g -e s/" "/"-"/g | sort -u )
 		# TODO above lines in one awk and one sed
-	if [[ $RC -ne 0 ]]; then
-		echo "ERR: Could not get RPM list from zypper. RC=$RC"
-		get_inst_rpmall
-		exit $RC
+	if [ $RC -ne 0 -o "$ALL_RPM" = "" ]; then
+		echo "ERR: Can not read from zypper. RC=$RC"
+		ALL_RPM=$(timeout $ZYPTMO rpm -qa 2>$ERR | sort; RC=$?)
+		if [ $RC -ne 0 ]; then
+			echo "ERR: Can not read from rpm. RC=$RC"
+			exit $RC
+		fi
 	fi
+	# TODO better error handling
 }
 
 
@@ -315,6 +327,11 @@ function remove_rpms(){
 		;;
 		kern)
 		for f in $SLEHA_KERN_RPM; do
+			rpm -e --allmatches --nodeps $f 2>$ERR
+		done
+		;;
+		4sap)
+		for f in $SLEHA_4SAP_RPM; do
 			rpm -e --allmatches --nodeps $f 2>$ERR
 		done
 		;;
@@ -389,6 +406,11 @@ function detect_inst_rpms(){
 			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
 		done
 		;;
+		4sap)
+		for r in $SLEHA_4SAP_RPM; do
+			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
+		done
+		;;
 		repo)
 		for r in $SLEHA_REPO_RPM; do
 			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
@@ -415,6 +437,11 @@ function detect_avail_rpms(){
 		;;
 		kern)
 		for r in $SLEHA_KERN_RPM; do
+			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
+		done
+		;;
+		4sap)
+		for r in $SLEHA_4SAP_RPM; do
 			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
 		done
 		;;
@@ -461,19 +488,21 @@ case $1 in
 	-a|--available)
 		get_avail_rpmall
 		detect_avail_rpms base
-		detect_inst_rpms kern 
+		detect_inst_rpms kern
+		detect_inst_rpms 4sap 
 		exit
 	;;
 	-i|--installed)
 		get_inst_rpmall
 		detect_inst_rpms base
 		detect_inst_rpms kern 
+		detect_inst_rpms 4sap 
 		exit
 	;;
 	-f|--files)
 		detect_files base
-		detect_files misc
 		detect_files kern
+		detect_files misc
 		exit
 	;;
 	-s|--standalone)
@@ -484,10 +513,11 @@ case $1 in
 	;;
 	-p|--pedantic|--paranoid|--penetrant)
 		detect_files base
-		detect_files misc
 		detect_files kern
+		detect_files misc
 		get_avail_rpmall
 		detect_avail_rpms repo
+		detect_avail_rpms 4sap 
 		exit
 	;;
 	-u|--uninstall)
@@ -496,8 +526,9 @@ case $1 in
 		[[ $YESNO == "yes" ]] || exit
 		# remove_rpm repo # but NOT: libgnutls, ligthttpd, rubygems
 		remove_rpms base
-		remove_rpms misc
 		remove_rpms kern
+		remove_rpms misc
+		remove_rpms 4sap 
 		exit
 	;;
 	-r|--removeall)
@@ -505,10 +536,11 @@ case $1 in
 		read -p "Remove RPMs, files, repos of SLE-HA? (DANGER) [yes/no]: " YESNO
 		[[ $YESNO == "yes" ]] || exit
 		echo remove_files base
-		echo remove_files misc
 		echo remove_files kern
-		echo remove_rpms repo
+		echo remove_files misc
 		echo remove_cib
+		echo remove_rpms repo
+		echo remove_rpms 4sap 
 		# TODO remove_repos
 		exit
 	;;
@@ -517,12 +549,13 @@ case $1 in
 		RC=0
 		RC=$(
 		 ( detect_files base
-                   detect_files misc
                    detect_files kern
+                   detect_files misc
+                   detect_files 4sap
 		   get_inst_rpmall
                    ( detect_inst_rpms base
-		     detect_inst_rpms misc
 		     detect_inst_rpms kern
+		     detect_inst_rpms misc
 		   ) | grep -v -- "-devel" | grep -v "sdksp.*-"
 		 )   | grep -v "^INFO:.*###" | tr -s "\n" 2>$ERR | wc -l )
 		echo "${EXE}: Found $RC hints on installed SLE-HA" >/dev/stderr

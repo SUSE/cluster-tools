@@ -83,6 +83,18 @@ rear
 rear116
 "
 #
+SLEHA_EXTR_RPM="
+libgnutls-extra26
+rubygems
+lighttpd
+"
+#
+SLEHA_4SAP_RPM="
+SAPHanaSR
+SAPHanaSR-ScaleOut
+sap_suse_cluster_connector
+"
+#
 SLEHA_REPO_RPM="
 cluster-glue
 cluster-network-kmp-default
@@ -120,7 +132,6 @@ libdlm3
 libdlm-devel
 libglue2
 libglue-devel
-libgnutls-extra26
 libnetfilter_conntrack3
 libnetfilter_conntrack-devel
 libnfnetlink-devel
@@ -131,7 +142,6 @@ libpacemaker-devel
 libqb0
 libqb-devel
 librsync
-lighttpd
 lvm2-clvm
 nagios-plugins-metadata
 ocfs2console
@@ -159,7 +169,6 @@ rear-SUSE
 release-notes-hae
 resource-agents
 rubygem-bundler
-rubygems
 sbd
 scsires
 sleha-bootstrap

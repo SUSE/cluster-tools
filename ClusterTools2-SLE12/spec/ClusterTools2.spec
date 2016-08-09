@@ -19,7 +19,7 @@ Summary:      Cluster Tools to control some functions easy
 Version:      3.0.0
 #Release:      0.1
 Release:      3
-Source:       %{name}-%{version}.tgz
+Source:       %{name}-%{version}.tbz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
 Vendor:	      SUSE Linux GmbH

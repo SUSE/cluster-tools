@@ -24,10 +24,10 @@ test:
 
 tar:	
 	#tar -cvzf ${PKT}-${VERS}.tgz man? share sbin spec agents lib scripts samples cli etc plugins
-	tar -cvzf ${PKT}-${VERS}.tgz man? share sbin spec samples etc plugins
+	tar -cvjf ${PKT}-${VERS}.tbz man? share sbin spec samples etc plugins
 
 rpm:	tar
-	mv ${PKT}-${VERS}.tgz /usr/src/packages/SOURCES
+	mv ${PKT}-${VERS}.tbz /usr/src/packages/SOURCES
 	cp spec/${PKT}.spec /usr/src/packages/SPECS
 	( cd /usr/src/packages; sudo rpmbuild -ba --target noarch SPECS/${PKT}.spec )
 

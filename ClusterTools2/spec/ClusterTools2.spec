@@ -86,7 +86,7 @@ cp -va etc/logrotate.d/* %{buildroot}/etc/logrotate.d/
 #
 cp -a share/* %{buildroot}/usr/share/ClusterTools2/
 cp -a cli/* %{buildroot}/usr/share/ClusterTools2/cli/
-cp -a cli/on-fail-block/* %{buildroot}/usr/share/ClusterTools2/cli/on-fail-block/*
+cp -a cli/on-fail-block/* %{buildroot}/usr/share/ClusterTools2/cli/on-fail-block/
 chmod 0755 samples/*.pl 
 cp -a samples/* %{buildroot}/usr/share/ClusterTools2/samples/
 cp -a lib/* %{buildroot}/usr/lib/ClusterTools2/

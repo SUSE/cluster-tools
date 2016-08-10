@@ -1,4 +1,4 @@
-.TH cs_detect_sleha 8 "02 Aug 2016" "" "ClusterTools2"
+.TH cs_detect_sleha 8 "10 Aug 2016" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_detect_sleha \- looks for indicators of SLE-HA add-on
@@ -119,6 +119,7 @@ code equals the number of indications found.
 .SH BUGS
 The "--removeall" function might damage the system - do not use it. 
 Detecting and detaching repositories from zypper is currently not implemented.
+The script returns wrong results, if the RPM database  is locked.
 The script looks for RPM names only, it does not care for providers other than SLE-HA.
 Feedback is welcome, please use the project page at
 .br

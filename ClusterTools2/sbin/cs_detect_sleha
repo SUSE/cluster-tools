@@ -6,7 +6,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2016-08-05 11:11 SLES11
+# Version: 2016-08-10 15:21 SLES11
 #
 
 EXE="$0"
@@ -314,34 +314,11 @@ function remove_files(){
 
 
 function remove_rpms(){
+	# TODO check if RPM is from SUSE (build host, vendor)
 	echo "INFO: ### $FUNCNAME $1 start ###"
-	case $1 in
-		base)
-		for f in $SLEHA_BASE_RPM; do
-			rpm -e --allmatches --nodeps $f 2>$ERR
-		done
-		;;
-		misc)
-		for f in $SLEHA_MISC_RPM; do
-			rpm -e --allmatches --nodeps $f 2>$ERR
-		done
-		;;
-		kern)
-		for f in $SLEHA_KERN_RPM; do
-			rpm -e --allmatches --nodeps $f 2>$ERR
-		done
-		;;
-		4sap)
-		for f in $SLEHA_4SAP_RPM; do
-			rpm -e --allmatches --nodeps $f 2>$ERR
-		done
-		;;
-		repo)
-		for f in $SLEHA_REPO_RPM; do
-			rpm -e --allmatches --nodeps $f 2>$ERR
-		done
-		;;
-	esac
+	for f in ${!1}; do
+		rpm -e --allmatches --nodeps $f 2>$ERR
+	done
 	echo "INFO: ### $FUNCNAME $1 end ###"
 }
 
@@ -365,93 +342,30 @@ function remove_cib(){
 
 
 function detect_files(){
-	# TODO read variable name from call, avoid case
 	echo "INFO: ### $FUNCNAME $1 start ###"
-	case $1 in
-		base)
-		for f in $SLEHA_BASE_FIL; do
-			ls -l $f 2>$ERR
-		done
-		;;
-		misc)
-		for f in $SLEHA_MISC_FIL; do
-			ls -l $f 2>$ERR
-		done
-		;;
-		kern)
-		for f in $SLEHA_KERN_FIL; do
-			ls -l $f 2>$ERR
-		done
-		;;
-	esac
+	for f in ${!1}; do
+		ls -l $f 2>$ERR
+	done
 	echo "INFO: ### $FUNCNAME $1 end ###"
 }
 
 
 function detect_inst_rpms(){
-	# TODO read variable name from call, avoid case
+	# TODO check if RPM is from SUSE (build host, vendor)
 	echo "INFO: ### $FUNCNAME $1 start ###"
-	( case $1 in
-		base)
-		for r in $SLEHA_BASE_RPM; do
-			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
-		done
-		;;
-		misc)
-		for r in $SLEHA_MISC_RPM; do
-			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
-		done
-		;;
-		kern)
-		for r in $SLEHA_KERN_RPM; do
-			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
-		done
-		;;
-		4sap)
-		for r in $SLEHA_4SAP_RPM; do
-			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
-		done
-		;;
-		repo)
-		for r in $SLEHA_REPO_RPM; do
-			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
-		done
-		;;
-	esac ) | sort -u
+	( for r in ${!1}; do
+		echo $ALL_RPM | tr " " "\n" | grep "${r}-"
+	done ) | sort -u
 	echo "INFO: ### $FUNCNAME $1 end ###"
 }
 
 
 function detect_avail_rpms(){
-	# TODO read variable name from call, avoid case
+	# TODO check if RPM is from SUSE (build host, vendor)
 	echo "INFO: ### $FUNCNAME $1 start ###"
-	( case $1 in
-		base)
-		for r in $SLEHA_BASE_RPM; do
-			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
-		done
-		;;
-		misc)
-		for r in $SLEHA_MISC_RPM; do
-			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
-		done
-		;;
-		kern)
-		for r in $SLEHA_KERN_RPM; do
-			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
-		done
-		;;
-		4sap)
-		for r in $SLEHA_4SAP_RPM; do
-			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
-		done
-		;;
-		repo)
-		for r in $SLEHA_REPO_RPM; do
-			echo $ALL_RPM | tr " " "\n" | grep "${r}-"
-		done
-		;;
-	esac ) | tr -s " " | sort -u |\
+	( for r in ${!1}; do
+		echo $ALL_RPM | tr " " "\n" | grep "${r}-"
+	done ) | tr -s " " | sort -u |\
 	sed s/"Abort..retry..ignore.*options...a.."// |\
 	grep -v "in.*\.\.\.$" | grep -v "^S.\|.Name" | grep -v -- "^--+" |\
 	grep -v "^Repository" | grep -v "^All.repositories" |\
@@ -464,9 +378,7 @@ function detect_avail_rpms(){
 function detect_repos(){
 	echo "INFO: ### $FUNCNAME $1 start ###"
 	# TODO detect repos
-	#case $1 in
 	#timeout $ZYPTMO zypper ... --with-repos --sort-by-priority --details --uri
-	#esac
 	echo "INFO: ### $FUNCNAME $1 start ###"
 }
 
@@ -488,37 +400,37 @@ case $1 in
 	;;
 	-a|--available)
 		get_avail_rpmall
-		detect_avail_rpms base
-		detect_inst_rpms kern
-		detect_inst_rpms 4sap 
+		detect_avail_rpms SLEHA_BASE_RPM
+		detect_avail_rpms SLEHA_KERN_RPM
+		detect_avail_rpms SLEHA_4SAP_RPM
 		exit
 	;;
 	-i|--installed)
 		get_inst_rpmall
-		detect_inst_rpms base
-		detect_inst_rpms kern 
-		detect_inst_rpms 4sap 
+		detect_inst_rpms SLEHA_BASE_RPM
+		detect_inst_rpms SLEHA_KERN_RPM
+		detect_inst_rpms SLEHA_4SAP_RPM
 		exit
 	;;
 	-f|--files)
-		detect_files base
-		detect_files kern
-		detect_files misc
+		detect_files SLEHA_BASE_FIL
+		detect_files SLEHA_KERN_FIL
+		detect_files SLEHA_MISC_FIL
 		exit
 	;;
 	-s|--standalone)
-		detect_files kern
+		detect_files SLEHA_KERN_FIL
 		get_inst_rpmall
-		detect_inst_rpms kern
+		detect_inst_rpms SLEHA_KERN_RPM
 		exit
 	;;
 	-p|--pedantic|--paranoid|--penetrant)
-		detect_files base
-		detect_files kern
-		detect_files misc
+		detect_files SLEHA_BASE_FIL
+		detect_files SLEHA_KERN_FIL
+		detect_files SLEHA_MISC_FIL
 		get_avail_rpmall
-		detect_avail_rpms repo
-		detect_avail_rpms 4sap 
+		detect_avail_rpms SLEHA_REPO_RPM
+		detect_avail_rpms SLEHA_4SAP_RPM
 		exit
 	;;
 	-u|--uninstall)
@@ -526,22 +438,22 @@ case $1 in
 		read -p "Uninstall RPMs of SLE-HA? [yes/no]: " YESNO
 		[[ $YESNO == "yes" ]] || exit
 		# remove_rpm repo # but NOT: libgnutls, ligthttpd, rubygems
-		remove_rpms base
-		remove_rpms kern
-		remove_rpms misc
-		remove_rpms 4sap 
+		remove_rpms SLEHA_BASE_RPM
+		remove_rpms SLEHA_KERN_RPM
+		remove_rpms SLEHA_MISC_RPM
+		remove_rpms SLEHA_4SAP_RPM
 		exit
 	;;
 	-r|--removeall)
 		YESNO=no
 		read -p "Remove RPMs, files, repos of SLE-HA? (DANGER) [yes/no]: " YESNO
 		[[ $YESNO == "yes" ]] || exit
-		echo remove_files base
-		echo remove_files kern
-		echo remove_files misc
+		echo remove_files SLEHA_BASE_FIL 
+		echo remove_files SLEHA_KERN_FIL
+		echo remove_files SLEHA_MISC_FIL
 		echo remove_cib
-		echo remove_rpms repo
-		echo remove_rpms 4sap 
+		echo remove_rpms SLEHA_REPO_RPM
+		echo remove_rpms SLEHA_4SAP_RPM
 		# TODO remove_repos
 		exit
 	;;
@@ -549,14 +461,14 @@ case $1 in
 		#set -x
 		RC=0
 		RC=$(
-		 ( detect_files base
-                   detect_files kern
-                   detect_files misc
-                   detect_files 4sap
+		 ( detect_files SLEHA_BASE_FIL
+                   detect_files SLEHA_KERN_FIL
+                   detect_files SLEHA_MISC_FIL
+                   detect_files SLEHA_4SAP_FIL
 		   get_inst_rpmall
-                   ( detect_inst_rpms base
-		     detect_inst_rpms kern
-		     detect_inst_rpms misc
+                   ( detect_inst_rpms SLEHA_BASE_RPM
+		     detect_inst_rpms SLEHA_KERN_RPM
+		     detect_inst_rpms SLEHA_MISC_RPM
 		   ) | grep -v -- "-devel" | grep -v "sdksp.*-"
 		 )   | grep -v "^INFO:.*###" | tr -s "\n" 2>$ERR | wc -l )
 		echo "${EXE}: Found $RC hints on installed SLE-HA" >/dev/stderr

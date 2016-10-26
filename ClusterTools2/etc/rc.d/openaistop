@@ -1,0 +1,133 @@
+#!/bin/bash
+#
+# openaistop
+#
+# Version: 2016-10-26
+#
+### BEGIN INIT INFO
+# Description: stops pacemaker/corosync cluster service
+# Provides: openaistop
+# Required-Start: $network
+# Default-Start:
+# Required-Stop: $network
+# Default-Stop: 0 6
+### END INIT INFO
+
+do_force=0
+exec="/usr/sbin/corosync"
+lockfile="/var/lock/subsys/corosync"
+
+OPENAIS_SYSCONFIG=/etc/sysconfig/openais
+if [ -f $OPENAIS_SYSCONFIG ]; then
+	source $OPENAIS_SYSCONFIG
+fi
+PACEMAKER_SYSCONFIG=/etc/sysconfig/pacemaker
+if [ -f $PACEMAKER_SYSCONFIG ]; then
+	source $PACEMAKER_SYSCONFIG
+fi
+SBD_CONFIG=/etc/sysconfig/sbd
+SBD_BIN="/usr/sbin/sbd"
+if [ -f $SBD_CONFIG ]; then
+	source $SBD_CONFIG
+fi
+
+[ -x "$exec" ] || exit 0
+
+SBD_DEVS=${SBD_DEVICE%;}
+SBD_DEVICE=${SBD_DEVS//;/ -d }
+
+: ${SBD_DELAY_START:="no"}
+
+
+function env_is_true() {
+	case "$1" in
+	yes|true|1|YES|TRUE|ja|on|ON) true ;;
+	*)	false ;;
+	esac
+}
+
+
+function StopSBD() {
+	test -x $SBD_BIN || return
+	if [ -n "$SBD_DEVICE" ]; then
+		echo -n "Stopping SBD - "
+		if ! $SBD_BIN -d $SBD_DEVICE -D $SBD_OPTS message LOCAL exit ; then
+			echo "SBD failed to stop; aborting."
+			exit 1
+		fi
+	fi
+	while pidofproc $SBD_BIN >/dev/null 2>&1 ; do
+		sleep 1
+	done
+	echo -n "done "
+}
+
+
+function export_pacemaker_config() {
+	if [ -n "$LRMD_MAX_CHILDREN" ]; then
+		export LRMD_MAX_CHILDREN
+	fi
+}
+
+
+function internal_status() {
+	checkproc $exec > /dev/null 2>&1
+	return $?
+}
+
+
+function start() {
+	echo "OK"
+	return 0
+}
+
+do_force=0
+
+function stop() {
+	local escalation_delay=20
+	local iter=0
+	local stopsbd=1
+	local sig=TERM
+
+	echo -n $"Stopping pacemaker/corosync daemon: "
+
+	while internal_status; do
+		c_pid="`pidofproc $exec`"
+		if [ $iter -eq $escalation_delay -a $do_force = 1 ]; then
+			echo -n " Escalating... "
+			sig=KILL
+		# Do not stop SBD if we forcibly killed corosync; other
+		# nodes may still have a legitimate desire to STONITH us.
+			stopsbd=0
+		fi
+		kill -$sig $c_pid
+		iter=$[iter+1]
+		echo -n "."
+		sleep 2
+	done
+
+	if [ $stopsbd = 1 ]; then
+		StopSBD
+	fi
+
+	rm -f "$lockfile"
+	echo "OK"
+	return 0
+}
+
+
+# main
+case "$1" in
+ start|stop)
+	$1
+	;;
+ force-stop)
+	do_force=1
+	stop
+	;;
+ *)
+	echo $"Usage: $0 {start|stop|force-stop}"
+	exit 2
+	;;
+esac
+#

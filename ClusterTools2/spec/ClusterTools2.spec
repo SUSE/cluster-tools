@@ -17,8 +17,7 @@ Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      2.5.5
-#Release:      0.1
-Release:      1
+Release:      2
 Source:       %{name}-%{version}.tbz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
@@ -58,6 +57,7 @@ test "$RPM_BUILD_ROOT" != "/" && rm -rf $RPM_BUILD_ROOT
 mkdir -p %{buildroot}/etc/ClusterTools2
 mkdir -p %{buildroot}/etc/cron.d
 mkdir -p %{buildroot}/etc/logrotate.d
+mkdir -p %{buildroot}/etc/rc.d
 mkdir -p %{buildroot}/usr/sbin
 mkdir -p %{buildroot}/usr/share/ClusterTools2
 mkdir -p %{buildroot}/usr/share/ClusterTools2/cli/on-fail-block
@@ -81,6 +81,7 @@ cp -va plugins/* %{buildroot}/usr/lib/ClusterTools2/supportconfig/plugins
 cp -va etc/ClusterTools2/* %{buildroot}/etc/ClusterTools2/
 cp -va etc/cron.d/* %{buildroot}/etc/cron.d/
 cp -va etc/logrotate.d/* %{buildroot}/etc/logrotate.d/
+cp -va etc/rc.d/* %{buildroot}/etc/rc.d/
 #
 # share 
 #
@@ -109,6 +110,7 @@ for f in /usr/lib/man/man/man8/cs_* /usr/lib/man/man8/{ClusterService,psauxlog,m
 /usr/sbin/*
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
+/etc/rc.d/openaistop
 %config(noreplace) /etc/ClusterTools2
 %config(noreplace) /etc/cron.d/*
 %config(noreplace) /etc/logrotate.d/*
@@ -117,3 +119,4 @@ for f in /usr/lib/man/man/man8/cs_* /usr/lib/man/man8/{ClusterService,psauxlog,m
 %doc /usr/share/man/man8/*.gz
 
 %changelog
+#

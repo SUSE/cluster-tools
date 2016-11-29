@@ -171,17 +171,19 @@ libibverbs1
 
 CFGVAR="
 HANA_SAP_BOOTARG
-HANA_SUSE_BOOTARG
 HANA_SAP_SYSCTL
-HANA_SUSE_SYSCTL
 HANA_SAP_SVC_YES
 HANA_SAP_SVC_OFF
-HANA_VERS_MIN
 HANA_SAP_PKG_YES
 HANA_SAP_PKG_NOT
-HANA_SAP_PKG_NOT
+HANA_VERS_MIN
+HANA_SUSE_BOOTARG
+HANA_SUSE_SYSCTL
 HANA_SUSE_PTRN
 HANA_SUSE_PKG_YES
+HANA_SUSE_SVC_YES
+HANA_SUSE_SVC_OFF
+HANA_SUSE_RUNLVL
 "
 
 
@@ -391,10 +393,12 @@ function prck_runlvl(){
 	echo "INFO: start $EXE $FUNCNAME"
 	echo_msgsep $FUNCNAME
 
+	# TODO sles12 HANA_SUSE_RUNLVL
 	FOUND=$(awk -F: '$1=="id" && $3=="initdefault" {print $2}' /etc/inittab)
 	test -z "${FOUND}" && FOUND="NA"
 	echo "default runlevel (3):	${FOUND}"
 
+	# TODO sles12
 	# TODO sapinit?
 	for a in ${HANA_SAP_SVC_YES} ${HANA_SUSE_SVC_YES}; do
 		FOUND=$(chkconfig -A | grep $a | awk '{print $2}')

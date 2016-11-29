@@ -44,16 +44,19 @@ vm.dirty_background_bytes
 "
 #
 HANA_SAP_SVC_YES="
-boot.sysstat
-boot.sapconf
-boot.clock
-ntp
-sapinit
+syslog-ng.service
+syslogd.service
+ntpd.service
 "
+# TODO boot.sysstat boot.clock sapinit in sles12?
 #
 HANA_SAP_SVC_OFF="
-boot.kdump
+systemd-journald.service
+systemd-journal-flush.service
+apparmor.service
+syslogd.service
 "
+# TODO wehre is boot.kdump in sles12?
 #
 HANA_VERS_MIN="
 kernel-default:3.12.51-60.20
@@ -146,5 +149,30 @@ SAPHanaSR-doc
 HANA-Firewall
 librdmacm1
 libibverbs1
+"
+#
+HANA_SUSE_SVC_YES="
+haveged.service
+mcelog.service
+btrfsmaintenance-refresh.service
+cron.service
+sshd.service
+systemd-sysctl.service
+tuned.service
+sapconf.service
+uuidd.socket
+"
+#
+# TODO uuidd.service vs. uuidd.socket
+HANA_SUSE_SVC_OFF="
+mysql.service
+SuSEfirewall2.service
+SuSEfirewall2_init.service
+uuidd.service
+"
+#
+# TODO target?
+HANA_SUSE_RUNLVL="
+multi-user.target
 "
 #

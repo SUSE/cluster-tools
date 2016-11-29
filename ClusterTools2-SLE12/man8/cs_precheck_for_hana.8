@@ -1,4 +1,4 @@
-.TH cs_precheck_for_hana 8 "30 May 2016" "" "ClusterTools2"
+.TH cs_precheck_for_hana 8 "28 Nov 2016" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_precheck_for_hana \- check pre-requisites for SAP HANA System Replication and automation with SLE-HA cluster
@@ -31,6 +31,9 @@ Global options are:
 .HP
 \fB --version\fR
 	show version.
+.HP
+\fB --writecfg\fR
+	show some internal variables.
 .HP
 \fB --base\fR
 	show basic OS configuration, related to SAP HANA and its System Replication.
@@ -83,8 +86,10 @@ Feedback is welcome, please use the project page at
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
 .\"
 .SH SEE ALSO
-\fBhb_report\fP(8), \fBsupportconfig\fP(8), \fBcs_sum_hana_config\fP(8),
-\fBcs_sum_base_config\fP(8), \fBcs_show_error_patterns\fP(8), \fBcs_show_memory\fP(8),
+\fBhb_report\fP(8), \fBsupportconfig\fP(8),
+\fBsapconf\fP(8), \fBtuned\fP(8), \fBsysctl\fP(8),
+\fBcs_sum_hana_config\fP(8), \fBcs_sum_base_config\fP(8),
+\fBcs_show_error_patterns\fP(8), \fBcs_show_memory\fP(8),
 \fBcs_show_supportconfig\fP(8), \fBcs_show_initrd\fP(8), \fBClusterTools2\fP(7),
 \fBSAPHanaSR\fP(7), \fBSAPHanaSR-ScaleOut\fP(7),
 .br

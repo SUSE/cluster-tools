@@ -5,7 +5,7 @@
 # (c) 2015-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 2016-02-24 14:50
+# Version: 2016-11-28 19:25
 #
 
 EXE="$0"
@@ -22,8 +22,9 @@ test -z "${TEMP}" &&\
 test -z "${HANA_SAP_BOOTARG}" &&\
 	HANA_SAP_BOOTARG="
 intel_idle.max_cstate=0
-processor.max_cstate=0
+processor.max_cstate=1
 transparent_hugepage=never
+numa_balancing=disabled
 "
 test -z "${HANA_SUSE_BOOTARG}" &&\
 	HANA_SUSE_BOOTARG="
@@ -43,8 +44,17 @@ fs.file-max
 kernel.sem
 kernel.shmall
 kernel.shmmax
-net.ipv4.tcp_slow_start_after_idle
+net.core.somaxconn
 net.ipv4.ip_local_port_range
+net.ipv4.tcp_slow_start_after_idle
+net.ipv4.tcp_slow_start_after_idle
+net.ipv4.tcp_max_syn_backlog
+net.ipv4.tcp_tw_reuse
+net.ipv4.tcp_tw_recycle
+net.ipv4.tcp_timestamps
+net.ipv4.tcp_syn_retries
+net.ipv4.tcp_wmem
+net.ipv4.tcp_rmem
 "
 test -z "${HANA_SUSE_SYSCTL}" &&\
 	HANA_SUSE_SYSCTL="
@@ -67,20 +77,20 @@ boot.kdump
 "
 test -z "${HANA_VERS_MIN}" &&\
 	HANA_VERS_MIN="
-kernel-default:3.0.101-68
-kernel-xen:3.0.101-68
+kernel-default:3.12.51-60.20
+kernel-xen:3.12.51-60.20
+kernel-ppc:3.12.51-60.20
 glibc:2.11.3-17.56.2
 libgcc_s1:4.7.2_20130108-0.17.2
 libstdc++6:4.7.2_20130108-0.17.2
 xfsprogs:3.1.8-0.5.1
+util-linux:2.25-22.1
+uuidd:2.25-22.1
 "
 test -z "${HANA_SAP_PKG_YES}" &&\
 	HANA_SAP_PKG_YES="
-hal
-gtk2
+bc
 iptraf
-libicu
-mozilla-xulrunner192
 ntp
 sudo
 syslog-ng
@@ -88,56 +98,43 @@ tcsh
 libssh2-1
 libstdc++6
 libgcc_s1
-expect
-autoyast2-installation
-yast2-ncurses
-cairo
-findutils-locate
-graphviz
-iptraf
-krb5-32bit
-krb5-client
-nfs-client
-bc
-numactl
-bc
-expect
-findutils-locate
-krb5-32bit
-krb5-client
-libgcc_s1
-libicu52_1
-libltdl7
-libnuma1
-libopenssl0_9_8
-libpng12-0
-libssh2-1
-libstdc++6
-libuuid1
-nfs-client
-ntp
-numactl
-python-curses
-python-pycurl
-sapconf
-sudo
-syslog-ng
-sysstat
-tcsh
-tuned
-unixODBC
-uuidd
-xfsprogs
-cairo
-graphviz
 libpng12-0
 libcairo2
 libgtk-2_0-0
 libjpeg62
 libyui-ncurses7
+libltdl7
+libuuid1
+libssh2-1
+libnuma1
+libicu52_1
+expect
+autoyast2-installation
+cairo
+findutils-locate
+graphviz
+iptraf
+krb5-32bit
+krb5-client
+nfs-client
+tuned
+numactl
+uuidd
+xfsprogs
+python-curses
+python-pycurl
+unixODBC
 "
 test -z "${HANA_SAP_PKG_NOT}" &&\
         HANA_SAP_PKG_NOT="
+apparmor
+apache2-mod_apparmor
+apparmor-parser
+apparmor-profiles
+apparmor-utils
+pam_apparmor
+perl-apparmor
+yast2-apparmor
 ulimit
 "
 test -z "${HANA_SUSE_PTRN}" &&\
@@ -152,11 +149,11 @@ ha_sles
 "
 test -z "${HANA_SUSE_PKG_YES}" &&\
 	HANA_SUSE_PKG_YES="
+perl-TermReadLine-Gnu
 rear1172a
 sysstat
 supportutils
 sapconf
-xfsprogs
 xfsdump
 fio-util
 fio-common
@@ -170,7 +167,6 @@ SAPHanaSR-doc
 HANA-Firewall
 librdmacm1
 libibverbs1
-perl-TermReadLine-Gnu
 "
 
 CFGVAR="

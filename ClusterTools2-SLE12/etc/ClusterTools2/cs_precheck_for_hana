@@ -69,8 +69,6 @@ uuidd:2.25-22.1
 #
 HANA_SAP_PKG_YES="
 bc
-hal
-gtk2
 iptraf
 ntp
 sudo
@@ -118,19 +116,19 @@ perl-apparmor
 yast2-apparmor
 ulimit
 "
-# TODO HANA_SAP_PTRN_NOT="apparmor"
 #
 HANA_SUSE_PTRN="
 Minimal
+Basis-Devel
 base
 x11
-Basis-Devel
 sap-hana
 sap_server
 ha_sles
 "
 #
 HANA_SUSE_PKG_YES="
+perl-TermReadLine-Gnu
 rear1172a
 sysstat
 supportutils

@@ -79,7 +79,6 @@ test -z "${HANA_SAP_PKG_YES}" &&\
 hal
 gtk2
 iptraf
-java-1_6_0-ibm
 libicu
 mozilla-xulrunner192
 ntp
@@ -92,8 +91,6 @@ libgcc_s1
 expect
 autoyast2-installation
 yast2-ncurses
-bing
-bonnie
 cairo
 findutils-locate
 graphviz
@@ -101,7 +98,43 @@ iptraf
 krb5-32bit
 krb5-client
 nfs-client
-sensors
+bc
+numactl
+bc
+expect
+findutils-locate
+krb5-32bit
+krb5-client
+libgcc_s1
+libicu52_1
+libltdl7
+libnuma1
+libopenssl0_9_8
+libpng12-0
+libssh2-1
+libstdc++6
+libuuid1
+nfs-client
+ntp
+numactl
+python-curses
+python-pycurl
+sapconf
+sudo
+syslog-ng
+sysstat
+tcsh
+tuned
+unixODBC
+uuidd
+xfsprogs
+cairo
+graphviz
+libpng12-0
+libcairo2
+libgtk-2_0-0
+libjpeg62
+libyui-ncurses7
 "
 test -z "${HANA_SAP_PKG_NOT}" &&\
         HANA_SAP_PKG_NOT="
@@ -109,15 +142,17 @@ ulimit
 "
 test -z "${HANA_SUSE_PTRN}" &&\
 	HANA_SUSE_PTRN="
+Minimal
+Basis-Devel
 base
 x11
-Basis-Devel
-sap_hana
+sap-hana
+sap_server
 ha_sles
 "
 test -z "${HANA_SUSE_PKG_YES}" &&\
 	HANA_SUSE_PKG_YES="
-rear
+rear1172a
 sysstat
 supportutils
 sapconf
@@ -133,6 +168,24 @@ fio-firmware-highiops
 SAPHanaSR
 SAPHanaSR-doc
 HANA-Firewall
+librdmacm1
+libibverbs1
+perl-TermReadLine-Gnu
+"
+
+CFGVAR="
+HANA_SAP_BOOTARG
+HANA_SUSE_BOOTARG
+HANA_SAP_SYSCTL
+HANA_SUSE_SYSCTL
+HANA_SAP_SVC_YES
+HANA_SAP_SVC_OFF
+HANA_VERS_MIN
+HANA_SAP_PKG_YES
+HANA_SAP_PKG_NOT
+HANA_SAP_PKG_NOT
+HANA_SUSE_PTRN
+HANA_SUSE_PKG_YES
 "
 
 
@@ -140,12 +193,13 @@ function help() {
 	echo "usage:	$(basename $0)"
 	echo "	$(basename $0) [OPTION]"
 	echo
-	echo " --help		show help."
-	echo " --version	show version."
-	echo " --base 	show base config."
-	echo " --apps 	show HANA apps config."
+	echo " --help		show help"
+	echo " --version	show version"
+	echo " --writecfg	show some internal variables"
+	echo " --base 	show base config"
+	echo " --apps 	show HANA apps config"
 	echo
-	test $UID -gt 0 && echo "please call as root."
+	test $UID -gt 0 && echo "please call as root"
 }
 
 
@@ -153,6 +207,20 @@ function echo_msgsep(){
 	echo
 	echo "============================================================ ${1:0
 :14} ==="
+}
+
+
+function writecfg(){
+	# TODO --writecfg <variable_name> show single variable
+	#echo "INFO: ### $FUNCNAME $1 start ###" >/dev/stderr
+	echo -e "# $CFG \n# For SLES12.\n#"
+	for c in $CFGVAR; do
+		echo "${c}=\""
+		echo ${!c} | tr " " "\n"
+		echo "\""
+		echo "#"
+	done
+	#echo "INFO: ### $FUNCNAME $1 end ###" >/dev/stderr
 }
 
 
@@ -445,6 +513,10 @@ case $1 in
 		prck_apps
 
 		echo "INFO: normal_end $EXE"
+		exit
+	;;
+	-w|--writecfg)
+		writecfg
 		exit
 	;;
 	*)

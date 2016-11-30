@@ -45,16 +45,14 @@ vm.dirty_background_bytes
 #
 HANA_SAP_SVC_YES="
 syslog-ng.service
-syslogd.service
 ntpd.service
+sapinit.service
 "
 # TODO boot.sysstat boot.clock sapinit in sles12?
-#
+# TODO systemd-journald.service systemd-journal-flush.service syslogd.sevice
 HANA_SAP_SVC_OFF="
-systemd-journald.service
-systemd-journal-flush.service
+kdump.service
 apparmor.service
-syslogd.service
 "
 # TODO wehre is boot.kdump in sles12?
 #
@@ -152,10 +150,8 @@ libibverbs1
 "
 #
 HANA_SUSE_SVC_YES="
-haveged.service
 mcelog.service
 btrfsmaintenance-refresh.service
-cron.service
 sshd.service
 systemd-sysctl.service
 tuned.service

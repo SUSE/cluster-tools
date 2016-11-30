@@ -65,15 +65,31 @@ vm.dirty_background_bytes
 # TODO HANA_SAP_PKG_YES as well?
 test -z "${HANA_SAP_SVC_YES}" &&\
 	HANA_SAP_SVC_YES="
-boot.sysstat
-boot.clock
-boot.sapconf
-ntp
-sapinit
+syslog-ng.service
+ntpd.service
+sapinit.service
+"
+test -z "${HANA_SUSE_SVC_YES}" &&\
+HANA_SUSE_SVC_YES="
+mcelog.service
+btrfsmaintenance-refresh.service
+sshd.service
+systemd-sysctl.service
+tuned.service
+sapconf.service
+uuidd.socket
 "
 test -z "${HANA_SAP_SVC_OFF}" &&\
 	HANA_SAP_SVC_OFF="
-boot.kdump
+kdump.service
+apparmor.service
+"
+test -z "${HANA_SUSE_SVC_OFF}" &&\
+HANA_SUSE_SVC_OFF="
+mysql.service
+SuSEfirewall2.service
+SuSEfirewall2_init.service
+uuidd.service
 "
 test -z "${HANA_VERS_MIN}" &&\
 	HANA_VERS_MIN="

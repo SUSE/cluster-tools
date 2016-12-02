@@ -125,6 +125,7 @@ test -z "${ERROR_PATTERN}" &&\
 "POSSIBLE.BREAK-IN.ATTEMPT"
 "ntpd.*failed"
 "ntpd.*time.reset"
+"ntpd.*TIME_ERROR"
 "time.sync.status.changed"
 "Frequency.format.error"
 "failed.to.bind.to.LDAP"

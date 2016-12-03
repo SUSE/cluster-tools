@@ -1,4 +1,4 @@
-.TH cs_make_sbd_devices 8 "22 Jun 2015" "" "ClusterTools2"
+.TH cs_make_sbd_devices 8 "03 Dec 2016" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_make_sbd_devices \- initialise SBD devices 
@@ -29,6 +29,9 @@ For information on timings please see stonith_sbd(7), sbd(8), and multipath.conf
 .HP
 \fB --init\fR
 	initialise SBD devices.
+.HP
+\fB --clear\fR
+	clear local node's slot on SBD devices.
 .\"
 .SH EXAMPLES
 .br
@@ -44,6 +47,10 @@ For information on timings please see stonith_sbd(7), sbd(8), and multipath.conf
 * Show content of SBD devices.
 .br
 # cs_make_sbd_devices --dump
+.TP
+* Write a clear messages to the local node's slot on SBD devices.
+.br
+# cs_make_sbd_devices -c
 .\"
 .SH EXIT STATUS
 .B 0
@@ -69,15 +76,16 @@ Feedback is welcome, please use the project page at
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
 .\"
 .SH SEE ALSO
-\fBstonith_sbd\fP(7), \fBsbd\fP(8), \fBstonith\fP(8), \fBClusterTools2\fP(7),
- \fBdasdfmt\fP(7), \fBmultipath.conf\fP(5),
+\fBstonith_sbd\fP(7), \fBsbd\fP(8), \fBstonith\fP(8), \fBcs_show_sbd_devices\fP(8),
+\fBClusterTools2\fP(7),  \fBdasdfmt\fP(7), \fBmultipath.conf\fP(5),
+.br
 https://www.suse.com/documentation/sle_ha/book_sleha/data/sec_ha_storage_protect
 _fencing.html ,
 https://www.suse.com/support/kb/doc.php?id=7016305
 .\"
 .\"
 .SH COPYRIGHT
-(c) 2011-2015 L.Pinne, Germany.
+(c) 2011-2016 L.Pinne, Germany.
 .br
 cs_make_sbd_devices comes with ABSOLUTELY NO WARRANTY.
 .br

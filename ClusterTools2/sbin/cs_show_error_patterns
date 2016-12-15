@@ -6,7 +6,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2016-08-03 SLES11
+# Version: 2016-12-12 SLES11
 #
 
 EXE="$0"
@@ -28,7 +28,7 @@ ZIPPED_LOG
 "
 
 test -z "${SYSTEM_LOG}" &&\
-	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0"
+	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0 /var/log/mcelog"
 
 # TODO SLES12 bond ...?
 if which journalctl 2>/dev/null; then
@@ -67,6 +67,7 @@ test -z "${ERROR_PATTERN}" &&\
 "irq.*nobody.cared"
 "Error.DRAM"
 "mce:.CPU.supports.0.MCE.banks"
+"Processor.*temperature"
 "SMP.disabled"
 "kernel.*task.*abort"
 "kernel.*ACPI.Error"

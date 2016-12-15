@@ -5,7 +5,7 @@
 # (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 0.2 2016-08-03
+# Version: 0.2 2016-12-12
 #
 
 EXE="$0"
@@ -33,7 +33,7 @@ test -z "${SYSTEM_LOG}" &&\
 if which journalctl 2>/dev/null; then
 	JCTL="/tmp/journalctl.$RDM"
 	test -z "${SYSTEM_LOG}" &&\
-		SYSTEM_LOG="/var/log/messages /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0"
+		SYSTEM_LOG="/var/log/messages /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0 /var/log/mcelog"
 fi
 SYSTEM_LOG="${SYSTEM_LOG} ${DMSG} ${JCTL}"
 
@@ -66,6 +66,7 @@ test -z "${ERROR_PATTERN}" &&\
 "irq.*nobody.cared"
 "Error.DRAM"
 "mce:.CPU.supports.0.MCE.banks"
+"Processor.*temperature"
 "SMP.disabled"
 "kernel.*task.*abort"
 "kernel.*ACPI.Error"

@@ -4,8 +4,9 @@
 #
 # (c) 2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License 2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2016-08-03
+# Version: 2016-12-19 SLES11
 #
 
 EXE="$0"
@@ -24,6 +25,7 @@ test -z "${CLONE_FILES}" &&\
 /etc/machine-id
 /etc/rhn/rhn.conf
 /etc/sysconfig/rhn/systemid
+/etc/sysconfig/rhn/osad-auth.conf
 /etc/sshd/ssh_host_*
 /etc/SUSEConnect
 /etc/zmd/deviceid
@@ -32,6 +34,7 @@ test -z "${CLONE_FILES}" &&\
 /etc/zypp/services.d/*
 /root/.ssh/*
 /var/cache/SuseRegister/lastzmdconfig.cache
+/var/lib/dbus/machine-id
 "
 # TODO double check list above
 # TODO application files, f.e. /etc/oraInst.loc or even /etc/smt.conf

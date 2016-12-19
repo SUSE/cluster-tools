@@ -11,6 +11,7 @@ CLONE_FILES="
 /etc/machine-id
 /etc/rhn/rhn.conf
 /etc/sysconfig/rhn/systemid
+/etc/sysconfig/rhn/osad-auth.conf
 /etc/sshd/ssh_host_*
 /etc/SUSEConnect
 /etc/zmd/deviceid
@@ -19,5 +20,6 @@ CLONE_FILES="
 /etc/zypp/services.d/*
 /root/.ssh/*
 /var/cache/SuseRegister/lastzmdconfig.cache
+/var/lib/dbus/machine-id
 "
 #

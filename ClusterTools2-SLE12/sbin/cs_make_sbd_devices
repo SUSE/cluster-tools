@@ -2,9 +2,9 @@
 #
 # cs_make_sbd_devices
 #
-# (c) 2011-2016 SUSE Linux GmbH, Germany.
+# (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne
 # GNU General Public License v2. No warranty.
-# Author: L.Pinne
+# http://www.gnu.org/licenses/gpl.html
 #
 # Version: 0.02 2016-12-03 18:38
 #

@@ -30,12 +30,9 @@ function show_help(){
 function from_dir(){
 	# TODO common awk sub-function for all from_ functions
 	R=${1}
-	ls "${R}"/ | while read; do echo $REPLY |\
-	awk -F"." 'NF==2 && $2!="gz" {print $1,$2}
-		   NF==3 && $3=="gz" {print $1,$2}
-		   NF==4 && $4=="gz" {print $1"."$2,$3}
-		   NF==3 && $3!="gz" {print $1"."$2,$3}'; done |\
-	while read; do do_man2pdf $REPLY; done
+	ls "${R}" | while read; do
+		do_man2pdf ${R}$REPLY;
+	done
 }
 
 

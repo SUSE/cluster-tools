@@ -1,4 +1,4 @@
-.TH cs_man2pdf 8 "02 Feb 2016" "" "ClusterTools2"
+.TH cs_man2pdf 8 "10 Feb 2016" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_man2pdf \- create PDF file from manual page
@@ -51,9 +51,9 @@ smartphones, or gaming consoles.
 .br
 # cs_man2pdf -d ./mankind/
 .TP
-* create PDF files for manual pages from installed RPM ClusterTools2-doc.
+* create PDF files for manual pages from installed RPM ClusterTools2.
 .br
-# cs_man2pdf -r ClusterTools2-doc 
+# cs_man2pdf -r ClusterTools2 
 .\"
 .\"
 .SH EXIT STATUS
@@ -73,6 +73,8 @@ $PWD/<man_page>.<n>.pdf
 .\"
 .SH BUGS
 This script can only handle manual pages with up to two dots in the filename.
+Manual pages with double colons currently are not handled. I am sorry for Perl.
+When using --directory, a .gz suffix will make it to the PDF's filename.
 Feedback is welcome, please use the project page at
 .br
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
@@ -81,7 +83,7 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 \fBman\fP(1), \fBapropos\fP(1), \fBwhatis\fP(1), \fBmandb\fP(8), \fBps2pdf\fP(1)
 .\"
 .SH COPYRIGHT
-(c) 2016 L.Pinne, Germany.
+(c) 2016-2017 L.Pinne, Germany.
 .br
 cs_man2pdf comes with ABSOLUTELY NO WARRANTY.
 .br

@@ -2,11 +2,11 @@
 #
 # cs_man2pdf
 #
-# (c) 2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2016-2017 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2016-03-12 SLES11
+# Version: 2017-01-26 SLES11
 #
 # TODO handle perl man pages with "::" in filenames
 
@@ -28,10 +28,11 @@ function show_help(){
 
 
 function from_dir(){
-	# TODO common awk sub-function for all from_ functions
+	# TODO .gz.pdf -> .pdf
 	R=${1}
-	ls "${R}" | while read; do
-		do_man2pdf ${R}$REPLY;
+	ls "${R}" | grep -v "pdf$" | while read; do echo ${REPLY} |\
+		man -Tps ${R}/${REPLY} 2>/dev/null |\
+		ps2pdf - >${REPLY}.pdf 2>/dev/null
 	done
 }
 

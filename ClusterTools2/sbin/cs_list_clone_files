@@ -16,7 +16,9 @@ test -s $CFG && source $CFG
 
 test -z "${CLONE_FILES}" &&\
 	CLONE_FILES="
+/etc/HOSTNAME
 /boot/grub/menu.lst
+/boot/grub2/grub.cfg
 /etc/HOSTNAME
 /etc/udev/rules.d/70-persistent-net.rules
 /etc/sysconfig/network/ifcfg-*

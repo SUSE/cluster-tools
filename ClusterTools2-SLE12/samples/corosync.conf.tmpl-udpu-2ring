@@ -1,0 +1,54 @@
+# /etc/corosync/corosync.conf
+# udp unicast, two rings, rrp_mode active, no encryption
+# corosync.conf(5), votequorum(5), corosync_overview(8)
+totem {
+    version: 2
+    #crypto_cipher: sha1
+    #crypto_hash: aes256
+    crypto_cipher: none
+    crypto_hash: none
+    clear_node_high_bit: yes
+    transport: udpu
+    threads: @@THREADS@@ 
+    rrp_mode: active
+    #token: 5000
+    #token_retransmits_before_loss_const: 28
+    #join: 60
+    #consensus: 6000
+    #fail_recv_const: 5000
+    #max_messages: 20
+    interface {
+        ringnumber: 0
+        bindnetaddr: @@BINDNETADDR_0@@
+        mcastport: @@MCASTPORT_0@@
+        ttl: 1
+        }
+}
+nodelist {
+    node {
+        ring0_addr: @@MEMBERADDR1_0@@
+        ring1_addr: @@MEMBERADDR1_1@@
+	nodeid: 1
+        }
+    node {
+        ring0_addr: @@MEMBERADDR2_0@@
+	ring1_addr: @@MEMBERADDR2_1@@
+        nodeid: 2
+        }
+}
+logging {
+    fileline: off
+    to_syslog: yes
+    debug: off
+    timestamp: on
+    logger_subsys {
+        subsys: QUORUM
+        debug: off
+        }
+    }
+quorum {
+    expected_votes: 2
+    two_node: 1
+    provider: corosync_votequorum
+}
+#

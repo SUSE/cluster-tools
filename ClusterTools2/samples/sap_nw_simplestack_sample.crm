@@ -1,0 +1,64 @@
+#
+configure \
+ primitive rsc_fs_C11_sapdb Filesystem \
+ params device=/dev/sapvg/sapdb directory=/sapdb fstype=xfs \
+ options=noatime op stop timeout=300s interval=0 op monitor interval=30s timeout=130s \
+ meta target-role=Stopped 
+#
+configure \
+ primitive rsc_fs_C11_sapmnt Filesystem \
+ params device=/dev/sapvg/sapmnt directory=/sapmnt fstype=xfs \
+ options=noatime op stop timeout=300s interval=0 op monitor interval=30s timeout=130s \
+ meta target-role=Stopped 
+#
+configure \
+ primitive rsc_fs_C11_usrsap Filesystem \
+ params device=/dev/sapvg/usrsap directory=/usr/sap fstype=xfs \
+ options=noatime op stop timeout=300s interval=0 op monitor interval=30s timeout=130s \
+ meta target-role=Stopped 
+#
+configure \
+ primitive rsc_lvm_C11_sapvg LVM \
+ params volgrpname=sapvg op monitor interval=130s timeout=130s op stop timeout=130s interval=0 on_fail=fence \
+ meta target-role=Stopped 
+# 
+configure \
+ primitive rsc_md_C11_md0 Raid1 \
+ params raidconf=/clusterconf/C11/mdadm.conf raiddev=/dev/md0 op stop timeout=130s interval=0 on_fail=fence \
+ meta target-role=Stopped
+# 
+configure \
+ primitive rsc_ip_C11_db IPaddr2 \
+ params ip=192.168.201.188 cidr_netmask=24 nic=eth0 op monitor interval=10s timeout=20s on_fail=restart \
+ meta target-role=Stopped 
+#
+configure \
+ primitive rsc_ip_C11_ci IPaddr2 \
+ params ip=192.168.201.187 cidr_netmask=24 nic=eth0 op monitor interval=10s timeout=20s on_fail=restart \
+ meta target-role=Stopped 
+#
+configure \
+ primitive rsc_ip_C11_as IPaddr2 \
+ params ip=192.168.201.186 cidr_netmask=24 nic=eth0 op monitor interval=10s timeout=20s on_fail=restart \
+ meta target-role=Stopped 
+#
+configure \
+ primitive rsc_sap_C11_ASCS00_as SAPInstance \
+ params InstanceName=C11_ASCS00_as AUTOMATIC_RECOVER=true op monitor interval=120s timeout=60s start_delay=120s op start timeout=180s op stop timeout=240s on_fail=block \
+ meta target-role=Stopped 
+# 
+configure \
+ primitive rsc_sap_C11_DVEBMGS01_ci SAPInstance \
+ params InstanceName=C11_DVEBMGS01_ci AUTOMATIC_RECOVER=true op monitor interval=180s timeout=60s start_delay=240s op start timeout=240s op stop timeout=240s on_fail=block \
+ meta target-role=Stopped 
+#
+configure \
+ primitive rsc_sapdb_C11 SAPDatabase \
+ params SID=C11 DBTYPE=ADA op monitor interval=120s timeout=60s start_delay=180s op start timeout=1800s op stop timeout=1800s \
+ meta target-role=Stopped 
+#
+configure group grp_sap_C11 rsc_md_C11_md0 rsc_lvm_C11_sapvg rsc_fs_C11_sapdb rsc_fs_C11_sapmnt rsc_fs_C11_usrsap rsc_ip_C11_db rsc_ip_C11_ci rsc_ip_C11_as rsc_sap_C11_ASCS00_as rsc_sapdb_C11 rsc_sap_C11_DVEBMGS01_ci \
+meta target-role=Stopped 
+#
+configure location loc_grp_sap_C11_on_node01 grp_sap_C11 1000: node01
+#

@@ -3,32 +3,52 @@
 # no trailing whitespace after the \
 configure \
 primitive rsc_ip_@@SID@@_db IPaddr2 \
-params ip=@@IPSIDDB@@ cidr_netmask=24 op monitor interval=10s timeout=20s \
-on_fail=restart \
+params ip=@@IPSIDDB@@ cidr_netmask=24 \
+op monitor interval=10s timeout=20s on_fail=restart \
 meta target-role=Stopped
 #
 configure \
 primitive rsc_ip_@@SID@@_ci IPaddr2 \
-params ip=@@IPSIDCI@@ cidr_netmask=24 op monitor interval=10s timeout=20s \
-on_fail=restart \
+params ip=@@IPSIDCI@@ cidr_netmask=24 \
+op monitor interval=10s timeout=20s on_fail=restart \
 meta target-role=Stopped
 #
 configure \
 primitive rsc_ip_@@SID@@_as IPaddr2 \
-params ip=@@IPSIDAS@@ cidr_netmask=24 op monitor interval=10s timeout=20s \
-on_fail=restart \
+params ip=@@IPSIDAS@@ cidr_netmask=24 \
+op monitor interval=10s timeout=20s on_fail=restart \
+meta target-role=Stopped
+#
+configure \
+primitive rsc_fs_@@SID@@_sapdb Filesystem \
+params device=/dev/sapvg/sapdb directory=/sapdb fstype=xfs options=noatime \
+op stop timeout=300s interval=0 op monitor interval=30s timeout=130s \
+meta target-role=Stopped 
+#
+configure \
+primitive rsc_fs_@@SID@@_sapmnt Filesystem \
+params device=/dev/sapvg/sapmnt directory=/sapmnt fstype=xfs options=noatime \
+op stop timeout=300s interval=0 op monitor interval=30s timeout=130s \
+meta target-role=Stopped 
+#
+configure \
+primitive rsc_fs_@@SID@@_usrsap Filesystem \
+params device=/dev/sapvg/usrsap directory=/usr/sap fstype=xfs options=noatime \
+op stop timeout=300s interval=0 op monitor interval=30s timeout=130s \
 meta target-role=Stopped
 #
 configure \
 primitive rsc_sap_@@SID@@_ASCS00_as SAPInstance \
 params InstanceName=@@SID@@_ASCS00_as AUTOMATIC_RECOVER=true \
+START_PROFILE=/sapmnt/@@SID@@/profile/@@SID@@_ASCS00_sap@@sid@@as \
 op monitor interval=120s timeout=60s start_delay=120s \
 op start timeout=180s op stop timeout=240s on_fail=block \
 meta target-role=Stopped
-# 
+#
 configure \
 primitive rsc_sap_@@SID@@_DVEBMGS01_ci SAPInstance \
 params InstanceName=@@SID@@_DVEBMGS01_ci AUTOMATIC_RECOVER=true \
+START_PROFILE=/sapmnt/@@SID@@/profile/@@SID@@_DVEBMGS01_sap@@sid@@ci \
 op monitor interval=180s timeout=60s start_delay=240s \
 op start timeout=240s op stop timeout=240s on_fail=block \
 meta target-role=Stopped
@@ -40,7 +60,8 @@ start_delay=180s \
 op start timeout=1800s op stop timeout=1800s \
 meta target-role=Stopped
 #
-configure group grp_sap_@@SID@@ rsc_md_@@SID@@_md0 rsc_lvm_@@SID@@_sapvg \
+configure group grp_sap_@@SID@@ \
+rsc_md_@@SID@@_md0 rsc_lvm_@@SID@@_sapvg \
 rsc_fs_@@SID@@_sapdb rsc_fs_@@SID@@_sapmnt rsc_fs_@@SID@@_usrsap \
 rsc_ip_@@SID@@_db rsc_ip_@@SID@@_ci rsc_ip_@@SID@@_as \
 rsc_sap_@@SID@@_ASCS00_as rsc_sapdb_@@SID@@ rsc_sap_@@SID@@_DVEBMGS01_ci \

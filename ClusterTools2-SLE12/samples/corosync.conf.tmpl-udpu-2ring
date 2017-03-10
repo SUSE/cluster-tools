@@ -47,8 +47,6 @@ logging {
         }
     }
 quorum {
-    expected_votes: 2
-    two_node: 1
     provider: corosync_votequorum
 }
 #

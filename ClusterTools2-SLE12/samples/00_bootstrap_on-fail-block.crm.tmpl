@@ -1,0 +1,15 @@
+configure \
+property $id="cib-bootstrap-options" \
+	cluster-infrastructure="corosync" \
+	no-quorum-policy="ignore" \
+	dc-deadtime="20s" \
+	default-resource-stickiness="1000" \
+	stonith-enabled="true" \
+	stonith-timeout="150s" \
+	have-watchdog="true"
+configure \
+rsc_defaults $id="rsc_defaults-options" \
+	failure-timeout="86400s"
+configure \
+	op_defaults $id="op_defaults-options" \
+	on-fail="block" timeout="300s"

@@ -1,0 +1,57 @@
+.TH cs_show_scores 8 "18 Feb 2015" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_show_scores \- show scores for resources in a pacemaker HA cluster 
+.\"
+.SH SYNOPSIS
+.B cs_show_scores \fIOPTION\fR
+.\"
+.SH DESCRIPTION
+\fBcs_show_scores\fP TODO
+.br
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+	show help.
+.HP
+\fB --version\fR
+	show version.
+.HP
+\fB --raw\fR
+	show raw scores from ptest.
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_show_scores
+	the program itself.
+.TP
+/etc/ClusterTools2/cs_show_scores
+	the configuration.
+.\"
+.SH BUGS
+Documented options are currently not implemented.
+Gets very slow with growing number of nodes or resources.
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBClusterTools2\fP(7), \fBcs_list_failcounts\fP(8), \fBptest\fP(8), \fBcrm\fP(8),
+\fBattrd_updater\fP(8)
+.\"
+.SH COPYRIGHT
+(c) 2011-2015 L.Pinne, Germany.
+.br
+cs_show_scores comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

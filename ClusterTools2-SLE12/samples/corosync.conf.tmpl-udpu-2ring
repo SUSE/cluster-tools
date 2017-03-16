@@ -7,10 +7,10 @@ totem {
     #crypto_hash: aes256
     crypto_cipher: none
     crypto_hash: none
-    clear_node_high_bit: yes
+    cluster_name: @@CLUSTERNAME@@ 
+    clear_node_high_bit: no
     transport: udpu
-    threads: @@THREADS@@ 
-    rrp_mode: active
+    rrp_mode: passive
     #token: 5000
     #token_retransmits_before_loss_const: 28
     #join: 60
@@ -21,6 +21,12 @@ totem {
         ringnumber: 0
         bindnetaddr: @@BINDNETADDR_0@@
         mcastport: @@MCASTPORT_0@@
+        ttl: 1
+        }
+    interface {
+        ringnumber: 1 
+        bindnetaddr: @@BINDNETADDR_1@@
+        mcastport: @@MCASTPORT_1@@
         ttl: 1
         }
 }

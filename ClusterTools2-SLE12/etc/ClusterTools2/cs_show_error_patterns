@@ -1,5 +1,5 @@
 # /etc/ClusterTools2/cs_show_error_patterns
-# For SLES11.
+# For SLES12.
 #
 ERROR_PATTERN="
 "taint.flag"
@@ -140,6 +140,7 @@ CLUERR_PATTERN="
 APPERR_PATTERN="
 "vasd.will.not.synchronize.time"
 "vascache.*error"
+"sapstartsrv.*pam_systemd.*Failed"
 "
 #
 CLUSTER_LOG="/var/log/corosync.log"

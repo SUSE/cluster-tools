@@ -6,7 +6,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2017-02-16 SLES11
+# Version: 2017-04-24 SLES11
 #
 
 EXE="$0"
@@ -139,6 +139,7 @@ test -z "${ERROR_PATTERN}" &&\
 "Failed.to.read"
 "exits.with.status.*[1-9]"
 "Failed.services.*runlevel"
+"cgroup:.*rejected"
 "shutdown.*shutting.down"
 "syslog-ng.shutting.down"
 "kernel.*segfault.at"

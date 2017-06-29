@@ -9,6 +9,7 @@ totem {
     crypto_hash: none
     clear_node_high_bit: yes
     transport: udpu
+    rrp_mode: passive
     #token: 5000
     #token_retransmits_before_loss_const: 28
     #join: 60

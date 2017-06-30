@@ -1,0 +1,52 @@
+# @@SID@@_storagesimplestack.crm.tmpl
+# version: 2017-03-14
+# pls. use with 00_bootstrap.crm.tmpl
+# no trailing whitespace after the \
+#
+# SID	C11
+# IP	192.168.178.211
+# NIC	eth0
+# PNODE	node0
+#
+# mount point	/C11fs0
+# VG		C11vg0
+# LV		C11vg0/C11lv0
+# MD device	/dev/md0
+# MD config	/clusterconf/C11/mdadm.conf
+# PV		/dev/disk/by-id/...
+#
+#
+configure \
+primitive rsc_ip_@@SID@@_ip0 IPaddr2 \
+params ip=@@IP@@ nic=@@NIC@@ cidr_netmask=24 \
+op monitor interval=10s timeout=20s on_fail=restart \
+meta target-role=Stopped
+#
+configure \
+primitive rsc_fs_@@SID@@_fs0 Filesystem \
+params device=/dev/@@SID@@vg0/@@SID@@lv0 directory=/@@SID@@fs0 \
+fstype=xfs options=noatime \
+op stop timeout=300s interval=0 op monitor interval=30s timeout=130s \
+meta target-role=Stopped
+#
+configure \
+primitive rsc_lvm_@@SID@@_vg0 LVM \
+params volgrpname=@@SID@@vg0 \
+op monitor interval=130s timeout=130s \
+op stop timeout=130s interval=0 on_fail=fence \
+meta target-role=Stopped
+#
+configure \
+primitive rsc_md_@@SID@@_md0 Raid1 \
+params raidconf=/clusterconf/@@SID@@/mdadm.conf raiddev=/dev/md0 \
+op stop timeout=130s interval=0 on_fail=fence \
+meta target-role=Stopped
+#
+configure group grp_@@SID@@ \
+rsc_md_@@SID@@_md0 rsc_lvm_@@SID@@_vg0 rsc_fs_@@SID@@_fs0 \
+rsc_ip_@@SID@@_ip0 \
+meta target-role=Stopped
+#
+configure location loc_grp_@@SID@@_on_@@PNODE@@ grp_@@SID@@ 1000: \
+@@PNODE@@
+#

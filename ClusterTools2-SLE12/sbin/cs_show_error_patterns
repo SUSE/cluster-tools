@@ -68,10 +68,12 @@ test -z "${ERROR_PATTERN}" &&\
 "Error.DRAM"
 "mce:.CPU.supports.0.MCE.banks"
 "Processor.*temperature"
+"SMART.*failure"
 "SMP.disabled"
 "kernel.*task.*abort"
 "kernel.*ACPI.Error"
 "kernel.*page.allocation.failure"
+"kernel.*medium.error"
 "double.fault:"
 "target.failure"
 "reservation.conflict"
@@ -202,6 +204,10 @@ test -z "${APPERR_PATTERN}" &&\
 "sapstartsrv.*pam_systemd.*Failed"
 "bluestore.*FAILED"
 "ceph.*Failed"
+"ceph.*_fail"
+"tclink.*ERROR"
+"tclink.*error"
+"salt.*ERROR"
 "
 
 function help() {

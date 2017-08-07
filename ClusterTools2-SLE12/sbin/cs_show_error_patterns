@@ -165,6 +165,7 @@ test -z "${ERROR_PATTERN}" &&\
 "vxvm.*volume.*not"
 "Hangcheck.*clock"
 "pagecache.limit.set"
+"postfix.*fatal"
 "
 # TODO: separate variable for application patterns (annot.open..rofile" ... "Hangcheck.*clock"
 # TODO: raid.set.*active.with.2.out.of.2.mirrors ?

@@ -6,7 +6,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2017-04-24 SLES11
+# Version: 2017-08-07 SLES11
 #
 
 EXE="$0"
@@ -85,7 +85,7 @@ test -z "${ERROR_PATTERN}" &&\
 "doesn.*support.*DPO.*FUA"
 "Unable.*SMART.enabled"
 "BBU.disabled"
-"Warning*LUN assignments.*changed"
+"Warning.*LUN.assignments.*changed"
 "multipathd.*timed.out"
 "multipathd.*mpath.*unable"
 "multipathd.*reinstated"

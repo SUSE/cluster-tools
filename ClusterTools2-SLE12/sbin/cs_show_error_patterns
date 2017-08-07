@@ -99,12 +99,6 @@ test -z "${ERROR_PATTERN}" &&\
 "duplicate.VG"
 "duplicate.PV"
 "not.found"
-"dlm.*link.*down"
-"ocfs2.*has.evicted"
-"ocfs2.*ERR"
-"ocfs2.*not.unmounted.cleanly"
-"OCFS2.*kernel.interface.loaded"
-"o2dlm_eviction_cb"
 "fsck.*recommended"
 "EXT.-fs.error"
 "Starting.XFS.recovery"
@@ -168,13 +162,13 @@ test -z "${ERROR_PATTERN}" &&\
 "pagecache.limit.set"
 "postfix.*fatal"
 "
-# TODO: separate variable for application patterns (annot.open..rofile" ... "Hangcheck.*clock"
-# TODO: raid.set.*active.with.2.out.of.2.mirrors ?
-# TODO: check for un-matched userfreindly names (mpath[a-z])
-# TODO: pattern for failed module (could not load)
-# TODO: async IO from grep kio /proc/slabinfo ?
-# TODO: direct IO from grep ...,DIR, /proc/slabinfo ?
-# TODO: verify cluster log msgs. maybe more generic possible ?
+# TODO separate variable for application patterns (annot.open..rofile" ... "Hangcheck.*clock"
+# TODO raid.set.*active.with.2.out.of.2.mirrors ?
+# TODO check for un-matched userfreindly names (mpath[a-z])
+# TODO pattern for failed module (could not load)
+# TODO async IO from grep kio /proc/slabinfo ?
+# TODO direct IO from grep ...,DIR, /proc/slabinfo ?
+# TODO verify cluster log msgs. maybe more generic possible ?
 
 test -z "${CLUERR_PATTERN}" &&\
 	 CLUERR_PATTERN="
@@ -197,6 +191,12 @@ test -z "${CLUERR_PATTERN}" &&\
 "sbd.*mbox.read.failed"
 "sbd.*Latency"
 "SoftDog.*not"
+"dlm.*link.*down"
+"ocfs2.*has.evicted"
+"ocfs2.*ERR"
+"ocfs2.*not.unmounted.cleanly"
+"OCFS2.*kernel.interface.loaded"
+"o2dlm_eviction_cb"
 "
 
 test -z "${APPERR_PATTERN}" &&\
@@ -241,7 +241,7 @@ function run_grep() {
 	dmesg >$DMSG
 	which journalctl 2>/dev/null && journalctl --no-pager >$JCTL
 
-	# TODO: more efficient loop
+	# TODO more efficient loop
 	for e in ${ERROR_PATTERN} ${CLUERR_PATTERN} ${APPERR_PATTERN}; do
         	echo -n "$e = "
 		for f in ${LOG}; do

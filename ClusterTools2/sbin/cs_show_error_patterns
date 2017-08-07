@@ -69,6 +69,7 @@ test -z "${ERROR_PATTERN}" &&\
 "Error.DRAM"
 "mce:.CPU.supports.0.MCE.banks"
 "Processor.*temperature"
+"SMART.*failure"
 "SMP.disabled"
 "kernel.*task.*abort"
 "kernel.*ACPI.Error"

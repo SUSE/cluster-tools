@@ -2,10 +2,10 @@
 #
 # cs_show_supportconfig
 #
-# (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2017 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License 2. No warranty.
 #
-# Version: SLES12 0.03 2016-08-03
+# Version: SLES12 0.03 2017-08-07
 #
 # For Supportconfig Script Version: 2.25-237
 #
@@ -1218,6 +1218,7 @@ function chk_saphana(){
 # TODO /usr/sap 50GB, <hana-data> 3*RAM, <hana-shared> 1*RAM, <hana-log> 1*RAM max. 512GB 
 # TODO 10gb/s NIC for system replication
 # TODO MTU=9000 for system replication
+# TODO udev.txt: # /usr/lib/udev/rules.d/60-ssd-scheduler.rules -> deadline
 
 	test -z "${HANA_SAP_BOOTARG}" &&\
 	HANA_SAP_BOOTARG="
@@ -1930,6 +1931,7 @@ xfs
 
 	# TODO FIL="fs-softraid.txt"
 	# TODO better elevator guessing 
+	# TODO e.g. udev.txt: # /usr/lib/udev/rules.d/60-ssd-scheduler.rules -> deadline
 	FIL="boot.txt"
 	echo "/boot/grub/menu.lst:"
 	grep "io.scheduler.*registered.(default)" $FIL

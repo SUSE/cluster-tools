@@ -5,7 +5,7 @@
 # (c) 2011-2017 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 0.2 2017-04-24
+# Version: 0.2 2017-08-07
 #
 
 EXE="$0"
@@ -125,6 +125,7 @@ test -z "${ERROR_PATTERN}" &&\
 "Host.*is.not.allowed.to.talk.to.us!"
 "COMPLAIN.ACCEPT.*MAC"
 "POSSIBLE.BREAK-IN.ATTEMPT"
+"wicked.*failed"
 "ntpd.*failed"
 "ntpd.*time.reset"
 "ntpd.TIME_ERROR"
@@ -199,6 +200,8 @@ test -z "${APPERR_PATTERN}" &&\
 "vasd.will.not.synchronize.time"
 "vascache.*error"
 "sapstartsrv.*pam_systemd.*Failed"
+"bluestore.*FAILED"
+"ceph.*Failed"
 "
 
 function help() {

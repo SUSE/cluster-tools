@@ -5,7 +5,7 @@
 # (c) 2011-2017 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 0.2 2017-08-07
+# Version: SLES12 0.2 2017-08-07
 #
 
 EXE="$0"

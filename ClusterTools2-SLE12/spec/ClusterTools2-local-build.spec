@@ -3,7 +3,7 @@
 #
 # Copyright (c) 2008-2010 SUSE LINUX GmbH, Germany.
 # Copyright (c) 2011-2014 SUSE LINUX Products GmbH, Germany.
-# Copyright (c) 2015-2016 SUSE LINUX GmbH, Germany.
+# Copyright (c) 2015-2017 SUSE LINUX GmbH, Germany.
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
@@ -16,8 +16,7 @@ License:      GPL
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      3.0.0 
-#Release:     0.1
+Version:      3.0.1 
 Release:      1 
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build

@@ -3,10 +3,9 @@
 # corosync.conf(5), votequorum(5), corosync_overview(8)
 totem {
     version: 2
-    #crypto_cipher: sha1
-    #crypto_hash: aes256
-    crypto_cipher: none
-    crypto_hash: none
+    secauth: on
+    crypto_cipher: aes256
+    crypto_hash: sha1
     cluster_name: @@CLUSTERNAME@@ 
     clear_node_high_bit: no
     transport: udpu

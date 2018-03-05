@@ -2,13 +2,19 @@
 #
 # cs_show_scores
 #
+# (c) 2018 SUSE Linux GmbH, Germany.
+# GNU General Public License v2. No warranty.
+# Author: L.Pinne
+#
+# Version: 2018-03-05
+#
 # (c) Apr 2009, Author: Dominik Klein
 # Display scores of Linux-HA resources
 #
 
 if [ "$1" = "--help" -o "$1" = "-h" ]
 then
-	echo "showscores.sh - basically parsing ptest -Ls."
+	echo "cs_show_scores - basically parsing \"crm resource scores\""
 	echo "Usage: "
 	echo "$0 (to display score information for all resources on all nodes sorted by resource name)"
 	echo "$0 node (to display score information for all resources on all nodes sorted by nodename)"

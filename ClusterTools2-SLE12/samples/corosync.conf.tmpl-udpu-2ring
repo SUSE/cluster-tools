@@ -7,7 +7,7 @@ totem {
     crypto_cipher: aes256
     crypto_hash: sha1
     cluster_name: @@CLUSTERNAME@@ 
-    clear_node_high_bit: no
+    clear_node_high_bit: yes
     transport: udpu
     rrp_mode: passive
     #token: 5000

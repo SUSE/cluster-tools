@@ -1,5 +1,5 @@
 # /etc/corosync/corosync.conf
-# udp unicast, two rings, rrp_mode passive, no encryption
+# udp unicast, two rings, rrp_mode passive, encryption
 # corosync.conf(5), votequorum(5), corosync_overview(8)
 totem {
     version: 2
@@ -12,8 +12,8 @@ totem {
     rrp_mode: passive
     #token: 5000
     #token_retransmits_before_loss_const: 28
-    #join: 60
-    #consensus: 6000
+    #join: 1000
+    #consensus: 7500
     #fail_recv_const: 5000
     #max_messages: 20
     interface {

@@ -1,5 +1,5 @@
 # /etc/corosync/corosync.conf
-# udp unicast, one ring, rrp_mode passive, no encryption
+# udp unicast, one ring, rrp_mode passive, encryption
 # corosync.conf(5), votequorum(5), corosync_overview(8)
 totem {
     version: 2

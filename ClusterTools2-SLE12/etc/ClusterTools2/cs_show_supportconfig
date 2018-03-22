@@ -465,10 +465,11 @@ ulimit
 "
 #
 HANA_SUSE_PGK_YES="
-rear
+rear1172a
 sysstat
 supportutils
 sapconf
+saptune
 xfsprogs
 xfsdump
 fio-util
@@ -479,6 +480,8 @@ iomemory-vsl
 fio-firmware-highiops
 SAPHanaSR
 SAPHanaSR-doc
+SAPHanaSR-ScaleOut
+SAPHanaSR-ScaleOut-doc
 HANA-Firewall
 "
 #

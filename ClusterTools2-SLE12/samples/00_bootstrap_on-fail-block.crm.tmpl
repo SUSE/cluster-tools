@@ -1,11 +1,11 @@
 configure \
 property $id="cib-bootstrap-options" \
 	cluster-infrastructure="corosync" \
-	no-quorum-policy="ignore" \
 	dc-deadtime="20s" \
 	default-resource-stickiness="1000" \
 	stonith-enabled="true" \
 	stonith-timeout="150s" \
+	stonith-action="reboot" \
 	have-watchdog="true"
 configure \
 rsc_defaults $id="rsc_defaults-options" \

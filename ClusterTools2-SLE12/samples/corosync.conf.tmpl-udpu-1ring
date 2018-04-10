@@ -45,5 +45,8 @@ logging {
     }
 quorum {
     provider: corosync_votequorum
+    expected_votes: 2
+    two_node: 1
+    wait_for_all: 0
 }
 #

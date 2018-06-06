@@ -2,10 +2,10 @@
 #
 # cs_show_supportconfig
 #
-# (c) 2011-2017 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License 2. No warranty.
 #
-# Version: SLES12 0.03 2017-08-07
+# Version: SLES12 0.03 2018-03-22
 #
 # For Supportconfig Script Version: 2.25-237
 #
@@ -1318,10 +1318,11 @@ ha_sles
 # TODO Fusion IO driver RPMs per vendor? (IBM, Dell, HP are same)
 	test -z "${HANA_SUSE_PKG_YES}" &&\
 HANA_SUSE_PKG_YES="
-rear
+rear1172a
 sysstat
 supportutils
 sapconf
+saptune
 xfsprogs
 xfsdump
 fio-util
@@ -1333,6 +1334,8 @@ fio-firmware-ioaccelerator
 fio-firmware-highiops
 SAPHanaSR
 SAPHanaSR-doc
+SAPHanaSR-ScaleOut
+SAPHanaSR-ScaleOut-doc
 HANA-Firewall
 "
 

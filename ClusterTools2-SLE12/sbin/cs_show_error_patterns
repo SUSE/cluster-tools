@@ -2,10 +2,10 @@
 #
 # cs_show_error_patterns
 #
-# (c) 2011-2017 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: SLES12 0.2 2017-08-07
+# Version: SLES12 0.2 2018-01-16
 #
 
 EXE="$0"
@@ -66,6 +66,8 @@ test -z "${ERROR_PATTERN}" &&\
 "NMI.*error"
 "irq.*nobody.cared"
 "Error.DRAM"
+"Uncorrectable.*rror"
+"error.detected.during.POST"
 "mce:.CPU.supports.0.MCE.banks"
 "Processor.*temperature"
 "SMART.*failure"

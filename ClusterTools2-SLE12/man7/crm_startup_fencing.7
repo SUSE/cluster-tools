@@ -1,0 +1,140 @@
+.TH crm_startup_fencing 7 "10 Jan 2018" "" "ClusterTools2"
+.\"
+.SH NAME
+crm_startup_fencing \- how the cluster should act on startup
+.\"
+.SH DESCRIPTION
+
+The crm basic parameter \fBstartup-fencing\fP, together with others,
+defines how the cluster should act on startup. Corosync and pacemaker
+both have parameters for controlling the behaviour on cluster start.
+
+For corosync the parameters are two_node and wait_for_all.
+For pacemaker the parameters are no-quorum-policy, startup-fencing,
+expected-quorum-votes, and dc-deadtime.
+
+Of course, first of all it is important whether the cluster service
+is started on boot automatically or not.
+
+On startup each cluster node tries to see all other known nodes.
+
+TODO
+
+.\"
+.SH OPTIONS
+
+.B startup-fencing = true
+
+If a node is allowed to act (by having quorum or by no-quorum-policy),
+it will fence all unseen known nodes after becoming DC.
+This is to solve potential split-brain in order to start resources.
+This is the default.
+
+.B startup-fencing = false
+
+If a node is allowed to act (by having quorum or by no-quorum-policy),
+it will ignore unseen known nodes and just start resources.
+The cluster does not protect resources in case of split-brain during cluster
+start. This is not recommended. 
+
+.\"
+.SH EXAMPLES
+.P
+\fB* Two-node cluster, SBD STONITH\fR
+
+Common configuration for the widely used Simple Stack, as well as for
+SAP Enqueue Replication, SAP HANA System Replication scale-up, and IBM DB2 HADR.
+
+With SBD, startup-fencing has no immediate consequence if the fenced node is
+up without the cluster running. In this case a later start of the cluster on
+the fenced node will be blocked by SBD. So, the resources are save against
+split-brain.
+ 
+TODO
+pacemaker crm:
+.br
+startup-fencing=true
+.br
+no-quorum-policy=ignore
+
+corosync conf:
+.br
+two_node: 1
+.br
+wait_for_all: 0 
+
+
+.P
+\fB* Two-node cluster, remote management board STONITH\fR
+
+Server hardware (e.g. iLO, IPMI, DRAC) falls in this category, as well as
+server management consoles (e.g. HMC), hypervisors, virtualisation management
+(e.g. vCenter, OpenStack), or public cloud management APIs.
+
+With remote management board, startup-fencing will result in immediate reboot
+or shutdown of the fenced node.
+
+From all possible combinations of options, two setups might make sense.
+
+a. Cluster will wait for all nodes on startup
+
+TODO
+pacemaker crm:
+.br
+startup-fencing=true
+
+corosync conf:
+.br
+two_node: 1
+.br
+wait_for_all: 1
+
+
+b. Cluster will fence unseen node and start resources
+
+TODO
+pacemaker crm:
+.br
+startup-fencing=true
+.br
+no-quorum-policy=ignore
+
+corosync conf:
+.br
+two_node: 1
+.br
+wait_for_all: 0 
+
+
+.\"
+.SH FILES
+.TP
+/usr/share/ClusterTools2/samples/
+        samples of config files and scripts.
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBcrm\fP(8), \fBcs_prepare_crm_basics\fP(8), \fBstonith\fP(8),
+\fBstonith_sbd\fP(7), \fBsbd\fP(8), \fBcrm_simulate\fP(8),
+\fBcorosync-cfgtool\fP(8), \fBcorosync.conf\fP(7), \fBClusterTools2\fP(7),
+\fBcrm_no_quorum_policy\fP(7),
+.br
+http://www.suse.com/documentation/sle_ha/ ,
+.br
+http://www.clusterlabs.org/doc/en-US/Pacemaker/1.1/html/Clusters_from_Scratch/ch05s03.html ,
+.\"
+.SH AUTHORS
+The content of this manual page was mostly derived from online documentation
+mentioned above.
+.\"
+.SH COPYRIGHT
+(c) 2018 SUSE Linux GmbH, Germany.
+ClusterTools2 comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

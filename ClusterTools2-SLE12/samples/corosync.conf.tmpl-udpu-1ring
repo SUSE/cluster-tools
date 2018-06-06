@@ -1,19 +1,19 @@
 # /etc/corosync/corosync.conf
-# udp unicast, one ring, rrp_mode passive, no encryption
+# udp unicast, one ring, rrp_mode passive, encryption
 # corosync.conf(5), votequorum(5), corosync_overview(8)
 totem {
     version: 2
-    #crypto_cipher: sha1
-    #crypto_hash: aes256
-    crypto_cipher: none
-    crypto_hash: none
+    secauth: on
+    crypto_cipher: aes256 
+    crypto_hash: sha1
+    cluster_name: @@CLUSTERNAME@@
     clear_node_high_bit: yes
     transport: udpu
     rrp_mode: passive
     #token: 5000
     #token_retransmits_before_loss_const: 28
-    #join: 60
-    #consensus: 6000
+    #join: 1000
+    #consensus: 7500
     #fail_recv_const: 5000
     #max_messages: 20
     interface {
@@ -45,5 +45,8 @@ logging {
     }
 quorum {
     provider: corosync_votequorum
+    expected_votes: 2
+    two_node: 1
+    wait_for_all: 0
 }
 #

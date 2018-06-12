@@ -1,31 +1,35 @@
 #
 # spec file for package ClusterTools2
 #
-# Copyright (c) 2008-2010 SUSE LINUX GmbH, Germany.
-# Copyright (c) 2011-2014 SUSE LINUX Products GmbH, Germany.
-# Copyright (c) 2015-2017 SUSE LINUX GmbH, Germany.
-# This file and all modifications and additions to the pristine
-# package are under the same license as the package itself.
+# Copyright (c) 2018 SUSE LINUX GmbH, Nuernberg, Germany.
 #
-# GNU General Public License v2. No warranty.
+# All modifications and additions to the file contributed by third parties
+# remain the property of their copyright owners, unless otherwise agreed
+# upon. The license for this file, and modifications and additions to the
+# file, is the same license as for the pristine package itself (unless the
+# license for the pristine package is not an Open Source License, in which
+# case the license is the MIT License). An "Open Source License" is a
+# license that conforms to the Open Source Definition (Version 1.9)
+# published by the Open Source Initiative.
+
+# Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
-# please send bugfixes or comments to feedback@suse.de.
-#
-Name:         ClusterTools2
-License:      GPL-2.0
-Group:        Productivity/Clustering/HA
-Autoreqprov:  on
-Summary:      Cluster Tools to control some functions easy
-Version:      3.0.1
-Release:      1
-Source:       %{name}-%{version}.tbz
-BuildRoot:    %{_tmppath}/%{name}-%{version}-build
-BuildArch:    noarch
-Vendor:	      SUSE Linux GmbH
-Requires:     pacemaker > 1.1.1
-Requires:     perl-TermReadLine-Gnu >= 1.16
-Requires:     cron
-Requires:     logrotate
+
+
+Name:           ClusterTools2
+Summary:        Cluster Tools to control some functions easy
+License:        GPL-2.0
+Group:          Productivity/Clustering/HA
+Version:        3.0.2
+Release:        0
+Source:         %{name}-%{version}.tbz
+BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+BuildArch:      noarch
+Requires:       cron
+Requires:       logrotate
+Requires:       pacemaker > 1.1.1
+Requires:       perl-TermReadLine-Gnu >= 1.16
+Requires(post): man
 
 %description
 ClusterTools2 provides tools for setting up and managing a corosync/

@@ -1,3 +1,5 @@
+* Wed Mar 14 2018 - ilya.manyugin@suse.com
+  - added /etc/ClusterTools2/cs_make_sbd_devices
 * Thu Sep 06 2013 - lars.pinne@suse.com
   - added cs_show_wwpn, cs_check_lsbinit first alpha
 * Mon May 06 2013 - fabian.herschel@suse.com

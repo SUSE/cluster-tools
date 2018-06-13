@@ -1,10 +1,10 @@
 # /etc/corosync/corosync.conf
-# udp unicast, one ring, rrp_mode passive, encryption
+# udp unicast, one ring, rrp_mode passive, encryption, sle-ha12sp3
 # corosync.conf(5), votequorum(5), corosync_overview(8)
 totem {
     version: 2
     secauth: on
-    crypto_cipher: aes256 
+    crypto_cipher: aes256
     crypto_hash: sha1
     cluster_name: @@CLUSTERNAME@@
     clear_node_high_bit: yes
@@ -18,7 +18,7 @@ totem {
     #max_messages: 20
     interface {
         ringnumber: 0
-        bindnetaddr: @@BINDNETADDR_0@@
+	#bindnetaddr: @@BINDNETADDR_0@@
         mcastport: @@MCASTPORT_0@@
         ttl: 1
         }

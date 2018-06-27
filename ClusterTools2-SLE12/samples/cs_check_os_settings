@@ -1,0 +1,404 @@
+#!/bin/bash
+# cs_check_os_settings
+#
+# (c) 2017 SUSE Linux GmbH, Germany.
+# GNU General Public License v2. No warranty.
+# Author: L.Pinne
+#
+# Version: 2017-12-08
+#
+
+#=== SAP note 2205917
+#
+# /sys/kernel/mm/ksm/run
+#	0
+#=== SAP note 1771258 
+# ulimit -x
+# /etc/security/limits.conf
+#@sapsys	soft 	nofile 65536
+#@sapsys 	hard	nofile 65536
+#@sdba 		soft	nofile 65536
+#@sdba		hard	nofile 65536
+#@dba 		soft 	nofile 65536
+#@dba 		hard	nofile 65536
+#
+#=== SAP note ?
+#/etc/systemd/logind.conf.d/sap-hana.conf 
+#	[Login]
+#	UserTasksMax=1000000
+#
+#=== SAP note ?
+#	en_US
+#
+
+# TODO FORCE_LATENCY=70 "cat /dev/cpu_dma_latency"
+TUNED_CONF="/usr/lib/tuned/sap-hana/tuned.conf"
+LOGIND_CONF="/etc/systemd/logind.conf.d/sap-hana.conf"
+SAPINIT_CONF="/etc/systemd/system/sapinit.service.d/type.conf"
+BOOT_CONF="/etc/defaults/grub"
+SYSCTL_CONF="/etc/sysctl.d/sap-hana.conf"
+LOCAL_CONF="/etc/init.d/boot.local"
+PRODUCT_CONF="/etc/products.d/baseproduct"
+LIMITS_CONF="/etc/security/limits.conf"
+
+#
+SERVICES_SAP="
+# TODO SAP note$
+uuidd.service=enabled$
+uuidd.socket=enabled$
+sapinit.service=enabled$
+sysstat.service=enabled$
+"
+
+#
+SERVICES_SUSE="
+ntpd.service=enabled$
+tuned.service=enabled$
+sapconf.service=enabled$
+systemd-sysctl.service=enabled$
+sshd.service=enabled$
+ksmd.service=disabled$
+lvm2-lvmetad.service=disabled$
+lvm2-lvmetad.socket=disabled$
+pacemaker.service=disabled$
+"
+
+#
+SAPINIT_SUSE="
+After=pacemaker.service$
+Type=oneshot$
+"
+
+#
+LIMITS_SAP="
+@sapsys=1048576$
+@sdba=1048576$
+@dba=1048576$
+"
+
+#
+LOGIND_SAP="
+# SAP note 2205917$
+UserTasksMax=1000000$
+"
+
+#
+TUNED_SAP="
+# SAP note 2205917$
+force_latency=70$
+governor=performance$
+"
+
+#
+TUNED_SUSE="
+"
+
+#
+BOOT_SAP="
+# SAP note 2205917 2131662 2031375$
+transparent_hugepage=never$
+# SAP note 2205917$
+numa_balancing=disabled$
+intel_idle.max_cstate=1$
+processor.max_cstate=1$
+# SAP note none$
+elevator=noop$
+"
+# SAP note 941735
+# /dev/shm (RAM + SWAP) * 0.75
+
+#
+BOOT_SUSE="
+cgroup_disable=memory$
+"
+
+#
+RPM_SAP="
+# SAP note 2205917$
+kernel-default=3.12.67-60.64.18$
+kernel-ppc64le=3.12.67-60.64.18$
+# kernel-ppc64=3.0.101-104.2$
+# kernel-bigmem=3.0.101-104.2$
+glibc=2.22-51.6$
+# SAP note 1984787$
+libuuid1=2.25-22$
+sapinit-systemd-compat=1.0-2.1$
+# TODO SAP note$
+libgcc_s1=6.2.1$
+util-linux=2.25-22$
+"
+
+#
+RPM_SUSE=" 
+ntp=4.2.8p9$
+sysstat=10.2.1$
+xfsprogs=3.2.1$
+"
+
+#
+# TODO PATTERN_SAP
+# TODO PATTERN_SUSE base x11 sap-hana Basis-Devel Minimal
+#	for f in base x11 sap-hana Basis-Devel Minimal ; \
+#	do echo $f ; zypper search -t pattern | grep ^i...$f ; done
+# TODO CHANNEL_SUSE
+
+#
+SYSCTL_SAP="
+# SAP note 2205917$
+kernel.numa_balancing=0$
+# SAP note 1980196 12757 900929$
+vm.max_map_count=65530$
+# SAP note 2534844$
+kernel.shmmni=32768$
+# SAP Note 941735$
+kernel.shmall=1152921504606846720$
+kernel.shmmax=18446744073709551615$
+# SAP Note none$
+kernel.sem=32000 1024000000 500 32000$
+# SAP note 2205917$
+# Energy Performance BIOS, CPU Frequency/Voltage scaling, cpu_dma_frequency$
+# SAP note none$
+# min_perf_pct$
+# SAP note none$
+# read_ahead_kb 64$
+# SAP note 2382421$
+net.core.somaxconn=4096$
+net.ipv4.tcp_max_syn_backlog=8192$
+net.ipv4.tcp_timestamps=1$
+net.ipv4.tcp_syn_retries=8$
+net.ipv4.tcp_window_scaling=1$
+net.ipv4.ip_local_port_range=1024 64999$
+net.ipv4.tcp_tw_reuse=1$
+net.ipv4.tcp_tw_recycle=1$
+# SAP note 1557506$
+vm.pagecache_limit_mb=0$
+vm.pagecache_limit_ignore_dirty=0$
+"
+
+#
+SYSCTL_SUSE="
+# SAP note none$
+net.ipv4.tcp_slow_start_after_idle=0$
+# SAP note none$
+vm.swappiness=60$
+fs.aio-max-nr=458752$
+fs.file-max=20000000$
+vm.overcommit_memory=1$
+#vm.max_map_count=1000000$
+#kernel.shmmax=9223372036854775807$
+#kernel.sem=1250 256000 100 8192$
+#kernel.shmall=1152921504606846720$
+# SUSE TID 7008919 7010287$
+vm.dirty_background_bytes=314572800$
+vm.dirty_bytes=629145600$
+"
+
+#
+# TODO always display version and date, because settings are subject to change
+# TODO function echo_help()
+# TODO function echo_variables()
+#
+
+function echo_msgsep() {
+	echo
+        echo "================================================ ${1:0:30} ==="
+	echo
+}
+
+
+function echo_result() {
+        echo "want  $name = $1"
+	echo "have  $name = $2"
+	echo
+}
+
+
+function chk_taint() {
+	echo_msgsep "$FUNCNAME $1"
+	have=$(cat /proc/sys/kernel/tainted)
+	echo_result "0"  $have
+}
+
+function chk_basics() {
+	echo_msgsep "$FUNCNAME $1"
+
+	baseproduct_out=$(grep -e shortsummary -e target $PRODUCT_CONF |\
+	sed -e s/target//g -e s/shortsummary//g -e s/\<.\>//g -e s/\<\>//g |\
+	tr -d "\n")
+
+	echo -n "hostname = "; hostname -f
+	echo -n "date = "; date
+	echo "product = $baseproduct_out"
+	echo -n "myself = "; echo -n "$0";
+		head -9 $0 | grep "^# Version:" | tr -d "#"
+	echo
+}
+
+
+function chk_hardware() {
+        echo_msgsep "$FUNCNAME $1"
+
+	lscpu | awk -F: '$1=="NUMA node(s)"{print "cpu_numa_nodes = "$2};
+		$1=="Socket(s)"{print "cpu_sockets = "$2};
+		$1=="On-line CPU(s) list"{print "cpu_online = "$2}'
+	awk -F: '$1=="MemTotal" {print "mem_total = "$2};
+		$1=="SwapTotal" {print "swap_total = "$2}' /proc/meminfo
+	echo
+	numastat | grep -e "node[0-9]" -e numa_miss
+	echo
+}
+
+
+function chk_sysctl() {
+	echo_msgsep "$FUNCNAME $1"
+
+	SYSCTL=$1
+	sysctl_out=$(/sbin/sysctl -A | tr "\n" "$")
+
+	# TODO use shell array to omit this ugly $
+	# TODO one single awk script
+	for s in $(echo ${!SYSCTL} | tr " $" "&\n" | grep -v "#"); do
+		name=$(echo $s | tr "&" " " | awk -F= '{print $1}' | tr -d " ")
+		want=$(echo $s | tr "&" " " | awk -F= '{print $2}')
+		have=$(echo $sysctl_out | tr "$" "\n" |\
+			awk -F= '$1=="'${name}' " {print $2}')
+		# TODO echo_result
+		echo "want  $name = $want"
+		echo "have  $name =$have"
+		echo
+	done
+}
+
+
+function chk_boot() {
+        echo_msgsep "$FUNCNAME $1"
+
+	BOOT=$1
+	boot_out=$(cat /proc/cmdline | tr " " "$")
+
+	for s in $(echo ${!BOOT} | tr " $" "&\n" | grep -v "#"); do
+		name=$(echo $s | tr "&" " " | awk -F= '{print $1}' | tr -d " ")
+		want=$(echo $s | tr "&" " " | awk -F= '{print $2}')
+		have=$(echo $boot_out | tr "$" "\n" |\
+			awk -F= '$1=="'${name}'" {print $2}')
+		echo_result $want $have
+	done
+}
+
+
+function chk_rpm() {
+	echo_msgsep "$FUNCNAME $1"
+
+	RPM=$1
+	rpm_out=$(rpm -qa | grep -v -- "-32bit-" | tr "\n" "$")
+
+	for s in $(echo ${!RPM} | tr " $" "&\n" | grep -v "#"); do
+		name=$(echo $s | tr "&" " " | awk -F= '{print $1}' | tr -d " ")
+		want=$(echo $s | tr "&" " " | awk -F= '{print $2}')
+		have=$(echo $rpm_out | tr "$" "\n" | grep "^${name}-[0-9]" )	
+		echo_result ${name}-$want $have
+	done
+}
+
+
+function chk_tuned() {
+	echo_msgsep "$FUNCNAME $1"
+
+	TUNED=$1
+	# TODO where to find the resulting settings?
+	tuned_out=$()
+
+	want=$(echo $TUNED_CONF | awk -F/ '{print $5}')
+	have=$(tuned-adm active | awk -F: '{print $2}')	
+	echo "want  tuned_prof: $want"
+	echo "have  tuned_prof:$have"
+	echo
+	return	
+	# TODO
+	for s in $(echo ${!TUNED} | tr " $" "&\n" | grep -v "#"); do
+		name=$(echo $s | tr "&" " " | awk -F= '{print $1}' | tr -d " ")
+		want=$(echo $s | tr "&" " " | awk -F= '{print $2}')
+		echo_result $want $have
+	done
+}
+
+
+function chk_sapinit() {
+	echo_msgsep "$FUNCNAME $1"
+
+	SAPINIT=$1
+	sapinit_out=$(systemctl show sapinit | tr "\n" "$")
+	
+	for s in $(echo ${!SAPINIT} | tr " $" "&\n" | grep -v "#"); do
+		name=$(echo $s | tr "&" " " | awk -F= '{print $1}' | tr -d " ")
+		want=$(echo $s | tr "&" " " | awk -F= '{print $2}')	
+		have=$(echo $sapinit_out | tr "$" "\n" |\
+			awk -F= '$1=="'${name}'" {print $2}')
+		echo_result $want $have
+	done
+}
+
+
+function chk_services() {
+	echo_msgsep "$FUNCNAME $1"
+
+	SERVICES=$1
+	services_yes=$( (systemctl list-unit-files *.service;
+			systemctl list-unit-files *.socket)|\
+		awk -F" " '$1~/\./ && $2=="enabled" {print $1,$2}' |\
+		tr "\n" "$")
+	services_lsb_yes=$(systemctl list-units *.service |\
+	 	awk '$1~/\./ && $2=="loaded" {print $1,"enabled"}' |\
+		tr "\n" "$") 
+	services_not=$( (systemctl list-unit-files *.service;
+			systemctl list-unit-files *.socket)|\
+		awk -F" " '$1~/\./ && $2=="disabled" {print $1,$2}' |\
+		tr "\n" "$")
+
+	for s in $(echo ${!SERVICES} | tr " $" "&\n" | grep -v "#" ); do
+		name=$(echo $s | tr "&" " " | awk -F= '{print $1}' | tr -d " ")
+		want=$(echo $s | tr "&" " " | awk -F= '{print $2}')
+		have=$(echo $services_yes $services_lsb_yes $services_not |\
+			tr "$" "\n" | sort -u |\
+			awk -F" " '$1=="'${name}'" {print $2}')
+		echo_result $want $have
+	done
+}
+
+
+function chk_limits() {
+	echo_msgsep "$FUNCNAME $1"
+	# TODO ulimit -x	
+
+	# LIMITS_SAP
+
+	# grep $p $LIMITS_CONF
+
+	echo_result $want $have
+}
+
+
+# main()
+
+chk_basics
+chk_hardware
+chk_taint
+
+chk_rpm RPM_SAP
+chk_rpm RPM_SUSE
+
+chk_boot BOOT_SAP
+chk_boot BOOT_SUSE
+
+chk_services SERVICES_SAP
+chk_services SERVICES_SUSE
+
+chk_sapinit SAPINIT_SUSE
+
+chk_tuned TUNED_SAP
+chk_tuned TUNED_SUSE
+
+chk_sysctl SYSCTL_SAP
+chk_sysctl SYSCTL_SUSE
+
+#

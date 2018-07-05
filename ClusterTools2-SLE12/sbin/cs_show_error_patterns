@@ -78,6 +78,7 @@ test -z "${ERROR_PATTERN}" &&\
 "kernel.*page.allocation.failure"
 "kernel.*failed.to.assign"
 "kernel.*medium.error"
+"kernel.*pci.*failed"
 "double.fault:"
 "target.failure"
 "reservation.conflict"

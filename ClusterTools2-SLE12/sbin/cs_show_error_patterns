@@ -5,7 +5,7 @@
 # (c) 2011-2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: SLES12 0.2 2018-01-16
+# Version: SLES12 0.2 2018-07-05
 #
 
 EXE="$0"
@@ -65,6 +65,7 @@ test -z "${ERROR_PATTERN}" &&\
 "NMI.received"
 "NMI.*error"
 "irq.*nobody.cared"
+"Signaling PME.*interrupt"
 "Error.DRAM"
 "Uncorrectable.*rror"
 "error.detected.during.POST"

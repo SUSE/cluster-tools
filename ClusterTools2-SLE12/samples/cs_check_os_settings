@@ -1,11 +1,11 @@
 #!/bin/bash
 # cs_check_os_settings
 #
-# (c) 2017 SUSE Linux GmbH, Germany.
+# (c) 2017-2018 SUSE Linux GmbH, Germany.
 # GNU General Public License v2. No warranty.
-# Author: L.Pinne
+# Authors: L.Pinne, R.Wolf
 #
-# Version: 2017-12-08
+# Version: 2018-04-24 
 #
 
 #=== SAP note 2205917
@@ -31,7 +31,6 @@
 #	en_US
 #
 
-# TODO FORCE_LATENCY=70 "cat /dev/cpu_dma_latency"
 TUNED_CONF="/usr/lib/tuned/sap-hana/tuned.conf"
 LOGIND_CONF="/etc/systemd/logind.conf.d/sap-hana.conf"
 SAPINIT_CONF="/etc/systemd/system/sapinit.service.d/type.conf"
@@ -53,7 +52,7 @@ sysstat.service=enabled$
 #
 SERVICES_SUSE="
 ntpd.service=enabled$
-tuned.service=enabled$
+tuned.service=disabled$
 sapconf.service=enabled$
 systemd-sysctl.service=enabled$
 sshd.service=enabled$
@@ -61,6 +60,7 @@ ksmd.service=disabled$
 lvm2-lvmetad.service=disabled$
 lvm2-lvmetad.socket=disabled$
 pacemaker.service=disabled$
+sbd.service=enabled$
 "
 
 #
@@ -194,7 +194,6 @@ vm.dirty_bytes=629145600$
 "
 
 #
-# TODO always display version and date, because settings are subject to change
 # TODO function echo_help()
 # TODO function echo_variables()
 #

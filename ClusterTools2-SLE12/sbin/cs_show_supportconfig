@@ -5,7 +5,7 @@
 # (c) 2011-2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License 2. No warranty.
 #
-# Version: SLES12 0.03 2018-03-22
+# Version: SLES12 0.03 2018-07-23
 #
 # For Supportconfig Script Version: 2.25-237
 #
@@ -203,7 +203,7 @@ function chk_modules(){
 
 	# TODO add Cisco HBA
 	# TODO test HP eth nx_nic
-	# TODO watchdog ppc64 alim7101_wdt.ko?, s390x vmwatchdog.ko?
+	# TODO watchdog ppc64le?, s390x vmwatchdog.ko?
 	# TODO check Fusion IO
 	test -z "${HARDW_MOD}" &&\
 	HARDW_MOD="
@@ -437,6 +437,7 @@ function chk_services(){
 	echo
 
 # TODO precheck_for_sap
+# TODO boot.sapinit with AUTOSTART in instance profile?
 	test -z "${SVC_YES}" &&\
 	SVC_YES="
 boot.clock
@@ -446,6 +447,7 @@ boot.multipath
 boot.sapconf
 boot.sysstat
 boot.sysctl
+boot.sapinit
 multipathd
 ntp
 "
@@ -462,7 +464,6 @@ pacemaker
 powerd
 slpd
 smartd
-sapinit
 uuidd
 "
 	FIL="chkconfig.txt"
@@ -887,6 +888,7 @@ sbd:
         test -z "$f" || grep -vh "^#" $f # | grep "/dev/null"
         echo
 
+	# TODO /proc/sys/net/ipv4/tcp_retries2 : 2 for NW Enqueue Replication
 }
 
 

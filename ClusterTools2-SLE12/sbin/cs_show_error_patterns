@@ -5,7 +5,7 @@
 # (c) 2011-2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: SLES12 0.2 2018-09-05
+# Version: SLES12 0.2 2018-09-06
 #
 
 EXE="$0"
@@ -142,6 +142,7 @@ test -z "${ERROR_PATTERN}" &&\
 "Failed.to.read"
 "exits.with.status.*[1-9]"
 "Failed.services.*runlevel"
+"systemd.*start-limit"
 "cgroup:.*rejected"
 "shutdown.*shutting.down"
 "syslog-ng.shutting.down"

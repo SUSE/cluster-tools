@@ -1,64 +1,58 @@
 # /etc/corosync/corosync.conf
-compatibility: whitetank
-aisexec {
-	user:		root
-	group:		root
-}
-service {
-	ver:		0
-	name:		pacemaker
-	use_mgmtd:	yes
-	use_logd:	yes
-}
 totem {
-	version:	2
-	# kaballa, alchemy, rocket science, never touch this numbers.
-	token:		5000
-	fail_recv_const: 5000
-	token_retransmits_before_loss_const: 28
-	join:		60
-	consensus:	6000
-	vsftype:	none
-	max_messages:	20
+	version: 2
+	secauth: on
+	crypto_cipher: aes256
+	crypto_hash: sha1
+	cluster_name: hacluster
 	clear_node_high_bit: yes
-	secauth:	@@SECAUTH@@
-	threads:	@@THREADS@@	
- 	rrp_mode:      	@@RRPMODE@@ 
-        transport:	udpu
-        interface {
-                ringnumber:     0
-                bindnetaddr:	@@BINDNETADDR_0@@   
-                mcastport:     	@@MCASTPORT_0@@ 
-                member {
-                        memberaddr: @@MEMBERADDR1_0@@ 
-                }
-                member {
-                        memberaddr: @@MEMBERADDR2_0@@
-                }
-        }
+	transport: udpu
+	rrp_mode: passive
+	# you lileky need the following
+	#token: 5000
+	#token_retransmits_before_loss_const: 28
+	#join: 1000
+	#consensus: 7500
+	#fail_recv_const: 5000
+ 	#max_messages: 20
+	interface {
+		ringnumber: 0
+		mcastport: @@MCASTPORT_0@@ 
+		member {
+			memberaddr: @@MEMBERADDR1_0@@ 
+ 		}
+		member {
+ 			memberaddr: @@MEMBERADDR2_0@@
+ 		}
+ 	}
 	# never use the same sub-network for both rings.
-        interface {
-                ringnumber:	1 
-                bindnetaddr:	@@BINDNETADDR_1@@   
-                mcastport:     	@@MCASTPORT_1@@ 
-                member {
-                        memberaddr: @@MEMBERADDR1_1@@ 
-                }
-                member {
-                        memberaddr: @@MEMBERADDR2_1@@
-                }
-        }
+	interface {
+ 		ringnumber: 1 
+ 		mcastport: @@MCASTPORT_1@@ 
+		member {
+ 			memberaddr: @@MEMBERADDR1_1@@ 
+ 		}
+ 		member {
+ 			memberaddr: @@MEMBERADDR2_1@@
+ 		}
+ 	}
 }
 logging {
 	fileline:	off
-	to_stderr:	no
-	to_logfile:	no
-	logfile:	/var/log/corosync.log
-	to_syslog:	yes	
-	syslog_facility: daemon
+	to_syslog:	yes
 	debug:		off
-	timestamp:	off
+	timestamp:	on
+	debug:		off
+	timestamp:	on
+	logger_subsys {
+		subsys: QUORUM
+	debug: off
+	}
 }
-amf {
-	mode: disabled
+quorum {
+	provider: corosync_votequorum
+	expected_votes: 2
+	two_node: 1
+	wait_for_all: 0
 }
+#

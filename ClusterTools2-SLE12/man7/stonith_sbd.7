@@ -165,7 +165,7 @@ delivered to the node. For multipath, this should be the time required
 for MPIO to detect a path failure and switch to the next path. You may
 have to test this in your environment. The node will perform suicide if
 it has not updated the watchdog timer fast enough; the watchdog timeout
-must be shorter than the msgwait timeout - half the value is a good
+must be shorter than half the msgwait timeout - half the value is a good
 estimate. This can be specified when the SBD device is initialized.
 
 Sharing one SBD device among several clusters is not recommended.

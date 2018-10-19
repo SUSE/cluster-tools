@@ -5,7 +5,7 @@
 # (c) 2011-2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: SLES12 0.2 2018-09-06
+# Version: SLES12 0.2 2018-10-19
 #
 
 EXE="$0"
@@ -19,6 +19,7 @@ JCTL=""
 
 CFGVAR="
 ERROR_PATTERN
+SVCERR_PATTERN
 CLUERR_PATTERN
 APPERR_PATTERN
 CLUSTER_LOG
@@ -71,7 +72,6 @@ test -z "${ERROR_PATTERN}" &&\
 "error.detected.during.POST"
 "mce:.CPU.supports.0.MCE.banks"
 "Processor.*temperature"
-"SMART.*failure"
 "SMP.disabled"
 "Broken.BIOS"
 "kernel.*task.*abort"
@@ -90,13 +90,8 @@ test -z "${ERROR_PATTERN}" &&\
 "Dropped.frame"
 "disabling.*barrier"
 "doesn.*support.*DPO.*FUA"
-"Unable.*SMART.enabled"
 "BBU.disabled"
 "Warning.*LUN.assignments.*changed"
-"multipathd.*timed.out"
-"multipathd.*mpath.*unable"
-"multipathd.*reinstated"
-"multi.*path.*down"
 "[Ff]ail.*/dev/md"
 "U_\|_U"
 "found.0.matching.devices"
@@ -117,36 +112,23 @@ test -z "${ERROR_PATTERN}" &&\
 "bond.*not.detect.*failures"
 "bond.*permanent.HWaddr.*in.use"
 "link.*not.ready"
-"link.failure"
-"Link.Failure.Count"
+"ink..ailure"
 "RPC.*multiple.fragments"
 "martian.source.*dev"
 "unexpectedly.shrunk.window"
 "TCP:.Possible.SYN.flooding.on.port"
 "net_ratelimit:"
-"Host.*is.not.allowed.to.talk.to.us!"
+"Host.*is.not.allowed.to.talk.to.us"
 "COMPLAIN.ACCEPT.*MAC"
 "POSSIBLE.BREAK-IN.ATTEMPT"
-"wicked.*failed"
-"ntpd.*failed"
-"ntpd.*time.reset"
-"ntpd.TIME_ERROR"
-"time.sync.status.changed"
-"Frequency.format.error"
-"failed.to.bind.to.LDAP"
 "error:.PAM:.User.not.known"
 "conversation.failed"
 "refused.mount.request"
 "nfs..server.*not.responding"
-"logrotate.*error"
 "Failed.to.read"
 "exits.with.status.*[1-9]"
-"Failed.services.*runlevel"
-"systemd.*start-limit"
 "cgroup:.*rejected"
 "shutdown.*shutting.down"
-"syslog-ng.shutting.down"
-"kernel.*segfault.at"
 "Out.of.memory"
 "invoked.oom-killer"
 "Call.Trace"
@@ -159,15 +141,30 @@ test -z "${ERROR_PATTERN}" &&\
 "annot.create..ocket"
 "end.*failed"
 "ead.*failed"
-"GAB.*failure"
-"Symantec.Technical.Support"
-"error.*VRT"
-"VCS.CRITICAL"
-"vxvm.*volume.*not"
-"Hangcheck.*clock"
 "pagecache.limit.set"
+"
+
+test -z "${SVCERR_PATTERN}" &&\
+	 SVCERR_PATTERN="
+"SMART.*failure"
+"multipathd.*timed.out"
+"multipathd.*mpath.*unable"
+"multipathd.*reinstated"
+"multi.*path.*down"
+"wicked.*failed"
+"ntpd.*failed"
+"ntpd.*time.reset"
+"ntpd.TIME_ERROR"
+"time.sync.status.changed"
+"Frequency.format.error"
+"failed.to.bind.to.LDAP"
+"logrotate.*error"
+"systemd.*start-limit"
+"Failed.services.*runlevel"
+"syslog-ng.shutting.down"
 "postfix.*fatal"
 "
+
 # TODO separate variable for application patterns (annot.open..rofile" ... "Hangcheck.*clock"
 # TODO raid.set.*active.with.2.out.of.2.mirrors ?
 # TODO check for un-matched userfreindly names (mpath[a-z])
@@ -196,7 +193,7 @@ test -z "${CLUERR_PATTERN}" &&\
 "crmd.*Updating.failcount.*start"
 "sbd.*mbox.read.failed"
 "sbd.*Latency"
-"SoftDog.*not"
+"oft.og.*not"
 "dlm.*link.*down"
 "ocfs2.*has.evicted"
 "ocfs2.*ERR"
@@ -207,6 +204,12 @@ test -z "${CLUERR_PATTERN}" &&\
 
 test -z "${APPERR_PATTERN}" &&\
 	APPERR_PATTERN="
+"GAB.*failure"
+"Symantec.Technical.Support"
+"error.*VRT"
+"VCS.CRITICAL"
+"vxvm.*volume.*not"
+"Hangcheck.*clock"
 "vasd.will.not.synchronize.time"
 "vascache.*error"
 "sapstartsrv.*pam_systemd.*Failed"
@@ -231,7 +234,7 @@ function help() {
 
 
 function writecfg(){
-	echo -e "# $CFG \n# For SLES11.\n#"
+	echo -e "# $CFG \n# For SLES12.\n#"
 	for c in $CFGVAR; do
 		echo "${c}=\""
 		echo ${!c} | tr " " "\n"
@@ -248,7 +251,13 @@ function run_grep() {
 	which journalctl 2>/dev/null && journalctl --no-pager >$JCTL
 
 	# TODO more efficient loop
-	for e in ${ERROR_PATTERN} ${CLUERR_PATTERN} ${APPERR_PATTERN}; do
+	for e in ${ERROR_PATTERN} ${SVCERR_PATTERN}; do
+        	echo -n "$e = "
+		for f in ${LOG}; do
+			test -r $f && cat $f
+		done | zgrep -ic $e
+	done
+	for e in ${CLUERR_PATTERN} ${APPERR_PATTERN}; do
         	echo -n "$e = "
 		for f in ${LOG}; do
 			test -r $f && cat $f

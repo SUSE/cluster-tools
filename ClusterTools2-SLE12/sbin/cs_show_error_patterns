@@ -5,7 +5,7 @@
 # (c) 2011-2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: SLES12 0.2 2018-10-19
+# Version: SLES12 0.2 2018-10-22
 #
 
 EXE="$0"
@@ -28,7 +28,7 @@ ZIPPED_LOG
 "
 
 test -z "${SYSTEM_LOG}" &&\
-	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0"
+	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0 /var/log/mcelog"
 
 # TODO SLES12 bond ...?
 if which journalctl 2>/dev/null; then
@@ -45,7 +45,7 @@ test -z "${CLUSTER_LOG}" &&\
 
 test -z "${ZIPPED_LOG}" &&\
 	ZIPPED_LOG="/var/log/messages*bz2"
-	ZIPPED_LOG="${ZIPPED_LOG} ${CLUSTER_LOG}*bz2"
+	ZIPPED_LOG="${ZIPPED_LOG} $(echo ${CLUSTER_LOG}|tr -d \\n)*bz2"
 
 # TODO add more HBA errors: hpsa cciss
 test -z "${ERROR_PATTERN}" &&\
@@ -56,6 +56,7 @@ test -z "${ERROR_PATTERN}" &&\
 "mlx4_en.*error"
 "bfa.*err"
 "lpfc.*err"
+"lpfc.*failed"
 "qla.*err"
 "qla.*failed"
 "qlge.*error"

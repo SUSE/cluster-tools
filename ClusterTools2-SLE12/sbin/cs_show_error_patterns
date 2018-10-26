@@ -5,7 +5,7 @@
 # (c) 2011-2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: SLES12 0.2 2018-10-22
+# Version: SLES12 0.2 2018-10-26
 #
 
 EXE="$0"
@@ -188,10 +188,12 @@ test -z "${CLUERR_PATTERN}" &&\
 "pcmk.*message.*local.cib.failed"
 "pengine.*fenced.*resource.failure"
 "pengine.*Forcing.*away.*failures"
+"High.CIB.load"
 "crm_resource.*Error"
 "crmd.*ERROR:"
 "crmd.*Updating.failcount.*stop"
 "crmd.*Updating.failcount.*start"
+"crmd.*High.CPU.load"
 "sbd.*mbox.read.failed"
 "sbd.*Latency"
 "oft.og.*not"
@@ -201,6 +203,7 @@ test -z "${CLUERR_PATTERN}" &&\
 "ocfs2.*not.unmounted.cleanly"
 "OCFS2.*kernel.interface.loaded"
 "o2dlm_eviction_cb"
+"HANA_CALL.timed.out"
 "
 
 test -z "${APPERR_PATTERN}" &&\
@@ -246,7 +249,7 @@ function writecfg(){
 
 
 function run_grep() {
-	echo "logs: $LOG" >/dev/stderr
+	echo -e "logs: $LOG\n" >/dev/stderr
 
 	dmesg >$DMSG
 	which journalctl 2>/dev/null && journalctl --no-pager >$JCTL

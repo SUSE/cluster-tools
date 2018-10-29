@@ -2,11 +2,11 @@
 #
 # cs_show_cluster_patterns
 #
-# (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2016-06-01 SLES11
+# Version: 2018-10-29 SLES11
 #
 
 EXE="$0"
@@ -29,14 +29,17 @@ test -z "${OSERR_PATTERN}" &&\
 "NMI.received"
 "NMI.*error"
 "dlm.*link.*down"
+"ocfs2.*has.evicted"
 "ocfs2.*ERR"
 "ocfs2.*not.unmounted.cleanly"
+"OCFS2.*kernel.interface.loaded"
+"o2dlm_eviction_cb"
 "fsck.*recommended"
 "EXT.-fs.error"
 "shutdown.*shutting.down"
 "syslog-ng.shutting.down"
 "syslog-ng.starting.up"
-"SoftDog.*not"
+"oft[Dd]og.*not"
 "
 
 # TODO: verify cluster log msgs. maybe more generic possible?
@@ -74,6 +77,7 @@ test -z "${CLUSTR_PATTERN}" &&\
 "pengine.*LogActions:.Leave.*\(Started.unmanaged\)"
 "pengine.*LogActions:.Leave.*\(Stopped.unmanaged\)"
 "cib.*failed"
+"High.CIB.load"
 "crm_resource.*Error"
 "crmd.*quorum.lost"
 "crmd.*our.DC.is.dead"
@@ -92,6 +96,7 @@ test -z "${CLUSTR_PATTERN}" &&\
 "crmd.*Updating.failcount.*stop"
 "crmd.*Updating.failcount.*start"
 "crmd.*cluster.nodes.*eligible"
+"crmd.*High.CPU.load"
 "lrmd.*probe"
 "lrmd.*RA.output.*failed"
 "lrmd.*RA.output.*error"
@@ -125,6 +130,7 @@ test -z "${RESRC_PATTERN}" &&\
 "SAP.*Unauthorized"
 "SAPHana.*Secure.store.users"
 "SAPHana.*RA.*rc=[1-7,9]"
+"HANA_CALL.timed.out"
 "eDirectory.*failed.*stop"
 "eDirectory.*not.*configured"
 "eDir.configuration.error"

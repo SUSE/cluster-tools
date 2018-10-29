@@ -146,7 +146,6 @@ CLUERR_PATTERN="
 "ocfs2.*not.unmounted.cleanly"
 "OCFS2.*kernel.interface.loaded"
 "o2dlm_eviction_cb"
-"HANA_CALL.timed.out"
 "
 #
 APPERR_PATTERN="

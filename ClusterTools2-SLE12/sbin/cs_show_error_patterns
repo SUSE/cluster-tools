@@ -81,6 +81,7 @@ test -z "${ERROR_PATTERN}" &&\
 "kernel.*failed.to.assign"
 "kernel.*medium.error"
 "kernel.*pci.*failed"
+"kernel.*lost.*interrupt"
 "double.fault:"
 "target.failure"
 "reservation.conflict"

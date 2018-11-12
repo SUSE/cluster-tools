@@ -1,4 +1,4 @@
-.TH ha_related_suse_tids 7 "20 Sep 2018" "" "ClusterTools2"
+.TH ha_related_suse_tids 7 "12 Nov 2018" "" "ClusterTools2"
 .\"
 .SH NAME
 ha_related_suse_tids - selection of SUSE Technical Information Documents, related to high availability
@@ -61,6 +61,10 @@ Updating a SLES11 Cluster to the latest Service Pack (7007261)
 .br
 Usage of hb_report for SLES HAE (7007262) 
 .br
+Supportconfig Self Service via SCC/FTP (7023007)
+.br
+Best practice for applying Program Temporary Fixes (PTFs) (7016640)
+.br
 
 .\"
 .B * Cluster basics, timing, fencing, communication:
@@ -98,6 +102,10 @@ Stalling I/O triggers HAE Cluster (7010781)
 Cluster SBD partition fails from mismatched metadata (7010933) 
 .br
 Create a SBD partition for HAE (High Availability) and XML example (7007616) 
+.br
+How to recreate SBD partition in a SUSE HA cluster. (7018194)
+.br
+SBD does not start but is configured (7022644)
 .br
 HAE: How to create an SBD on local storage for VirtualBox guests (7009737) 
 .br
@@ -169,6 +177,26 @@ Replacing SBD device in a running Pacemaker cluster (7021158)
 .br
 Mount and sbd failures leading to fencing failure (aio-max-nr too low) (7022255)
 .br
+Simulating a Cluster Network Failure (7017617)
+.br
+Cluster reboots frequently without cause in logs (PACEMAKER) (7018594)
+.br
+How to determine the next Pacemaker Cluster Action (7022764)
+.br
+ha-cluster-join fails on syncing configuration files (7020256)
+.br
+corosync[35436]: [TOTEM ] sendmsg(mcast) failed (non-critical)... (7022316)
+.br
+The memory footprint of "corosync" process increases when it has communication problems with the other cluster Nodes (7022840)
+.br
+sleha-join to a cluster using udpu will not join cluster until after restart of corosync on current nodes (7021065)
+.br
+Preventing a Fence Race in Split Brain (COROSYNC,PACEMAKER) (7022467)
+.br
+Cluster node will not join after one node was upgraded. (7022565)
+.br
+Rear backup fails with "No space left on device" errors (7022152)
+.br
 
 .\"
 .B * Cluster resources:
@@ -208,6 +236,10 @@ OCFS2 volume with more than 16TB fails to mount due to missing block64 option (7
 Cannot Perform a Filesystem Check on OCFS2 (7005238) 
 .br
 OCFS2 Partition Fails to Mount with No Free Slots Error (7005236) 
+.br
+mount.ocfs2: Cluster stack is invalid while trying to join the group (7018352)
+.br
+mount.ocfs2: Protocol error while mounting /dev/sdX on / (7017651)
 .br
 howto automatically rebuild a broken md with HAE (7008537) 
 .br
@@ -261,11 +293,9 @@ Basic health check for two-node SAP HANA performance based model (7022984)
 .br
 How to re-enable replication in a two-node SAP performance based model (7023127)
 .br
-SAP Instances failed stop on shutdown (PACEMAKER, SYSTEMD, SAP) (7022671)
-.br
-Indepth HANA Cluster Debug Data Collection (PACEMAKER, SAP) (7022702)
-.br
 Error when coming out of standby: hdbdaemon HDB Daemon not running (7021376)
+.br
+PostgreSQL resource fails to start with "My data may be inconsistent" (7023166)
 .br
 
 .\"
@@ -420,6 +450,21 @@ Reading /proc//maps and /proc//numa_maps takes long (7019001)
 CVE-2016-2183: openssl: Birthday attacks on 64-bit block ciphers aka triple-des (SWEET32) (7017985)
 .br
 How to prevent certain values in limits.conf from being changed by saptune (7023104)
+.br
+System crash or unexpected reboot (7010249)
+.br
+How to obtain application core dumps (3054866)
+.br
+HOWTO: Configure lkcd to capture a kernel core dump (3044267)
+.br
+How to obtain systemd service core dumps (7017137)
+.br
+How To Redirect Unwanted Messages From /var/log/messages (7004659)
+.br
+Best practice for providing kernel core dumps to support incidents (7010056)
+.br
+How to recover from BTRFS errors (7018181)
+.br
 
 .\" .br TODO Oracle 7023167
 .\"

@@ -1,0 +1,56 @@
+.TH cs_show_hana_info 8 "18 Nov 2018" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_show_hana_info \- show info about HANA instance
+.\"
+.SH SYNOPSIS
+.P
+.B cs_show_hana_info \fI[OPTION]\fR
+.P
+.B cs_show_hana_info \fI<SID>\fR \fI<INST_NR>\fR
+.\"
+.SH DESCRIPTION
+\fBcs_show_hana_info\fP shows info about HANA instance.
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+	show help.
+.HP
+\fB --version\fR
+	show version.
+.\"
+.SH EXAMPLES
+.br
+.TP
+* Shwo info about HANA instance with SID HDB and instance number 11 :
+.br
+# cs_show_hana_info HDB 11
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.SH FILES
+.TP
+	...
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBsu\fP(1),
+https://www.suse.com/support/kb/doc.php?id=7022702
+.\"
+.SH COPYRIGHT
+(c) 2018 L.Pinne, Germany.
+.br
+cs_show_hana_info comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

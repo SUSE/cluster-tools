@@ -1,0 +1,87 @@
+#!/bin/bash
+#
+# cs_show_hana_info
+#
+# (c) 2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU General Public License v2. No warranty.
+#
+# Version: 2018-11-19
+#
+
+EXE="$0"
+#CFG="/etc/ClusterTools2/cs_show_hana_info"
+#test -s $CFG && source $CFG
+
+MYHOST=$(hostname)
+
+test -z "${TEMP}" &&\
+	TEMP="/dev/shm/cltl.$RANDOM"
+
+function show_help() {
+	echo "usage	$(basename $0) OPTION"
+	echo "	$(basename $0) <sid> <inst_nr>"
+	echo
+	echo "OPTION:"
+	echo " --help		show help."
+	echo " --version	show version."
+	echo
+	exit
+}
+
+function show_hana() {
+
+	su - ${SID}adm || exit 1
+
+	echo "hostname: ${MYHOST}" >${TEMP} || exit 2
+	echo "sid: $SID" >>${TEMP}
+	echo "inst_nr: $INR" >>${TEMP}
+
+	RC_ALL=0
+
+	sapcontrol -nr $INR -function GetProcessList >>${TEMP}
+	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
+	echo "sapcontrol -nr $INR -function GetProcessList: RC: "$RC
+
+	hdbnsutil -sr_state >>${TEMP}
+	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
+	echo "hdbnsutil -sr_state: RC: "$RC >>${TEMP}
+
+	HDBSettings.sh landscapeHostConfiguration.py --sapcontrol=1 >>${TEMP}
+	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
+	echo "landscapeHostConfiguration.py: RC: "$RC >>${TEMP}
+
+	HDBSettings.sh systemReplicationStatus.py >>${TEMP}
+	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
+	echo "systemReplicationStatus.py: RC: "$RC >>${TEMP}
+
+	HDB info >>${TEMP}
+	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
+	echo "HDB info : RC: "$RC >>${TEMP}
+
+	HDBSettings.sh systemOverview.py >>${TEMP}
+	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
+	echo "HDBSettings.sh systemOverview.py: RC: "$RC >>${TEMP}
+
+	cat ${TEMP} && rm ${TEMP}
+}
+
+
+# main()
+case $1 in
+	-v|--version)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	-h|--help)
+		show_help
+	;;
+	*)
+		test $# -eq 2 || show_help
+		SID=$(echo $1 | tr "[:upper:]" "[:lower:]")
+		INR=$2
+		show_hana
+		exit $RC_ALL
+	;;
+esac
+#

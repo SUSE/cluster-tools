@@ -5,7 +5,7 @@
 # (c) 2011-2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: SLES12 0.2 2018-11-16
+# Version: SLES12 0.2 2018-11-23
 #
 
 EXE="$0"
@@ -104,6 +104,7 @@ test -z "${ERROR_PATTERN}" &&\
 "not.found"
 "fsck.*recommended"
 "EXT.-fs.error"
+"BTRFS.error"
 "Starting.XFS.recovery"
 "xfs_log_force.*error"
 "sdrServ:.*err"

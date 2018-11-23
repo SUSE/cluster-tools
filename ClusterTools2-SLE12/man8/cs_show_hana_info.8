@@ -1,4 +1,4 @@
-.TH cs_show_hana_info 8 "18 Nov 2018" "" "ClusterTools2"
+.TH cs_show_hana_info 8 "23 Nov 2018" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_show_hana_info \- show info about HANA instance
@@ -7,7 +7,7 @@ cs_show_hana_info \- show info about HANA instance
 .P
 .B cs_show_hana_info \fI[OPTION]\fR
 .P
-.B cs_show_hana_info \fI<SID>\fR \fI<INST_NR>\fR
+.B cs_show_hana_info \fI[OPTION]\fR \fI<SID>\fR \fI<INST_NR>\fR
 .\"
 .SH DESCRIPTION
 \fBcs_show_hana_info\fP shows info about HANA instance.
@@ -19,13 +19,25 @@ cs_show_hana_info \- show info about HANA instance
 .HP
 \fB --version\fR
 	show version.
+.HP
+\fB --info\fR
+	show info for given instance.
+.HP
+\fB --logs\fR
+	show summary on errors in logs for given instance.
+
 .\"
 .SH EXAMPLES
 .br
 .TP
-* Shwo info about HANA instance with SID HDB and instance number 11 :
+* Show info about HANA instance with SID HDB and instance number 11 :
 .br
-# cs_show_hana_info HDB 11
+# cs_show_hana_info --info HDB 11
+.br
+.TP
+* Show summary on errors in logs from HANA instance with SID HDB and instance number 11 :
+.br
+# cs_show_hana_info -l HDB 11
 .\"
 .SH EXIT STATUS
 .B 0
@@ -35,6 +47,7 @@ Successful program execution.
 Usage, syntax or execution errors.
 .SH FILES
 .TP
+/hana/shared/<SID>/HDB<INST_NR>/<HOST>/trace/*.trc
 	...
 .\"
 .SH BUGS

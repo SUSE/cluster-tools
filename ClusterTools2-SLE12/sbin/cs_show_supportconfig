@@ -1570,6 +1570,12 @@ HANA-Firewall
 		echo
 	fi
 	echo
+	FIL="memory.txt"
+	split_file $FIL
+	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TMP}/${FIL}/xx*)
+        test -z "$f" ||\
+		awk ' $9~/HDB_/ {print $9}' $f | sort -u | tail -2
+	echo
 }
 
 

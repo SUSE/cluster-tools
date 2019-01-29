@@ -5,7 +5,7 @@
 # (c) 2011-2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: SLES12 0.2 2018-11-23
+# Version: SLES12 0.2 2019-01-29
 #
 
 EXE="$0"
@@ -66,7 +66,6 @@ test -z "${ERROR_PATTERN}" &&\
 "IO_PAGE_FAULT"
 "NMI.received"
 "NMI.*error"
-"systemd.*Received SIGINT"
 "irq.*nobody.cared"
 "Signaling PME.*interrupt"
 "Error.DRAM"
@@ -150,6 +149,7 @@ test -z "${ERROR_PATTERN}" &&\
 
 test -z "${SVCERR_PATTERN}" &&\
 	 SVCERR_PATTERN="
+"systemd.*Received.SIGINT"
 "SMART.*failure"
 "multipathd.*timed.out"
 "multipathd.*mpath.*unable"

@@ -2,10 +2,10 @@
 #
 # cs_show_supportconfig
 #
-# (c) 2011-2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License 2. No warranty.
 #
-# Version: SLES12 0.03 2018-07-23
+# Version: SLES12 0.03 2019-01-28
 #
 # For Supportconfig Script Version: 2.25-237
 #
@@ -857,6 +857,10 @@ sbd:
 	echo "/etc/corosync/corosync.conf:"
 	test -z $f || grep -v "^#" $f
 	echo
+        f=$(grep -l "^# /usr/sbin/corosync-cfgtool -s$" ${TMP}/${FIL}/xx*)
+	echo "/usr/sbin/corosync-cfgtool -s:"
+	test -z $f || grep -v "^#" $f
+	echo
 	f=$(grep -l "^# /usr/sbin/sbd.-d.*dump$" ${TMP}/${FIL}/xx*)
         f=$(grep -l "^# /usr/sbin/crm_mon.-r.-1$" ${TMP}/${FIL}/xx*)
 	echo "crm_mon -r -1:"
@@ -864,6 +868,12 @@ sbd:
 	echo
         f=$(grep -l "^# /var/lib/heartbeat/crm/cib.xml$" ${TMP}/${FIL}/xx*)
 	echo "/var/lib/heartbeat/crm/cib.xml:"
+	test -z $f || grep -v "^#" $f
+        f=$(grep -l "^# /var/lib/pacemaker/cib/cib.xml$" ${TMP}/${FIL}/xx*)
+	echo "/var/lib/pacemaker/cib/cib.xml:"
+	test -z $f || grep -v "^#" $f
+        f=$(grep -l "^# /usr/sbin/crm configure show$" ${TMP}/${FIL}/xx*)
+	echo "/usr/sbin/crm configure show:"
 	test -z $f || grep -v "^#" $f
 	echo
 	# TODO crm configure show?

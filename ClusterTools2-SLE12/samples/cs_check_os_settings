@@ -130,7 +130,7 @@ util-linux=2.25-22$
 
 #
 RPM_SUSE=" 
-kernel-ppc64=4.12.14-95.6.1
+kernel-ppc64=4.12.14
 ntp=4.2.8p9$
 sysstat=10.2.1$
 xfsprogs=3.2.1$

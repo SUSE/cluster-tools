@@ -5,7 +5,7 @@
 # (c) 2011-2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: SLES12 0.2 2019-01-29
+# Version: SLES12 0.2 2019-02-04
 #
 
 EXE="$0"
@@ -51,6 +51,7 @@ test -z "${ZIPPED_LOG}" &&\
 test -z "${ERROR_PATTERN}" &&\
 	 ERROR_PATTERN="
 "taint.flag"
+"signature.*missing"
 "no.device.*found"
 "be2net.*Error"
 "mlx4_en.*error"

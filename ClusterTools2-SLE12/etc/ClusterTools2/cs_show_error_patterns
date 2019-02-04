@@ -3,6 +3,7 @@
 #
 ERROR_PATTERN="
 "taint.flag"
+"signature.*missing"
 "no.device.*found"
 "be2net.*Error"
 "mlx4_en.*error"

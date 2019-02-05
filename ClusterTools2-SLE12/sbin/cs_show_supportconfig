@@ -202,7 +202,8 @@ function chk_modules(){
 	echo
 
 	# TODO add Cisco HBA
-	# TODO test HP eth nx_nic
+	# TODO add IBM vnic
+	# TODO test HPE eth nx_nic, ibmvfc
 	# TODO watchdog ppc64le?, s390x vmwatchdog.ko?
 	# TODO check Fusion IO
 	test -z "${HARDW_MOD}" &&\
@@ -214,6 +215,7 @@ mlx4_en.ko
 i40e.ko
 bfa.ko
 lpfc.ko
+ibmvfc.ko
 qlge.ko
 qla2xxx.ko
 hfcldd.ko

@@ -170,6 +170,7 @@ test -z "${SVCERR_PATTERN}" &&\
 "syslog-ng.shutting.down"
 "postfix.*fatal"
 "cgroup:.fork.rejected"
+"systemd.*Proceeding.anyway"
 "
 
 # TODO separate variable for application patterns (annot.open..rofile" ... "Hangcheck.*clock"

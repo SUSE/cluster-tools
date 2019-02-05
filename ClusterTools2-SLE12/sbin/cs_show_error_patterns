@@ -2,7 +2,7 @@
 #
 # cs_show_error_patterns
 #
-# (c) 2011-2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
 # Version: SLES12 0.2 2019-02-09
@@ -58,6 +58,7 @@ test -z "${ERROR_PATTERN}" &&\
 "bfa.*err"
 "lpfc.*err"
 "lpfc.*failed"
+"ibmvfc.*failed"
 "qla.*err"
 "qla.*failed"
 "qlge.*error"

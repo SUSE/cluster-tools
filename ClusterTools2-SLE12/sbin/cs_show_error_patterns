@@ -152,6 +152,9 @@ test -z "${ERROR_PATTERN}" &&\
 test -z "${SVCERR_PATTERN}" &&\
 	 SVCERR_PATTERN="
 "systemd.*Received.SIGINT"
+"systemd.*start-limit"
+"systemd.*nknown"
+"systemd.*Proceeding.anyway"
 "SMART.*failure"
 "multipathd.*timed.out"
 "multipathd.*mpath.*unable"
@@ -165,12 +168,10 @@ test -z "${SVCERR_PATTERN}" &&\
 "Frequency.format.error"
 "failed.to.bind.to.LDAP"
 "logrotate.*error"
-"systemd.*start-limit"
 "Failed.services.*runlevel"
 "syslog-ng.shutting.down"
 "postfix.*fatal"
 "cgroup:.fork.rejected"
-"systemd.*Proceeding.anyway"
 "
 
 # TODO separate variable for application patterns (annot.open..rofile" ... "Hangcheck.*clock"

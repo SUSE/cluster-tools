@@ -131,6 +131,7 @@ test -z "${RESRC_PATTERN}" &&\
 "SAPHana.*Secure.store.users"
 "SAPHana.*RA.*rc=[1-7,9]"
 "HANA_CALL.timed.out"
+"SAPHanaTopology.*failed"
 "eDirectory.*failed.*stop"
 "eDirectory.*not.*configured"
 "eDir.configuration.error"

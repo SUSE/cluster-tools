@@ -76,6 +76,7 @@ test -z "${ERROR_PATTERN}" &&\
 "mce:.CPU.supports.0.MCE.banks"
 "Processor.*temperature"
 "SMP.disabled"
+"No.hypervisor.support.for.SR-IOV"
 "Broken.BIOS"
 "kernel.*task.*abort"
 "kernel.*ACPI.Error"

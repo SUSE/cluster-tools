@@ -5,7 +5,7 @@
 # (c) 2011-2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: SLES12 0.2 2019-02-04
+# Version: SLES12 0.2 2019-02-09
 #
 
 EXE="$0"
@@ -168,6 +168,7 @@ test -z "${SVCERR_PATTERN}" &&\
 "Failed.services.*runlevel"
 "syslog-ng.shutting.down"
 "postfix.*fatal"
+"cgroup:.fork.rejected"
 "
 
 # TODO separate variable for application patterns (annot.open..rofile" ... "Hangcheck.*clock"

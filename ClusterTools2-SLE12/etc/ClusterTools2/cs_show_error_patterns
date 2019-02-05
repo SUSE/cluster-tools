@@ -121,6 +121,7 @@ SVCERR_PATTERN="
 "Failed.services.*runlevel"
 "syslog-ng.shutting.down"
 "postfix.*fatal"
+"cgroup:.fork.rejected"
 "
 #
 CLUERR_PATTERN="

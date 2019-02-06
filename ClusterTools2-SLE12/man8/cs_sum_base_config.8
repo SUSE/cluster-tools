@@ -1,4 +1,4 @@
-.TH cs_sum_base_config 8 "03 Aug 2016" "" "ClusterTools2"
+.TH cs_sum_base_config 8 "06 Feb 2018" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_sum_base_config \- calculate checksums for common configuration and system
@@ -10,7 +10,7 @@ parameters
 .SH DESCRIPTION
 \fBcs_sum_base_config\fP calculates MD5 checksums for common configuration
 and system parameters.
-By default only files and parameters are checked, that are expected to be 
+By default mostly files and parameters are checked, that are expected to be 
 identical on all nodes of one cluster. The output can be used to find
 differences between two or more cluster nodes.
 Or it can be stored and re-used later to check for changes.
@@ -57,6 +57,27 @@ Please call this script as root.
 # ssh root@nodeq "cs_sum_base_config -a" >>nodeq.txt
 .br
 # diff node[pq].txt
+.br
+.P
+* Do not checksum whole file, but only non-comment lines.
+.br
+Edit configuration.
+.br
+# vi /etc/ClusterTools2/cs_sum_base_config
+.br
+Remove file name from CONF_FILES, e.g.
+.br
+:dd /etc/sysctl.conf
+.br
+Add script to CONF_CALLS, e.g.
+.br
+:i
+.br
+\'/usr/bin/grep -v "^#" /etc/sysctl.conf\'
+.br
+:wq
+.br
+# cs_sum_base_config | grep "/etc/sysctl.conf"
 .\"
 .SH EXIT STATUS
 .B 0
@@ -77,6 +98,8 @@ Usage, syntax or execution errors.
 The number of files is limited to the maximum number of arguments for a shell
 loop. Single quotes "'" are not allowed in calls.
 Time is read from hwclock, but not compared to system time.
+Some files are checked for later re-use, e.g. initiatorname.iscsi.
+This leads to few fals-positives when comparing two nodes.
 Feedback is welcome, please use the project page at
 .br
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
@@ -86,7 +109,7 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 \fBaideinit\fP(8), \fBtripwire\fP(8)
 .\"
 .SH COPYRIGHT
-(c) 2011-2016 L.Pinne, Germany.
+(c) 2011-2019 L.Pinne, Germany.
 .br
 cs_sum_base_config comes with ABSOLUTELY NO WARRANTY.
 .br

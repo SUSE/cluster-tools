@@ -136,7 +136,8 @@ util-linux=2.25-22$
 "
 
 #
-RPM_SUSE=" 
+RPM_SUSE="
+kernel-ppc64le=4.4.143-94.47$
 ntp=4.2.8p9$
 sysstat=10.2.1$
 xfsprogs=3.2.1$

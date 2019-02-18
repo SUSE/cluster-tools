@@ -71,7 +71,7 @@ cp -va plugins/* %{buildroot}/usr/lib/ClusterTools2/supportconfig/plugins
 # etc
 #
 cp -va etc/ClusterTools2/* %{buildroot}/etc/ClusterTools2/
-cp -va etc/cron.d/* %{buildroot}/etc/cron.d/
+#cp -va etc/cron.d/* %{buildroot}/etc/cron.d/
 cp -va etc/logrotate.d/* %{buildroot}/etc/logrotate.d/
 #
 # share 
@@ -102,7 +102,7 @@ for f in /usr/lib/man/man/man8/cs_* /usr/lib/man/man8/{ClusterService,psauxlog,m
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
 %config(noreplace) /etc/ClusterTools2
-%config(noreplace) /etc/cron.d/*
+#%config(noreplace) /etc/cron.d/*
 %config(noreplace) /etc/logrotate.d/*
 %doc /usr/share/man/man5/*.gz
 %doc /usr/share/man/man7/*.gz

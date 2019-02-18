@@ -3,7 +3,7 @@
 #
 # Copyright (c) 2008-2010 SUSE LINUX GmbH, Germany.
 # Copyright (c) 2011-2014 SUSE LINUX Products GmbH, Germany.
-# Copyright (c) 2015-2018 SUSE LINUX GmbH, Germany.
+# Copyright (c) 2015-2019 SUSE LINUX GmbH, Germany.
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
@@ -17,14 +17,14 @@ Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      3.0.1
-Release:      6 
+Release:      7
 Source:       %{name}-%{version}.tbz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
 Vendor:	      SUSE Linux GmbH
 Requires:     pacemaker > 1.1.1
 Requires:     perl-TermReadLine-Gnu >= 1.16
-Requires:     cron
+#Requires:     cron
 Requires:     logrotate
 
 %description
@@ -47,7 +47,7 @@ test "$RPM_BUILD_ROOT" != "/" && rm -rf $RPM_BUILD_ROOT
 
 %install
 mkdir -p %{buildroot}/etc/ClusterTools2
-mkdir -p %{buildroot}/etc/cron.d
+#mkdir -p %{buildroot}/etc/cron.d
 mkdir -p %{buildroot}/etc/logrotate.d
 mkdir -p %{buildroot}/usr/sbin
 mkdir -p %{buildroot}/usr/share/ClusterTools2

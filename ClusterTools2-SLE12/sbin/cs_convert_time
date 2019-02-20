@@ -1,32 +1,22 @@
 #!/bin/bash
-# ------------------------------------------------------------------------------
-# Copyright (c) 2016 SUSE Linux GmbH, Nuernberg, Germany.
 #
-# This program is free software; you can redistribute it and/or modify it under
-# the terms of version 2 of the GNU General Public License as published by the
-# Free Software Foundation.
-#
-# This program is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License along with
-# this program; if not, contact SUSE Linux GmbH.
-#
-# ------------------------------------------------------------------------------
 # cs_convert_time
-# Convert time values between wall time and seconds since Epoch formats.
+#
+# (c) 2014-2019 SUSE Linux GmbH, Germany. Author: I.Manyugin, L.Pinne.
+# GNU General Public License v2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
+#
 # Version: 2016-02-16
-# Author: Ilya Manyugin <imanyugin@suse.com>
+#
 
 function help(){
 	local script_name=$(basename $0)
-	echo "${script_name}: convert time values between wall time and seconds since Epoch formats."
+	echo "${script_name}: convert time values between wall time and seconds since Epoch format."
 	echo
 	echo "usage: $script_name time_value"
 	echo "usage: $script_name [OPTION]"
 	echo
-	echo "OPTIONS:"
+	echo "OPTION:"
 	echo "--help		show this message"
 	echo "--version	print version number and exit"
 }
@@ -45,15 +35,15 @@ if [[ $# -eq 0 ]]; then
 fi
 
 case $1 in
-	--version|-v )
-			ver_string=$(grep "^# Version:" $0 | cut -c3-)
-			echo -e "$(basename $0) $ver_string"
-		;;
-	--help|-h )
-			help
-		;;
-	* )
+	-v|--version)
+		ver_string=$(grep "^# Version:" $0 | cut -c3-)
+		echo -e "$(basename $0) $ver_string"
+	;;
+	-h|--help)
+		help
+	;;
+	*)
 		convert_time $@
-		;;
+	;;
 esac
 #

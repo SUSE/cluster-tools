@@ -12,7 +12,7 @@
 
 EXE=$0
 ERR="/dev/null"
-TMP="/tmp/cltl.$RANDOM"
+TMP="/dev/shm/cltl.$RANDOM"
 
 CFG="/etc/ClusterTools2/cs_show_supportconfig"
 test -s $CFG && source $CFG

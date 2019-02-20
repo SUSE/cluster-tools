@@ -1,12 +1,17 @@
 #!/bin/bash
 #
-# cs_show_hana_autofailover
+# cs_show_hana_autofailover_patterns
 #
 # (c) 2019 SUSE Linux GmbH, Germany. Author: L.Pinne
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-02-19 14:20 SLES12
+# Version: 2019-02-20 13:20 SLES12
+#
+# TODO /etc/ClusterTools2/cs_show_hana_autofailover_patterns
+# TODO patterns instead of functions like cs_error_patterns
+# TODO  --help
+# TODO  -g and -f like cs_show_supportconfig
 #
 
 DATE=${1:-"2019-01-27"}

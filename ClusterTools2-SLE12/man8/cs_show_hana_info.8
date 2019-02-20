@@ -1,4 +1,4 @@
-.TH cs_show_hana_info 8 "23 Nov 2018" "" "ClusterTools2"
+.TH cs_show_hana_info 8 "20 Feb 2019" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_show_hana_info \- show info about HANA instance
@@ -47,6 +47,12 @@ Successful program execution.
 Usage, syntax or execution errors.
 .SH FILES
 .TP
+/usr/sbin/cs_show_hana_info
+	the program itself.
+.TP
+/etc/ClusterTools2/cs_show_hana_info
+        the program's main configuration.
+.TP
 /hana/shared/<SID>/HDB<INST_NR>/<HOST>/trace/*.trc
 	...
 .\"
@@ -60,7 +66,7 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 https://www.suse.com/support/kb/doc.php?id=7022702
 .\"
 .SH COPYRIGHT
-(c) 2018 L.Pinne, Germany.
+(c) 2018-2019 L.Pinne, Germany.
 .br
 cs_show_hana_info comes with ABSOLUTELY NO WARRANTY.
 .br

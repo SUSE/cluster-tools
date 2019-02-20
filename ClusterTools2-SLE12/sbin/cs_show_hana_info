@@ -7,6 +7,10 @@
 #
 # Version: 2018-11-23
 #
+# TODO /etc/ClusterTools2/cs_show_hana_info
+# TODO show logs
+# TODO guess SID
+#
 
 EXE="$0"
 #CFG="/etc/ClusterTools2/cs_show_hana_info"

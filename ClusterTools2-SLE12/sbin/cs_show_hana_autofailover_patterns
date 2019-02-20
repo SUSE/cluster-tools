@@ -20,118 +20,118 @@ FCHBA="ibmvfc"
 
 
 # FC switch replacement
-show_hba_err() {
+function show_hba_err() {
   grep "$DATE".*"$FCHBA".*Login.failed $LOGS |\
 	cut_line
 }
 
 # SBD path error
-show_sbd_err() {
+function show_sbd_err() {
   grep "$DATE".*sbd.*terminated $LOGS |\
 	cut_line
 }
 
 # SBD self-reboot
 # TODO due to path error or poison pill? 
-show_sbd_boot() {
+function show_sbd_boot() {
   grep "$DATE".*sbd.*Rebooting.system $LOGS |\
 	cut_line
 }
 
 # SBD read reset
-show_sbd_recv() {
+function show_sbd_recv() {
   grep "$DATE".*sbd.*Received.command.reset $LOGS |\
 	cut_line
 }
 
 # SBD write reset
-show_sbd_send() {
+function show_sbd_send() {
   grep "$DATE".*USER=root.*sbd.*message.*reset $LOGS |\
 	cut_line
 }
 
 # XFS shutdown
-show_xfs_err() {
+function show_xfs_err() {
   grep "$DATE".*XFS.*Shutting.down $LOGS |\
 	cut_line
 }
 
 # XFS mount
-show_xfs_mnt() {
+function show_xfs_mnt() {
   grep "$DATE".*USER=root.*mount.*xfs.*hana $LOGS |\
 	cut_line
 }
 
 # XFS umount
-show_xfs_umnt() {
+function show_xfs_umnt() {
   grep "$DATE".*USER=root.*umount.*hana $LOGS |\
 	cut_line
 }
 
 # SCSI3 reservation reserve
-show_scsi_lock() {
+function show_scsi_lock() {
   grep "$DATE".*USER=root.*sg_persist.*out.*reserve $LOGS |\
 	cut_line
 }
 
-# SCSI3 reservation preeempt
-show_scsi_prem() {
+# SCSI3 reservation preempt
+function show_scsi_prem() {
   grep "$DATE".*USER=root.*sg_persist.*out.*preempt $LOGS |\
 	cut_line
 }
 
 # SCSI3 reservation clear
-show_scsi_free() {
+function show_scsi_free() {
   grep "$DATE".*USER=root.*sg_persist.*out.*clear $LOGS |\
 	cut_line
 }
 
 # SCSI3 reservation conflict
-show_scsi_clash() {
+function show_scsi_clash() {
   grep "$DATE".*kernel.*reservation.conflict $LOGS |\
 	cut_line
 }
 
 # MPIO path removed
-show_mpio_del() {
+function show_mpio_del() {
   grep "$DATE".*multipath.*path.removed $LOGS |\
 	cut_line
 }
 
 # MPIO path added
-show_mpio_add() {
+function show_mpio_add() {
   grep "$DATE".*multipath.*path.added $LOGS |\
 	cut_line
 }
 
 # system boot
-show_sys_boot() {
+function show_sys_boot() {
   grep "$DATE".*kernel.*bootconsole.*enabled $LOGS |\
 	cut_line
 }
 
 # TODO system shutdown
-show_sys_shut() {
-  grep "$DATE".*systemd.*Reached.target.Shutdown $LOGS |\
+function show_sys_shut() {
+  grep "$DATE".*systemd.*Stopping.Restore.**shutdown $LOGS |\
 	cut_line
 }
 
 # select colums
-cut_line() {
+function cut_line() {
 	awk -F" " '{print $1}' |\
 	awk -F":" '{print $2":"$3":"$4}' |\
 	awk -F"." '{print $1}' | sort -u
 }
 
 # show additional info
-show_info() {
+function show_info() {
 	while read; do echo ${REPLY}" - "${1} ; done
 }
 
 
 # main
 (
- #show_sbd_err | show_info sbd_err
+ show_sbd_err | show_info sbd_err
  show_sbd_recv | show_info "sbd_recv ---" 
  show_sbd_send | show_info "sbd_send +++"
  #show_sbd_boot | show_info "sbd_boot <<<<<<"
@@ -142,7 +142,7 @@ show_info() {
  show_mpio_del | show_info mpio_del
  show_mpio_add | show_info mpio_add
  show_sys_boot | show_info "sys_boot >>>>>>"
- #show_sys_shut | show_info sys_shut 
+ show_sys_shut | show_info "sys_shut <<<<<<"
  show_scsi_lock | show_info "scsi_lock ..." 
  show_scsi_prem | show_info "scsi_pre" 
  show_scsi_free | show_info scsi_free 

@@ -2,10 +2,10 @@
 #
 # cs_show_initrd
 #
-# (c) 2014-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2014-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 2016-06-22 12:18
+# Version: 2019-02-20 17:24
 #
 
 EXE="$0"
@@ -22,16 +22,15 @@ function help() {
 	echo " --all		list all initrd files"
 	echo " --etc		list initrd etc files"
 	echo " --modules	list initrd modules"
-	echo " --compare	compare initrd modules with /etc/sysconfig/kernel"
+#	echo " --compare	compare initrd modules with /etc/sysconfig/kernel"
 	echo
 }
 
 
 function show_initrd() {
-	# TODO verbose, f.e.: cpio -itv 2>/dev/null | colrm 43 54
-	file $1 | awk '$2=="gzip"' >/dev/null &&\
-		/usr/bin/zcat $1 | cpio -it 2>/dev/null
-	# TODO SLES12
+	#file $1 | awk '$2=="gzip"' >/dev/null &&\
+	#	/usr/bin/zcat $1 | cpio -it 2>/dev/null
+	# TODO verbose, e.g.: cpio -itv 2>/dev/null | colrm 43 54
 	file $1 | awk '$2=="XZ"' >/dev/null &&\
 		/usr/bin/xz --decompress --stdout $1 | cpio -it 2>/dev/null
 }
@@ -74,7 +73,7 @@ case $1 in
 	# TODO compare etc file from initrd with systems etc
 	# TODO calculate md5sum for initrd file list, like cs_sum_base_config
 	-c|--compare)
-		# TODO SLES12 is /etc/dracut.donf.d/*.conf
+		# TODO SLES12 /etc/dracut.donf.d/*.conf
 		# TODO put this into fucntion
 		SYSCONFMODS=$(awk -F"=" '$1=="INITRD_MODULES"{print $2}' /etc/sysconfig/kernel |\
 				 tr -d \" | tr " " "\n" | sort)

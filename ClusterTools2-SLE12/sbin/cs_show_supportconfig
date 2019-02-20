@@ -12,11 +12,11 @@
 
 EXE=$0
 ERR="/dev/null"
-TMP="/dev/shm/cltl.$RANDOM"
+TEMP="/dev/shm/cltl.$RANDOM"
 
 CFG="/etc/ClusterTools2/cs_show_supportconfig"
 test -s $CFG && source $CFG
-test -z "${TEMP}" && TMP="$TEMP}"
+test -z "${TEMP}" && TEMP="${TEMP}}"
 
 # TODO make DIR= work
 DIR=${2:-$PWD}
@@ -86,9 +86,9 @@ function echo_msgsep(){
 
 function split_file(){
 	F=$1
-	mkdir -p ${TMP}/$F
-	cp $F ${TMP}/${F}/
-	cd ${TMP}/$F
+	mkdir -p ${TEMP}/$F
+	cp $F ${TEMP}/${F}/
+	cd ${TEMP}/$F
 #	csplit $F /^#==\[ [a-zA-Z] ^C \]==*#$/ {*}
 	csplit $F /^#==..Co.*===========================#$/ {*} >>$ERR
 	cd "${OLDPWD}"
@@ -98,8 +98,8 @@ function split_file(){
 function show_sys_scsi(){
 	echo "# /usr/bin/systool -vb scsi"
 	FIL="sysfs.txt"
-	split_file $FIL
-	f=$(grep -l "^# /usr/bin/systool -vb scsi$" ${TMP}/${FIL}/xx*)
+	split_file ${FIL}
+	f=$(grep -l "^# /usr/bin/systool -vb scsi$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -e "Device.path.=.*/sys/devices/.*target.*/[0-9]" -e "timeout.*=..[1-9]" -e "model.*=" $f 
 }
@@ -111,64 +111,64 @@ function chk_hardware(){
 
 	echo "machine:"
 	FIL="hardware.txt"
-	grep -e "system.hardware.*=" -e "system.*.machine.=..s390" $FIL | grep -v "system.*video"
-	grep "system.firmware.*=" $FIL
-	grep -e "Manufacturer:.\"[A-Za-z]" -e "Product:.\"" -e "Product.id:.\"" -e "Serial:.\"" $FIL | sort -u
-	grep -e "str3:.\"../../....\"" -e "str5:.\"[A-Za-z]" $FIL |\
+	grep -e "system.hardware.*=" -e "system.*.machine.=..s390" ${FIL} | grep -v "system.*video"
+	grep "system.firmware.*=" ${FIL}
+	grep -e "Manufacturer:.\"[A-Za-z]" -e "Product:.\"" -e "Product.id:.\"" -e "Serial:.\"" ${FIL} | sort -u
+	grep -e "str3:.\"../../....\"" -e "str5:.\"[A-Za-z]" ${FIL} |\
 		 grep -v "Unknown"
-	grep -A4 "^# Virtuali.ation" $FIL
+	grep -A4 "^# Virtuali.ation" ${FIL}
 	echo
 	
 	echo "processor:"
 	FIL="hardware.txt"
-	grep -A16 "^# /usr/bin/lscpu" $FIL
-	grep -e "^model.name.*:" $FIL | sort -u
-	grep -A5 "^vendor_id.*:.IBM/S390" $FIL
+	grep -A16 "^# /usr/bin/lscpu" ${FIL}
+	grep -e "^model.name.*:" ${FIL} | sort -u
+	grep -A5 "^vendor_id.*:.IBM/S390" ${FIL}
 	FIL="boot.txt"
-	grep -e "^\[.*Detected.*MHz.processor" -e "^\[.*Brought up.*CPUs" $FIL
+	grep -e "^\[.*Detected.*MHz.processor" -e "^\[.*Brought up.*CPUs" ${FIL}
 	echo
 
 	echo "memory:"
 	FIL="boot.txt"
-	grep "System RAM: " $FIL | sort -u
+	grep "System RAM: " ${FIL} | sort -u
 
 	FIL="basic-health-check.txt"
-	grep -A 4 "# /usr/bin/free -k" $FIL | tail -3 
+	grep -A 4 "# /usr/bin/free -k" ${FIL} | tail -3 
 	echo
 
 # TODO more specific patterns
 #	FIL="hardware.txt"
 #	for f in "iLO" "IPMI" "DRAC" "Emulex" "Brocade" "QLogic" "Broadcom" "MPT"; do
-#		grep -e ${f} -e "pci.product.=" $FIL | sort -u
+#		grep -e ${f} -e "pci.product.=" ${FIL} | sort -u
 #	done
 
 	echo "boards:"
 	FIL="hardware.txt"
-	grep "pci.product.=" $FIL |\
+	grep "pci.product.=" ${FIL} |\
 		 grep -v "USB.*HCI.*ontroller" | grep -v "PCI.*Port" |\
 		 grep -v "I/O Hub" | grep -v "Integrated.Memory.Controller" | sort -u
-	grep "scsi.vendor.=" $FIL | sort -u
+	grep "scsi.vendor.=" ${FIL} | sort -u
 	echo
 
 	echo "disk:"
 	FIL="fs-diskio.txt"
-	grep -A1 "^Model:" $FIL | grep -v "^--$"
-	awk '$0~/^Disk..dev.dasd/ {print $2,$3,$4}' $FIL
+	grep -A1 "^Model:" ${FIL} | grep -v "^--$"
+	awk '$0~/^Disk..dev.dasd/ {print $2,$3,$4}' ${FIL}
 	echo
 	echo "storage:"
 	FIL="mpio.txt"
-	grep "Vendor:.*Model:.*Rev:" $FIL | sort -u
+	grep "Vendor:.*Model:.*Rev:" ${FIL} | sort -u
 	echo
 
 	FIL="hardware.txt"
 	for f in "supports.DPO.and.FUA" "support.DPO.or.FUA"; do
 		echo -n "${f} : "
-		grep -c ${f} $FIL
+		grep -c ${f} ${FIL}
 	done
 	FIL="messages.txt"
 	for f in "disabling.barriers"; do
 		echo -n "${f} : "
-		grep -c ${f} $FIL
+		grep -c ${f} ${FIL}
 	done
 	echo
 
@@ -181,7 +181,7 @@ Device.File:
 "
 	# TODO better loop
 	for f in $NIC_PTRN; do
-		grep --binary-file=text -A20 -e "^..: PCI.*Ethernet controller$" -e "HiperSocket.controller$" $FIL |\
+		grep --binary-file=text -A20 -e "^..: PCI.*Ethernet controller$" -e "HiperSocket.controller$" ${FIL} |\
 		grep $f
 	done | sort -u | sed s/Device.File:/"NIC Device File:"/g
 	echo	
@@ -198,7 +198,7 @@ function chk_modules(){
 	echo
 
 	FIL="boot.txt"
-	grep "^\[.*AppArmor:.*initialized" $FIL
+	grep "^\[.*AppArmor:.*initialized" ${FIL}
 	echo
 
 	# TODO add Cisco HBA
@@ -254,33 +254,33 @@ ibmvscsic.ko
 "
 	FIL="boot.txt"
 	for m in INITRD_MODULES MODULES_LOADED_ON_BOOT; do
-		grep "^${m}=" $FIL
+		grep "^${m}=" ${FIL}
 	done
 	echo
 	for m in $HARDW_MOD; do
-		grep ${m} $FIL | sort -u
+		grep ${m} ${FIL} | sort -u
 		n=$(basename ${m} .ko)
-		grep "modprobe ${n}" $FIL
+		grep "modprobe ${n}" ${FIL}
 	done
 	echo
 # TODO see below - use split files to records instead of -A9, to find "supported:"
 	FIL="modules.txt"
 	for m in $HARDW_MOD; do
-		grep -A9 "^filename:.*${m}" $FIL |\
+		grep -A9 "^filename:.*${m}" ${FIL} |\
 		 awk '$1=="filename:" || $1=="license:" || $1=="supported:" {print $0}' 
 	done
 	echo
 	for m in $HARDW_MOD; do
 		n=$(basename ${m} .ko)
-		grep "options ${n}" $FIL
+		grep "options ${n}" ${FIL}
 	done
 	echo
 	FIL="modules.txt"
-	split_file $FIL
-	f=$(grep -l "^# /sbin/lsmod$" ${TMP}/${FIL}/xx*)
+	split_file ${FIL}
+	f=$(grep -l "^# /sbin/lsmod$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -vh "^#==..Co.*==#" $f | sort -u | grep -v "#"
-	rm -rf ${TMP}/${FIL}
+	rm -rf ${TEMP}/${FIL}
 	echo	
 	echo -n "process on watchdog : "
         awk '$9=="/dev/watchdog" {print $1,$9}' open-files.txt
@@ -304,12 +304,12 @@ function chk_memory(){
 	# TODO memory.txt: /proc/meminfo cached active file and cache inactive M.Jedamzik
 
 	FIL="memory.txt"
-	split_file $FIL
+	split_file ${FIL}
 	echo
-	f=$(grep -l "^# /usr/bin/free -k$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /usr/bin/free -k$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -vh "^#==..Co.*==#" $f
-	f=$(grep -l "^# /proc/meminfo$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /proc/meminfo$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -vh "^#==..Co.*==#" $f
 	echo "# /proc/vmstat"
@@ -321,13 +321,13 @@ thp_collapse_alloc_failed
 compact_pagemigrate_failed
 compact_fail
 "
-	f=$(grep -l "^# /proc/vmstat$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /proc/vmstat$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 	for m in $MEM_VMSTAT; do
 		grep $m $f
 	done
 	echo
-	awk 'NF==2 && $0~/^numa_miss/ {print $0}' $FIL
+	awk 'NF==2 && $0~/^numa_miss/ {print $0}' ${FIL}
 	echo
 	echo "# /sbin/sysctl -a"
 	# TODO what else?
@@ -352,16 +352,16 @@ vm.vfs_cache_pressure
 vm.memory_failure_early_kill
 vm.zone_reclaim_mode
 "
-	f=$(grep -l "^# /sbin/sysctl -a 2>/dev/null | grep ^vm$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /sbin/sysctl -a 2>/dev/null | grep ^vm$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 	for m in $MEM_SYSCTL; do
 		grep $m $f
 	done
 	echo
-	f=$(grep -l "^# /sys/kernel/mm/transparent_hugepage/enabled$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /sys/kernel/mm/transparent_hugepage/enabled$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -vh "^#==..Co.*==#" $f | tr -s "\n"
-	f=$(grep -l "^# /sys/kernel/mm/transparent_hugepage/defrag$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /sys/kernel/mm/transparent_hugepage/defrag$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -vh "^#==..Co.*==#" $f | tr -s "\n"
 	echo	
@@ -369,7 +369,7 @@ vm.zone_reclaim_mode
 	echo "# tmpfs:"
 	echo "   Size  Used  Avail  Use%  Mount"
 	echo "   Inodes  IUsed  IFree  IUse%  Mount"
-	grep "^tmpfs" $FIL | tr -s " "
+	grep "^tmpfs" ${FIL} | tr -s " "
 	echo
 }
 
@@ -379,27 +379,27 @@ function chk_numa(){
 	echo_msgsep $FUNCNAME
 
 	FIL="memory.txt"
-	split_file $FIL
+	split_file ${FIL}
 	echo
-	f=$(grep -l "^# /usr/bin/numactl --hardware$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /usr/bin/numactl --hardware$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -vh "^#==..Co.*==#" $f
 # TODO buddyinfo needed?
-#	f=$(grep -l "^# /proc/buddyinfo$" ${TMP}/${FIL}/xx*)
+#	f=$(grep -l "^# /proc/buddyinfo$" ${TEMP}/${FIL}/xx*)
 #	test -z "$f" ||\
 #		grep -vh "^#==..Co.*==#" $f
-	f=$(grep -l "^# /usr/bin/numastat$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /usr/bin/numastat$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -vh "^#==..Co.*==#" $f
 	echo "# /proc/vmstat"
 	# TODO what else?
-	f=$(grep -l "^# /proc/vmstat$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /proc/vmstat$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -e "numa_miss" -e "zone_reclaim_" -e "htlb_buddy_alloc" $f
 	echo
 	echo "# /sbin/sysctl -a"
 	# TODO what else?
-	f=$(grep -l "^# /sbin/sysctl -a 2>/dev/null | grep ^vm$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /sbin/sysctl -a 2>/dev/null | grep ^vm$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -e "vm.zone_reclaim_mode" -e "vm.numa_zonelist_order"  $f
 	echo
@@ -412,29 +412,29 @@ function chk_services(){
 
 	FIL="boot.txt"
 	# TODO SLES12 what to look for? 
-	grep "exits with status" $FIL | grep -v "exits with status 0$"
- 	grep "Skipped.features:" $FIL | sort -u
+	grep "exits with status" ${FIL} | grep -v "exits with status 0$"
+ 	grep "Skipped.features:" ${FIL} | sort -u
 	echo
-	grep "INIT: Entering runlevel:" $FIL | sort -u
+	grep "INIT: Entering runlevel:" ${FIL} | sort -u
 	echo
 	# TODO split systemd.txt "# /bin/ls -alR /etc/systemd/" 
 	FIL="systemd.txt"
-	test -r "$FIL" &&\
-		awk '$9=="default.target" && $10=="->" {print $9,"->",$11}' $FIL
+	test -r "${FIL}" &&\
+		awk '$9=="default.target" && $10=="->" {print $9,"->",$11}' ${FIL}
 	echo
 	FIL="chkconfig.txt"
-	if $(test -r "$FIL"); then
+	if $(test -r "${FIL}"); then
 		for p in "3:on" "3:off"; do
 			echo -n "${p} : "
-			grep -c "${p}" $FIL
+			grep -c "${p}" ${FIL}
 		done
 	fi
 	# TODO split systemd.txt @ "# /bin/systemctl --no-pager --all list-units"
 	# TODO single+better awk for SLES12
 	FIL="systemd.txt"
-	if $(test -r "$FIL"); then
-		awk '$1~/\.service/ && $2=="enabled" {print}' $FIL
-		awk '$1~/\.service/ && $2=="disabled" {print}' $FIL
+	if $(test -r "${FIL}"); then
+		awk '$1~/\.service/ && $2=="enabled" {print}' ${FIL}
+		awk '$1~/\.service/ && $2=="disabled" {print}' ${FIL}
 	fi
 	echo
 
@@ -469,25 +469,25 @@ smartd
 uuidd
 "
 	FIL="chkconfig.txt"
-	if $(test -r "$FIL"); then
+	if $(test -r "${FIL}"); then
 		echo "service should be on:"
 		for s in $SVC_YES; do
-			grep "${s}:..on" $FIL
-			grep "${s}:..off" $FIL
-			grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
-			grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+			grep "${s}:..on" ${FIL}
+			grep "${s}:..off" ${FIL}
+			grep "^${s}.*0:.*3:on" ${FIL} | grep -v "boot\."
+			grep "^${s}.*0.*3:off" ${FIL} | grep -v "boot\."
 		done
 		echo
 		echo "service should be off:"
 		for s in $SVC_OFF; do
-			grep "${s}:..off" $FIL
-			grep "${s}:..on" $FIL
-			grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
-			grep "^${s}.*0.*3:on" $FIL | grep -v "boot\."
+			grep "${s}:..off" ${FIL}
+			grep "${s}:..on" ${FIL}
+			grep "^${s}.*0.*3:off" ${FIL} | grep -v "boot\."
+			grep "^${s}.*0.*3:on" ${FIL} | grep -v "boot\."
 		done
 	fi
 	FIL="systemd.txt"
-	if $(test -r "$FIL"); then
+	if $(test -r "${FIL}"); then
 		# TODO SLES12
 		echo
 	fi
@@ -532,16 +532,16 @@ xprtld
 eccmad
 "
 	FIL="chkconfig.txt"
-	if $(test -r "$FIL"); then
+	if $(test -r "${FIL}"); then
 		for s in $VRT_SVC_YES; do
-			grep "${s}:..on" $FIL
-			grep "${s}:..off" $FIL
-			grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
-			grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+			grep "${s}:..on" ${FIL}
+			grep "${s}:..off" ${FIL}
+			grep "^${s}.*0:.*3:on" ${FIL} | grep -v "boot\."
+			grep "^${s}.*0.*3:off" ${FIL} | grep -v "boot\."
 	done
 	fi
 	FIL="systemd.txt"
-	if $(test -r "$FIL"); then
+	if $(test -r "${FIL}"); then
 		# TODO SLES12
 		echo
 	fi
@@ -583,9 +583,9 @@ eccmad
 
 	FIL="fs-diskio.txt"
 	echo -n "VxDMP: "
-	grep -c "VxDMP.*/devices/virtual/block/VxDMP" $FIL
+	grep -c "VxDMP.*/devices/virtual/block/VxDMP" ${FIL}
 	echo -n "VxVM:  "
-	grep -c "VxVM.*/devices/virtual/block/VxVM" $FIL
+	grep -c "VxVM.*/devices/virtual/block/VxVM" ${FIL}
 	echo
 }
 
@@ -605,43 +605,43 @@ function chk_network(){
 	FIL="boot.txt"
 	echo "boot setup:"
 	for p in $NETW_PTRN; do
-		grep $p $FIL
+		grep $p ${FIL}
 	done | sort -u
 	echo "last setup:"
 	FIL="network.txt"
 	for p in $NETW_PTRN; do
-		grep --binary-file=text $p $FIL
+		grep --binary-file=text $p ${FIL}
 	done | sort -u
 	echo
-	grep --binary-file=text "eth.*\ device:" $FIL
+	grep --binary-file=text "eth.*\ device:" ${FIL}
 	echo
 
 	FIL="network.txt"
-	( grep --binary-file=text -A3 "^# /sbin/ethtool bond" $FIL
+	( grep --binary-file=text -A3 "^# /sbin/ethtool bond" ${FIL}
 	  grep --binary-file=text -A18 -e "^# /sbin/ethtool hsi" \
 		-e "^#.*/sbin/ethtool sit" \
-		-e "^#.*/sbin/ethtool eth" $FIL ) |\
+		-e "^#.*/sbin/ethtool eth" ${FIL} ) |\
 		 grep -v "^#==\[ " | grep -v "^# /sbin/ethtool" | grep -v "^--$"
 	echo
 	
 	# TODO summary num. NICs, num. "not connected"
-	( grep --binary-file=text -A3 "^# /etc/sysconfig/network/routes$" $FIL ) |\
+	( grep --binary-file=text -A3 "^# /etc/sysconfig/network/routes$" ${FIL} ) |\
 		 grep -v "^#==\[ " | grep -v "^# /sbin/ethtool"
 
-	( grep --binary-file=text -A13 "^# /etc/sysconfig/network/ifcfg-bond" $FIL |\
+	( grep --binary-file=text -A13 "^# /etc/sysconfig/network/ifcfg-bond" ${FIL} |\
 		grep -v "=''$"
 		echo
-	grep --binary-file=text -A21 "^# /proc/net/bonding/bond" $FIL
+	grep --binary-file=text -A21 "^# /proc/net/bonding/bond" ${FIL}
 
 	grep --binary-file=text -A10 \
 		-e "^# /etc/sysconfig/network/ifcfg-qeth" \
-		-e "^# /etc/sysconfig/network/ifcfg-eth" $FIL |\
+		-e "^# /etc/sysconfig/network/ifcfg-eth" ${FIL} |\
 		 grep -v "=''$" ) |\
 		 grep -v "^#==\[ " 
 	echo
 	# TODO firewall
 	echo "iptables:"	
-	grep "iptable_" $FIL
+	grep "iptable_" ${FIL}
 	echo
 }
 
@@ -652,34 +652,34 @@ function chk_nameres(){
 
 	# TODO SLES12
 	FIL="network.txt"
-	( grep --binary-file=text -A1 "^# /etc/HOSTNAME" $FIL
-	grep --binary-file=text -A1 "^# /bin/hostname" $FIL
-	grep --binary-file=text -A1 "^# /sbin/chkconfig nscd" $FIL ) |\
+	( grep --binary-file=text -A1 "^# /etc/HOSTNAME" ${FIL}
+	grep --binary-file=text -A1 "^# /bin/hostname" ${FIL}
+	grep --binary-file=text -A1 "^# /sbin/chkconfig nscd" ${FIL} ) |\
 		 grep -v "^#==\[ " 
 	echo
-	split_file $FIL 
+	split_file ${FIL} 
 
 	echo "# /etc/hosts:"
-	f=$(grep -l "^# /etc/hosts$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /etc/hosts$" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
         	grep -v "^#" $f | tr -s "\n"
 	echo
 	echo "# /etc/resolv.conf:"
-	f=$(grep -l "^# /etc/resolv.conf$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /etc/resolv.conf$" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
         	grep -v "^#" $f | tr -s "\n"
 	echo
 #	echo "# /etc/nsswitch.conf:"
-#	f=$(grep -l "^# /etc/nsswitch.conf$" ${TMP}/${FIL}/xx*)
+#	f=$(grep -l "^# /etc/nsswitch.conf$" ${TEMP}/${FIL}/xx*)
 #	test -z "$f" ||\
 #       	grep -v "^#" $f | tr -s "\n"
 #	echo
 	echo "# /etc/host.conf:"
-	f=$(grep -l "^# /etc/host.conf$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /etc/host.conf$" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
         	grep -v "^#" $f | tr -s "\n"
 
-        rm -rf ${TMP}/${FIL}
+        rm -rf ${TEMP}/${FIL}
 	echo
 
 # TODO DNS
@@ -693,25 +693,25 @@ function chk_timeres(){
 	FIL="ntp.txt"
 	echo "software:"
 	for p in "^#.rpm.-V" "^#.Verification.Status:"; do
-		grep ${p} $FIL
+		grep ${p} ${FIL}
 	done
 	echo
 	# TODO SLES12
 	echo "service:"
-	grep -A1 "^# /sbin/chkconfig" $FIL
-	grep -A5 "# /usr/sbin/ntpq -p" $FIL | grep -v "====="
+	grep -A1 "^# /sbin/chkconfig" ${FIL}
+	grep -A5 "# /usr/sbin/ntpq -p" ${FIL} | grep -v "====="
 
 	echo "config:"
 	echo "# /etc/ntp.conf:"
-	split_file $FIL 
-	f=$(grep -l "^# /etc/ntp.conf$" ${TMP}/${FIL}/xx*)
+	split_file ${FIL} 
+	f=$(grep -l "^# /etc/ntp.conf$" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
 		grep -v "^#" $f | tr -s "\n"
-	f=$(grep -l "^NTPD_FORCE_SYNC_ON_STARTUP=" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^NTPD_FORCE_SYNC_ON_STARTUP=" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
 		grep -v "^#" $f | tr -s "\n"
 
-        rm -rf ${TMP}/${FIL}
+        rm -rf ${TEMP}/${FIL}
 	echo
 
 	test -z "${TIME_ERR}" &&\
@@ -723,7 +723,7 @@ function chk_timeres(){
 	echo "errors:"
 	for p in $TIME_ERR; do
 		echo -n "${p} : "
-		grep -c ${p} $FIL
+		grep -c ${p} ${FIL}
 	done
 	echo
 
@@ -737,12 +737,12 @@ TIMEZONE
 DEFAULT_TIMEZONE
 "
 	for p in $TIME_PTRN; do
-		grep "^${p}" $FIL | sort -u
+		grep "^${p}" ${FIL} | sort -u
 	done
 	echo
 
 	FIL="etc.txt"
-	grep -A4 "^/etc/adjtime" $FIL
+	grep -A4 "^/etc/adjtime" ${FIL}
 	echo
 
 # TODO www.novell.com/support/kb/doc.php?id=7009834 208 days uptime limit
@@ -786,7 +786,7 @@ sbd:
 "
 	FIL="rpm.txt"
 	for f in $CLUSTER_PGK; do
-		grep $f $FIL 	
+		grep $f ${FIL} 	
 	done | sort
 	echo
 	# TODO check /etc/corosync/
@@ -806,75 +806,75 @@ sbd:
 	echo
 
 	FIL="chkconfig.txt"
-	if $(test -r "$FIL"); then
-		split_file $FIL
-		f=$(grep -l "^# /sbin/chkconfig.--list$" ${TMP}/${FIL}/xx*)
+	if $(test -r "${FIL}"); then
+		split_file ${FIL}
+		f=$(grep -l "^# /sbin/chkconfig.--list$" ${TEMP}/${FIL}/xx*)
 		echo "/sbin/chkconfig --list:"
 		test -z $f ||\
 			grep -e "^openais.*0:" -e "^hp-asrd.*0:" $f
 		echo
-		f=$(grep -l "^/etc/init.d/rc3.d:$" ${TMP}/${FIL}/xx*)
+		f=$(grep -l "^/etc/init.d/rc3.d:$" ${TEMP}/${FIL}/xx*)
         	echo "/etc/init.d/rc3.d:"
        		test -z $f ||\
 			grep -e "K..openais" -e "S..hp-asrd" $f
 		echo
-		f=$(grep -l "^/etc/init.d/rc5.d:$" ${TMP}/${FIL}/xx*)
+		f=$(grep -l "^/etc/init.d/rc5.d:$" ${TEMP}/${FIL}/xx*)
         	echo "/etc/init.d/rc5.d:"
         	test -z $f ||\
 			grep -e "K..openais" -e "S..hp-asrd" $f
 		echo
 	fi
 	FIL="systemd.txt"
-	if $(test -r "$FIL"); then
+	if $(test -r "${FIL}"); then
 		# TODO SLES12
 		echo
 	fi
 
 	FIL="sysconfig.txt"
-        split_file $FIL
-        f=$(grep -l "^# /etc/sysconfig/openais$" ${TMP}/${FIL}/xx*)
+        split_file ${FIL}
+        f=$(grep -l "^# /etc/sysconfig/openais$" ${TEMP}/${FIL}/xx*)
 	echo "/etc/sysconfig/openais:"
 	test -z $f || grep -v "^#" $f | tr -s "\n"
 	echo
-        f=$(grep -l "^# /etc/sysconfig/pacemaker$" ${TMP}/${FIL}/xx*)
+        f=$(grep -l "^# /etc/sysconfig/pacemaker$" ${TEMP}/${FIL}/xx*)
 	echo "/etc/sysconfig/pacemaker:"
 	test -z $f || grep -v "^#" $f | tr -s "\n"
 	echo	
-	f=$(grep -l "^# /etc/sysconfig/sbd$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /etc/sysconfig/sbd$" ${TEMP}/${FIL}/xx*)
 	echo "/etc/sysconfig/sbd:"
 	test -z $f || grep -v "^#" $f | tr -s "\n"
 	echo
 
 	FIL="ha.txt"
-        split_file $FIL
-	f=$(grep -l "^# /usr/sbin/sbd.-d.*dump$" ${TMP}/${FIL}/xx*)
+        split_file ${FIL}
+	f=$(grep -l "^# /usr/sbin/sbd.-d.*dump$" ${TEMP}/${FIL}/xx*)
 	echo "sbd -d /dev/... dump:"
 	test -z $f || grep -v "^#" $f
 	echo
-	f=$(grep -l "^# /usr/sbin/sbd.-d.*list$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /usr/sbin/sbd.-d.*list$" ${TEMP}/${FIL}/xx*)
 	echo "sbd -d /dev/... list:"
 	test -z $f || grep -v "^#" $f
 	echo
-        f=$(grep -l "^# /etc/corosync/corosync.conf$" ${TMP}/${FIL}/xx*)
+        f=$(grep -l "^# /etc/corosync/corosync.conf$" ${TEMP}/${FIL}/xx*)
 	echo "/etc/corosync/corosync.conf:"
 	test -z $f || grep -v "^#" $f
 	echo
-        f=$(grep -l "^# /usr/sbin/corosync-cfgtool -s$" ${TMP}/${FIL}/xx*)
+        f=$(grep -l "^# /usr/sbin/corosync-cfgtool -s$" ${TEMP}/${FIL}/xx*)
 	echo "/usr/sbin/corosync-cfgtool -s:"
 	test -z $f || grep -v "^#" $f
 	echo
-	f=$(grep -l "^# /usr/sbin/sbd.-d.*dump$" ${TMP}/${FIL}/xx*)
-        f=$(grep -l "^# /usr/sbin/crm_mon.-r.-1$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /usr/sbin/sbd.-d.*dump$" ${TEMP}/${FIL}/xx*)
+        f=$(grep -l "^# /usr/sbin/crm_mon.-r.-1$" ${TEMP}/${FIL}/xx*)
 	echo "crm_mon -r -1:"
 	test -z $f || grep -v "^#" $f
 	echo
-        f=$(grep -l "^# /var/lib/heartbeat/crm/cib.xml$" ${TMP}/${FIL}/xx*)
+        f=$(grep -l "^# /var/lib/heartbeat/crm/cib.xml$" ${TEMP}/${FIL}/xx*)
 	echo "/var/lib/heartbeat/crm/cib.xml:"
 	test -z $f || grep -v "^#" $f
-        f=$(grep -l "^# /var/lib/pacemaker/cib/cib.xml$" ${TMP}/${FIL}/xx*)
+        f=$(grep -l "^# /var/lib/pacemaker/cib/cib.xml$" ${TEMP}/${FIL}/xx*)
 	echo "/var/lib/pacemaker/cib/cib.xml:"
 	test -z $f || grep -v "^#" $f
-        f=$(grep -l "^# /usr/sbin/crm configure show$" ${TMP}/${FIL}/xx*)
+        f=$(grep -l "^# /usr/sbin/crm configure show$" ${TEMP}/${FIL}/xx*)
 	echo "/usr/sbin/crm configure show:"
 	test -z $f || grep -v "^#" $f
 	echo
@@ -883,20 +883,20 @@ sbd:
 	FIL="basic-health-check.txt"
 	echo "cluster processes running:"
 	for p in $CLUSTER_PRCS; do 
-		awk '$10=="'${p}'" {print $0}' $FIL
+		awk '$10=="'${p}'" {print $0}' ${FIL}
 	done
 	echo
 
 	FIL="lvm.txt"
-        split_file $FIL
+        split_file ${FIL}
         echo "/etc/lvm/lvm.conf:"
-        f=$(grep -l "# /etc/lvm/lvm.conf" $TMP/$FIL/xx*)
+        f=$(grep -l "# /etc/lvm/lvm.conf" ${TEMP}/${FIL}/xx*)
         test -z "$f" || grep -vh "^#" $f | grep "filter"
         echo
 	FIL="fs-softraid.txt"
-        split_file $FIL
+        split_file ${FIL}
         echo "/etc/mdadm.conf:"
-        f=$(grep -l "# /etc/mdadm.conf" $TMP/$FIL/xx*)
+        f=$(grep -l "# /etc/mdadm.conf" ${TEMP}/${FIL}/xx*)
         test -z "$f" || grep -vh "^#" $f # | grep "/dev/null"
         echo
 
@@ -910,20 +910,20 @@ function chk_xenhost(){
 
 	# TODO what is really needed?
 	FIL="xen.txt"
-        split_file $FIL
+        split_file ${FIL}
 	echo
 	echo "# /boot/grub/menu.lst"
-	f=$(grep -l "# /boot/grub/menu.lst" $TMP/$FIL/xx*)
+	f=$(grep -l "# /boot/grub/menu.lst" ${TEMP}/${FIL}/xx*)
 	test -z "$f" || grep -e "kernel /boot/xen.gz" -e "module /boot/vmlinuz.*-xen" -e "module /boot/initrd.*-xen" $f
 	echo
 	# TODO more xen specific RPMs?
 	grep -e "vmdp" -e "libvirt" rpm.txt
 	echo
-	f=$(grep -l "# /etc/xen/xend-config.sxp" $TMP/$FIL/xx*)
+	f=$(grep -l "# /etc/xen/xend-config.sxp" ${TEMP}/${FIL}/xx*)
 	echo "# /etc/xen/xend-config.sxp"
 	test -z "$f" || grep -vh "^#" $f
 	echo
-	f=$(grep -l "# /etc/sysconfig/xendomains" $TMP/$FIL/xx*)
+	f=$(grep -l "# /etc/sysconfig/xendomains" ${TEMP}/${FIL}/xx*)
 	echo "# /etc/sysconfig/xendomains"
 	test -z "$f" || grep -vh "^#" $f
 	# TODO xm info, xm list
@@ -931,36 +931,36 @@ function chk_xenhost(){
 	# TODO Xen errors in syslog
 
 	FIL="modules.txt"
-        split_file $FIL
+        split_file ${FIL}
 	# TODO what filenames?
 	echo "# /etc/modprobe.d/xen-blkbk.conf"
-	f=$(grep -l "# /etc/modprobe.d/xen-blkbk.conf" $TMP/$FIL/xx*)
+	f=$(grep -l "# /etc/modprobe.d/xen-blkbk.conf" ${TEMP}/${FIL}/xx*)
 	test -z "$f" || grep -vh "^#" $f
 	echo
 	echo "# /sbin/modinfo blkbk"
-	f=$(grep -l "# /sbin/modinfo blkbk" $TMP/$FIL/xx*)
+	f=$(grep -l "# /sbin/modinfo blkbk" ${TEMP}/${FIL}/xx*)
 	test -z "$f" || grep -vh "^#" $f
 	echo
 	# TODO netbk some options only from /etc/modules.d/*; what filenames?
 	echo "# /etc/modprobe.d/xen-netbk.conf"
-	f=$(grep -l "# /etc/modprobe.d/xen-netbk.conf" $TMP/$FIL/xx*)
+	f=$(grep -l "# /etc/modprobe.d/xen-netbk.conf" ${TEMP}/${FIL}/xx*)
 	test -z "$f" || grep -vh "^#" $f
 	echo
 	echo "# /sbin/modinfo netbk"
-	f=$(grep -l "# /sbin/modinfo netbk" $TMP/$FIL/xx*)
+	f=$(grep -l "# /sbin/modinfo netbk" ${TEMP}/${FIL}/xx*)
 	test -z "$f" || grep -vh "^#" $f
 	echo
 	# TODO blkbk "max_ring_page_order=0..4" from /etc/modules.d/*; what filenames?
 	echo "# /etc/modprobe.d/iomemory-vsl.conf"
-	f=$(grep -l "# /etc/modprobe.d/iomemory-vsl.conf" $TMP/$FIL/xx*)
+	f=$(grep -l "# /etc/modprobe.d/iomemory-vsl.conf" ${TEMP}/${FIL}/xx*)
 	test -z "$f" || grep -vh "^#" $f
 	echo	
 	echo "# /sbin/modinfo iomemory_vsl (propietary Fusion-IO)"
-	f=$(grep -l "# /sbin/modinfo iomemory_vsl" $TMP/$FIL/xx*)
+	f=$(grep -l "# /sbin/modinfo iomemory_vsl" ${TEMP}/${FIL}/xx*)
 	test -z "$f" || grep -vh "^#" $f
 	echo
 	echo "# grep for options [netbk|blkbk|iomemory_vsl]:"
-	grep -e "options netbk" -e "options blkbk" -e "options iomemory_vsl" $FIL
+	grep -e "options netbk" -e "options blkbk" -e "options iomemory_vsl" ${FIL}
 	echo
 }
 
@@ -1066,7 +1066,7 @@ xendomains
 	for p in $VMW_PKG; do
 		echo -n "$p : "
 		# TODO awk only
-		grep $p $FIL | awk '{print $1}'
+		grep $p ${FIL} | awk '{print $1}'
 	done
 	echo
 	echo
@@ -1074,45 +1074,45 @@ xendomains
 	FIL="modules.txt"
 	for p in $VMW_MODUL; do
 		echo -n "$p : "
-		grep $p $FIL	
+		grep $p ${FIL}	
 	done
 	echo
 	# TODO common function for services, see chk_services, chk_sap, chk_oracle
 	echo "- service should be on:"
 	FIL="chkconfig.txt"
-	if $(test -r "$FIL"); then
+	if $(test -r "${FIL}"); then
 		for s in $VMW_SVC_YES; do
-			grep "${s}:..on" $FIL
-			grep "${s}:..off" $FIL
-			grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
-			grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+			grep "${s}:..on" ${FIL}
+			grep "${s}:..off" ${FIL}
+			grep "^${s}.*0:.*3:on" ${FIL} | grep -v "boot\."
+			grep "^${s}.*0.*3:off" ${FIL} | grep -v "boot\."
 		done
 		echo
 		echo "- service should be off:"
 		for s in $VMW_SVC_OFF; do
-			grep "${s}:..off" $FIL
-			grep "${s}:..on" $FIL
-			grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
-			grep "^${s}.*0.*3:on" $FIL | grep -v "boot\."
+			grep "${s}:..off" ${FIL}
+			grep "${s}:..on" ${FIL}
+			grep "^${s}.*0.*3:off" ${FIL} | grep -v "boot\."
+			grep "^${s}.*0.*3:on" ${FIL} | grep -v "boot\."
 		done
 	fi
 	FIL="systemd.txt"
-	if $(test -r "$FIL"); then
+	if $(test -r "${FIL}"); then
 		# TODO SLES12
 		echo
 	fi
 	echo
 	echo -n "- vmtoolsd running: "
 	FIL="basic-health-check.txt"
-	awk '$10~/vmtoolsd/ {print $10}' $FIL
+	awk '$10~/vmtoolsd/ {print $10}' ${FIL}
 	echo
 	echo "- config files:"	
 	FIL="etc.txt"
-	split_file $FIL
+	split_file ${FIL}
 	for p in $VMW_ETC; do
 		echo
 		echo "$p :"
-		f=$(grep -l "^# ${p}$" ${TMP}/${FIL}/xx*)
+		f=$(grep -l "^# ${p}$" ${TEMP}/${FIL}/xx*)
 		test -z $f && continue
 		test -r $f && grep -v "^#" $f | tr -s "\n"
 	done
@@ -1133,8 +1133,8 @@ ulimit
 	# TODO check /etc/sysconfig/sapconf
 	echo "sysconfig :"
 	FIL=etc.txt
-	split_file $FIL
-	f=$(grep -l "^# /etc/sysconfig/sapconf$" ${TMP}/${FIL}/xx*)
+	split_file ${FIL}
+	f=$(grep -l "^# /etc/sysconfig/sapconf$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -v "^#" $f | sort -u
 	echo
@@ -1143,34 +1143,34 @@ ulimit
 	echo
 	echo "proc :"
 	FIL=proc.txt
-	split_file $FIL
-	f=$(grep -l "^# /proc/net/unix$" ${TMP}/${FIL}/xx*)
+	split_file ${FIL}
+	f=$(grep -l "^# /proc/net/unix$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		awk '$8~/sap/ || $8~/oracle/ {print $8}' $f | sort -u
 	echo
 	FIL=pam.txt
-	split_file $FIL
+	split_file ${FIL}
 # TODO
 #	echo "pam_limits :"
-#	f=$(grep -l "^# /etc/security/limits.conf$" ${TMP}/${FIL}/xx*)
+#	f=$(grep -l "^# /etc/security/limits.conf$" ${TEMP}/${FIL}/xx*)
 #	test -z "$f" ||\
 #		awk'$1=="oracle" || $1~/sapsys/ || $1~/dba/ {print}' $f | sort -u
 #	echo
 # TODO
 #	echo "getent_passwd :"
-#	f=$(grep -l "^# /usr/bin/getent passwd$" ${TMP}/${FIL}/xx*)
+#	f=$(grep -l "^# /usr/bin/getent passwd$" ${TEMP}/${FIL}/xx*)
 #	test -z "$f" ||\
 #		awk -F: '$2~/SAP.*Administrator/ {print}' $f | sort -u	
 #	echo
 	echo "getent_group :"
-	f=$(grep -l "^# /usr/bin/getent group$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /usr/bin/getent group$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		awk -F: '$1=="sapinst" || $1=="sapsys" || $1=="oper"  {print}' $f | sort -u
 	echo
 	echo "proc :"
 	FIL=memory.txt
-	split_file $FIL
-	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TMP}/${FIL}/xx*)
+	split_file ${FIL}
+	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		awk '$2=="sapstartsrv" || $2=="sapstart" || $2~/ms\.sap/ || $2~/en\.sap/  || $2~/ig\.sap/ || $2=="igsmux_mt" || $2=="igspw_mt" || $2=="gwrd" || $2=="icman" || $2~/jc\.sap/ || $2=="jstart" {print}' $f | sort -u
 		awk '$8~/sapstart/ || $8~/disp\+work/ || $8~/igswd_mt/ || $8~/igspw_mt/ || $8~/igsmux_mt/ || $8~/gwrd/ || $8~/icman/ || $8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ || $8~/dw_/ || $8~/jstart/  {print $8}' $f | sort -u
@@ -1197,7 +1197,7 @@ ulimit
 	echo "RPMs forbidden by SAP:"
 	for f in $SAP_SAP_PKG_NOT; do
 		echo -n "$f : "
-		grep -v -- "-32bit" $FIL | grep "^${f}-[0-9]" || echo "NO"
+		grep -v -- "-32bit" ${FIL} | grep "^${f}-[0-9]" || echo "NO"
 	done | awk '{print $1,":",$3}' | sort
 	echo
 }
@@ -1366,8 +1366,8 @@ HANA-Firewall
 		echo -n "$FULL : "
 		q="$FULL"
 		# TODO do search, if package is -32bit
-		grep -v -- "-32bit" $FIL | grep "^${FULL}" ||\
-		 	q=$(	p=$(grep -v -- "-32bit" $FIL |\
+		grep -v -- "-32bit" ${FIL} | grep "^${FULL}" ||\
+		 	q=$(	p=$(grep -v -- "-32bit" ${FIL} |\
 					grep  "^${BASE}-[0-9]")
 				echo "NO but $p"
 			)
@@ -1375,7 +1375,7 @@ HANA-Firewall
 	done | awk '{print $1,":",$3,$4,$5}' | sort
 	echo
 	FIL="boot.txt"
-	grep -A1 "^# /bin/uname -a" $FIL
+	grep -A1 "^# /bin/uname -a" ${FIL}
 	echo
 
 	FIL="rpm.txt"
@@ -1383,26 +1383,26 @@ HANA-Firewall
 	for f in $HANA_SAP_PKG_YES; do
 		echo -n "$f : "
 		# TODO do search, if package is -32bit
-		grep -v -- "-32bit" $FIL | grep "^${f}-[0-9]" || echo "NO"
+		grep -v -- "-32bit" ${FIL} | grep "^${f}-[0-9]" || echo "NO"
 	done | awk '{print $1,":",$3}' | sort
 	echo
 	echo "RPMs recommended by SUSE:"
 	for f in $HANA_SUSE_PKG_YES; do
 		echo -n "$f : "
 		# TODO do search, if package is -32bit
-		grep -v -- "-32bit" $FIL | grep "^${f}-[0-9]" || echo "NO"
+		grep -v -- "-32bit" ${FIL} | grep "^${f}-[0-9]" || echo "NO"
 	done | awk '{print $1,":",$3}' | sort
 	echo
 	# TODO HANA_SAP_PKG_NOT. -32bit?
 	echo "RPMs forbidden by SAP:"
 	for f in $HANA_SAP_PKG_NOT; do
 		echo -n "$f : "
-		grep -v -- "-32bit" $FIL | grep "^${f}-[0-9]" || echo "NO"
+		grep -v -- "-32bit" ${FIL} | grep "^${f}-[0-9]" || echo "NO"
 	done | awk '{print $1,":",$3}' | sort
 	echo
 
 	FIL="boot.txt"
-	KRNLCMD=$(grep -A1 "^# /proc/cmdline" $FIL | tail -1)
+	KRNLCMD=$(grep -A1 "^# /proc/cmdline" ${FIL} | tail -1)
 	echo "SAP recommended /proc/cmdline args:"
 	# TODO shorter output
 	for f in $HANA_SAP_BOOTARG; do
@@ -1427,23 +1427,23 @@ HANA-Firewall
 	
 	FIL="sysconfig.txt"
 
-	split_file $FIL
+	split_file ${FIL}
 
 	hana_defapd=$(echo "${HANA_SAP_BOOTARG}" "${HANA_SUSE_BOOTARG}" | tr -d "\n")
 	echo "SAP+SUSE recommended DEFAULT_APPEND: $hana_defapd"
 	echo "# /etc/sysconfig/bootloader:"
-	f=$(grep -l "^# /etc/sysconfig/bootloader$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /etc/sysconfig/bootloader$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep DEFAULT_APPEND $f
 	echo
-	rm -rf ${TMP}/${FIL}
+	rm -rf ${TEMP}/${FIL}
 
 	# TODO HANA_SAP_SYSCTL, HANA_SUSE_SYSCTL as SAP_SYSCTL in chk_sap? 
 	FIL="etc.txt"
 
-	split_file $FIL
+	split_file ${FIL}
 
-	f=$(grep -l "^# /etc/sysctl.conf$" ${TMP}/${FIL}/xx*)
+	f=$(grep -l "^# /etc/sysctl.conf$" ${TEMP}/${FIL}/xx*)
 	echo "SAP recommended sysctl:"
 	test -z "$f" ||\
 		for p in $HANA_SAP_SYSCTL; do
@@ -1458,13 +1458,13 @@ HANA-Firewall
 			grep $p $f || echo "NO"
 		done
 	echo
-	rm -rf ${TMP}/${FIL}
+	rm -rf ${TEMP}/${FIL}
 
 	# TODO /boot/grub/menu.lst
 	
 	FIL="boot.txt"
 	
-	split_file $FIL
+	split_file ${FIL}
 
 	# TODO
 	echo
@@ -1472,49 +1472,49 @@ HANA-Firewall
 		tr -d "#"
 	echo "SAP recommended boot.local: echo never > /sys/kernel/mm/transparent_hugepage/enabled"
 	echo "# /etc/init.d/boot.local:"
-	F=$(grep -l "# /etc/init.d/boot.local" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')	
+	F=$(grep -l "# /etc/init.d/boot.local" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')	
 		test -z "$F" ||\
 			grep -v "^#" $F
 
 	FIL="sysfs.txt"
 	echo "SAP recommeded nr_anon_transparent_hugepages: 0 , nr_hugepages: 0"
-	grep "nr_anon_transparent_hugepages " $FIL | grep -v -- "--" 
-	grep -A1 "# /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages" $FIL | grep -v -- "--"
+	grep "nr_anon_transparent_hugepages " ${FIL} | grep -v -- "--" 
+	grep -A1 "# /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages" ${FIL} | grep -v -- "--"
 	
 # TODO fix it: csplit runs on 100% CPU for ever
-#	split_file $FIL
+#	split_file ${FIL}
 #
 #	echo "SAP recommeded nr_anon_transparent_hugepages: 0 , nr_hugepages: 0"
 #	# TODO n NUMA nodes
-#	F=$(grep -l "# /sys/devices/system/node/node0/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#	F=$(grep -l "# /sys/devices/system/node/node0/vmstat" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 #		test -z "$F" ||\
 #			grep "nr_anon_transparent_hugepages" $F
-#	F=$(grep -l "# /sys/devices/system/node/node1/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#	F=$(grep -l "# /sys/devices/system/node/node1/vmstat" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 #		test -z "$F" ||\
 #			grep "nr_anon_transparent_hugepages" $F
-#	F=$(grep -l "# /sys/devices/system/node/node2/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#	F=$(grep -l "# /sys/devices/system/node/node2/vmstat" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 #		test -z "$F" ||\
 #			grep "nr_anon_transparent_hugepages" $F
-#	F=$(grep -l "# /sys/devices/system/node/node3/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#	F=$(grep -l "# /sys/devices/system/node/node3/vmstat" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 #		test -z "$F" ||\
 #			grep "nr_anon_transparent_hugepages" $F
-#	F=$(grep -l "# /sys/devices/system/node/node4/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#	F=$(grep -l "# /sys/devices/system/node/node4/vmstat" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 #		test -z "$F" ||\
 #			grep "nr_anon_transparent_hugepages" $F
-#	F=$(grep -l "# /sys/devices/system/node/node5/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#	F=$(grep -l "# /sys/devices/system/node/node5/vmstat" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 #		test -z "$F" ||\
 #			grep "nr_anon_transparent_hugepages" $F
-#	F=$(grep -l "# /sys/devices/system/node/node6/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#	F=$(grep -l "# /sys/devices/system/node/node6/vmstat" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 #		test -z "$F" ||\
 #			grep "nr_anon_transparent_hugepages" $F
-#	F=$(grep -l "# /sys/devices/system/node/node7/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#	F=$(grep -l "# /sys/devices/system/node/node7/vmstat" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 #		test -z "$F" ||\
 #			grep "nr_anon_transparent_hugepages" $F
-#	F=$(grep -l "# /sys/devices/system/node/node8/vmstat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#	F=$(grep -l "# /sys/devices/system/node/node8/vmstat" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 #		test -z "$F" ||\
 #			grep "nr_anon_transparent_hugepages" $F
 #
-#	F=$(grep -l "# /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+#	F=$(grep -l "# /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 #		test -z "$F" ||\
 #			cat $F
 	echo
@@ -1523,35 +1523,35 @@ HANA-Firewall
 	echo
 
 	FIL="fs-diskio.txt"
-	test -f $FIL &&\
-		split_file $FIL
+	test -f ${FIL} &&\
+		split_file ${FIL}
 	
 	echo "SAP recommeded filesystem type: XFS"
-	F=$(grep -l "# /etc/fstab" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+	F=$(grep -l "# /etc/fstab" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 	grep -v "#==" $F | tr -s " "
 	# TODO XFS create options
 
 	# TODO calculate 2x RAM, max.50GB
 	echo "SAP recommended swap space: 2x RAM, max.50GB"
 	# TODO depends on name "swap"
-	grep "Disk.*swap" $FIL
+	grep "Disk.*swap" ${FIL}
 
 	# grep "pagecache.limit.set"
 	# TODO search Fusion IO drives 
 	# TODO boot msg shows max.4GB, use other info here	
 	FIL="boot.txt"
-	grep "^\[.*System RAM: " $FIL | awk '{print $11,$12,$13}'
+	grep "^\[.*System RAM: " ${FIL} | awk '{print $11,$12,$13}'
 
 	echo
 
 	FIL="chkconfig.txt"
-	if $(test -r "$FIL"); then
+	if $(test -r "${FIL}"); then
 		echo "SAP recommeded service ON:"
 		for s in $HANA_SAP_SVC_YES; do
 			echo -n "$s: "
-			p=$(test -r $FIL && grep "${s}:" $FIL | cut -d: -f2)
+			p=$(test -r ${FIL} && grep "${s}:" ${FIL} | cut -d: -f2)
 			# TODO
-			# p=$(test -r $FIL && grep "${s}.*0:" $FIL | cut -d: -f2-)
+			# p=$(test -r ${FIL} && grep "${s}.*0:" ${FIL} | cut -d: -f2-)
 			test -z "$p" && p="NA"
 			echo "${p}"
 		done
@@ -1559,22 +1559,22 @@ HANA-Firewall
 		echo "SAP recommeded service OFF:"
 		for s in $HANA_SAP_SVC_OFF; do
 			echo -n "$s: "
-			p=$(test -r $FIL && grep "${s}:" $FIL | cut -d: -f2)
+			p=$(test -r ${FIL} && grep "${s}:" ${FIL} | cut -d: -f2)
 			# TODO
-			# p=$(test -r $FIL && grep "${s}.*0:" $FIL | cut -d: -f2-)
+			# p=$(test -r ${FIL} && grep "${s}.*0:" ${FIL} | cut -d: -f2-)
 			test -z "$p" && p="NA"
 			echo "${p}"
 		done
 	fi
 	FIL="systemd.txt"
-	if $(test -r "$FIL"); then
+	if $(test -r "${FIL}"); then
 		# TODO SLES12
 		echo
 	fi
 	echo
 	FIL="memory.txt"
-	split_file $FIL
-	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TMP}/${FIL}/xx*)
+	split_file ${FIL}
+	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
 		awk ' $9~/HDB_/ {print $9}' $f | sort -u | tail -2
 	echo
@@ -1640,9 +1640,9 @@ oracle.*
 	echo
 	echo "sysconfig_oracle :"
         FIL="sysconfig.txt"
-        split_file $FIL
+        split_file ${FIL}
 	# TODO fix test
-        F=$(grep -l "# /etc/sysconfig/oracle" $TMP/$FIL/xx* |\
+        F=$(grep -l "# /etc/sysconfig/oracle" ${TEMP}/${FIL}/xx* |\
 		 tr -d ":#" | awk '{print $1}')
 	test -z $F ||\
         	grep -v "^#" $F  | awk -F: '{print $2}' | tr -s "\n "
@@ -1698,7 +1698,7 @@ ClusterTools2
 	echo
 	echo "RPM found :"
         for p in $ORA_SFT_PTRN; do
-                awk '$1=="'${p}'" {print $0}' $FIL
+                awk '$1=="'${p}'" {print $0}' ${FIL}
         done
         echo
 # TODO
@@ -1729,7 +1729,7 @@ smartd
 sapinit
 "
 	FIL="chkconfig.txt"
-	if $(test -r "$FIL"); then
+	if $(test -r "${FIL}"); then
 		echo "service needed :"
 		for s in $ORA_SVC_YES; do
 			echo $s
@@ -1737,22 +1737,22 @@ sapinit
 		echo
 		echo "service found :"
 		for s in $ORA_SVC_YES; do
-			grep "${s}:..on" $FIL
-			grep "${s}:..off" $FIL
-			grep "^${s}.*0:.*3:on" $FIL | grep -v "boot\."
-			grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
+			grep "${s}:..on" ${FIL}
+			grep "${s}:..off" ${FIL}
+			grep "^${s}.*0:.*3:on" ${FIL} | grep -v "boot\."
+			grep "^${s}.*0.*3:off" ${FIL} | grep -v "boot\."
 		done
 		echo
 		echo "service should be off :"
 		for s in $ORA_SVC_OFF; do
-			grep "${s}:..off" $FIL
-			grep "${s}:..on" $FIL
-			grep "^${s}.*0.*3:off" $FIL | grep -v "boot\."
-			grep "^${s}.*0.*3:on" $FIL | grep -v "boot\."
+			grep "${s}:..off" ${FIL}
+			grep "${s}:..on" ${FIL}
+			grep "^${s}.*0.*3:off" ${FIL} | grep -v "boot\."
+			grep "^${s}.*0.*3:on" ${FIL} | grep -v "boot\."
 		done
 	fi
 	FIL="systemd.txt"
-	if $(test -r "$FIL"); then
+	if $(test -r "${FIL}"); then
 		# TODO SLES12
 		echo
 	fi
@@ -1760,8 +1760,8 @@ sapinit
 	# TODO rpm.txt /usr/local/bin: coraenv, dbhome, oraenv
 	echo "proc :"
 	FIL=memory.txt
-	split_file $FIL
-	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TMP}/${FIL}/xx*)
+	split_file ${FIL}
+	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		awk '$8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ || $8~/tnslsnr/ || $8~/libodmd11/ || $8~/oracle$/ {print $8}' $f | sort -u
 	echo
@@ -1769,8 +1769,8 @@ sapinit
 	# TODO memory.txt: tnslsnr libclntsh oracle$ libodmd11
 	# TODO env.txt: ORA_
 	FIL=env.txt
-	split_file $FIL
-	f=$(grep -l "^# /usr/bin/env$" ${TMP}/${FIL}/xx*)
+	split_file ${FIL}
+	f=$(grep -l "^# /usr/bin/env$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		awk '$1~/ORA/ {print}' $f | sort -u
 	echo
@@ -1782,10 +1782,10 @@ function chk_kernel(){
 	echo_msgsep $FUNCNAME
 
 	FIL="boot.txt"
-	grep -A1 "^# /bin/uname -a" $FIL
-	grep -A1 "^# /proc/cmdline" $FIL
+	grep -A1 "^# /bin/uname -a" ${FIL}
+	grep -A1 "^# /proc/cmdline" ${FIL}
 
-	grep "^\[.*Booting paravirtualized kernel on bare hardware" $FIL
+	grep "^\[.*Booting paravirtualized kernel on bare hardware" ${FIL}
 
 	echo -n "kernel.tainted : "
 	grep "^kernel.tainted.=" env.txt
@@ -1799,17 +1799,17 @@ function chk_software(){
 	
 	FIL="basic-environment.txt"
 
-	grep -A3 "# /etc/SuSE-release" $FIL
+	grep -A3 "# /etc/SuSE-release" ${FIL}
 	echo
-	grep -A1 "# /etc/lsb-release" $FIL
+	grep -A1 "# /etc/lsb-release" ${FIL}
 	echo	
 
 	FIL="sam.txt"
-	grep -A4 "\.prod:" $FIL
+	grep -A4 "\.prod:" ${FIL}
 	echo
 
 	FIL="rpm.txt"
-	grep "(none)" $FIL | grep -v "gpg-pubkey"
+	grep "(none)" ${FIL} | grep -v "gpg-pubkey"
 	echo	
 
 	FIL="sam.txt"
@@ -1820,7 +1820,7 @@ Baseproduct:
 not.our.package:
 "	
 	for p in $SOFTW_PTRN; do
-		grep "${p}" $FIL
+		grep "${p}" ${FIL}
 	done
 	echo
 }
@@ -1842,10 +1842,10 @@ function chk_updates(){
 "SLE12-SP2-SAP-"
 "
 	for p in ${UPDT_PTRN}; do
-		grep "|.*|.${p}.*|.*|" $FIL | sort -u
+		grep "|.*|.${p}.*|.*|" ${FIL} | sort -u
 	done
 	echo
-	grep "patches.needed" $FIL
+	grep "patches.needed" ${FIL}
 	echo
 }
 
@@ -1856,24 +1856,24 @@ function chk_multipath(){
 
 	FIL="mpio.txt"
 
-	split_file $FIL
+	split_file ${FIL}
 
-	F=$(grep -l "# /etc/multipath.conf" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+	F=$(grep -l "# /etc/multipath.conf" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 	echo "# /etc/multipath.conf:"
 	test -z "$F" || grep -v "^#" $F | tr -s "\n"
 
 	for p in "^#.rpm.-V" "^#.Verification.Status:"; do
-		grep "${p}" $FIL
+		grep "${p}" ${FIL}
 	done
-	grep "^#.RPM.Not.Installed:" $FIL
+	grep "^#.RPM.Not.Installed:" ${FIL}
 	echo
 
 	for p in "^boot.device-mapper.*o" "^boot.multipath.*o" "^multipathd.*0:.*3:on"; do
-		grep ${p} $FIL
+		grep ${p} ${FIL}
 	done
 	echo
 	
-	grep -B1 "^size=.*features=.*hwhandler=" $FIL |\
+	grep -B1 "^size=.*features=.*hwhandler=" ${FIL} |\
 		sed s/^size/"	size"/g | grep -v "^--$"
 	echo
 	# TODO by-id
@@ -1882,7 +1882,7 @@ function chk_multipath(){
 	# TODO multipath.conf: compare failback, rr_min_io, rr_min_io_rq, no_path_retry, polling_interval, dev_loss_tmo, user_friendly_names, async???
 	# TODO check for un-matched userfriendly names (mpath[a-z])
 	for p in "loading.*prioritizer" "path.checker.=" "prio.="; do
-		grep ${p} $FIL
+		grep ${p} ${FIL}
 	done | awk '{print $6,$7,$8}' | sort -u
 	echo
 }
@@ -1894,16 +1894,16 @@ function chk_filesys(){
 	
 	FIL="fs-diskio.txt"
 
-	split_file $FIL
+	split_file ${FIL}
 	
-	F=$(grep -l "# /etc/fstab" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+	F=$(grep -l "# /etc/fstab" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 	grep -v "#==" $F | tr -s " "
-	F=$(grep -l "# /bin/mount" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+	F=$(grep -l "# /bin/mount" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 	grep -v "#==" $F | tr -s " "
 	# TODO define meaningful limits for await and svctm	
 	# TODO make limits for await and svctm a config parameter
 	# TODO autofs	
-	F=$(grep "# /usr/bin/iostat" $TMP/$FIL/xx* | tr -d ":#" | awk '{print $1}')
+	F=$(grep "# /usr/bin/iostat" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 	echo $F | awk ' $1=="Device:" {print $0}
 		$10 > 100.0 {print $0}
 		$11 > 20.0 {print $0}' | sort -u
@@ -1932,7 +1932,7 @@ xfsprogs
 "
 	echo "software:"
 	for p in $STOR_PKG; do
-		awk '$1=="'$p'" {print $1,$NF} ' $FIL
+		awk '$1=="'$p'" {print $1,$NF} ' ${FIL}
 	done
 	echo
 	# TODO check if local disk is in multipath
@@ -1946,8 +1946,8 @@ xfs
 "	
 	echo "disk:"
 	FIL="fs-diskio.txt"
-	#grep -B1 "^Disk./dev/" $FIL
-	grep -A1 "^Model:" $FIL | grep -v "^--$"
+	#grep -B1 "^Disk./dev/" ${FIL}
+	grep -A1 "^Model:" ${FIL} | grep -v "^--$"
 	echo
 	show_sys_scsi
 	echo
@@ -1957,42 +1957,42 @@ xfs
 	# TODO e.g. udev.txt: # /usr/lib/udev/rules.d/60-ssd-scheduler.rules -> deadline
 	FIL="boot.txt"
 	echo "/boot/grub/menu.lst:"
-	grep "io.scheduler.*registered.(default)" $FIL
-	grep "kernel.*elevator" $FIL
+	grep "io.scheduler.*registered.(default)" ${FIL}
+	grep "kernel.*elevator" ${FIL}
 	echo
 	FIL="sysconfig.txt"
 	echo "/etc/sysconfig/bootloader:"
-	grep "DEFAULT_APPEND.*elevator" $FIL
+	grep "DEFAULT_APPEND.*elevator" ${FIL}
 	echo
-	split_file $FIL
+	split_file ${FIL}
 	echo "/etc/sysconfig/mdadm:"
-	f=$(grep -l "# /etc/sysconfig/mdadm" $TMP/$FIL/xx*)
+	f=$(grep -l "# /etc/sysconfig/mdadm" ${TEMP}/${FIL}/xx*)
         test -z "$f" || grep -v "^#" $f | tr -s "\n"
         echo
 	
 	FIL="fs-softraid.txt"
-	split_file $FIL
+	split_file ${FIL}
 	echo "/etc/sysconfig/mdadm:"
-	f=$(grep -l "# /etc/mdadm.conf" $TMP/$FIL/xx*)
+	f=$(grep -l "# /etc/mdadm.conf" ${TEMP}/${FIL}/xx*)
         test -z "$f" || cat $f | tr -s "\n"
         echo
 	echo "/proc/mdstat:"
-	f=$(grep -l "# /proc/mdstat" $TMP/$FIL/xx*)
+	f=$(grep -l "# /proc/mdstat" ${TEMP}/${FIL}/xx*)
         test -z "$f" || cat $f | tr -s "\n"
         echo
 
 	FIL="lvm.txt"
-	split_file $FIL
+	split_file ${FIL}
 	echo "/sbin/vgs:"
-        f=$(grep -l "# /sbin/vgs" $TMP/$FIL/xx*)
+        f=$(grep -l "# /sbin/vgs" ${TEMP}/${FIL}/xx*)
 	test -z "$f" || grep -vh "^#" $f | tr -s "\n"
 	echo
 	echo "/etc/sysconfig/lvm:"
-        f=$(grep -l "# /etc/sysconfig/lvm" $TMP/$FIL/xx*)
+        f=$(grep -l "# /etc/sysconfig/lvm" ${TEMP}/${FIL}/xx*)
 	test -z "$f" || grep -vh "^#" $f | tr -s "\n"
 	echo
 	echo "/etc/lvm/lvm.conf:"
-	f=$(grep -l "# /etc/lvm/lvm.conf" $TMP/$FIL/xx*)
+	f=$(grep -l "# /etc/lvm/lvm.conf" ${TEMP}/${FIL}/xx*)
 	test -z "$f" || grep -vh "^#" $f | grep -vh "^    #" | tr -s "\n"
 	echo
 }
@@ -2003,18 +2003,18 @@ function chk_overview(){
 	echo_msgsep $FUNCNAME
 
 	#FIL="supportconfig.txt"
-	#grep "Script.Version:" $FIL
+	#grep "Script.Version:" ${FIL}
 	FIL="network.txt"
 	echo -n "Hostname: "
-	grep --binary-file=text -A1 "#./etc/HOSTNAME" $FIL | tail -1
+	grep --binary-file=text -A1 "#./etc/HOSTNAME" ${FIL} | tail -1
 	# TODO replace basic-health-report.txt by basic-health-check.txt
 	# TODO no basic-health-report.txt in SLES12
 	# TODO D state, defunc (zombie), ...
 	FIL="basic-health-report.txt"
 	echo "Supportconfig: " $DIR
-	test -r $FIL &&\
+	test -r ${FIL} &&\
 	for p in "^Date.Checked:" "^Status:" "\[...Red...\]" "\[.Yellow..\]"; do
-		grep ${p} $FIL
+		grep ${p} ${FIL}
 	done
 	echo
 }
@@ -2059,26 +2059,26 @@ vm.vfs_cache_pressure
 	PROC_PTRN=$SYSC_PTRN
 	echo "proc : "
 	for m in ${PROC_PTRN}; do
-#		grep -A1 "${m}" $FIL
-		grep "^${m}" $FIL
+#		grep -A1 "${m}" ${FIL}
+		grep "^${m}" ${FIL}
 	done | tr -s " " | tr "	" " " | sort -u
 	echo
 	FIL="etc.txt"
 	echo "sysctl.conf : "
 	for m in ${SYSC_PTRN}; do	
-		grep ^$m $FIL
+		grep ^$m ${FIL}
 	done | sort -u
 	echo
 	# TODO security/limits.conf
 	# TODO tmpfs
 	FIL="env.txt"
-	split_file $FIL
-	F=$(grep -h "# ulimit -a" $TMP/$FIL/xx* | tr -d ":#")
+	split_file ${FIL}
+	F=$(grep -h "# ulimit -a" ${TEMP}/${FIL}/xx* | tr -d ":#")
         echo $F | grep -v "#==" | tr -s " "
 
 	FIL="sysconfig.txt"
-	split_file $FIL
-	F=$(grep -l "# /etc/sysconfig/ulimit" $TMP/$FIL/xx* | tr -d ":#" |\
+	split_file ${FIL}
+	F=$(grep -l "# /etc/sysconfig/ulimit" ${TEMP}/${FIL}/xx* | tr -d ":#" |\
 		 awk '{print $1}')
 	# TODO make it work:
 	# test -r $F && grep -v "^#" $F | tr -s "\n "
@@ -2089,7 +2089,7 @@ vm.vfs_cache_pressure
 
 	# TODO how to find scheduler from supportdonfig? plugin needed?
 	FIL="boot.txt"
-	echo -n "io_scheduler: "; grep "io scheduler.*registered..default" $FIL
+	echo -n "io_scheduler: "; grep "io scheduler.*registered..default" ${FIL}
 	echo
 }
 
@@ -2101,11 +2101,11 @@ function chk_sysload(){
 	FIL="basic-health-report.txt"
 	echo "basic-health-report:"
 	# TODO replace basic-health-report.txt
-	test -r $FIL &&\
-	grep "^[A-Z].*\[....e....\]$" $FIL | grep -v "Kernel.Taint"
+	test -r ${FIL} &&\
+	grep "^[A-Z].*\[....e....\]$" ${FIL} | grep -v "Kernel.Taint"
 	# TODO make dfull work
 	dfull="X"
-	dfull=$( grep "%.>=.90%" $FIL )
+	dfull=$( grep "%.>=.90%" ${FIL} )
 	test "${dfull}" = "X" &&\
 	(	echo "Used Disk Space:"
 		echo $dfull
@@ -2257,9 +2257,9 @@ function chk_errors(){
 
 	FIL="messages.txt"
 	# TODO fix messages.txt starts <NUL>
-	FRST=$(grep -A1 "# /var/log/messages - Last.*Lines" $FIL |\
+	FRST=$(grep -A1 "# /var/log/messages - Last.*Lines" ${FIL} |\
 		tail -1 | awk '{print $1,$2,$3}')
-	echo "$FIL starts $FRST"
+	echo "${FIL} starts $FRST"
 	
 	LOG="boot.txt messages.txt proc.txt ha.txt"
 	for e in ${ERROR_PATTERN} ${CLUERR_PATTERN}; do
@@ -2273,8 +2273,8 @@ function chk_errors(){
 	# TODO dropped packets from proc.txt
 	echo "dropped network packets:"
 	FIL="proc.txt"
-	split_file $FIL
-	f=$(grep -l "^# /proc/net/dev$" ${TMP}/${FIL}/xx*)
+	split_file ${FIL}
+	f=$(grep -l "^# /proc/net/dev$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		cat $f
 
@@ -2286,7 +2286,7 @@ listen.queue.of.a.socket.overflowed
 "
 	FIL="network.txt"
 	for p in $NET_ERR; do
-		grep $p $FIL
+		grep $p ${FIL}
 	done
 	echo
 }
@@ -2339,7 +2339,7 @@ case $1 in
 		chk_errors
 		chk_sysload
 
-		rm -rf $TMP
+		rm -rf ${TEMP}
 		exit
 	;;
 	--function|-f)
@@ -2354,7 +2354,7 @@ case $1 in
 		else $FUN
 		fi
 
-		rm -rf $TMP
+		rm -rf ${TEMP}
 		exit
 	;;
 	--writecfg|-w)
@@ -2366,7 +2366,7 @@ case $1 in
 		#set -x
 		chk_sleha
 
-		rm -rf $TMP
+		rm -rf ${TEMP}
 		exit
 	;;
 esac

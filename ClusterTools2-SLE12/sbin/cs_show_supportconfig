@@ -266,6 +266,7 @@ ibmvfc.ko
 	done
 	echo
 # TODO see below - use split files to records instead of -A9, to find "supported:"
+# TODO make ibmvscsi.ko beeing found.
 	FIL="modules.txt"
 	for m in $HARDW_MOD; do
 		grep -A9 "^filename:.*${m}" ${FIL} |\

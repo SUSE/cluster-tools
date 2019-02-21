@@ -33,7 +33,7 @@ function show_sbd_err() {
 
 # SBD self-reboot
 # TODO due to path error or poison pill? 
-function show_sbd_boot() {
+function show_sbd_shut() {
   grep "$DATE".*sbd.*Rebooting.system $LOGS |\
 	cut_line
 }
@@ -112,7 +112,7 @@ function show_sys_boot() {
 
 # TODO system shutdown
 function show_sys_shut() {
-  grep "$DATE".*systemd.*Stopping.Restore.**shutdown $LOGS |\
+  grep "$DATE".*systemd.*Stopping.Restore.*shutdown $LOGS |\
 	cut_line
 }
 
@@ -134,7 +134,7 @@ function show_info() {
  show_sbd_err | show_info sbd_err
  show_sbd_recv | show_info "sbd_recv ---" 
  show_sbd_send | show_info "sbd_send +++"
- #show_sbd_boot | show_info "sbd_boot <<<<<<"
+ #show_sbd_boot | show_info "sbd_shut <<<<<<"
  show_xfs_mnt | show_info xfs_mnt 
  show_xfs_umnt | show_info xfs_umnt 
  show_xfs_err | show_info "xfs_err !!!" 

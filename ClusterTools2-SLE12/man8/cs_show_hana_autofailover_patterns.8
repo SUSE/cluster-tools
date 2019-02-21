@@ -1,0 +1,60 @@
+.TH cs_show_hana_autofailover_patterns 8 "20 Feb 2019" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_show_hana_autofailover_patterns \- search log files for known patterns
+.\"
+.SH SYNOPSIS
+.B cs_show_hana_autofailover_patterns \fI[OPTION]\fR
+.\"
+.SH DESCRIPTION
+\fBcs_show_hana_autofailover_patterns\fP searches log files for known error patterns. Timestamp and shortcut for patterns are printed. Matches are collapsed per second.
+The script search in live logfiles as well as in supportconfig logs.
+.br
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+	show help.
+.HP
+\fB --version\fR
+	show version.
+.\"
+TODO
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH EXAMPLES
+.TP
+# cs_show_hana_autofailover_patterns --hba
+search for HBA related patterns.
+Use default HBA type (ibmvfc) and messages log files in current directory.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_show_hana_autofailover_patterns
+	the program itself.
+\$PWD/messages
+	the default logfiles.
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBgrep\fP(1), \fBmultipathd\fP(), \fBsg_persist\fP(), \fBmount\fP(), \fBsbd()\fP, 
+.\"
+.SH COPYRIGHT
+(c) 2019 L.Pinne, Germany.
+.br
+cs_show_hana_autofailover_patterns comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"
+

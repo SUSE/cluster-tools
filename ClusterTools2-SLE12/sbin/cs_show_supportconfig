@@ -5,7 +5,7 @@
 # (c) 2011-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License 2. No warranty.
 #
-# Version: SLES12 0.03 2019-01-28
+# Version: SLES12 0.03 2019-0i2-22
 #
 # For Supportconfig Script Version: 2.25-237
 #
@@ -250,7 +250,9 @@ vmwatchdog.ko
 alim7101_wdt.ko
 iomemory-vsl.ko
 ibmveth.ko
-ibmvscsic.ko
+ibmvnic.ko
+ibmvscsi.ko
+ibmvfc.ko
 "
 	FIL="boot.txt"
 	for m in INITRD_MODULES MODULES_LOADED_ON_BOOT; do

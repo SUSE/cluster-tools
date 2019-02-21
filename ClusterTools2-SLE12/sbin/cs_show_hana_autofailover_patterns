@@ -6,7 +6,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-02-20 13:20 SLES12
+# Version: 2019-02-21 16:10 SLES12
 #
 # TODO /etc/ClusterTools2/cs_show_hana_autofailover_patterns
 # TODO patterns instead of functions like cs_error_patterns
@@ -14,106 +14,19 @@
 # TODO  -g and -f like cs_show_supportconfig
 #
 
-DATE=${1:-"2019-01-27"}
-LOGS="messages*"
-FCHBA="ibmvfc"
+DATE=${2:-"2019-01-27"}
+LOGS=${3:-"messages*"}
+FCHBA=${4:-"ibmvfc"}
+
+EXE=$0
+ERR="/dev/null"
+TEMP="/dev/shm/cltl.$RANDOM"
 
 
-# FC switch replacement
-function show_hba_err() {
-  grep "$DATE".*"$FCHBA".*Login.failed $LOGS |\
-	cut_line
-}
-
-# SBD path error
-function show_sbd_err() {
-  grep "$DATE".*sbd.*terminated $LOGS |\
-	cut_line
-}
-
-# SBD self-reboot
-# TODO due to path error or poison pill? 
-function show_sbd_shut() {
-  grep "$DATE".*sbd.*Rebooting.system $LOGS |\
-	cut_line
-}
-
-# SBD read reset
-function show_sbd_recv() {
-  grep "$DATE".*sbd.*Received.command.reset $LOGS |\
-	cut_line
-}
-
-# SBD write reset
-function show_sbd_send() {
-  grep "$DATE".*USER=root.*sbd.*message.*reset $LOGS |\
-	cut_line
-}
-
-# XFS shutdown
-function show_xfs_err() {
-  grep "$DATE".*XFS.*Shutting.down $LOGS |\
-	cut_line
-}
-
-# XFS mount
-function show_xfs_mnt() {
-  grep "$DATE".*USER=root.*mount.*xfs.*hana $LOGS |\
-	cut_line
-}
-
-# XFS umount
-function show_xfs_umnt() {
-  grep "$DATE".*USER=root.*umount.*hana $LOGS |\
-	cut_line
-}
-
-# SCSI3 reservation reserve
-function show_scsi_lock() {
-  grep "$DATE".*USER=root.*sg_persist.*out.*reserve $LOGS |\
-	cut_line
-}
-
-# SCSI3 reservation preempt
-function show_scsi_prem() {
-  grep "$DATE".*USER=root.*sg_persist.*out.*preempt $LOGS |\
-	cut_line
-}
-
-# SCSI3 reservation clear
-function show_scsi_free() {
-  grep "$DATE".*USER=root.*sg_persist.*out.*clear $LOGS |\
-	cut_line
-}
-
-# SCSI3 reservation conflict
-function show_scsi_clash() {
-  grep "$DATE".*kernel.*reservation.conflict $LOGS |\
-	cut_line
-}
-
-# MPIO path removed
-function show_mpio_del() {
-  grep "$DATE".*multipath.*path.removed $LOGS |\
-	cut_line
-}
-
-# MPIO path added
-function show_mpio_add() {
-  grep "$DATE".*multipath.*path.added $LOGS |\
-	cut_line
-}
-
-# system boot
-function show_sys_boot() {
-  grep "$DATE".*kernel.*bootconsole.*enabled $LOGS |\
-	cut_line
-}
-
-# TODO system shutdown
-function show_sys_shut() {
-  grep "$DATE".*systemd.*Stopping.Restore.*shutdown $LOGS |\
-	cut_line
+# find pattern
+function find_line() {
+	# TODO date and time
+	grep "${DATE}.*${1}" $LOGS | cut_line | show_info "${2}"
 }
 
 # select colums
@@ -128,24 +41,131 @@ function show_info() {
 	while read; do echo ${REPLY}" - "${1} ; done
 }
 
+# find SCSI reservation 
+function find_scsi() {
+	# SCSI3 reservation reserve
+	find_line "USER=root.*sg_persist.*out.*reserve" "scsi_lock ..."
+	# SCSI3 reservation preempt
+	find_line "USER=root.*sg_persist.*out.*preempt" "scsi_pre"
+	# SCSI3 reservation clear
+	find_line "USER=root.*sg_persist.*out.*clear" "scsi_free"
+	# SCSI3 reservation conflict
+	find_line "kernel.*reservation.conflict" "scsi_clash"
+}
 
-# main
-(
- show_sbd_err | show_info sbd_err
- show_sbd_recv | show_info "sbd_recv ---" 
- show_sbd_send | show_info "sbd_send +++"
- #show_sbd_boot | show_info "sbd_shut <<<<<<"
- show_xfs_mnt | show_info xfs_mnt 
- show_xfs_umnt | show_info xfs_umnt 
- show_xfs_err | show_info "xfs_err !!!" 
- show_hba_err | show_info hba_err
- show_mpio_del | show_info mpio_del
- show_mpio_add | show_info mpio_add
- show_sys_boot | show_info "sys_boot >>>>>>"
- show_sys_shut | show_info "sys_shut <<<<<<"
- show_scsi_lock | show_info "scsi_lock ..." 
- show_scsi_prem | show_info "scsi_pre" 
- show_scsi_free | show_info scsi_free 
- show_scsi_clash | show_info scsi_clash
-) | sort
+# find sbd 
+function find_sbd() {
+	# SBD path error
+	find_line "sbd.*terminated" "sbd_err"
+	# SBD read reset
+	find_line "sbd.*Received.command.reset" "sbd_recv ---"
+	# SBD write reset
+	find_line "USER=root.*sbd.*message.*reset" "sbd_send +++" 
+	# SBD self-reboot
+	# TODO due to path error or poison pill?
+	#find_line "sbd.*Rebooting.system" "sbd_shut <<<<<<"
+}
+
+# find mpio 
+function find_mpio() {
+	# MPIO path removed
+	find_line "multipath.*path.removed" "mpio_del"
+	# MPIO path added
+	find_line "multipath.*path.added" "mpio_add"
+	# MPIO path failed
+	#find_line "kernel.*FAILED.Result" "mpio_fail"
+	#find_line "multipathd.*remaining.active.paths" "mpio_fail"
+	#find_line "multipathd.*checker.failed.path" "mpio_fail"
+}
+
+# find xfs 
+function find_xfs() {
+	# XFS shutdown
+	find_line "XFS.*Shutting.down" "xfs_err !!!"
+	# XFS mount
+	find_line "USER=root.*mount.*xfs.*hana" "xfs_mnt"
+	# XFS umount
+	find_line "USER=root.*umount.*hana" "xfs_umnt"
+}
+
+# find hba
+function find_hba() {
+	# HBA port login failed, e.g. switch replacement
+	find_line "${FCHBA}.*Login.failed" "hba_err_p"
+	find_line "${FCHBA}.*Target.failed" "hba_err_q"
+	find_line "${FCHBA}.*Partner.initialization.complete" "hba_init"
+}
+
+# find boot 
+function find_boot() {
+	# system boot
+	find_line "kernel.*bootconsole.*enabled" "sys_boot >>>>>>"
+	# system shutdown
+	find_line "systemd.*Stopping.Restore.*shutdown" "sys_shut <<<<<<"
+}
+
+# show help
+function show_help() {
+	BEX=$(basename $EXE)
+	echo "usage: $BEX [--help | --version]"
+	echo "usage: $BEX OPTION [<date> [<logfile> [<hba>]]]"
+	echo
+	echo "OPTION:"
+	echo " --all		find all patterns"
+	echo " --scsi		find SCSI3 reservation patterns"
+	echo " --xfs		find XFS patterns"
+	echo " --sbd		find SBD patterns"
+	echo " --mpio		find MPIO patterns"
+	echo " --hba		find HBA patterns"
+	echo " --boot		find re-boot patterns"
+	echo
+}
+
+
+# main()
+
+case $1 in
+	--help|-h)
+		show_help
+		exit
+	;;
+	--version|-v)
+		echo -n "$(basename $EXE) "
+		head -11 $EXE | grep "^# Version: "
+		exit
+	;;
+	--scsi)
+		find_scsi | sort
+		exit
+	;;
+	--xfs)
+		find_xfs | sort
+		exit
+	;;
+	--mpio)
+		find_mpio | sort
+		exit
+	;;
+	--hba)
+		find_hba | sort
+		exit
+	;;
+	--sbd)
+		find_sbd | sort
+		exit
+	;;
+	--boot)
+		find_boot | sort
+		exit
+	;;
+	--all|*)
+		( find_sbd
+		find_xfs
+		find_scsi
+		find_mpio
+		find_hba
+		find_boot ) | sort
+		exit
+	;;
+esac
 #

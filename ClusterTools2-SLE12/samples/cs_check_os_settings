@@ -1,11 +1,11 @@
 #!/bin/bash
 # cs_check_os_settings
 #
-# (c) 2017-2018 SUSE Linux GmbH, Germany.
+# (c) 2017-2019 SUSE Linux GmbH, Germany.
 # GNU General Public License v2. No warranty.
 # Authors: L.Pinne, R.Wolf
 #
-# Version: 2018-04-24 
+# Version: 2019-02-22 
 #
 
 #=== SAP note 2205917
@@ -121,12 +121,14 @@ cgroup_disable=memory$
 
 #
 RPM_SAP="
+# SAP note 2655238$
+kernel-ppc64le=4.4.156-94.57$
+kernel-default=4.4.156-94.57$
 # SAP note 2205917$
-kernel-default=3.12.67-60.64.18$
-kernel-ppc64le=3.12.67-60.64.18$
 # kernel-ppc64=3.0.101-104.2$
 # kernel-bigmem=3.0.101-104.2$
-glibc=2.22-51.6$
+# SAP note 2686011$
+glibc=2.22-62.16$
 # SAP note 1984787$
 libuuid1=2.25-22$
 sapinit-systemd-compat=1.0-2.1$
@@ -137,7 +139,6 @@ util-linux=2.25-22$
 
 #
 RPM_SUSE="
-kernel-ppc64le=4.4.143-94.47$
 ntp=4.2.8p9$
 sysstat=10.2.1$
 xfsprogs=3.2.1$

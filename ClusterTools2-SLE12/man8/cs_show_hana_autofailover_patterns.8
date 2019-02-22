@@ -32,9 +32,9 @@ Usage, syntax or execution errors.
 .\"
 .SH EXAMPLES
 .TP
-# cs_show_hana_autofailover_patterns --hba 2019-02-19
-search for HBA related patterns on 2019-02-19.
-Use default HBA type and messages log files in current directory.
+* Search for SCSI3 reservation related patterns on 2019-01-19. Use default HBA type and messages log files in current directory.
+ # cd nts_hana01_190201_1921
+ # cs_show_hana_autofailover_patterns --scsi 2019-01-19
 .\"
 .SH FILES
 .TP
@@ -50,8 +50,8 @@ Feedback is welcome, please use the project page at
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
 .\"
 .SH SEE ALSO
-\fBgrep\fP(1), \fBmultipathd\fP(8), \fBsg_persist\fP(8), \fBmount\fP(8),
-\fBsbd\fP(8), \fBsyslog\fP(8)
+\fBcs_show_error_patterns\fP(1), \fBcs_show_supportconfig\fP(1),
+\fBsupportconfig\fP(8), \fBgrep\fP(1), \fBmultipathd\fP(8), \fBsg_persist\fP(8), \fBmount\fP(8), \fBsbd\fP(8), \fBsyslog\fP(8)
 .\"
 .SH COPYRIGHT
 (c) 2019 L.Pinne, Germany.

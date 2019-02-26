@@ -980,19 +980,39 @@ function chk_powervm(){
 	PWVM_PKG="
 ntp-4
 "
+
+	# TODO systemd.txt services
+	test -z "${PWVM_SVC_YES}" &&\
+	PWVM_SVC_YES="
+ntp
+srcmstr
+iprdump
+iprinit
+iprupdate
+"
+
 	# TODO mpio modules, e.g. alua?
+	# TODO modules.txt /sys/module/ibmvfc/parameters/
+	# TODO modules.txt /sys/module/ibmveth/parameters/ 
 	test -z "${PWVM_MODUL}" &&\
 	PWVM_MODUL="
 ibmveth
 ivmvnic
 ibmvscsi
 ibmvfc
+ibmpowernv
+ibmpex
+ibmaem
+rpaphp
+scsi_dh_alua
+softdog
 "
 	# TODO which files?
 	test -z "${PWVM_ETC}" &&\
 	PWVM_ETC="
 "/etc/ntp.conf"
 "/etc/multipath.conf"
+"/etc/sysconfig/network/ifcfg-eth0"
 "
 
 
@@ -1075,7 +1095,7 @@ vmware-tools-services
 	VMW_SVC_OFF="
 alsasound
 ipmi
-irq_balancer
+irqbalance
 joystick
 libvirtd
 mcelog

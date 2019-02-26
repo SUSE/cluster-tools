@@ -979,8 +979,23 @@ function chk_powervm(){
 	test -z "${PWVM_PKG}" &&\
 	PWVM_PKG="
 ntp-4
+DynamicRM
+IBMinvscout
+TIV-TSMERP-HANA
+TIVsm-API64
+TIVsm-BA
+gskcrypt64
+gskssl64
+ibm-power-managed-sles12
+ibmPMLinux
+iprutils
+librtas1
+librtas2
+lpar2rrd-agent
+powerpc-utils
+powerpc-utils-python
+ppc64-diag
 "
-
 	# TODO systemd.txt services
 	test -z "${PWVM_SVC_YES}" &&\
 	PWVM_SVC_YES="
@@ -1013,11 +1028,12 @@ softdog
 "/etc/ntp.conf"
 "/etc/multipath.conf"
 "/etc/sysconfig/network/ifcfg-eth0"
+"/etc/sysconfig/network/ifcfg-eth1"
 "
 
 	echo "- packages installed:"
 	FIL="rpm.txt"
-	for p in $VMW_PKG; do
+	for p in $PWVM_PKG; do
 		echo -n "$p : "
 		# TODO awk only
 		grep $p ${FIL} | awk '{print $1}'
@@ -1026,7 +1042,7 @@ softdog
 	echo
 	echo "- modules loaded:"
 	FIL="modules.txt"
-	for p in $VMW_MODUL; do
+	for p in $PWVM_MODUL; do
 		echo -n "$p : "
 		grep $p ${FIL}	
 	done
@@ -1066,8 +1082,18 @@ softdog
 		test -z $f && continue
 		test -r $f && grep -v "^#" $f | tr -s "\n"
 	done
+	FIL="network.txt"
+	split_file ${FIL}
+	for p in $PWVM_ETC; do
+		echo
+		echo "$p :"
+		f=$(grep -l "^# ${p}$" ${TEMP}/${FIL}/xx*)
+		test -z $f && continue
+		test -r $f && grep -v "^#" $f | tr -s "\n"
+	done
 	echo
-	show_sys_scsi
+	echo
+	#show_sys_scsi
 	echo
 }
 

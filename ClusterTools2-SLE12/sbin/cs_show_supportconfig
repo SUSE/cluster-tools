@@ -5,7 +5,7 @@
 # (c) 2011-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License 2. No warranty.
 #
-# Version: SLES12 0.03 2019-0i2-22
+# Version: SLES12 0.03 2019-02-26
 #
 # For Supportconfig Script Version: 2.25-237
 #
@@ -49,6 +49,9 @@ VRT_SVC_YES
 VRT_ERR_PTRN
 CLUSTER_PKG
 CLUSTER_PRCS
+PWVM_PKG
+PWVM_MODUL
+PWVM_ETC
 VMW_PKG
 VMW_MODUL
 VMW_SVC_YES
@@ -965,6 +968,34 @@ function chk_xenhost(){
 	echo "# grep for options [netbk|blkbk|iomemory_vsl]:"
 	grep -e "options netbk" -e "options blkbk" -e "options iomemory_vsl" ${FIL}
 	echo
+}
+
+
+function chk_powervm(){
+
+	echo_msgsep $FUNCNAME
+
+	# TODO IBM power tools
+	test -z "${PWVM_PKG}" &&\
+	PWVM_PKG="
+ntp-4
+"
+	# TODO mpio modules, e.g. alua?
+	test -z "${PWVM_MODUL}" &&\
+	PWVM_MODUL="
+ibmveth
+ivmvnic
+ibmvscsi
+ibmvfc
+"
+	# TODO which files?
+	test -z "${PWVM_ETC}" &&\
+	PWVM_ETC="
+"/etc/ntp.conf"
+"/etc/multipath.conf"
+"
+
+
 }
 
 

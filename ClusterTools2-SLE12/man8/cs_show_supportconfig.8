@@ -1,4 +1,4 @@
-.TH cs_show_supportconfig 8 "07 Aug 2016" "" "ClusterTools2"
+.TH cs_show_supportconfig 8 "26 Feb 2019" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_show_supportconfig \- collect information from supportconfig files
@@ -57,6 +57,9 @@ show overview info, than search for Veritas Cluster Services.
 .TP
 # cs_show_supportconfig -f nts_node0_111010_1101 chk_sap chk_saphana
 search for SAP HANA related informations.
+.TP
+# cs_show_supportconfig -f nts_node0_111010_1101 chk_powervm chk_numa chk_sysconf chk_network chk_storage chk_timeres
+search for infos relevant inside an LPAR on PowerVM.
 .\"
 .SH FILES
 .TP
@@ -92,7 +95,7 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 http://support.novell.com/advisor/ , https://build.opensuse.org/project/show/Novell:NTS:SCA
 .\"
 .SH COPYRIGHT
-(c) 2011-2017 I.Manyugin, L.Pinne; Germany.
+(c) 2011-2019 I.Manyugin, L.Pinne; Germany.
 .br
 cs_show_supportconfig comes with ABSOLUTELY NO WARRANTY.
 .br

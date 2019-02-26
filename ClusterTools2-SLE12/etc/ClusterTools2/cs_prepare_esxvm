@@ -14,7 +14,7 @@ SRVC_NO="
 boot.multipath
 multipathd
 microcode.ctl
-irq_balancer
+irqbalance
 alsasound
 smartd
 mcelog

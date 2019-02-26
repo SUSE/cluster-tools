@@ -1015,7 +1015,60 @@ softdog
 "/etc/sysconfig/network/ifcfg-eth0"
 "
 
-
+	echo "- packages installed:"
+	FIL="rpm.txt"
+	for p in $VMW_PKG; do
+		echo -n "$p : "
+		# TODO awk only
+		grep $p ${FIL} | awk '{print $1}'
+	done
+	echo
+	echo
+	echo "- modules loaded:"
+	FIL="modules.txt"
+	for p in $VMW_MODUL; do
+		echo -n "$p : "
+		grep $p ${FIL}	
+	done
+	echo
+	FIL="chkconfig.txt"
+	if $(test -r "${FIL}"); then
+		echo "- service should be on:"
+		for s in $PWVM_SVC_YES; do
+			grep "${s}:..on" ${FIL}
+			grep "${s}:..off" ${FIL}
+			grep "^${s}.*0:.*3:on" ${FIL} | grep -v "boot\."
+			grep "^${s}.*0.*3:off" ${FIL} | grep -v "boot\."
+		done
+		echo
+		echo "- service should be off:"
+		for s in $PWVM_SVC_OFF; do
+			grep "${s}:..off" ${FIL}
+			grep "${s}:..on" ${FIL}
+			grep "^${s}.*0.*3:off" ${FIL} | grep -v "boot\."
+			grep "^${s}.*0.*3:on" ${FIL} | grep -v "boot\."
+		done
+	fi
+	FIL="systemd.txt"
+	if $(test -r "${FIL}"); then
+		# TODO SLES12
+		echo
+	fi
+	echo
+	echo
+	echo "- config files:"	
+	FIL="etc.txt"
+	split_file ${FIL}
+	for p in $PWVM_ETC; do
+		echo
+		echo "$p :"
+		f=$(grep -l "^# ${p}$" ${TEMP}/${FIL}/xx*)
+		test -z $f && continue
+		test -r $f && grep -v "^#" $f | tr -s "\n"
+	done
+	echo
+	show_sys_scsi
+	echo
 }
 
 

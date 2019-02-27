@@ -11,15 +11,14 @@
 # TODO show logs
 # TODO guess SID
 #
+#set -x
 
 EXE="$0"
 #CFG="/etc/ClusterTools2/cs_show_hana_info"
 #test -s $CFG && source $CFG
 
 MYHOST=$(hostname)
-
 SAPSVC="/usr/sap/sapservices"
-GBLINI="/usr/sap/${SID}/SYS/global/hdb/custom/config/global.ini"
 
 test -z "${TEMP}" &&\
 	TEMP="/dev/shm/cltl.$RANDOM"
@@ -38,54 +37,76 @@ function show_help() {
 
 function show_info() {
 
-	su - ${SID}adm || exit 1
+	echo "# $(basename $EXE}): show_info"
+
+	# TODO su - ${SID}adm once for the whole function
 
 	echo "hostname: ${MYHOST}" >${TEMP} || exit 2
-	echo "sid: $SID" >>${TEMP}
+	echo "sid: $ARG_SID" >>${TEMP}
 	echo "inst_nr: $INR" >>${TEMP}
-
+	echo
 	RC_ALL=0
 
-	sapcontrol -nr $INR -function GetProcessList >>${TEMP}
+	echo "# ===" >>${TEMP}
+	echo "# sapcontrol -nr $INR -function GetProcessList:" >>${TEMP}
+	su - ${SID}adm -c "sapcontrol -nr $INR -function GetProcessList" >>${TEMP}
 	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
-	echo "sapcontrol -nr $INR -function GetProcessList: RC: "$RC
+	echo "# sapcontrol -nr $INR -function GetProcessList: RC: "$RC >>${TEMP}
+	echo
 
-	hdbnsutil -sr_state >>${TEMP}
+	echo "# ===" >>${TEMP}
+	echo "# hdbnsutil -sr_state:" >>${TEMP}
+	su - ${SID}adm -c "hdbnsutil -sr_state" >>${TEMP}
 	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
-	echo "hdbnsutil -sr_state: RC: "$RC >>${TEMP}
+	echo "# hdbnsutil -sr_state: RC: "$RC >>${TEMP}
+	echo
 
-	HDBSettings.sh landscapeHostConfiguration.py --sapcontrol=1 >>${TEMP}
+	echo "# ===" >>${TEMP}
+	echo "# landscapeHostConfiguration.py:" >>${TEMP}
+	su - ${SID}adm -c "HDBSettings.sh landscapeHostConfiguration.py" >>${TEMP}
 	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
-	echo "landscapeHostConfiguration.py: RC: "$RC >>${TEMP}
+	echo "# landscapeHostConfiguration.py: RC: "$RC >>${TEMP}
+	echo
 
-	HDBSettings.sh systemReplicationStatus.py >>${TEMP}
+	echo "# ===" >>${TEMP}
+	echo "# systemReplicationStatus.py:" >>${TEMP}
+	su - ${SID}adm -c "HDBSettings.sh systemReplicationStatus.py" >>${TEMP}
 	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
-	echo "systemReplicationStatus.py: RC: "$RC >>${TEMP}
+	echo "# systemReplicationStatus.py: RC: "$RC >>${TEMP}
+	echo
 
-	HDB info >>${TEMP}
+	echo "# ===" >>${TEMP}
+	echo "# HDB info:" >>${TEMP}
+	su - ${SID}adm -c "HDB info" >>${TEMP}
 	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
-	echo "HDB info: RC: "$RC >>${TEMP}
+	echo "# HDB info: RC: "$RC >>${TEMP}
+	echo
 
-	HDBSettings.sh systemOverview.py >>${TEMP}
+	echo "# ===" >>${TEMP}	
+	echo "# HDBSettings.sh systemOverview.py:" >>${TEMP}
+	su - ${SID}adm -c "HDBSettings.sh systemOverview.py" >>${TEMP}
 	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
-	echo "HDBSettings.sh systemOverview.py: RC: "$RC >>${TEMP}
+	echo "# HDBSettings.sh systemOverview.py: RC: "$RC >>${TEMP}
+	echo
 
-	echo "cat $SAPSVC" >>${TEMP}
+	echo "# ===" >>${TEMP}	
+	echo "# cat $SAPSVC" >>${TEMP}
 	cat $SAPSVC >>${TEMP}
 	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
-	echo "cat ${SAPSVC}: RC: "$RC >>${TEMP}
+	echo "# cat ${SAPSVC}: RC: "$RC >>${TEMP}
+	echo
 
-	echo "cat $GBLINI" >>${TEMP}
+	echo "# ===" >>${TEMP}	
+	echo "# cat $GBLINI" >>${TEMP}
 	cat $GBLINI >>${TEMP}
 	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
-	echo "cat ${GBLINI}: RC: "$RC >>${TEMP}
+	echo "# cat ${GBLINI}: RC: "$RC >>${TEMP}
+	echo
 
 	cat ${TEMP} && rm ${TEMP}
 }
 
 function show_logs() {
-
-	su - ${SID}adm || exit 1
 
 	RC_ALL=0
 
@@ -105,15 +126,17 @@ case $1 in
 	;;
 	-i|--info)
 		test $# -eq 3 || show_help
-		SID=$(echo $1 | tr "[:upper:]" "[:lower:]")
-		INR=$2
+		ARG_SID=$2
+		SID=$(echo $2 | tr "[:upper:]" "[:lower:]")
+		INR=$3
+		GBLINI="/usr/sap/${ARG_SID}/SYS/global/hdb/custom/config/global.ini"
 		show_info
 		exit $RC_ALL
 	;;
 	-l|--logs)
 		test $# -eq 3 || show_help
-		SID=$(echo $1 | tr "[:upper:]" "[:lower:]")
-		INR=$2
+		SID=$(echo $2 | tr "[:upper:]" "[:lower:]")
+		INR=$3
 		show_logs
 		exit $RC_ALL
 	;;

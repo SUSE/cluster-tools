@@ -346,6 +346,8 @@ sbd:
 "
 #
 PWVM_PKG="
+glibc2
+kernel-default
 ntp-4
 DynamicRM
 IBMinvscout

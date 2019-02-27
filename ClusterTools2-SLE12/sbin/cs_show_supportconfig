@@ -978,6 +978,8 @@ function chk_powervm(){
 	# TODO IBM power tools
 	test -z "${PWVM_PKG}" &&\
 	PWVM_PKG="
+glibc2
+kernel-default
 ntp-4
 DynamicRM
 IBMinvscout

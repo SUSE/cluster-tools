@@ -2,10 +2,10 @@
 #
 # cs_show_hana_info
 #
-# (c) 2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2018-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 2018-11-23
+# Version: 2019-02-26
 #
 # TODO /etc/ClusterTools2/cs_show_hana_info
 # TODO show logs
@@ -17,6 +17,9 @@ EXE="$0"
 #test -s $CFG && source $CFG
 
 MYHOST=$(hostname)
+
+SAPSVC="/usr/sap/sapservices"
+GBLINI="/usr/sap/${SID}/SYS/global/hdb/custom/config/global.ini"
 
 test -z "${TEMP}" &&\
 	TEMP="/dev/shm/cltl.$RANDOM"
@@ -61,11 +64,21 @@ function show_info() {
 
 	HDB info >>${TEMP}
 	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
-	echo "HDB info : RC: "$RC >>${TEMP}
+	echo "HDB info: RC: "$RC >>${TEMP}
 
 	HDBSettings.sh systemOverview.py >>${TEMP}
 	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
 	echo "HDBSettings.sh systemOverview.py: RC: "$RC >>${TEMP}
+
+	echo "cat $SAPSVC" >>${TEMP}
+	cat $SAPSVC >>${TEMP}
+	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
+	echo "cat ${SAPSVC}: RC: "$RC >>${TEMP}
+
+	echo "cat $GBLINI" >>${TEMP}
+	cat $GBLINI >>${TEMP}
+	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
+	echo "cat ${GBLINI}: RC: "$RC >>${TEMP}
 
 	cat ${TEMP} && rm ${TEMP}
 }

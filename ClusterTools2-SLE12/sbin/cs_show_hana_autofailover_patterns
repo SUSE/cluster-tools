@@ -12,6 +12,7 @@
 # TODO patterns instead of functions like cs_error_patterns
 # TODO  --help
 # TODO  -g and -f like cs_show_supportconfig
+# TODO FCHBA needed?
 #
 
 DATE=${2:-"2019-01-27"}

@@ -41,10 +41,13 @@ function show_info() {
 
 	# TODO su - ${SID}adm once for the whole function
 
-	echo "hostname: ${MYHOST}" >${TEMP} || exit 2
+	echo "# ===" >>${TEMP}
+	echo "hostname: ${MYHOST}" >${TEMP} || exit 1
 	echo "sid: $ARG_SID" >>${TEMP}
 	echo "inst_nr: $INR" >>${TEMP}
+	id ${SID}adm >>${TEMP} || exit 2
 	echo
+
 	RC_ALL=0
 
 	echo "# ===" >>${TEMP}

@@ -158,6 +158,7 @@ xfsprogs
 STOR_MOD="
 ext2
 ext3
+ext4
 ocfs2
 xfs
 "

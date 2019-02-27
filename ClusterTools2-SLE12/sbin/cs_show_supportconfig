@@ -5,7 +5,7 @@
 # (c) 2011-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License 2. No warranty.
 #
-# Version: SLES12 0.03 2019-02-26
+# Version: SLES12 0.03 2019-02-27
 #
 # For Supportconfig Script Version: 2.25-237
 #
@@ -108,6 +108,20 @@ function show_sys_scsi(){
 }
 
 
+function show_sys_fcfabric(){
+	echo "# /usr/bin/systool -vc fc_host"
+	FIL="sysfs.txt"
+	split_file ${FIL}
+	f=$(grep -l "^# /usr/bin/systool -vc fc_host$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -A13 "Class.Device.path.=.\"/sys/devices/" $f
+		echo
+		#awk -F"=" '$1=="fabric_name" {print $2}' $f | sort -u
+		grep port_name $f | sort -f
+		echo
+}
+
+
 function chk_hardware(){
 
 	echo_msgsep $FUNCNAME
@@ -162,7 +176,6 @@ function chk_hardware(){
 	FIL="mpio.txt"
 	grep "Vendor:.*Model:.*Rev:" ${FIL} | sort -u
 	echo
-
 	FIL="hardware.txt"
 	for f in "supports.DPO.and.FUA" "support.DPO.or.FUA"; do
 		echo -n "${f} : "
@@ -174,6 +187,9 @@ function chk_hardware(){
 		grep -c ${f} ${FIL}
 	done
 	echo
+	show_sys_fcfabric
+	#awk  -F" " '$8 ~/\/sys\/class\/fc_host\/host/ {print $10}' ${FIL} |\
+	echo
 
 	echo "network_card:"
 	FIL="network.txt"
@@ -184,7 +200,7 @@ Device.File:
 "
 	# TODO better loop
 	for f in $NIC_PTRN; do
-		grep --binary-file=text -A20 -e "^..: PCI.*Ethernet controller$" -e "HiperSocket.controller$" ${FIL} |\
+		grep --binary-file=text -A20 -e "^..: PCI.*Ethernet controller$" -e "HiperSocket.controller$" -e "IBM.Virtual.Ethernet.card" ${FIL} |\
 		grep $f
 	done | sort -u | sed s/Device.File:/"NIC Device File:"/g
 	echo	
@@ -2076,6 +2092,7 @@ xfsprogs
 	STOR_MOD="
 ext2
 ext3
+ext4
 ocfs2
 xfs
 "	

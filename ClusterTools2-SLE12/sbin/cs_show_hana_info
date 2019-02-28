@@ -40,6 +40,7 @@ function show_info() {
 	echo "# $(basename $EXE}): show_info"
 
 	# TODO su - ${SID}adm once for the whole function
+	# TODO one common function for all tasks
 
 	echo "# ===" >>${TEMP}
 	echo "hostname: ${MYHOST}" >${TEMP} || exit 1
@@ -106,6 +107,14 @@ function show_info() {
 	echo "# cat ${GBLINI}: RC: "$RC >>${TEMP}
 	echo
 
+	echo "# ===" >>${TEMP}	
+	echo "# cat /proc/meminfo" >>${TEMP}
+	cat /proc/meminfo >>${TEMP}
+	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
+	echo "# cat /proc/meminfo: RC: "$RC >>${TEMP}
+	echo
+
+	# TODO systemd slice
 	cat ${TEMP} && rm ${TEMP}
 }
 
@@ -114,6 +123,7 @@ function show_logs() {
 	RC_ALL=0
 
 	# TODO awk ... /hana/shared/${SID}/HDB${INR}/${MYHOST}/trace/*.trc
+	
 	# 5th? column = "e"
 	# ? column = "DISK FULL"
 	echo "not implemented yet"

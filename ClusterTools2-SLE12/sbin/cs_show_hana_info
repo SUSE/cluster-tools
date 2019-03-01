@@ -5,7 +5,7 @@
 # (c) 2018-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 2019-02-26
+# Version: 2019-03-01
 #
 # TODO /etc/ClusterTools2/cs_show_hana_info
 # TODO show logs
@@ -29,8 +29,8 @@ function show_help() {
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
-	echo " --info <sid> <inst_nr>	show info for given instance."
-	echo " --logs <sid> <inst_nr>	show logs for given instance."
+	echo " --info <SID> <inst_nr>	show info for given instance."
+	echo " --logs <SID> <inst_nr>	show logs for given instance."
 	echo
 	exit
 }
@@ -139,7 +139,7 @@ case $1 in
 	;;
 	-i|--info)
 		test $# -eq 3 || show_help
-		ARG_SID=$2
+		ARG_SID=$(echo $2 | tr "[:lower:]" "[:upper:]")
 		SID=$(echo $2 | tr "[:upper:]" "[:lower:]")
 		INR=$3
 		GBLINI="/usr/sap/${ARG_SID}/SYS/global/hdb/custom/config/global.ini"

@@ -69,10 +69,10 @@ case $1 in
 	*)
 		echo "usage: $(basename $0) [OPTION]"
 		echo
-		echo " --offline	remove CIB and PE logs."
-		echo " --force	stop cluster service and resources, remove CIB and PE logs."
-		echo " --help		show help."
-		echo " --version	show version."
+		echo " --offline	remove CIB and PE logs"
+		echo " --force	stop cluster service and resources, remove CIB and PE logs"
+		echo " --help		show help"
+		echo " --version	show version"
 		exit
 	;;
 esac

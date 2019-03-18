@@ -1,4 +1,4 @@
-.TH ha_related_suse_tids 7 "20 Feb 2019" "" "ClusterTools2"
+.TH ha_related_suse_tids 7 "18 Mar 2019" "" "ClusterTools2"
 .\"
 .SH NAME
 ha_related_suse_tids - selection of SUSE Technical Information Documents, related to high availability
@@ -41,6 +41,8 @@ Useful keywords for searching are
 .B mpio
 .br
 .B multipath
+.br
+.B iscsi
 .TP
 Product to select is usually one of
 .B <empty_string>
@@ -61,9 +63,37 @@ Updating a SLES11 Cluster to the latest Service Pack (7007261)
 .br
 Usage of hb_report for SLES HAE (7007262) 
 .br
+Config Report For Linux (7001936)
+.br
 Supportconfig Self Service via SCC/FTP (7023007)
 .br
+Supportconfig hangs on SLE 11 SP3 after updating kernel (7012980)
+.br
+Supportconfig causes the server to panic when processing PROC (7009270)
+.br
+How to make sure the latest supportutils are installed. (7010476)
+.br
+Troubleshooting Tools for Linux (3513679)
+.br
+Best practices for maintaining a fully supported SUSE Linux Enterprise (SLES) system (7018730)
+.br
+Best practice for providing kernel core dumps to support incidents (7010056)
+.br
+How to obtain application core dumps (3054866)
+.br
+HOWTO: Configure lkcd to capture a kernel core dump (3044267)
+.br
+How to obtain systemd service core dumps (7017137)
+.br
+application core created on kernel 3.0.101-108.35 not readable (7022975)
+.br
+How To Redirect Unwanted Messages From /var/log/messages (7004659)
+.br
+Supportutils fails to update do "Failed dependencies: rpmlib(PayloadIsLzma)" (7014039)
+.br
 Best practice for applying Program Temporary Fixes (PTFs) (7016640)
+.br
+Tainted kernel (3582750)
 .br
 
 .\"
@@ -407,19 +437,7 @@ ReaR does not support servers with SAN-attached storage/SAN boot (7008030)
 .br
 ReaR rescue environment fails to load on Blade Hardware (7008029) 
 .br
-Supportconfig causes the server to panic when processing PROC (7009270)
-.br
-Supportconfig hangs on SLE 11 SP3 after updating kernel (7012980)
-.br
-How to make sure the latest supportutils are installed. (7010476)
-.br
-Config Report For Linux (7001936)
-.br
 Frequent ACPI errors starting with SMBus or IPMI write requires Buffer of length 42. (7010449)
-.br
-Troubleshooting Tools for Linux (3513679)
-.br
-Supportutils fails to update do "Failed dependencies: rpmlib(PayloadIsLzma)" (7014039)
 .br
 XFS metadata corruption and invalid checksum on SAP Hana servers (7022921)
 .br
@@ -443,23 +461,9 @@ Long Client hang to Cluster after failover of ERS Instance (7023324)
 .br
 "cgroup: fork rejected by pids controller in..." found in system log (7022001)
 .br
-application core created on kernel 3.0.101-108.35 not readable (7022975)
-.br
 Reading /proc//maps and /proc//numa_maps takes long (7019001) 
 .br
 CVE-2016-2183: openssl: Birthday attacks on 64-bit block ciphers aka triple-des (SWEET32) (7017985)
-.br
-How to prevent certain values in limits.conf from being changed by saptune (7023104)
-.br
-How to obtain application core dumps (3054866)
-.br
-HOWTO: Configure lkcd to capture a kernel core dump (3044267)
-.br
-How to obtain systemd service core dumps (7017137)
-.br
-How To Redirect Unwanted Messages From /var/log/messages (7004659)
-.br
-Best practice for providing kernel core dumps to support incidents (7010056)
 .br
 How to recover from BTRFS errors (7018181)
 .br
@@ -486,10 +490,6 @@ Deleting file on btrfs partition gives "No space left on device"  (7011860)
 System lock up after XFS reporting possible memory allocation ... (7023344)
 .br
 Master TID: Migrating a regular SLES to SLES for SAP (7018744)
-.br
-Best practices for maintaining a fully supported SUSE Linux Enterprise (SLES) system (7018730)
-.br
-Tainted kernel (3582750)
 .br
 Database Errors with Kernel 3.0.101-108.57 and 3.0.101-108.60 (7023167)
 .br

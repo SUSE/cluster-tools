@@ -198,6 +198,7 @@ test -z "${CLUERR_PATTERN}" &&\
 "TOTEM.*processor.failed"
 "TOTEM.*Incrementing.problem"
 "TOTEM.*Retransmit.List"
+"corosync.*not.scheduled"
 "quorum.lost"
 "fenced.because.*.un-expectedly.down"
 "stonith.*Device.*not.fond"

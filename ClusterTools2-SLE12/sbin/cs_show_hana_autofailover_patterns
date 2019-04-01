@@ -6,7 +6,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-02-21 16:10 SLES12
+# Version: 2019-04-01 14:10 SLES12
 #
 # TODO /etc/ClusterTools2/cs_show_hana_autofailover_patterns
 # TODO patterns instead of functions like cs_error_patterns
@@ -84,6 +84,8 @@ function find_mpio() {
 function find_xfs() {
 	# XFS shutdown
 	find_line "XFS.*Shutting.down" "xfs_err !!!"
+	# XFS repair 
+	find_line "USER=root.*xfs_repair.*hana" "xfs_rep"
 	# XFS mount
 	find_line "USER=root.*mount.*xfs.*hana" "xfs_mnt"
 	# XFS umount

@@ -32,6 +32,7 @@ function find_line() {
 
 # select colums
 function cut_line() {
+	# TODO fix if filename is specified "05:42 - ..." instead of "2019-01-27T19:05:42 - ..."
 	awk -F" " '{print $1}' |\
 	awk -F":" '{print $2":"$3":"$4}' |\
 	awk -F"." '{print $1}' | sort -u

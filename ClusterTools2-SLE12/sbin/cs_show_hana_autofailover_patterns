@@ -23,8 +23,7 @@ EXE=$0
 ERR="/dev/null"
 TEMP="/dev/shm/cltl.$RANDOM"
 
-NLOG=$(ls ${LOGS} 2>/dev/null | wc -l)
-
+NLOG=$(ls -1 ${LOGS} | wc -l)
 
 # find pattern
 function find_line() {

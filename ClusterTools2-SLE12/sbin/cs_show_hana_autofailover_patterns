@@ -6,7 +6,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-04-01 14:10 SLES12
+# Version: 2019-04-03 17:30 SLES12
 #
 # TODO /etc/ClusterTools2/cs_show_hana_autofailover_patterns
 # TODO patterns instead of functions like cs_error_patterns
@@ -23,6 +23,8 @@ EXE=$0
 ERR="/dev/null"
 TEMP="/dev/shm/cltl.$RANDOM"
 
+NLOG=$(ls ${LOGS} 2>/dev/null | wc -l)
+
 
 # find pattern
 function find_line() {
@@ -32,10 +34,15 @@ function find_line() {
 
 # select colums
 function cut_line() {
-	# TODO fix if filename is specified "05:42 - ..." instead of "2019-01-27T19:05:42 - ..."
-	awk -F" " '{print $1}' |\
-	awk -F":" '{print $2":"$3":"$4}' |\
-	awk -F"." '{print $1}' | sort -u
+	if ( test $NLOG -eq 1 ); then 
+		awk -F" " '{print $1}' |\
+		awk -F":" '{print $1":"$2":"$3}' |\
+		awk -F"." '{print $1}' | sort -u
+	else
+		awk -F" " '{print $1}' |\
+		awk -F":" '{print $2":"$3":"$4}' |\
+		awk -F"." '{print $1}' | sort -u
+	fi
 }
 
 # show additional info

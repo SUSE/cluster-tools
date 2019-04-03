@@ -24,6 +24,10 @@ ERR="/dev/null"
 TEMP="/dev/shm/cltl.$RANDOM"
 
 NLOG=$(ls -1 ${LOGS} | wc -l)
+#echo $LOGS
+#echo $NLOG
+#exit
+
 
 # find pattern
 function find_line() {

@@ -35,6 +35,9 @@ Usage, syntax or execution errors.
 * Search for SCSI3 reservation related patterns on 2019-01-19. Use default HBA type and messages log files in current directory.
  # cd nts_hana01_190201_1921
  # cs_show_hana_autofailover_patterns --scsi 2019-01-19
+.TP
+* Search for all patterns on 2019-01-19 in log files named "messages-*" (hyphens are needed here).
+ # cs_show_hana_autofailover_patterns --all 2019-01-19 "messages-*"
 .\"
 .SH FILES
 .TP
@@ -45,6 +48,7 @@ $PWD/messages
 	the default logfile
 .\"
 .SH BUGS
+Filename expansion is uncommon.
 Feedback is welcome, please use the project page at
 .br
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel

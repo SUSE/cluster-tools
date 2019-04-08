@@ -71,6 +71,7 @@ test -z "${ERROR_PATTERN}" &&\
 "NMI.received"
 "NMI.*error"
 "irq.*nobody.cared"
+"urandom.warning"
 "Signaling PME.*interrupt"
 "Error.DRAM"
 "Uncorrectable.*rror"

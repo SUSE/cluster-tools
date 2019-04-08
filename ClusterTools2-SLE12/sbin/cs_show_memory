@@ -213,7 +213,12 @@ function show_payload() {
 
 	echo "### $FUNCNAME"
 	echo
-	echo TODO
+	/usr/bin/systemd-cgtop -m -b -P --iterations=1 |\
+		awk -F" " '{print $1" "$2" "$4}'
+	echo
+	/bin/systemctl --no-pager show |\
+		grep -e DefaultLimit -e DefaultTasksMax
+	#TODO MemoryLimit ?
 }
 
 

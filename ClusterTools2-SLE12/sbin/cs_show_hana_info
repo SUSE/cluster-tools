@@ -5,7 +5,7 @@
 # (c) 2018-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 2019-03-05
+# Version: 2019-04-09
 #
 # TODO /etc/ClusterTools2/cs_show_hana_info
 # TODO show logs
@@ -26,7 +26,7 @@ test -z "${TEMP}" &&\
 
 function show_help() {
 	echo "usage	$EXE [ --help | --version ]"
-	echo "	$EXE [ --info | --logs ] <sid> <inst_nr>"
+	echo "	$EXE [ --info | --logs ] <SID> <inst_nr>"
 	echo
 	echo " --help		show help"
 	echo " --version	show version"
@@ -65,7 +65,7 @@ function show_info() {
 	echo > ${TEMP} || exit 1
 	( echo "# ==="
 	echo "hostname: ${MYHOST}"
-	echo "sid: $ARG_SID"
+	echo "sid: $SID"
 	echo "inst_nr: $INR"
 	id ${SID}adm
 	echo ) >>${TEMP} || exit 2
@@ -118,6 +118,8 @@ case $1 in
 		test $# -eq 3 || show_help
 		UPSID=$(echo $2 | tr "[:lower:]" "[:upper:]")
 		SID=$(echo $2 | tr "[:upper:]" "[:lower:]")
+		# TODO bash 4.0: UPSID=${2^^}
+		# TODO bash 4.0: SID=${2,,}
 		INR=$3
 		GBLINI="/usr/sap/${UPSID}/SYS/global/hdb/custom/config/global.ini"
 		show_info
@@ -125,6 +127,7 @@ case $1 in
 	;;
 	-l|--logs)
 		test $# -eq 3 || show_help
+		UPSID=$(echo $2 | tr "[:lower:]" "[:upper:]")
 		SID=$(echo $2 | tr "[:upper:]" "[:lower:]")
 		INR=$3
 		# TODO path to logs

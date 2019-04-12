@@ -1950,7 +1950,8 @@ function chk_software(){
 	echo_msgsep $FUNCNAME
 	
 	FIL="basic-environment.txt"
-
+	
+	# TODO os-release but not SuSE-realease
 	grep -A3 "# /etc/SuSE-release" ${FIL}
 	echo
 	grep -A1 "# /etc/lsb-release" ${FIL}

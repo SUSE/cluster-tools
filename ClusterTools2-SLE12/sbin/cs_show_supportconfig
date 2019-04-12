@@ -2268,6 +2268,7 @@ function chk_sysload(){
 
 	OWD=$PWD
 	cd sar || exit
+	# TODO why is sar not found?
 	# TODO print date of sar file to each output line
 	#	either by adding date from sar-fiel header,
 	#	or by grep-ing the alreday known maxima out of the files

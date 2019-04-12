@@ -1396,6 +1396,7 @@ transparent_hugepage=never
 elevator=noop
 cgroup_disable=memory
 "
+# TODO look for elevator also in udev.txt
 # TODO should sysctl go to chk_sap?
 	test -z "${HANA_SAP_SYSCTL}" &&\
 	HANA_SAP_SYSCTL="

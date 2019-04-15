@@ -173,6 +173,7 @@ test -z "${SVCERR_PATTERN}" &&\
 "multipathd.*reinstated"
 "multi.*path.*down"
 "lvmetad.*failed"
+"fstrim:.*FITRIM.ioctl.failed:"
 "wicked.*failed"
 "ntpd.*failed"
 "ntpd.*time.reset"

@@ -167,6 +167,7 @@ test -z "${SVCERR_PATTERN}" &&\
 "systemd.*Proceeding.anyway"
 "systemd.*No.such.file"
 "systemd.*Failed"
+"systemd-coredump.*dumped core"
 "SMART.*failure"
 "multipathd.*timed.out"
 "multipathd.*mpath.*unable"

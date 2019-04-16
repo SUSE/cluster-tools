@@ -142,6 +142,7 @@ SVCERR_PATTERN="
 "syslog-ng.shutting.down"
 "postfix.*fatal"
 "cgroup:.fork.rejected"
+"sfcbd.*Fatal"
 "
 #
 CLUERR_PATTERN="

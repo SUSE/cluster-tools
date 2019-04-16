@@ -230,6 +230,7 @@ test -z "${CLUERR_PATTERN}" &&\
 
 test -z "${APPERR_PATTERN}" &&\
 	APPERR_PATTERN="
+"Serviceguard.daemon.*exit"
 "GAB.*failure"
 "Symantec.Technical.Support"
 "error.*VRT"

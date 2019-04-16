@@ -5,7 +5,7 @@
 # (c) 2011-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License 2. No warranty.
 #
-# Version: SLES12 0.03 2019-02-27
+# Version: SLES12 0.03 2019-04-17
 #
 # For Supportconfig Script Version: 2.25-237
 #
@@ -221,7 +221,6 @@ function chk_modules(){
 	echo
 
 	# TODO add Cisco HBA
-	# TODO add IBM vnic
 	# TODO test HPE eth nx_nic, ibmvfc
 	# TODO watchdog ppc64le?, s390x vmwatchdog.ko?
 	# TODO check Fusion IO
@@ -234,7 +233,6 @@ mlx4_en.ko
 i40e.ko
 bfa.ko
 lpfc.ko
-ibmvfc.ko
 qlge.ko
 qla2xxx.ko
 hfcldd.ko
@@ -272,6 +270,7 @@ ibmveth.ko
 ibmvnic.ko
 ibmvscsi.ko
 ibmvfc.ko
+lin_tape.ko
 "
 	FIL="boot.txt"
 	for m in INITRD_MODULES MODULES_LOADED_ON_BOOT; do
@@ -1411,8 +1410,13 @@ fs.file-max
 kernel.sem
 kernel.shmall
 kernel.shmmax
+kernel.shmmni
+kernel.numa_balancing
+net.core.somaxconn
 net.ipv4.tcp_slow_start_after_idle
 net.ipv4.ip_local_port_range
+net.ipv4.tcp_max_syn_backlog
+net.ipv4.tcp_window_scaling
 "
 	test -z "${HANA_SUSE_SYSCTL}" &&\
 	HANA_SUSE_SYSCTL="
@@ -1421,11 +1425,15 @@ vm.dirty_background_bytes
 "
 	test -z "${HANA_VERS_MIN}" &&\
 	HANA_VERS_MIN="
-kernel-default:3.0.101-68
-kernel-xen:3.0.101-68
-glibc:2.11.3-17.56.2
-libgcc_s1:4.7.2_20130108-0.17.2
-libstdc++6:4.7.2_20130108-0.17.2
+kernel-ppc64le:4.4.156-94.57
+kernel-default:4.4.156-94.57
+kernel-xen:4.4.156-94.57
+glibc2:2.22-62.16
+libgcc_s1:6.2.1
+libstdc++6:6.2.1
+libuuid1=2.25-22
+sapinit-systemd-compat=1.0-2.1
+util-linux=2.25-22
 xfsprogs:3.1.8-0.5.1
 "
 	test -z "${HANA_SAP_PKG_YES}" &&\
@@ -1443,6 +1451,7 @@ tcsh
 libssh2-1
 libstdc++6
 libgcc_s1
+uuidd
 expect
 autoyast2-installation
 yast2-ncurses
@@ -2092,6 +2101,7 @@ xfsprogs
 	# TODO nfs
 	test -z "${STOR_MOD}" &&\
 	STOR_MOD="
+btrfs
 ext2
 ext3
 ext4
@@ -2189,10 +2199,14 @@ kernel.shmmax
 kernel.shmmni
 kernel.threads-max
 net.ipv4.ip_local_port_range
+net.ipv4.tcp_max_syn_backlog
+net.ipv4.tcp_slow_start_after_idle
+net.ipv4.tcp_window_scaling
 net.core.rmem_default
 net.core.rmem_max
 net.core.wmem_default
 net.core.wmem_max
+net.core.somaxconn
 vm.dirty_*
 vm.zone_reclaim_mode
 vm.numa_zonelist_order
@@ -2268,7 +2282,7 @@ function chk_sysload(){
 
 	OWD=$PWD
 	cd sar || exit
-	# TODO why is sar not found?
+	# TODO sa?? now is sar20190309.xz. There is also sar20190309 plain ASCII.
 	# TODO print date of sar file to each output line
 	#	either by adding date from sar-fiel header,
 	#	or by grep-ing the alreday known maxima out of the files

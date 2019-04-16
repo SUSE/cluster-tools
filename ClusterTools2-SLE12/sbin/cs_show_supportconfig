@@ -1957,23 +1957,19 @@ function chk_kernel(){
 function chk_software(){
 
 	echo_msgsep $FUNCNAME
-	
+
 	FIL="basic-environment.txt"
-	
-	# TODO os-release but not SuSE-realease
-	grep -A3 "# /etc/SuSE-release" ${FIL}
+
+	grep -A7 "# /etc/os-release" ${FIL}
 	echo
 	grep -A1 "# /etc/lsb-release" ${FIL}
 	echo	
-
-	FIL="sam.txt"
-	grep -A4 "\.prod:" ${FIL}
-	echo
 
 	FIL="rpm.txt"
 	grep "(none)" ${FIL} | grep -v "gpg-pubkey"
 	echo	
 
+	# TODO sam is gone
 	FIL="sam.txt"
 	test -z "${SOFTW_PTRN}" &&\
 	SOFTW_PTRN="

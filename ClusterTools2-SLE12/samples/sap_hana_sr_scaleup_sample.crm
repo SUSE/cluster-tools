@@ -1,13 +1,11 @@
 #
 primitive rsc_SAPHanaTopology_HAE_HDB96 ocf:suse:SAPHanaTopology \
-        operations $id="rsc_sap2_HAE_HDB96-operations" \
         op monitor interval="10" timeout="600" \
         op start interval="0" timeout="3600" \
         op stop interval="0" timeout="300" \
         params SID="HAE" InstanceNumber="96"
 #
 primitive rsc_SAPHana_HAE_HDB96 ocf:suse:SAPHana \
-        operations $id="rsc_sap_HAE_HDB96-operations" \
         op start interval="0" timeout="3600" \
         op stop interval="0" timeout="3600" \
         op promote interval="0" timeout="3600" \

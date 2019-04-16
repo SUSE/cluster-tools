@@ -236,6 +236,7 @@ test -z "${APPERR_PATTERN}" &&\
 "VCS.CRITICAL"
 "vxvm.*volume.*not"
 "Hangcheck.*clock"
+"lin_tape.*failed"
 "vasd.will.not.synchronize.time"
 "vascache.*error"
 "sapstartsrv.*pam_systemd.*Failed"

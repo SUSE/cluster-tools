@@ -17,13 +17,14 @@ Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      3.0.1 
-Release:      1 
+Release:      109
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
 Vendor:	      SUSE Linux GmbH
 Requires:     pacemaker > 1.1.1
 Requires:     perl-TermReadLine-Gnu >= 1.16
+Requires:     logrotate
 
 %description
 ClusterTools2 provides tools for setting up and managing a corosync/

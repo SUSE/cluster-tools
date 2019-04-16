@@ -256,6 +256,7 @@ dm_mirror.ko
 bonding.ko
 hpwdt.ko
 hangcheck-timer.ko
+deadman.ko
 ibmasr.ko
 iTCO_wdt.ko
 i6300esb.ko
@@ -814,7 +815,7 @@ sbd:
 	# TODO check ???, see cs_sum_baseconfig, cs_precheck_for_sap
 	# TODO check watchdogs, define $WATCHMOD, see cs_disbale_other_watchdog
 	# hangcheck_timer here, not "-" as in hangcheck-timer.ko
-	WATCHMOD="hpwdt hangcheck_timer iTCO ibmasr softdog"
+	WATCHMOD="hpwdt hangcheck_timer iTCO ibmasr softdog deadman"
 	echo -n "loaded watchdog: "
 	for m in $WATCHMOD; do
 		awk '$1=="'${m}'" {print $1}' modules.txt | sort -u
@@ -2047,9 +2048,9 @@ function chk_multipath(){
 		
 
 function chk_filesys(){
-	
+
 	echo_msgsep $FUNCNAME
-	
+
 	FIL="fs-diskio.txt"
 
 	split_file ${FIL}
@@ -2066,6 +2067,17 @@ function chk_filesys(){
 		$10 > 100.0 {print $0}
 		$11 > 20.0 {print $0}' | sort -u
 	echo
+
+	FIL="fs-btrfs.txt"
+
+	split_file ${FIL}
+
+	( grep -A4 "# /sbin/btrfs filesystem show" ${TEMP}/${FIL}/xx*
+	grep -A5 "# /sbin/btrfs scrub status /$" ${TEMP}/${FIL}/xx*
+	grep -A5 "# /sbin/btrfs filesystem df /$" ${TEMP}/${FIL}/xx*
+	grep -A5 "# /sbin/btrfs filesystem df /var/log$" ${TEMP}/${FIL}/xx*
+	grep -A5 "# /sbin/btrfs filesystem df /tmp$" ${TEMP}/${FIL}/xx*
+	grep -A5 "# /sbin/btrfs filesystem df /.snapshots$" ${TEMP}/${FIL}/xx* ) | tr "-" ":" | awk -F: '{print $3,$4}'
 }
 
 

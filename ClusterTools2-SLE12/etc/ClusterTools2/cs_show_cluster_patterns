@@ -1,5 +1,5 @@
 #/etc/ClusterTools2/cs_show_cluster_patterns
-# For SLES11.
+# For SLES12.
 #
 OSERR_PATTERN="
 "NMI.received"
@@ -12,9 +12,13 @@ OSERR_PATTERN="
 "o2dlm_eviction_cb"
 "fsck.*recommended"
 "EXT.-fs.error"
+"XFS.*Shutting.down"
+"multipath.*path.removed"
 "shutdown.*shutting.down"
 "syslog-ng.shutting.down"
 "syslog-ng.starting.up"
+"kernel.*bootconsole.*enabled"
+"systemd.*Stopping.Restore.*shutdown"
 "oft[Dd]og.*not"
 "
 #
@@ -80,6 +84,8 @@ CLUSTR_PATTERN="
 "sbd.*Received.command"
 "sbd.*mbox.read.failed"
 "sbd.*Latency"
+"sbd.*terminated"
+"sbd.*Rebooting.system"
 "stonith-ng.*Failed"
 "
 #

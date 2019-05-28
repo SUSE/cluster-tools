@@ -23,7 +23,8 @@ test -z "${CLUSTER_LOG}" &&\
 
 ZIPPED_LOG="${CLUSTER_LOG}*bz2"
 
-# TODO: what error msgs. make sense ?
+# TODO: what error msgs. make sense?
+# TODO: xfs_repair
 test -z "${OSERR_PATTERN}" &&\
 	 OSERR_PATTERN="
 "NMI.received"
@@ -36,9 +37,13 @@ test -z "${OSERR_PATTERN}" &&\
 "o2dlm_eviction_cb"
 "fsck.*recommended"
 "EXT.-fs.error"
+"XFS.*Shutting.down"
+"multipath.*path.removed"
 "shutdown.*shutting.down"
 "syslog-ng.shutting.down"
 "syslog-ng.starting.up"
+"kernel.*bootconsole.*enabled"
+"systemd.*Stopping.Restore.*shutdown"
 "oft[Dd]og.*not"
 "
 
@@ -109,6 +114,8 @@ test -z "${CLUSTR_PATTERN}" &&\
 "sbd.*Received.command"
 "sbd.*mbox.read.failed"
 "sbd.*Latency"
+"sbd.*terminated"
+"sbd.*Rebooting.system"
 "stonith-ng.*Failed"
 "
 

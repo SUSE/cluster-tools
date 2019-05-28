@@ -2,11 +2,11 @@
 #
 # cs_show_cluster_patterns
 #
-# (c) 2011-2018 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2018-10-29 SLES11
+# Version: 2019-05-28 SLES12
 #
 
 EXE="$0"

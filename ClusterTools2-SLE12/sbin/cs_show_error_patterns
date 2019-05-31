@@ -5,7 +5,7 @@
 # (c) 2011-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: SLES12 0.2 2019-02-09
+# Version: SLES12 0.2 2019-05-31
 #
 
 EXE="$0"
@@ -71,6 +71,7 @@ test -z "${ERROR_PATTERN}" &&\
 "NMI.received"
 "NMI.*error"
 "irq.*nobody.cared"
+"kthread.starved.for.*jiffies"
 "urandom.warning"
 "Signaling PME.*interrupt"
 "Error.DRAM"
@@ -124,7 +125,7 @@ test -z "${ERROR_PATTERN}" &&\
 "bond.*link.*down"
 "bond.*duplicate.address"
 "bond.*not.detect.*failures"
-"bond.*permanent.HWaddr.*in.use"
+"bond.*permanent.HWaddr.*use"
 "bond.*No.*response"
 "link.*not.ready"
 "ink..ailure"

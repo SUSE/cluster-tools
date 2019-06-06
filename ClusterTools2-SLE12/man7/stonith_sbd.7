@@ -1,4 +1,4 @@
-.TH stonith_sbd 7 "20 Sep 2016" "" "ClusterTools2"
+.TH stonith_sbd 7 "06 Jun 2019" "" "ClusterTools2"
 .\"
 .SH NAME
 stonith_sbd \- Stonith Block Device
@@ -187,7 +187,7 @@ On SLE-HA 12 add the following to /etc/sysconfig/sbd:
 .br
 #/etc/sysconfig/sbd
 .br
-# SBD devices (no trailing ";"):
+# SBD devices (no trailing semicolon ";" please, but qutatio marks needed " "):
 .br
 SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
@@ -209,7 +209,7 @@ On SLE-HA 11 add the following to /etc/sysconfig/sbd:
 .br
 #/etc/sysconfig/sbd
 .br
-# SBD devices (no trailing ";"):
+# SBD devices (no trailing semicolon ";" please, but qutation marks needed " "):
 .br
 SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
@@ -437,7 +437,7 @@ The content of this manual page was mostly derived from online documentation
 mentioned above.
 .\"
 .SH COPYRIGHT
-(c) 2009-2018 SUSE Linux GmbH, Germany.
+(c) 2009-2019 SUSE Linux GmbH, Germany.
 .br
 sbd comes with ABSOLUTELY NO WARRANTY.
 .br

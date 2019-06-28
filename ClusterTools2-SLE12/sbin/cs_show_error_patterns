@@ -5,7 +5,7 @@
 # (c) 2011-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: SLES12 0.2 2019-05-31
+# Version: SLES12 0.2 2019-06-28
 #
 
 EXE="$0"
@@ -82,6 +82,7 @@ test -z "${ERROR_PATTERN}" &&\
 "SMP.disabled"
 "No.hypervisor.support.for.SR-IOV"
 "Firmware.Bug"
+"BIOS.bug"
 "Broken.BIOS"
 "kernel.*task.*abort"
 "kernel.*ACPI.Error"

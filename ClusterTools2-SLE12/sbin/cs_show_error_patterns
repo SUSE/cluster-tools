@@ -5,7 +5,7 @@
 # (c) 2011-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: SLES12 0.2 2019-06-28
+# Version: SLES12 0.2 2019-07-12
 #
 
 EXE="$0"
@@ -170,6 +170,7 @@ test -z "${SVCERR_PATTERN}" &&\
 "systemd.*No.such.file"
 "systemd.*Failed"
 "systemd-coredump.*dumped core"
+"wickedd.*ouldn"
 "SMART.*failure"
 "multipathd.*timed.out"
 "multipathd.*mpath.*unable"

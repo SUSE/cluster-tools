@@ -258,6 +258,7 @@ test -z "${APPERR_PATTERN}" &&\
 "tclink.*ERROR"
 "tclink.*error"
 "salt.*ERROR"
+"discagent.*Error"
 "
 
 function help() {

@@ -203,6 +203,7 @@ APPERR_PATTERN="
 "tclink.*ERROR"
 "tclink.*error"
 "salt.*ERROR"
+"discagent.*Error"
 "
 #
 CLUSTER_LOG="/var/log/corosync.log"

@@ -5,7 +5,7 @@
 # (c) 2018-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 2019-04-09
+# Version: 2019-07-17
 #
 # TODO /etc/ClusterTools2/cs_show_hana_info
 # TODO show logs
@@ -69,6 +69,11 @@ function show_info() {
 	echo "inst_nr: $INR"
 	id ${SID}adm
 	echo ) >>${TEMP} || exit 2
+
+	# TODO sapinit status
+	# ( echo "# ==="
+	# /etc/init.d/sapinit status 
+	# echo ) >>${TEMP} || exit 2
 
 	sudo_cmd "sapcontrol -nr $INR -function GetProcessList"
 	sudo_cmd "hdbnsutil -sr_state"

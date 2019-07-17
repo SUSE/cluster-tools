@@ -193,9 +193,8 @@ test -z "${SVCERR_PATTERN}" &&\
 "sfcbd.*Fatal"
 "
 
-# TODO separate variable for application patterns (annot.open..rofile" ... "Hangcheck.*clock"
 # TODO raid.set.*active.with.2.out.of.2.mirrors ?
-# TODO check for un-matched userfreindly names (mpath[a-z])
+# TODO check for un-matched userfriendly names (mpath[a-z])
 # TODO pattern for failed module (could not load)
 # TODO async IO from grep kio /proc/slabinfo ?
 # TODO direct IO from grep ...,DIR, /proc/slabinfo ?

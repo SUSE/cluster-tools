@@ -94,6 +94,7 @@ test -z "${ERROR_PATTERN}" &&\
 "kernel.*lost.*interrupt"
 "kernel.*not.have.kernel.memory.protection"
 "kernel.*clocksource:.*witched"
+"BUG:. workqueue.lockup"
 "Section.*circular.dependency"
 "double.fault:"
 "target.failure"

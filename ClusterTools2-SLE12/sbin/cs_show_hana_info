@@ -20,7 +20,12 @@ EXE=$(basename $0)
 
 MYHOST=$(hostname)
 SAPSVC="/usr/sap/sapservices"
+SAPPFL=$(awk -F"=" '$1=="pf"{print $2}' $SAPSVC | awk -F" " '{print $1}')
+# TODO multiple pf= lines? 
 SUDOER="/etc/sudoers"
+# TODO /etc/sudoers.d/*
+GBLINI=""
+MYHOOK=""
 
 test -z "${TEMP}" &&\
 	TEMP="/dev/shm/cltl.$RANDOM"
@@ -85,10 +90,10 @@ function show_info() {
 	sudo_cmd "HDBSettings.sh systemOverview.py"
 
 	show_file "$SAPSVC"
+	show_file "$SAPPFL"
 	show_file "$GBLINI"
 	show_file "$SUDOER"
-	# TODO show HANA hook file
-	# TODO SAP start profile
+	# TODO show HANA hook file, see main()
 	# TODO systemd sapinit unitfile
 	# show_file "/proc/meminfo"
 	# TODO ulimit	
@@ -131,6 +136,12 @@ case $1 in
 		# TODO bash 4.0: SID=${2,,}
 		INR=$3
 		GBLINI="/usr/sap/${UPSID}/SYS/global/hdb/custom/config/global.ini"
+		# TODO SRHOOK=$( ... $GBLINI )
+		# $GBLINI:
+		# [ha_dr_provider_SAPHanaSR]
+		# provider = SAPHanaSR
+		# path = /hana/shared/myHooks
+		# execution_order = 1
 		show_info
 		exit $RC_ALL
 	;;

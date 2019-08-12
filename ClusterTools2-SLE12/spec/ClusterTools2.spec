@@ -17,7 +17,7 @@ Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      3.0.1
-Release:      109 
+Release:      110 
 Source:       %{name}-%{version}.tbz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch

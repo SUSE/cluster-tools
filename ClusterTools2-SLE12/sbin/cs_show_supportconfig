@@ -5,7 +5,7 @@
 # (c) 2011-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License 2. No warranty.
 #
-# Version: SLES12 0.03 2019-04-17
+# Version: SLES12 0.03 2019-08-12
 #
 # For Supportconfig Script Version: 2.25-237
 #
@@ -114,11 +114,11 @@ function show_sys_fcfabric(){
 	split_file ${FIL}
 	f=$(grep -l "^# /usr/bin/systool -vc fc_host$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		grep -A13 "Class.Device.path.=.\"/sys/devices/" $f
+		( grep -A13 "Class.Device.path.=.\"/sys/devices/" $f
 		echo
 		#awk -F"=" '$1=="fabric_name" {print $2}' $f | sort -u
 		grep port_name $f | sort -f
-		echo
+		echo )
 }
 
 

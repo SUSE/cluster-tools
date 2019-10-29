@@ -1,5 +1,5 @@
 # /etc/ClusterTools2/cs_delcib
-# For SLES11. 
+# For SLES12. 
 # 
 FIL="
 /var/lib/corosync/*

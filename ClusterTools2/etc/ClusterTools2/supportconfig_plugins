@@ -1,9 +1,9 @@
 # /etc/ClusterTools2/supportconfig_plugins
-# For SLES11.
+# For SLES12.
 # one entry per line "^plugin$"
-cat_messages
-show_error_patterns
-show_elevator
+#cat_messages
+#show_error_patterns
+#show_elevator
 #cat_psauxlog
 #cat_meminfolog
 #cat_lsoflog

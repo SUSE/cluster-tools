@@ -2,11 +2,11 @@
 #
 # cs_man2pdf
 #
-# (c) 2016-2017 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2016-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2017-01-26 SLES11
+# Version: 2017-03-05 SLES12
 #
 # TODO handle perl man pages with "::" in filenames
 
@@ -20,10 +20,10 @@ function show_help(){
 	echo "usage: $(basename $0) --rpm <rpm>"
 	echo "usage: $(basename $0) <man_page> <section>"
 	echo
-	echo " --dir <dir>	convert man pages from directory."
-	echo " --rpm <rpm>	convert man pages from installed RPM."
-	echo " --help		show help."
-	echo " --version	show version."
+	echo " --dir <dir>	convert man pages from directory"
+	echo " --rpm <rpm>	convert man pages from installed RPM"
+	echo " --help		show help"
+	echo " --version	show version"
 }
 
 

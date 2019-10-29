@@ -1,4 +1,4 @@
-.TH stonith_sbd 7 "12 Dec 2016" "" "ClusterTools2"
+.TH stonith_sbd 7 "06 Jun 2019" "" "ClusterTools2"
 .\"
 .SH NAME
 stonith_sbd \- Stonith Block Device
@@ -165,7 +165,7 @@ delivered to the node. For multipath, this should be the time required
 for MPIO to detect a path failure and switch to the next path. You may
 have to test this in your environment. The node will perform suicide if
 it has not updated the watchdog timer fast enough; the watchdog timeout
-must be shorter than the msgwait timeout - half the value is a good
+must be shorter than half the msgwait timeout - half the value is a good
 estimate. This can be specified when the SBD device is initialized.
 
 Sharing one SBD device among several clusters is not recommended.
@@ -187,7 +187,7 @@ On SLE-HA 12 add the following to /etc/sysconfig/sbd:
 .br
 #/etc/sysconfig/sbd
 .br
-# SBD devices (no trailing ";"):
+# SBD devices (no trailing semicolon ";" please, but qutatio marks needed " "):
 .br
 SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
@@ -209,7 +209,7 @@ On SLE-HA 11 add the following to /etc/sysconfig/sbd:
 .br
 #/etc/sysconfig/sbd
 .br
-# SBD devices (no trailing ";"):
+# SBD devices (no trailing semicolon ";" please, but qutation marks needed " "):
 .br
 SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
@@ -415,26 +415,29 @@ http://www.suse.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/
 https://www.suse.com/documentation/sle_ha/book_sleha/?page=/documentation/sle_ha/book_sleha/data/part_storage.html ,
 https://www.suse.com/documentation/sle_ha/book_sleha/data/sec_ha_storage_protect_fencing.html ,
 .br
-https://www.suse.com/support/kb/doc.php?id=7004306 ,
-https://www.suse.com/support/kb/doc.php?id=7007616 ,
-https://www.suse.com/support/kb/doc.php?id=7008921 ,
-https://www.suse.com/support/kb/doc.php?id=7009485 ,
-https://www.suse.com/support/kb/doc.php?id=7009737 ,
-https://www.suse.com/support/kb/doc.php?id=7010879 ,
-https://www.suse.com/support/kb/doc.php?id=7010931 ,
-https://www.suse.com/support/kb/doc.php?id=7010933 ,
-https://www.suse.com/support/kb/doc.php?id=7011346 ,
-https://www.suse.com/support/kb/doc.php?id=7011426 ,
-https://www.suse.com/support/kb/doc.php?id=7016042 ,
-https://www.suse.com/support/kb/doc.php?id=7016305 ,
-https://www.suse.com/support/kb/doc.php?id=7016880
+https://www.suse.com/support/kb/doc/?id=7004306 ,
+https://www.suse.com/support/kb/doc/?id=7007616 ,
+https://www.suse.com/support/kb/doc/?id=7008921 ,
+https://www.suse.com/support/kb/doc/?id=7009485 ,
+https://www.suse.com/support/kb/doc/?id=7009737 ,
+https://www.suse.com/support/kb/doc/?id=7010879 ,
+https://www.suse.com/support/kb/doc/?id=7010931 ,
+https://www.suse.com/support/kb/doc/?id=7010933 ,
+https://www.suse.com/support/kb/doc/?id=7011346 ,
+https://www.suse.com/support/kb/doc/?id=7011426 ,
+https://www.suse.com/support/kb/doc/?id=7016042 ,
+https://www.suse.com/support/kb/doc/?id=7016305 ,
+https://www.suse.com/support/kb/doc/?id=7016880 ,
+https://www.suse.com/support/kb/doc/?id=7021158 ,
+https://www.suse.com/support/kb/doc/?id=7022255
+
 .\"
 .SH AUTHORS
 The content of this manual page was mostly derived from online documentation
 mentioned above.
 .\"
 .SH COPYRIGHT
-(c) 2009-2016 SUSE Linux GmbH, Germany.
+(c) 2009-2019 SUSE Linux GmbH, Germany.
 .br
 sbd comes with ABSOLUTELY NO WARRANTY.
 .br

@@ -3,7 +3,7 @@
 #
 # Copyright (c) 2008-2010 SUSE LINUX GmbH, Germany.
 # Copyright (c) 2011-2014 SUSE LINUX Products GmbH, Germany.
-# Copyright (c) 2015-2017 SUSE LINUX GmbH, Germany.
+# Copyright (c) 2015-2019 SUSE LINUX GmbH, Germany.
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
@@ -17,14 +17,15 @@ Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
 Version:      3.0.1 
-Release:      1 
+Release:      109
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
 BuildArch:    noarch
 Vendor:	      SUSE Linux GmbH
 Requires:     pacemaker > 1.1.1
 Requires:     perl-TermReadLine-Gnu >= 1.16
-	
+Requires:     logrotate
+
 %description
 ClusterTools2 provides tools for setting up and managing a corosync/
 pacemaker cluster.
@@ -45,7 +46,7 @@ test "$RPM_BUILD_ROOT" != "/" && rm -rf $RPM_BUILD_ROOT
 
 %install
 mkdir -p %{buildroot}/etc/ClusterTools2
-mkdir -p %{buildroot}/etc/cron.d
+#mkdir -p %{buildroot}/etc/cron.d
 mkdir -p %{buildroot}/etc/logrotate.d
 mkdir -p %{buildroot}/usr/sbin
 mkdir -p %{buildroot}/usr/share/ClusterTools2
@@ -68,7 +69,7 @@ cp -va plugins/* %{buildroot}/usr/lib/supportconfig/plugins
 # etc
 #
 cp -va etc/ClusterTools2/* %{buildroot}/etc/ClusterTools2/
-cp -va etc/cron.d/* %{buildroot}/etc/cron.d/
+#cp -va etc/cron.d/* %{buildroot}/etc/cron.d/
 cp -va etc/logrotate.d/* %{buildroot}/etc/logrotate.d/
 #
 # share 
@@ -94,7 +95,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
 %config(noreplace) /etc/ClusterTools2
-%config(noreplace) /etc/cron.d/*
+#%config(noreplace) /etc/cron.d/*
 %config(noreplace) /etc/logrotate.d/*
 %doc /usr/share/man/man5/*.gz
 %doc /usr/share/man/man7/*.gz

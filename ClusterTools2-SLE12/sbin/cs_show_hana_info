@@ -1,0 +1,162 @@
+#!/bin/bash
+#
+# cs_show_hana_info
+#
+# (c) 2018-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# GNU General Public License v2. No warranty.
+#
+# Version: 2019-08-07
+#
+# TODO /etc/ClusterTools2/cs_show_hana_info
+# TODO show logs
+# TODO guess SID
+#
+#set -x
+
+EXE=$(basename $0)
+
+#CFG="/etc/ClusterTools2/cs_show_hana_info"
+#test -s $CFG && source $CFG
+
+MYHOST=$(hostname)
+SAPSVC="/usr/sap/sapservices"
+SAPPFL=$(awk -F"=" '$1=="pf"{print $2}' $SAPSVC | awk -F" " '{print $1}')
+# TODO multiple pf= lines? 
+SUDOER="/etc/sudoers"
+# TODO /etc/sudoers.d/*
+GBLINI=""
+MYHOOK=""
+
+test -z "${TEMP}" &&\
+	TEMP="/dev/shm/cltl.$RANDOM"
+
+function show_help() {
+	echo "usage	$EXE [ --help | --version ]"
+	echo "	$EXE [ --info | --logs ] <SID> <inst_nr>"
+	echo
+	echo " --help		show help"
+	echo " --version	show version"
+	echo " --info <SID> <inst_nr>	show info for given instance"
+	echo " --logs <SID> <inst_nr>	show logs for given instance"
+	echo
+	exit
+}
+
+function sudo_cmd() {
+	CMD="${1}"
+	( echo "# ==="
+	echo "# ${C}"
+	su - ${SID}adm -c "${CMD}"
+	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
+	echo "# ${CMD}: RC: "$RC
+	echo ) >>${TEMP}
+}
+
+function show_file() {
+	FIL="${1}"
+	( echo "# ==="	
+	echo "# cat ${FIL}"
+	cat ${FIL}
+	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
+	echo "# cat ${FIL}: RC: "$RC
+	echo ) >>${TEMP}
+}
+
+function show_info() {
+	# TODO su - ${SID}adm once for the whole function
+
+	echo "# ${EXE}: show_info"
+	RC_ALL=0
+
+	echo > ${TEMP} || exit 1
+	( echo "# ==="
+	echo "hostname: ${MYHOST}"
+	echo "sid: $SID"
+	echo "inst_nr: $INR"
+	id ${SID}adm
+	echo ) >>${TEMP} || exit 2
+
+	# TODO sapinit status
+	# ( echo "# ==="
+	# /etc/init.d/sapinit status 
+	# echo ) >>${TEMP} || exit 2
+
+	# TODO call sap cmds with --sapcontrol=1 to get parseable output
+	sudo_cmd "sapcontrol -nr $INR -function GetProcessList"
+	sudo_cmd "hdbnsutil -sr_state"
+	sudo_cmd "HDBSettings.sh landscapeHostConfiguration.py"
+	sudo_cmd "HDBSettings.sh systemReplicationStatus.py"
+	sudo_cmd "HDB info"
+	sudo_cmd "HDBSettings.sh systemOverview.py"
+
+	show_file "$SAPSVC"
+	show_file "$SAPPFL"
+	show_file "$GBLINI"
+	show_file "$SUDOER"
+	# TODO show HANA hook file, see main()
+	# TODO systemd sapinit unitfile
+	# show_file "/proc/meminfo"
+	# TODO ulimit	
+	# TODO systemd user slice
+	# TODO systemd system slice
+
+	cat ${TEMP} && rm ${TEMP}
+	echo
+	echo "# ${EXE}: show_info: RC: "$RC_ALL
+}
+
+function show_logs() {
+	echo "# ${EXE}: show_logs"
+	RC_ALL=0
+
+	echo > ${TEMP} || exit 1
+	# TODO awk ... /hana/shared/${SID}/HDB${INR}/${MYHOST}/trace/*.trc
+	# 5th? column = "e"
+	# ? column = "DISK FULL"
+	echo "not implemented yet" >>${TEMP}
+
+	cat ${TEMP} && rm ${TEMP}
+	echo
+	echo "# ${EXE}: show_info: RC: "$RC_ALL
+}
+
+
+# main()
+case $1 in
+	-v|--version)
+		echo -n "$EXE"
+		head -11 /usr/sbin/$EXE | grep "^# Version: "
+		exit
+	;;
+	-i|--info)
+		test $# -eq 3 || show_help
+		UPSID=$(echo $2 | tr "[:lower:]" "[:upper:]")
+		SID=$(echo $2 | tr "[:upper:]" "[:lower:]")
+		# TODO bash 4.0: UPSID=${2^^}
+		# TODO bash 4.0: SID=${2,,}
+		INR=$3
+		GBLINI="/usr/sap/${UPSID}/SYS/global/hdb/custom/config/global.ini"
+		# TODO SRHOOK=$( ... $GBLINI )
+		# $GBLINI:
+		# [ha_dr_provider_SAPHanaSR]
+		# provider = SAPHanaSR
+		# path = /hana/shared/myHooks
+		# execution_order = 1
+		show_info
+		exit $RC_ALL
+	;;
+	-l|--logs)
+		test $# -eq 3 || show_help
+		UPSID=$(echo $2 | tr "[:lower:]" "[:upper:]")
+		SID=$(echo $2 | tr "[:upper:]" "[:lower:]")
+		INR=$3
+		# TODO path to logs
+		show_logs
+		exit $RC_ALL
+	;;
+	*)
+		show_help
+		exit
+	;;
+esac
+#

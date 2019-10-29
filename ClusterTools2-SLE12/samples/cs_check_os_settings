@@ -1,11 +1,11 @@
 #!/bin/bash
 # cs_check_os_settings
 #
-# (c) 2017 SUSE Linux GmbH, Germany.
+# (c) 2017-2019 SUSE Linux GmbH, Germany.
 # GNU General Public License v2. No warranty.
-# Author: L.Pinne
+# Authors: L.Pinne, R.Wolf
 #
-# Version: 2017-12-08
+# Version: 2019-04-17 
 #
 
 #=== SAP note 2205917
@@ -31,10 +31,10 @@
 #	en_US
 #
 
-# TODO FORCE_LATENCY=70 "cat /dev/cpu_dma_latency"
 TUNED_CONF="/usr/lib/tuned/sap-hana/tuned.conf"
 LOGIND_CONF="/etc/systemd/logind.conf.d/sap-hana.conf"
 SAPINIT_CONF="/etc/systemd/system/sapinit.service.d/type.conf"
+SYSTEMD_CONF="/etc/systemd/system.conf"
 BOOT_CONF="/etc/defaults/grub"
 SYSCTL_CONF="/etc/sysctl.d/sap-hana.conf"
 LOCAL_CONF="/etc/init.d/boot.local"
@@ -53,7 +53,7 @@ sysstat.service=enabled$
 #
 SERVICES_SUSE="
 ntpd.service=enabled$
-tuned.service=enabled$
+tuned.service=disabled$
 sapconf.service=enabled$
 systemd-sysctl.service=enabled$
 sshd.service=enabled$
@@ -61,6 +61,7 @@ ksmd.service=disabled$
 lvm2-lvmetad.service=disabled$
 lvm2-lvmetad.socket=disabled$
 pacemaker.service=disabled$
+sbd.service=enabled$
 "
 
 #
@@ -90,6 +91,12 @@ governor=performance$
 "
 
 #
+SYSTEMD_SAP="
+# SAP note 2618400$
+DefaultTasksMax=65536$
+"
+
+#
 TUNED_SUSE="
 "
 
@@ -114,12 +121,14 @@ cgroup_disable=memory$
 
 #
 RPM_SAP="
+# SAP note 2655238$
+kernel-ppc64le=4.4.156-94.57$
+kernel-default=4.4.156-94.57$
 # SAP note 2205917$
-kernel-default=3.12.67-60.64.18$
-kernel-ppc64le=3.12.67-60.64.18$
 # kernel-ppc64=3.0.101-104.2$
 # kernel-bigmem=3.0.101-104.2$
-glibc=2.22-51.6$
+# SAP note 2686011$
+glibc=2.22-62.16$
 # SAP note 1984787$
 libuuid1=2.25-22$
 sapinit-systemd-compat=1.0-2.1$
@@ -129,7 +138,7 @@ util-linux=2.25-22$
 "
 
 #
-RPM_SUSE=" 
+RPM_SUSE="
 ntp=4.2.8p9$
 sysstat=10.2.1$
 xfsprogs=3.2.1$
@@ -164,12 +173,10 @@ kernel.sem=32000 1024000000 500 32000$
 # SAP note 2382421$
 net.core.somaxconn=4096$
 net.ipv4.tcp_max_syn_backlog=8192$
-net.ipv4.tcp_timestamps=1$
 net.ipv4.tcp_syn_retries=8$
 net.ipv4.tcp_window_scaling=1$
 net.ipv4.ip_local_port_range=1024 64999$
 net.ipv4.tcp_tw_reuse=1$
-net.ipv4.tcp_tw_recycle=1$
 # SAP note 1557506$
 vm.pagecache_limit_mb=0$
 vm.pagecache_limit_ignore_dirty=0$
@@ -194,7 +201,6 @@ vm.dirty_bytes=629145600$
 "
 
 #
-# TODO always display version and date, because settings are subject to change
 # TODO function echo_help()
 # TODO function echo_variables()
 #
@@ -323,6 +329,21 @@ function chk_tuned() {
 }
 
 
+function chk_systemd() {
+	echo_msgsep "$FUNCNAME $1"
+	systemd_out=$()
+
+	want=$(echo $SYSTEMD_CONF | awk -F/ '{print $5}')
+	have=$(systemd show)
+
+	echo "want  tuned_prof: $want"
+	echo "have  tuned_prof:$have"
+	echo
+	return
+	# TODO
+}
+
+
 function chk_sapinit() {
 	echo_msgsep "$FUNCNAME $1"
 
@@ -394,6 +415,8 @@ chk_services SERVICES_SAP
 chk_services SERVICES_SUSE
 
 chk_sapinit SAPINIT_SUSE
+
+chk_systemd SYSTEMD_SAP
 
 chk_tuned TUNED_SAP
 chk_tuned TUNED_SUSE

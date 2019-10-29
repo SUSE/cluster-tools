@@ -14,7 +14,8 @@ CONF_FILES="
 /boot/initrd-3.*xen
 /proc/cmdline
 /proc/sys/kernel/tainted
-/etc/auto.*
+/etc/auto.{master,misc,net,smb}
+/etc/auto.master.d/*
 /etc/ld.so.conf
 /etc/ld.so.conf.d/*
 /etc/hosts
@@ -42,6 +43,9 @@ CONF_FILES="
 /etc/iscsi/iscsid.conf
 /etc/iscsi/initiatorname.iscsi
 /etc/sysstat/*
+/etc/systemd/*.conf
+/etc/systemd/system/*.service
+/etc/systemd/system/*/*
 /etc/security/limits.conf
 /etc/sysconfig/kernel
 /etc/sysconfig/bootloader
@@ -58,7 +62,6 @@ CONF_FILES="
 /etc/sysconfig/bravo
 /etc/sysconfig/customfw
 /etc/default/*
-/etc/systemd/system/*
 /etc/ocfs2/cluster.conf
 /etc/pam.d/login
 /etc/opt/bravo/*.conf
@@ -94,15 +97,16 @@ CONF_CALLS="
 '/bin/cat /sys/kernel/mm/transparent_hugepage/enabled'
 '/usr/bin/grep -v "^#" /etc/sysctl.conf'
 '/usr/bin/grep -v "^#" /etc/security/limits.conf'
+'/usr/bin/grep -v "^#" /etc/systemd/system.conf'
 '/usr/bin/grep -v "^#" /etc/services'
 '/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
-'/bin/lsmod | colrm 33- | sort'
+'/bin/lsmod | awk °{print %1}° | sort'
 '/bin/ls -l /boot/vmlinuz | colrm 27 39'
 '/bin/ls -l /boot/initrd | colrm 27 39'
 '/bin/ls -l /boot/vmlinuz-xen | colrm 27 39'
 '/bin/ls -l /boot/initrd-xen | colrm 27 39'
-'/usr/bin/zcat /boot/initrd | cpio -itv 2>/dev/null | colrm 43 54'
+'/usr/bin/xz -dc /boot/initrd | cpio -itv 2>/dev/null | colrm 43 54'
 '/bin/fuser -u /dev/watchdog'
 '/usr/sbin/cs_make_sbd_devices -d'
 '/bin/rpm -qa'
@@ -118,14 +122,18 @@ CONF_CALLS="
 '/usr/bin/grep -v "^#" /etc/lvm/lvm.conf'
 '/usr/bin/grep -v "^#" /etc/multipath.conf'
 '/sbin/chkconfig -A'
-'/sbin/systemctl list-units'
-'/sbin/systemctl list-unit-files'
+'/usr/bin/systemctl list-units --no-pager'
+'/usr/bin/systemctl list-unit-files --no-pager'
+'/usr/bin/systemctl list-sockets --no-pager'
+'/usr/bin/systemctl list-timers --no-pager | awk °{print %NF}°'
+'/usr/bin/systemd-delta --no-pager'
 '/sbin/route -n'
 '/usr/sbin/iptables -L'
 '/bin/ip a s | /usr/bin/grep "^[123456789]\:"'
 '/usr/bin/grep -v "IPADDR=" /etc/sysconfig/network/ifcfg-* | /usr/bin/grep -v "UNIQUE="'
 '/usr/bin/cset set -r'
 '/usr/bin/numactl -H | grep -v free; /usr/bin/numactl -s'
+'timedatectl --no-pager status'
 '/usr/bin/find /opt/'
 '/usr/bin/find /usr/'
 '/usr/bin/find /etc/'
@@ -143,6 +151,7 @@ APPS_FILES="
 /opt/oracle/product/*/*/network/admin/*.ora
 /etc/sysconfig/postgresql
 /var/lib/pgsql/data/postgresql.conf
+/var/run/cron/tabs/*
 /etc/sysconfig/rhn/*
 /etc/rhn/rhn.conf
 /etc/nocpulse/*

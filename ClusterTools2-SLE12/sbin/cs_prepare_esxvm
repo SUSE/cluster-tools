@@ -2,7 +2,7 @@
 #
 # cs_prepare_esxvm
 #
-# (c) 2014-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2014-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
 # Version: 2016-02-10 14:25
@@ -32,7 +32,7 @@ test -z "${SRVC_NO}" &&\
 boot.multipath
 multipathd
 microcode.ctl
-irq_balancer
+irqbalance
 alsasound
 smartd
 mcelog

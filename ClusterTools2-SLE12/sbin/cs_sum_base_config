@@ -2,11 +2,11 @@
 #
 # cs_sum_base_config
 #
-# (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2016-11-05 14:18 SLES12
+# Version: 2019-02-08 20:20 SLES12
 #
 
 EXE="$0"
@@ -39,7 +39,8 @@ test -z "${CONF_FILES}" &&\
 /boot/initrd-3.*xen
 /proc/cmdline
 /proc/sys/kernel/tainted
-/etc/auto.*
+/etc/auto.{master,misc,net,smb}
+/etc/auto.master.d/*
 /etc/ld.so.conf
 /etc/ld.so.conf.d/*
 /etc/hosts
@@ -68,6 +69,9 @@ test -z "${CONF_FILES}" &&\
 /etc/iscsi/iscsid.conf
 /etc/iscsi/initiatorname.iscsi
 /etc/sysstat/*
+/etc/systemd/*.conf
+/etc/systemd/system/*.service
+/etc/systemd/system/*/*
 /etc/security/limits.conf
 /etc/sysconfig/kernel
 /etc/sysconfig/bootloader
@@ -119,14 +123,15 @@ test -z "${CONF_CALLS}" &&\
 '/bin/cat /sys/kernel/mm/transparent_hugepage/enabled'
 '/usr/bin/grep -v "^#" /etc/sysctl.conf'
 '/usr/bin/grep -v "^#" /etc/security/limits.conf'
+'/usr/bin/grep -v "^#" /etc/systemd/system.conf'
 '/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
-'/bin/lsmod | colrm 33- | sort'
+'/bin/lsmod | awk °{print %1}° | sort'
 '/bin/ls -l /boot/vmlinuz | colrm 27 39'
 '/bin/ls -l /boot/initrd | colrm 27 39'
 '/bin/ls -l /boot/vmlinuz-xen | colrm 27 39'
 '/bin/ls -l /boot/initrd-xen | colrm 27 39'
-'/usr/bin/zcat /boot/initrd | cpio -itv 2>/dev/null | colrm 43 54'
+'/usr/bin/xz -dc /boot/initrd | cpio -itv 2>/dev/null | colrm 43 54'
 '/bin/fuser -u /dev/watchdog'
 '/usr/sbin/cs_make_sbd_devices -d'
 '/bin/rpm -qa'
@@ -141,14 +146,18 @@ test -z "${CONF_CALLS}" &&\
 '/usr/bin/grep -v "^#" /etc/lvm/lvm.conf'
 '/usr/bin/grep -v "^#" /etc/multipath.conf'
 '/sbin/chkconfig -A'
-'/sbin/systemctl list-units'
-'/sbin/systemctl list-unit-files'
+'/usr/bin/systemctl list-units --no-pager'
+'/usr/bin/systemctl list-unit-files --no-pager'
+'/usr/bin/systemctl list-sockets --no-pager'
+'/usr/bin/systemctl list-timers --no-pager | awk °{print %NF}°'
+'/usr/bin/systemd-delta --no-pager'
 '/sbin/route -n'
 '/usr/sbin/iptables -L'
 '/bin/ip a s | /usr/bin/grep "^[123456789]\:"'
 '/usr/bin/grep -v "IPADDR=" /etc/sysconfig/network/ifcfg-* | /usr/bin/grep -v "UNIQUE="'
 '/usr/bin/cset set -l'
 '/usr/bin/numactl -H | grep -v free; /usr/bin/numactl -s'
+'timedatectl --no-pager status'
 '/usr/bin/find /opt/'
 '/usr/bin/find /usr/'
 '/usr/bin/find /etc/'
@@ -167,6 +176,7 @@ test -z "${APPS_FILES}" &&\
 /opt/oracle/product/*/*/network/admin/*.ora
 /etc/sysconfig/postgresql
 /var/lib/pgsql/data/postgresql.conf
+/var/run/cron/tabs/*
 /etc/sysconfig/rhn/*
 /etc/rhn/rhn.conf
 /etc/nocpulse/*
@@ -187,7 +197,6 @@ test -z "${APPS_FILES}" &&\
 #
 test -z "${APPS_CALLS}" &&\
 	 APPS_CALLS="
-'/bin/ls -al /home/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /usr/spool/sql/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /sapdb/programs/lib/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /sapdb/programs/runtime/ | awk °{print %1,%2,%3,%4,%5,%9}°'

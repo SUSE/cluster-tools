@@ -2,11 +2,11 @@
 #
 # cs_show_cluster_patterns
 #
-# (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2016-06-01 SLES11
+# Version: 2019-05-28 SLES12
 #
 
 EXE="$0"
@@ -23,20 +23,28 @@ test -z "${CLUSTER_LOG}" &&\
 
 ZIPPED_LOG="${CLUSTER_LOG}*bz2"
 
-# TODO: what error msgs. make sense ?
+# TODO: what error msgs. make sense?
+# TODO: xfs_repair
 test -z "${OSERR_PATTERN}" &&\
 	 OSERR_PATTERN="
 "NMI.received"
 "NMI.*error"
 "dlm.*link.*down"
+"ocfs2.*has.evicted"
 "ocfs2.*ERR"
 "ocfs2.*not.unmounted.cleanly"
+"OCFS2.*kernel.interface.loaded"
+"o2dlm_eviction_cb"
 "fsck.*recommended"
 "EXT.-fs.error"
+"XFS.*Shutting.down"
+"multipath.*path.removed"
 "shutdown.*shutting.down"
 "syslog-ng.shutting.down"
 "syslog-ng.starting.up"
-"SoftDog.*not"
+"kernel.*bootconsole.*enabled"
+"systemd.*Stopping.Restore.*shutdown"
+"oft[Dd]og.*not"
 "
 
 # TODO: verify cluster log msgs. maybe more generic possible?
@@ -74,6 +82,7 @@ test -z "${CLUSTR_PATTERN}" &&\
 "pengine.*LogActions:.Leave.*\(Started.unmanaged\)"
 "pengine.*LogActions:.Leave.*\(Stopped.unmanaged\)"
 "cib.*failed"
+"High.CIB.load"
 "crm_resource.*Error"
 "crmd.*quorum.lost"
 "crmd.*our.DC.is.dead"
@@ -92,6 +101,7 @@ test -z "${CLUSTR_PATTERN}" &&\
 "crmd.*Updating.failcount.*stop"
 "crmd.*Updating.failcount.*start"
 "crmd.*cluster.nodes.*eligible"
+"crmd.*High.CPU.load"
 "lrmd.*probe"
 "lrmd.*RA.output.*failed"
 "lrmd.*RA.output.*error"
@@ -104,6 +114,8 @@ test -z "${CLUSTR_PATTERN}" &&\
 "sbd.*Received.command"
 "sbd.*mbox.read.failed"
 "sbd.*Latency"
+"sbd.*terminated"
+"sbd.*Rebooting.system"
 "stonith-ng.*Failed"
 "
 
@@ -125,6 +137,8 @@ test -z "${RESRC_PATTERN}" &&\
 "SAP.*Unauthorized"
 "SAPHana.*Secure.store.users"
 "SAPHana.*RA.*rc=[1-7,9]"
+"HANA_CALL.timed.out"
+"SAPHanaTopology.*failed"
 "eDirectory.*failed.*stop"
 "eDirectory.*not.*configured"
 "eDir.configuration.error"

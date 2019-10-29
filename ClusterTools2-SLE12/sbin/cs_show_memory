@@ -2,11 +2,16 @@
 #
 # cs_show_memory
 #
-# (c) 2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2016-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 2016-08-03 11:40
+# Version: 2019-02-20 16:10
 #
+# TODO systemd cgroup
+# systemctl show machine.slice | grep -e MemoryLimit -e FragmentPath
+# systemctl show system.slice | grep -e MemoryLimit -e FragmentPath
+# systemctl show user.slice | grep -e MemoryLimit -e FragmentPath
+# 
 
 EXE="$0"
 CFG="/etc/ClusterTools2/cs_show_memory"
@@ -26,7 +31,7 @@ test -z "${ZIPPED_LOG}" &&\
 VM_CONFIG_MEMINFO="
 MemTotal:
 SwapTotal:
-HugePages_Total
+HugePages_Total:
 CommitLimit:
 VmallocTotal:
 Hugepagesize:
@@ -77,6 +82,7 @@ HugePages_Free:
 
 MEMLOG_PATTERN="
 Error.DRAM
+kernel.*not.have.kernel.memory.protection
 kernel.*page.allocation.failure
 kernel.*segfault.at
 Out.of.memory
@@ -120,6 +126,7 @@ function writecfg(){
 
 
 function show_configured() {
+	# systemd, cgroup
 	# ulimit
 	# hugepages, transparent hugepages
 	# nfs?
@@ -206,7 +213,12 @@ function show_payload() {
 
 	echo "### $FUNCNAME"
 	echo
-	echo TODO
+	/usr/bin/systemd-cgtop -m -b -P --iterations=1 |\
+		awk -F" " '{print $1" "$2" "$4}'
+	echo
+	/bin/systemctl --no-pager show |\
+		grep -e DefaultLimit -e DefaultTasksMax
+	#TODO MemoryLimit ?
 }
 
 

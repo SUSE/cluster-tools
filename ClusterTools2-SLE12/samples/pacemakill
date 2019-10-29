@@ -1,0 +1,50 @@
+#!/bin/bash
+# pacemakill
+# 2018-09-06
+
+sync
+
+echo -n "====== "
+date
+
+echo
+systemctl status pacemaker
+systemctl status sbd
+echo
+ps -ef | grep -i -e sbd -e pacemaker
+echo
+lsmod | grep dog
+lsof /dev/watchdog
+cs_show_sbd_devices
+
+echo
+echo
+echo -n "====== "
+echo KILLING NOW
+
+for i in {0..9} ; do
+	echo "run: $i"
+	ps -ef | awk '$8~/pacemaker/ {print $2}' |\
+	while read; do
+		echo "pid: $REPLY"; kill -9 $REPLY
+	done
+	sleep 1
+done
+
+echo
+grep "systemd.*pacemaker.*start-limit" /var/log/messages
+echo
+systemctl status pacemaker
+systemctl status sbd
+echo
+ps -ef | grep -i -e sbd -e pacemaker
+echo
+lsmod | grep dog
+lsof /dev/watchdog
+cs_show_sbd_devices
+echo -n "====== "
+date
+
+#systemctl stop pacemaker
+#systemctl start pacemaker
+#

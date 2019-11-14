@@ -3,7 +3,8 @@
 #
 # Copyright (c) 2008-2010 SUSE LINUX GmbH, Germany.
 # Copyright (c) 2011-2014 SUSE LINUX Products GmbH, Germany.
-# Copyright (c) 2015-2019 SUSE LINUX GmbH, Germany.
+# Copyright (c) 2015-2018 SUSE LINUX GmbH, Germany.
+# Copyright (c) 2019 SUSE LLC
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #

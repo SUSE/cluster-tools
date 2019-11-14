@@ -5,7 +5,7 @@ Fri Nov  1 09:59:34 UTC 2019 - abriel <abriel@suse.com>
 - Update package to the latest upstream version
   (bsc#1097134, jira#SLE-9199)
 - cleanup the package and the man pages, remove unavailable
-  references
+  references, adjust Copyright string, adjust feedback address
 
 -------------------------------------------------------------------
 Thu Feb 21 15:11:30 UTC 2019 - kstreitova@suse.com

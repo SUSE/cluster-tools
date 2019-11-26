@@ -2,7 +2,9 @@
 #
 # cs_precheck_for_ceph
 #
-# (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2015-2017 SUSE Linux GmbH, Germany.
+# (c) 2018-2019 SUSE LLC
+# Author: L.Pinne.
 # GNU Public License. No warranty.
 #
 # Version: 2015-08-20 15:35

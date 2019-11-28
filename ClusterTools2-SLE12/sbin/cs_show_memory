@@ -7,7 +7,9 @@
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 2019-02-20 16:10
+# Version: 2019-11-28 16:10
+#
+# shellcheck disable=SC1090,SC2128
 #
 # TODO systemd cgroup
 # systemctl show machine.slice | grep -e MemoryLimit -e FragmentPath
@@ -20,7 +22,7 @@ CFG="/etc/ClusterTools2/cs_show_memory"
 test -s $CFG && source $CFG
 RDM=$RANDOM
 JCTL=""
-if test -x $(type -p journalctl); then
+if test -x "$(type -p journalctl)"; then
 	JCTL="/tmp/journalctl.$RDM"
 	test -z "${SYSTEM_LOG}" &&\
 		SYSTEM_LOG="/var/log/messages"
@@ -75,6 +77,8 @@ AnonHugePages:
 HardwareCorrupted:
 "
 
+#### not used at the moment - why?
+# shellcheck disable=SC2034
 VM_UTILISE_MEMINFO_CALC="
 MemFree:
 Available:
@@ -101,8 +105,8 @@ MEMLOG_PATTERN
 "
 
 function help() {
-	echo "usage:	$(basename $0)"
-	echo "	$(basename $0) [OPTION]"
+	echo "usage:	$(basename "$EXE")"
+	echo "	$(basename "$EXE") [OPTION]"
 	echo
 	echo " --help		show help"
 	echo " --version	show version"
@@ -120,6 +124,7 @@ function writecfg(){
 	echo -e "# $CFG \n# For SLES11,12.\n#"
 	for c in $CFGVAR; do
 		echo "${c}=\""
+		# shellcheck disable=SC2086
 		echo ${!c} | tr " " "\n"
 		echo "\""
 		echo "#"
@@ -140,14 +145,14 @@ function show_configured() {
 	numactl -H | grep -e "^node.*cpus:" -e "^node.*size:"
 	echo
 	for s in $VM_CONFIG_MEMINFO; do
-		grep ^$s /proc/meminfo
+		grep "^$s" /proc/meminfo
 	done
 	echo
 	for s in $VM_CONFIG_SYSCTL; do
 		# TODO bash for .->/
-		f=$(echo $s | tr "." "/")
+		f=$(echo "$s" | tr "." "/")
 		echo -n "$s: "
-		cat /proc/sys/$f
+		cat /proc/sys/"$f"
 	done
 	echo
 	F="/sys/kernel/mm/transparent_hugepage/enabled"
@@ -182,7 +187,7 @@ function show_utilised() {
 
 	echo
 	for s in $VM_UTILISE_MEMINFO; do
-		grep ^$s /proc/meminfo
+		grep "^$s" /proc/meminfo
 	done
 	# TODO HugePages_Used = HugePages_Total: - HugePages_Free:
 	# TODO Swap_Used = SwapTotal: - SwapFree:
@@ -198,13 +203,13 @@ function show_logs() {
 
 	LOG="$SYSTEM_LOG $ZIPPED_LOG"
 	echo "logs: $LOG" >/dev/stderr
-	which journalctl 2>/dev/null && journalctl --no-pager >$JCTL
+	command -v journalctl 2>/dev/null && journalctl --no-pager >$JCTL
 	# TODO: more efficient loop
         for e in ${MEMLOG_PATTERN}; do
 		echo -n "$e = "
 		for f in ${LOG}; do
-			test -r $f && cat $f
-		done | zgrep -ic $e
+			test -r "$f" && cat "$f"
+		done | zgrep -ic "$e"
 	done
 	rm -f $JCTL
 }
@@ -227,8 +232,8 @@ function show_payload() {
 # main()
 case $1 in
 	 -v|--version)
-		echo -n "$(basename $EXE) "
-		head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	-h|--help)

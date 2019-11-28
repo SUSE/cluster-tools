@@ -8,8 +8,9 @@
 # GNU General Public License 2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2016-12-19 SLES12
+# Version: 2019-11-28 SLES12, SLES15
 #
+# shellcheck disable=SC1090
 
 EXE="$0"
 
@@ -47,7 +48,7 @@ CLONE_FILES
 "
 
 function help(){
-	echo "usage:	$(basename $0) [OPTION]"
+	echo "usage:	$(basename "$EXE") [OPTION]"
 	echo
 	echo " --help		show help"
 	echo " --version	show version"
@@ -62,6 +63,7 @@ function writecfg(){
 	echo -e "# $CFG \n# For SLES11,12.\n#"
 	for c in $CFGVAR; do
 		echo "${c}=\""
+		# shellcheck disable=SC2086
 		echo ${!c} | tr " " "\n"
 		echo "\""
 		echo "#"
@@ -72,7 +74,7 @@ function writecfg(){
 # TODO call cs_sum_base_config instead of having own function
 function sum_config(){
 	S="NA"
-	test -r $f && S=$(md5sum $f | awk '{print $1}')
+	test -r "$f" && S=$(md5sum "$f" | awk '{print $1}')
 	echo "$f = $S"
 }
 
@@ -98,7 +100,7 @@ function show_files(){
 		(( nf++ ))
 		S="NA"
 		echo "#########################################################"
-		test -r $f && S=$(grep -v "^[[:blank:]]*#" $f | tr -s "\n")
+		test -r "$f" && S=$(grep -v "^[[:blank:]]*#" "$f" | tr -s "\n")
 		echo "# $f :"
 		echo "$S"
 		echo
@@ -110,8 +112,8 @@ function show_files(){
 # main()
 case $1 in
 	-v|--version)
-		echo -n "$(basename $EXE) "
-		head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	-w|--writecfg)

@@ -6,13 +6,13 @@
 # GNU General Public License v2. No warranty.
 # Author: L.Pinne
 #
-# Version: 2018-03-05
+# Version: 2019-11-28
 #
 # (c) Apr 2009, Author: Dominik Klein
 # Display scores of Linux-HA resources
 #
 
-if [ "$1" = "--help" -o "$1" = "-h" ]
+if [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
 	echo "cs_show_scores - basically parsing \"crm resource scores\""
 	echo "Usage: "
@@ -38,10 +38,10 @@ then
 	sortby=3
 fi
 
-export default_stickiness=`crm_attribute -G -n default-resource-stickiness -Q 2>/dev/null`
-export default_migrationthreshold=`crm_attribute -G -n migration-threshold -t rsc_defaults -Q 2>/dev/null`
+default_stickiness=$(crm_attribute -G -n default-resource-stickiness -Q 2>/dev/null); export default_stickiness
+default_migrationthreshold=$(crm_attribute -G -n migration-threshold -t rsc_defaults -Q 2>/dev/null); export default_migrationthreshold
 
-if [ -n "$1" -a "$1" != "node" ]
+if [ -n "$1" ] && [ "$1" != "node" ]
 then
       resource=$1
 fi
@@ -50,28 +50,30 @@ then
       nodename=$2
 fi
 
-2>&1 ptest -Ls | grep -E "$resource" | grep -E "$nodename" > $tmpfile
+#2>&1 ptest -Ls | grep -E "$resource" | grep -E "$nodename" > $tmpfile
+crm resource scores | grep -E "$resource" | grep -E "$nodename" > $tmpfile
 
 parseline() { 
-	if ! echo $*|grep -q "promotion score"; then
+	if ! echo "$@"|grep -q "promotion score"; then
 		shift;
 	fi
 	res=$1; shift; shift; shift; shift; 
-	node=$(echo $1|sed 's/:$//'); shift; 
+	# shellcheck disable=SC2001
+	node=$(echo "$1"|sed 's/:$//'); shift;
 	score=$1; 
 }
 
 get_stickiness() {
 	res="$1"
 	# get meta attribute resource_stickiness
-	if ! stickiness=`crm_resource -g resource-stickiness -r $res --meta -Q 2>/dev/null`
+	if ! stickiness=$(crm_resource -g resource-stickiness -r "$res" --meta -Q 2>/dev/null)
 	then
 		# if no resource-specific stickiness is confiugured, use the default value
 		stickiness="$default_stickiness"
 	fi
 
 	# get meta attribute resource_failure_stickiness
-	if ! migrationthreshold=`crm_resource -g migration-threshold -r $res --meta -Q 2>/dev/null`
+	if ! migrationthreshold=$(crm_resource -g migration-threshold -r "$res" --meta -Q 2>/dev/null)
 	then
 		# if that doesnt exist, use the default value
 		migrationthreshold="$default_migrationthreshold"
@@ -79,55 +81,63 @@ get_stickiness() {
 }
 
 get_failcount() { #usage $0 res node
-        failcount=`crm_failcount -G -r $1 -U $2 -Q 2>/dev/null|grep -o "^[0-9]*$"`
+        failcount=$(crm_failcount -G -r "$1" -U "$2" -Q 2>/dev/null|grep -o "^[0-9]*$")
 }
 
 #determine the longest resource name to adjust width of the first column
 max_res_id_len=0
-for res_id in $(tail -n +2 $tmpfile | sed 's/^[a-zA-Z_-]*\:\ //' | cut -d " " -f 1 | sort | uniq); do 
-	res_id_len=$(echo $res_id|wc -c) 
-	[ $res_id_len -gt $max_res_id_len ] && export max_res_id_len=$res_id_len; 
+#for res_id in $(tail -n +2 $tmpfile | sed 's/^[a-zA-Z_-]*\:\ //' | cut -d " " -f 1 | sort | uniq); do
+for res_id in $(sed 's/^[a-zA-Z_-]*\:\ //' $tmpfile | cut -d " " -f 1 | sort | uniq); do
+	# shellcheck disable=SC2000
+	res_id_len=$(echo "$res_id"|wc -c)
+	[ "$res_id_len" -gt "$max_res_id_len" ] && export max_res_id_len=$res_id_len;
 done
-# we'll later add "_(master)" to master scores, so add 9 chars to max_res_id_len
-max_res_id_len=$(($max_res_id_len+9))
 
 #same for nodenames
 max_node_id_len=0
 for node_id in $(sed 's/^[a-zA-Z_-]*\:\ //' $tmpfile | cut -d " " -f 5 | grep -v "^$" | sort | uniq | sed 's/\://'); do
-	node_id_len=$(echo $node_id|wc -c)
-	[ $node_id_len -gt $max_node_id_len ] && export max_node_id_len=$node_id_len;
+	# shellcheck disable=SC2000
+	node_id_len=$(echo "$node_id"|wc -c)
+	[ "$node_id_len" -gt "$max_node_id_len" ] && export max_node_id_len=$node_id_len;
 done
 
+# we'll later add "_(master)" to master scores, so add 9 chars to max_res_id_len
+max_res_id_len=$((max_res_id_len + 9))
+
 # display allocation scores
-grep native_color $tmpfile | while read line
+grep native_color $tmpfile | while read -r line
 do
 	unset node res score stickiness failcount migrationthreshold
+	# shellcheck disable=SC2086
 	parseline $line
-	get_stickiness $res
-	get_failcount $res $node
-	printf "%-${max_res_id_len}s%-10s%-${max_node_id_len}s%-11s%-9s%-16s\n" $res $score $node $stickiness $failcount $migrationthreshold
+	get_stickiness "$res"
+	get_failcount "$res" "$node"
+	printf "%-${max_res_id_len}s%-10s%-${max_node_id_len}s%-11s%-9s%-16s\n" "$res" "$score" "$node" "$stickiness" "$failcount" "$migrationthreshold"
 done >> $tmpfile2
 
 # display promotion scores
-grep "promotion score" $tmpfile | while read line
+grep "promotion score" $tmpfile | while read -r line
 do
 	unset node res score stickiness failcount migrationthreshold
+	# shellcheck disable=SC2086
 	parseline $line
 	# Skip if node=none. Sometimes happens for clones but is internally mapped to another clone instance, so this is skipped
 	[ "$node" = "none" ] && continue
-	inflines=`grep "promotion score" $tmpfile | grep $res | grep 1000000 | wc -l`
-	if [ $inflines -eq 1 ]
+	# shellcheck disable=SC2126
+	inflines=$(grep "promotion score" $tmpfile | grep "$res" | grep 1000000 | wc -l)
+	if [ "$inflines" -eq 1 ]
 	then
 		# [10:24] <beekhof> the non INFINITY values are the true ones
 		# [10:25] <kleind> except for when the actually resulting score is [-]INFINITY
 		# [10:25] <beekhof> yeah
-		actualline=`grep "promotion score" $tmpfile | grep $res | grep -v 1000000`
+		actualline=$(grep "promotion score" $tmpfile | grep "$res" | grep -v 1000000)
+		# shellcheck disable=SC2086
 		parseline $actualline
 	fi
-	get_stickiness $res
-	get_failcount $res $node
+	get_stickiness "$res"
+	get_failcount "$res" "$node"
 	res=$res"_(master)"
-	printf "%-${max_res_id_len}s%-10s%-${max_node_id_len}s%-11s%-9s%-16s\n" $res $score $node $stickiness $failcount $migrationthreshold
+	printf "%-${max_res_id_len}s%-10s%-${max_node_id_len}s%-11s%-9s%-16s\n" "$res" "$score" "$node" "$stickiness" "$failcount" "$migrationthreshold"
 done | sort | uniq >> $tmpfile2
 
 if [ "$3" = "singlescore" ]

@@ -7,11 +7,13 @@
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 2015-03-09 10:50
+# Version: 2019-11-28 10:50
+#
+# shellcheck disable=SC1090
 #
 
 EXE="$0"
-ERR="/dev/null"
+#ERR="/dev/null"
 
 CFG="/etc/ClusterTools2/cs_stresscib"
 test -s $CFG && source $CFG
@@ -43,7 +45,7 @@ function do_init() {
 	touch $F_LOG
 	SVC=$(/sbin/chkconfig openais | tr -d " ")
 	if [ "$SVC" != openaison ]; then
-		echo "ERR: do_init: no chkconfig openais on: RC=$2" >/dev/stderr
+		echo "ERR: do_init: no chkconfig openais on: RC=2" >/dev/stderr
 		exit 2
 	fi
 	time_stamp=$(/bin/date +%F_%H-%M-%S)
@@ -92,7 +94,7 @@ function do_run() {
 	# TODO how many attributes: 6 x $N_NODE or $N_NODE ?
  	attr_value=${time_stamp}
 	attr_node=$HOSTNAME
-	for j in {1..6}; do
+	for _ in {1..6}; do
  		attr_name="val_stresscib_${attr_node}"
 		do_run_writehost 2>/dev/null; RC=$?
 		echo "$time_stamp : do_run_writehost : ${attr_node} ${attr_name} ${attr_value} : RC=$RC"
@@ -101,10 +103,10 @@ function do_run() {
 	time_stamp=$(/bin/date +%F_%H-%M-%S)
 	# write cluster specific attributes, 2 times
 	attr_value=${time_stamp}
-	NODE_1=$(echo $L_NODE | cut -d" " -f1)
+	NODE_1=$(echo "$L_NODE" | cut -d" " -f1)
 	# TODO better to get NODE_2 from last entry?
-	NODE_2=$(echo $L_NODE | cut -d" " -f2)
-	if [ "$HOSTNAME" = "$NODE_1" -o "$HOSTNAME" = "$NODE_2" ]; then
+	NODE_2=$(echo "$L_NODE" | cut -d" " -f2)
+	if [ "$HOSTNAME" = "$NODE_1" ] || [ "$HOSTNAME" = "$NODE_2" ]; then
 		attr_name="val_stresscib_cluster"
 		do_run_writecluster; RC=$?
 		echo "$time_stamp : do_run_writecluster : cluster ${attr_name} ${attr_value} : RC=$RC"
@@ -130,12 +132,12 @@ function do_run() {
 
 function do_run_writehost(){
 	# echo "/usr/sbin/crm_attribute -N ${attr_node} -v \"$attr_value\" -n \"$attr_name\" -l $attr_store -q"
-	/usr/sbin/crm_attribute -N ${attr_node} -v "$attr_value" -n "$attr_name" -l $attr_store -q
+	/usr/sbin/crm_attribute -N "${attr_node}" -v "$attr_value" -n "$attr_name" -l $attr_store -q
 }
 
 
 function do_run_readhost(){
-	/usr/sbin/crm_attribute -N ${attr_node} -G -n "$attr_name" -l $attr_store -q
+	/usr/sbin/crm_attribute -N "${attr_node}" -G -n "$attr_name" -l $attr_store -q
 }
 
 
@@ -164,8 +166,8 @@ function do_show() {
 
 
 function do_help() {
-	echo "usage: $(basename $0) [--help | --version | --init | --exit | --run ] "
-	echo "usage: $(basename $0) --run [123] "
+	echo "usage: $(basename "$EXE") [--help | --version | --init | --exit | --run ] "
+	echo "usage: $(basename "$EXE") --run [123] "
 	echo
 	echo " --init		initialise cib stress cron job."
 	echo " --exit		stop cib stress cron job."
@@ -182,8 +184,8 @@ function do_help() {
 
 case $1 in
 	-v|--version)
-		echo -n "$(basename $EXE) "
-		head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	-i|--init)
@@ -195,7 +197,7 @@ case $1 in
 	-r|run)
 		shift
 		LOAD=1
-		test -z $1 || LOAD=$1
+		test -z "$1" || LOAD=$1
 		case $LOAD in
 			1)
 				do_run >>$F_LOG 2>&1

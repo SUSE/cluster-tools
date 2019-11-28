@@ -7,7 +7,9 @@
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: SLES12 0.2 2019-07-22
+# Version: SLES12,SLES15 0.2 2019-11-28
+#
+# shellcheck disable=SC1090
 #
 
 EXE="$0"
@@ -18,6 +20,7 @@ test -s $CFG && source $CFG
 RDM=$RANDOM
 DMSG="/tmp/dmesg.$RDM"
 JCTL=""
+ORGFS=$IFS
 
 CFGVAR="
 ERROR_PATTERN
@@ -33,7 +36,7 @@ test -z "${SYSTEM_LOG}" &&\
 	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0 /var/log/mcelog"
 
 # TODO SLES12 bond ...?
-if which journalctl 2>/dev/null; then
+if command -v journalctl 2>/dev/null; then
 	JCTL="/tmp/journalctl.$RDM"
 	test -z "${SYSTEM_LOG}" &&\
 		SYSTEM_LOG="/var/log/messages /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0 /var/log/mcelog"
@@ -42,160 +45,161 @@ SYSTEM_LOG="${SYSTEM_LOG} ${DMSG} ${JCTL}"
 
 test -z "/etc/corosync/corosync.conf" &&\
 test -z "${CLUSTER_LOG}" &&\
-	 CLUSTER_LOG=$(grep "logfile:.*/" /etc/corosync/corosync.conf |\
+	 CLUSTER_LOG=$(grep "^[^#]*logfile:.*/" /etc/corosync/corosync.conf |\
 		 tr -d "    " | cut -d":" -f2)
 
 test -z "${ZIPPED_LOG}" &&\
 	ZIPPED_LOG="/var/log/messages*bz2"
-	ZIPPED_LOG="${ZIPPED_LOG} $(echo ${CLUSTER_LOG}|tr -d \\n)*bz2"
+test -n "${CLUSTER_LOG}" &&\
+	ZIPPED_LOG="${ZIPPED_LOG} $(echo "${CLUSTER_LOG}"|tr -d \\n)*bz2"
 
 # TODO add more HBA errors: hpsa cciss
 test -z "${ERROR_PATTERN}" &&\
 	 ERROR_PATTERN="
-"taint.flag"
-"signature.*missing"
-"no.device.*found"
-"be2net.*Error"
-"bnx2x.*failed"
-"mlx4_en.*error"
-"bfa.*err"
-"lpfc.*err"
-"lpfc.*failed"
-"lpfc.*Not.supported"
-"ibmvfc.*failed"
-"qla.*err"
-"qla.*failed"
-"qlge.*error"
-"Ramping.down.queue"
-"hfcldd.*Err"
-"unsupported.SFP.*module"
-"IO_PAGE_FAULT"
-"NMI.received"
-"NMI.*error"
-"irq.*nobody.cared"
-"kthread.starved.for.*jiffies"
-"urandom.warning"
-"Signaling PME.*interrupt"
-"Error.DRAM"
-"Uncorrectable.*rror"
-"error.detected.during.POST"
-"mce:.CPU.supports.0.MCE.banks"
-"Processor.*temperature"
-"SMP.disabled"
-"No.hypervisor.support.for.SR-IOV"
-"Firmware.Bug"
-"BIOS.bug"
-"Broken.BIOS"
-"kernel.*task.*abort"
-"kernel.*ACPI.Error"
-"kernel.*Hardware.Error"
-"kernel.*page.allocation.failure"
-"kernel.*failed.to.assign"
-"kernel.*medium.error"
-"kernel.*pci.*failed"
-"kernel.*lost.*interrupt"
-"kernel.*not.have.kernel.memory.protection"
-"kernel.*clocksource:.*witched"
-"BUG:. workqueue.lockup"
-"Section.*circular.dependency"
-"double.fault:"
-"target.failure"
-"reservation.conflict"
-"SCSI.*reset"
-"LUN.larger"
-"I/O.error"
-"Broken.pipe"
-"Dropped.frame"
-"disabling.*barrier"
-"doesn.*support.*DPO.*FUA"
-"BBU.disabled"
-"Warning.*LUN.assignments.*changed"
-"[Ff]ail.*/dev/md"
-"U_\|_U"
-"found.0.matching.devices"
-"/dev/md.*failed"
-"duplicate.VG"
-"duplicate.PV"
-"not.found"
-"mount.over.is.not.empty"
-"fsck.*recommended"
-"EXT.-fs.error"
-"BTRFS.error"
-"Starting.XFS.recovery"
-"xfs_log_force.*error"
-"XFS.*allocation.deadlock"
-"sdrServ:.*err"
-"server.*not.responding"
-"iSCSI.connection.*error"
-"Sense.*error"
-"bond.*link.*down"
-"bond.*duplicate.address"
-"bond.*not.detect.*failures"
-"bond.*permanent.HWaddr.*use"
-"bond.*No.*response"
-"link.*not.ready"
-"ink..ailure"
-"RPC.*multiple.fragments"
-"martian.source.*dev"
-"unexpectedly.shrunk.window"
-"TCP:.Possible.SYN.flooding.on.port"
-"net_ratelimit:"
-"Host.*is.not.allowed.to.talk.to.us"
-"COMPLAIN.ACCEPT.*MAC"
-"POSSIBLE.BREAK-IN.ATTEMPT"
-"error:.PAM:.User.not.known"
-"conversation.failed"
-"refused.mount.request"
-"nfs..server.*not.responding"
-"Failed.to.read"
-"exits.with.status.*[1-9]"
-"cgroup:.*rejected"
-"shutdown.*shutting.down"
-"Out.of.memory"
-"invoked.oom-killer"
-"Call.Trace"
-"soft.lockup"
-"kernel.*deprecated"
-"annot.open.*file"
-"nable.to.open.*file"
-"nable.to.load"
-"Potential.spurious.wakeup"
-"annot.create..ocket"
-"end.*failed"
-"ead.*failed"
-"pagecache.limit.set"
+taint.flag
+signature.*missing
+no.device.*found
+be2net.*Error
+bnx2x.*failed
+mlx4_en.*error
+bfa.*err
+lpfc.*err
+lpfc.*failed
+lpfc.*Not.supported
+ibmvfc.*failed
+qla.*err
+qla.*failed
+qlge.*error
+Ramping.down.queue
+hfcldd.*Err
+unsupported.SFP.*module
+IO_PAGE_FAULT
+NMI.received
+NMI.*error
+irq.*nobody.cared
+kthread.starved.for.*jiffies
+urandom.warning
+Signaling PME.*interrupt
+Error.DRAM
+Uncorrectable.*rror
+error.detected.during.POST
+mce:.CPU.supports.0.MCE.banks
+Processor.*temperature
+SMP.disabled
+No.hypervisor.support.for.SR-IOV
+Firmware.Bug
+BIOS.bug
+Broken.BIOS
+kernel.*task.*abort
+kernel.*ACPI.Error
+kernel.*Hardware.Error
+kernel.*page.allocation.failure
+kernel.*failed.to.assign
+kernel.*medium.error
+kernel.*pci.*failed
+kernel.*lost.*interrupt
+kernel.*not.have.kernel.memory.protection
+kernel.*clocksource:.*witched
+BUG:. workqueue.lockup
+Section.*circular.dependency
+double.fault:
+target.failure
+reservation.conflict
+SCSI.*reset
+LUN.larger
+I/O.error
+Broken.pipe
+Dropped.frame
+disabling.*barrier
+doesn.*support.*DPO.*FUA
+BBU.disabled
+Warning.*LUN.assignments.*changed
+[Ff]ail.*/dev/md
+U_\|_U
+found.0.matching.devices
+/dev/md.*failed
+duplicate.VG
+duplicate.PV
+not.found
+mount.over.is.not.empty
+fsck.*recommended
+EXT.-fs.error
+BTRFS.error
+Starting.XFS.recovery
+xfs_log_force.*error
+XFS.*allocation.deadlock
+sdrServ:.*err
+server.*not.responding
+iSCSI.connection.*error
+Sense.*error
+bond.*link.*down
+bond.*duplicate.address
+bond.*not.detect.*failures
+bond.*permanent.HWaddr.*use
+bond.*No.*response
+link.*not.ready
+ink..ailure
+RPC.*multiple.fragments
+martian.source.*dev
+unexpectedly.shrunk.window
+TCP:.Possible.SYN.flooding.on.port
+net_ratelimit:
+Host.*is.not.allowed.to.talk.to.us
+COMPLAIN.ACCEPT.*MAC
+POSSIBLE.BREAK-IN.ATTEMPT
+error:.PAM:.User.not.known
+conversation.failed
+refused.mount.request
+nfs..server.*not.responding
+Failed.to.read
+exits.with.status.*[1-9]
+cgroup:.*rejected
+shutdown.*shutting.down
+Out.of.memory
+invoked.oom-killer
+Call.Trace
+soft.lockup
+kernel.*deprecated
+annot.open.*file
+nable.to.open.*file
+nable.to.load
+Potential.spurious.wakeup
+annot.create..ocket
+end.*failed
+ead.*failed
+pagecache.limit.set
 "
 
 test -z "${SVCERR_PATTERN}" &&\
 	 SVCERR_PATTERN="
-"systemd.*Received.SIGINT"
-"systemd.*start-limit"
-"systemd.*nknown"
-"systemd.*Proceeding.anyway"
-"systemd.*No.such.file"
-"systemd.*Failed"
-"systemd-coredump.*dumped core"
-"wickedd.*ouldn"
-"SMART.*failure"
-"multipathd.*timed.out"
-"multipathd.*mpath.*unable"
-"multipathd.*reinstated"
-"multi.*path.*down"
-"lvmetad.*failed"
-"fstrim:.*FITRIM.ioctl.failed:"
-"wicked.*failed"
-"ntpd.*failed"
-"ntpd.*time.reset"
-"ntpd.TIME_ERROR"
-"time.sync.status.changed"
-"Frequency.format.error"
-"failed.to.bind.to.LDAP"
-"logrotate.*error"
-"Failed.services.*runlevel"
-"syslog-ng.shutting.down"
-"postfix.*fatal"
-"cgroup:.fork.rejected"
-"sfcbd.*Fatal"
+systemd.*Received.SIGINT
+systemd.*start-limit
+systemd.*nknown
+systemd.*Proceeding.anyway
+systemd.*No.such.file
+systemd.*Failed
+systemd-coredump.*dumped core
+wickedd.*ouldn
+SMART.*failure
+multipathd.*timed.out
+multipathd.*mpath.*unable
+multipathd.*reinstated
+multi.*path.*down
+lvmetad.*failed
+fstrim:.*FITRIM.ioctl.failed:
+wicked.*failed
+ntpd.*failed
+ntpd.*time.reset
+ntpd.TIME_ERROR
+time.sync.status.changed
+Frequency.format.error
+failed.to.bind.to.LDAP
+logrotate.*error
+Failed.services.*runlevel
+syslog-ng.shutting.down
+postfix.*fatal
+cgroup:.fork.rejected
+sfcbd.*Fatal
 "
 
 # TODO raid.set.*active.with.2.out.of.2.mirrors ?
@@ -207,67 +211,67 @@ test -z "${SVCERR_PATTERN}" &&\
 
 test -z "${CLUERR_PATTERN}" &&\
 	 CLUERR_PATTERN="
-"TOTEM.*FAILED.*RECEIVE"
-"TOTEM.*processor.failed"
-"TOTEM.*Incrementing.problem"
-"TOTEM.*Retransmit.List"
-"corosync.*not.scheduled"
-"quorum.lost"
-"fenced.because.*.un-expectedly.down"
-"stonith.*Device.*not.fond"
-"Node.*unclean"
-"pcmk.*Child.process.*exited"
-"pcmk.*message.*local.cib.failed"
-"pengine.*fenced.*resource.failure"
-"pengine.*Forcing.*away.*failures"
-"High.CIB.load"
-"crm_resource.*Error"
-"crmd.*ERROR:"
-"crmd.*Updating.failcount.*stop"
-"crmd.*Updating.failcount.*start"
-"crmd.*High.CPU.load"
-"sbd.*mbox.read.failed"
-"sbd.*Latency"
-"oft.og.*not"
-"dlm.*link.*down"
-"ocfs2.*has.evicted"
-"ocfs2.*ERR"
-"ocfs2.*not.unmounted.cleanly"
-"OCFS2.*kernel.interface.loaded"
-"o2dlm_eviction_cb"
+TOTEM.*FAILED.*RECEIVE
+TOTEM.*processor.failed
+TOTEM.*Incrementing.problem
+TOTEM.*Retransmit.List
+corosync.*not.scheduled
+quorum.lost
+fenced.because.*.un-expectedly.down
+stonith.*Device.*not.fond
+Node.*unclean
+pcmk.*Child.process.*exited
+pcmk.*message.*local.cib.failed
+pengine.*fenced.*resource.failure
+pengine.*Forcing.*away.*failures
+High.CIB.load
+crm_resource.*Error
+crmd.*ERROR:
+crmd.*Updating.failcount.*stop
+crmd.*Updating.failcount.*start
+crmd.*High.CPU.load
+sbd.*mbox.read.failed
+sbd.*Latency
+oft.og.*not
+dlm.*link.*down
+ocfs2.*has.evicted
+ocfs2.*ERR
+ocfs2.*not.unmounted.cleanly
+OCFS2.*kernel.interface.loaded
+o2dlm_eviction_cb
 "
 
 test -z "${APPERR_PATTERN}" &&\
 	APPERR_PATTERN="
-"Serviceguard.daemon.*exit"
-"GAB.*failure"
-"Symantec.Technical.Support"
-"error.*VRT"
-"VCS.CRITICAL"
-"vxvm.*volume.*not"
-"Hangcheck.*clock"
-"lin_tape.*failed"
-"vasd.will.not.synchronize.time"
-"vascache.*error"
-"sapstartsrv.*pam_systemd.*Failed"
-"Printing:.*Problem"
-"Basis.System:.*error"
-"Basis.System:.*canceled"
-"Basis.System:.*SYSFAIL"
-"Basis.System:.*lost"
-"bluestore.*FAILED"
-"ceph.*Failed"
-"ceph.*_fail"
-"ceph.*ERROR"
-"tclink.*ERROR"
-"tclink.*error"
-"salt.*ERROR"
-"discagent.*Error"
+Serviceguard.daemon.*exit
+GAB.*failure
+Symantec.Technical.Support
+error.*VRT
+VCS.CRITICAL
+vxvm.*volume.*not
+Hangcheck.*clock
+lin_tape.*failed
+vasd.will.not.synchronize.time
+vascache.*error
+sapstartsrv.*pam_systemd.*Failed
+Printing:.*Problem
+Basis.System:.*error
+Basis.System:.*canceled
+Basis.System:.*SYSFAIL
+Basis.System:.*lost
+bluestore.*FAILED
+ceph.*Failed
+ceph.*_fail
+ceph.*ERROR
+tclink.*ERROR
+tclink.*error
+salt.*ERROR
+discagent.*Error
 "
 
 function help() {
-	echo "usage:	$(basename $0)"
-	echo "	$(basename $0) [OPTION]"
+	echo "usage:	$(basename "$EXE")"
+	echo "	$(basename "$EXE") [OPTION]"
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
@@ -277,13 +281,18 @@ function help() {
 
 
 function writecfg(){
-	echo -e "# $CFG \n# For SLES12.\n#"
+	echo -e "# $CFG \n# For SLES12 and SLES15.\n#"
+	# to preserve blanks in the pattern
+	# else ${!c} will mangle the lines
+	IFS=$'\n'
 	for c in $CFGVAR; do
 		echo "${c}=\""
-		echo ${!c} | tr " " "\n"
+		# shellcheck disable=SC2086
+		printf "%s\n" ${!c}
 		echo "\""
 		echo "#"
 	done
+	IFS=$ORGFS
 }
 
 
@@ -291,21 +300,26 @@ function run_grep() {
 	echo -e "logs: $LOG\n" >/dev/stderr
 
 	dmesg >$DMSG
-	which journalctl 2>/dev/null && journalctl --no-pager >$JCTL
+	command -v journalctl 2>/dev/null && journalctl --no-pager >$JCTL
 
 	# TODO more efficient loop
+	IFS=$'\n'
 	for e in ${ERROR_PATTERN} ${SVCERR_PATTERN}; do
+		IFS=$ORGFS
         	echo -n "$e = "
 		for f in ${LOG}; do
-			test -r $f && cat $f
-		done | zgrep -ic $e
+			test -r "$f" && cat "$f"
+		done | zgrep -ic "$e"
 	done
+	IFS=$'\n'
 	for e in ${CLUERR_PATTERN} ${APPERR_PATTERN}; do
+		IFS=$ORGFS
         	echo -n "$e = "
 		for f in ${LOG}; do
-			test -r $f && cat $f
-		done | zgrep -ic $e
+			test -r "$f" && cat "$f"
+		done | zgrep -ic "$e"
 	done
+	IFS=$ORGFS
 
 	rm $DMSG $JCTL
 }
@@ -314,8 +328,8 @@ function run_grep() {
 # main()
 case $1 in
 	-v|--version)
-		echo -n "$(basename $EXE) "
-        	head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	-h|--help)
@@ -328,16 +342,16 @@ case $1 in
 	;;
 	-z|--zip)
 		LOG="${SYSTEM_LOG}"
-		test -s ${CLUSTER_LOG} && LOG="${LOG} ${CLUSTER_LOG}"
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${LOG} ${CLUSTER_LOG}"
 		for z in ${ZIPPED_LOG}; do
-			test -s $z && LOG="${LOG} ${z}"
+			test -s "$z" && LOG="${LOG} ${z}"
 		done
 		run_grep
 		exit
 	;;
 	*)
 		LOG="${SYSTEM_LOG}"
-		test -s ${CLUSTER_LOG} && LOG="${LOG} ${CLUSTER_LOG}"
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${LOG} ${CLUSTER_LOG}"
 		run_grep
 		exit		
 	;;

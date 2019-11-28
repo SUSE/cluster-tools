@@ -8,7 +8,9 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-05-28 SLES12
+# Version: 2019-11-28 SLES12, SLES15
+#
+# shellcheck disable=SC1090
 #
 
 EXE="$0"
@@ -16,37 +18,47 @@ EXE="$0"
 CFG="/etc/ClusterTools2/cs_show_cluster_patterns"
 test -s $CFG && source $CFG
 
+RDM=$RANDOM
+JCTL=""
+ORGFS=$IFS
+
 test -z "/etc/corosync/corosync.conf" &&\
 test -z "${CLUSTER_LOG}" &&\
 	 CLUSTER_LOG=$(grep "^[^#]*logfile:.*/" /etc/corosync/corosync.conf |\
 		 tr -d "    " | cut -d":" -f2)
 test -z "${CLUSTER_LOG}" &&\
-	 CLUSTER_LOG="/var/log/messages"
-
+	CLUSTER_LOG="/var/log/messages"
 ZIPPED_LOG="${CLUSTER_LOG}*bz2"
+
+if [ ! -s "${CLUSTER_LOG}" ]; then
+	if command -v journalctl 2>/dev/null; then
+		JCTL="/tmp/journalctl.$RDM"
+		CLUSTER_LOG=${JCTL}
+	fi
+fi
 
 # TODO: what error msgs. make sense?
 # TODO: xfs_repair
 test -z "${OSERR_PATTERN}" &&\
-	 OSERR_PATTERN="
-"NMI.received"
-"NMI.*error"
-"dlm.*link.*down"
-"ocfs2.*has.evicted"
-"ocfs2.*ERR"
-"ocfs2.*not.unmounted.cleanly"
-"OCFS2.*kernel.interface.loaded"
-"o2dlm_eviction_cb"
-"fsck.*recommended"
-"EXT.-fs.error"
-"XFS.*Shutting.down"
-"multipath.*path.removed"
-"shutdown.*shutting.down"
-"syslog-ng.shutting.down"
-"syslog-ng.starting.up"
-"kernel.*bootconsole.*enabled"
-"systemd.*Stopping.Restore.*shutdown"
-"oft[Dd]og.*not"
+	OSERR_PATTERN="
+NMI.received
+NMI.*error
+dlm.*link.*down
+ocfs2.*has.evicted
+ocfs2.*ERR
+ocfs2.*not.unmounted.cleanly
+OCFS2.*kernel.interface.loaded
+o2dlm_eviction_cb
+fsck.*recommended
+EXT.-fs.error
+XFS.*Shutting.down
+multipath.*path.removed
+shutdown.*shutting.down
+syslog-ng.shutting.down
+syslog-ng.starting.up
+kernel.*bootconsole.*enabled
+systemd.*Stopping.Restore.*shutdown
+oft[Dd]og.*not
 "
 
 # TODO: verify cluster log msgs. maybe more generic possible?
@@ -55,102 +67,102 @@ test -z "${OSERR_PATTERN}" &&\
 # TODO: update config file from built-in pattern list
 test -z "${CLUSTR_PATTERN}" &&\
 	 CLUSTR_PATTERN="
-"CLM.*Members.Left:"
-"TOTEM.*FAILED.*RECEIVE"
-"TOTEM.*processor.failed"
-"TOTEM.*Incrementing.problem"
-"TOTEM.*Retransmit.List"
-"pcmk.*Invalid.destination"
-"pcmk.*Assertion.failure"
-"pcmk.*Child.process.*exited"
-"pcmk.*Sending.message.*failed"
-"stonith.*Device.*not.found"
-"stonith.*Found.[01].matching.devices"
-"stonith.*failed"
-"stonith.*timed.out"
-"error.executing.ipmitool"
-"pengine.fenced.because.*.un-expectedly.down"
-"pengine.*Node.*unclean"
-"pengine.*fenced.*resource.failure"
-"pengine.*Forcing.*away.*failures"
-"pengine.*LogActions:.Start"
-"pengine.*LogActions:.Stop"
-"pengine.*LogActions:.Recover"
-"pengine.*LogActions:.Restart"
-"pengine.*LogActions:.Monitor"
-"pengine.*LogActions:.Move"
-"pengine.*LogActions:.Leave.*\(Started\)"
-"pengine.*LogActions:.Leave.*\(Stopped\)"
-"pengine.*LogActions:.Leave.*\(Started.unmanaged\)"
-"pengine.*LogActions:.Leave.*\(Stopped.unmanaged\)"
-"cib.*failed"
-"High.CIB.load"
-"crm_resource.*Error"
-"crmd.*quorum.lost"
-"crmd.*our.DC.is.dead"
-"crmd.*Resource.*active.at.shutdouwn"
-"crmd.*Action.*not.supported"
-"crmd.*State.transition.S_IDLE"
-"crmd.*State.transition.S_POLICY_ENGINE"
-"crmd.*State.transition.S_TRANSITION_ENGINE"
-"crmd.*State.transition.S_STARTING"
-"crmd.*State.transition.S_PENDING"
-"crmd.*State.transition.S_ELECTION"
-"crmd.*State.transition.S_INTEGRATION"
-"crmd.*State.transition.S_FINALIZE_JOIN"
-"crmd.*State.transition.S_NOT_DC"
-"crmd.*ERROR:"
-"crmd.*Updating.failcount.*stop"
-"crmd.*Updating.failcount.*start"
-"crmd.*cluster.nodes.*eligible"
-"crmd.*High.CPU.load"
-"lrmd.*probe"
-"lrmd.*RA.output.*failed"
-"lrmd.*RA.output.*error"
-"sbd.*Initializing"
-"sbd.*Monitoring"
-"sbd.*Using.watchdog"
-"sbd.*Set.watchdog.timeout"
-"sbd.*Writing.*to"
-"sbd.*successfully.delivered"
-"sbd.*Received.command"
-"sbd.*mbox.read.failed"
-"sbd.*Latency"
-"sbd.*terminated"
-"sbd.*Rebooting.system"
-"stonith-ng.*Failed"
+CLM.*Members.Left:
+TOTEM.*FAILED.*RECEIVE
+TOTEM.*processor.failed
+TOTEM.*Incrementing.problem
+TOTEM.*Retransmit.List
+pcmk.*Invalid.destination
+pcmk.*Assertion.failure
+pcmk.*Child.process.*exited
+pcmk.*Sending.message.*failed
+stonith.*Device.*not.found
+stonith.*Found.[01].matching.devices
+stonith.*failed
+stonith.*timed.out
+error.executing.ipmitool
+pengine.fenced.because.*.un-expectedly.down
+pengine.*Node.*unclean
+pengine.*fenced.*resource.failure
+pengine.*Forcing.*away.*failures
+pengine.*LogActions:.Start
+pengine.*LogActions:.Stop
+pengine.*LogActions:.Recover
+pengine.*LogActions:.Restart
+pengine.*LogActions:.Monitor
+pengine.*LogActions:.Move
+pengine.*LogActions:.Leave.*\(Started\)
+pengine.*LogActions:.Leave.*\(Stopped\)
+pengine.*LogActions:.Leave.*\(Started.unmanaged\)
+pengine.*LogActions:.Leave.*\(Stopped.unmanaged\)
+cib.*failed
+High.CIB.load
+crm_resource.*Error
+crmd.*quorum.lost
+crmd.*our.DC.is.dead
+crmd.*Resource.*active.at.shutdouwn
+crmd.*Action.*not.supported
+crmd.*State.transition.S_IDLE
+crmd.*State.transition.S_POLICY_ENGINE
+crmd.*State.transition.S_TRANSITION_ENGINE
+crmd.*State.transition.S_STARTING
+crmd.*State.transition.S_PENDING
+crmd.*State.transition.S_ELECTION
+crmd.*State.transition.S_INTEGRATION
+crmd.*State.transition.S_FINALIZE_JOIN
+crmd.*State.transition.S_NOT_DC
+crmd.*ERROR:
+crmd.*Updating.failcount.*stop
+crmd.*Updating.failcount.*start
+crmd.*cluster.nodes.*eligible
+crmd.*High.CPU.load
+lrmd.*probe
+lrmd.*RA.output.*failed
+lrmd.*RA.output.*error
+sbd.*Initializing
+sbd.*Monitoring
+sbd.*Using.watchdog
+sbd.*Set.watchdog.timeout
+sbd.*Writing.*to
+sbd.*successfully.delivered
+sbd.*Received.command
+sbd.*mbox.read.failed
+sbd.*Latency
+sbd.*terminated
+sbd.*Rebooting.system
+stonith-ng.*Failed
 "
 
 # TODO: SAPInstance, SAPDatabase patterns, See /etc/ClusterTools2/cs_show_cluster_patterns
 test -z "${RESRC_PATTERN}" &&\
 	 RESRC_PATTERN="
-"Volume.group.*error"
-"LVM.*not.*correctly"
-"CTDB.*not.start"
-"Timeout.*CTDB"
-"not.in.Secondary.mode"
-"demote.*still.primary"
-"Clone.options.misconfigured"
-"ERS_InstanceName.parameter.is.mandatory"
-"Cannot.find.sapstartsrv"
-"sapstartsrv.*for.instance"
-"Expected.*instance.*profile"
-"Expected.DIR_PROFILE.parameter"
-"SAP.*Unauthorized"
-"SAPHana.*Secure.store.users"
-"SAPHana.*RA.*rc=[1-7,9]"
-"HANA_CALL.timed.out"
-"SAPHanaTopology.*failed"
-"eDirectory.*failed.*stop"
-"eDirectory.*not.*configured"
-"eDir.configuration.error"
-"ndsd.*no.*socket"
-"eDirectory.isn.*running"
-"eDirectory.configuration.not"
-"Couldn.*find.device"
-"Couldn.*fsck"
-"Couldn.*mount"
-"DANGER.*NOT.cluster-aware"
+Volume.group.*error
+LVM.*not.*correctly
+CTDB.*not.start
+Timeout.*CTDB
+not.in.Secondary.mode
+demote.*still.primary
+Clone.options.misconfigured
+ERS_InstanceName.parameter.is.mandatory
+Cannot.find.sapstartsrv
+sapstartsrv.*for.instance
+Expected.*instance.*profile
+Expected.DIR_PROFILE.parameter
+SAP.*Unauthorized
+SAPHana.*Secure.store.users
+SAPHana.*RA.*rc=[1-7,9]
+HANA_CALL.timed.out
+SAPHanaTopology.*failed
+eDirectory.*failed.*stop
+eDirectory.*not.*configured
+eDir.configuration.error
+ndsd.*no.*socket
+eDirectory.isn.*running
+eDirectory.configuration.not
+Couldn.*find.device
+Couldn.*fsck
+Couldn.*mount
+DANGER.*NOT.cluster-aware
 "
 
 CFGVAR="
@@ -162,7 +174,7 @@ RESRC_PATTERN
 
 
 function help(){
-	echo "	$(basename $0) OPTION"
+	echo "	$(basename "$EXE") OPTION"
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
@@ -177,13 +189,18 @@ function help(){
 
 
 function writecfg(){
-	echo -e "# $CFG \n# For SLES11.\n#"
+	echo -e "# $CFG \n# For SLES12 and SLES15.\n#"
+	# to preserve blanks in the pattern
+	# else ${!c} will mangle the lines
+	IFS=$'\n'
 	for c in $CFGVAR; do
 		echo "${c}=\""
-		echo ${!c} | tr " " "\n"
+		# shellcheck disable=SC2086
+		printf "%s\n" ${!c}
 		echo "\""
 		echo "#"
 	done
+	IFS=$ORGFS
 }
 
 
@@ -191,11 +208,14 @@ function run_grep_show(){
 	echo "logs: $LOG" >/dev/stderr
 
         # TODO: more efficient loop
+	IFS=$'\n'
 	for e in ${OSERR_PATTERN} ${CLUSTR_PATTERN} ${RESRC_PATTERN}; do
+		IFS=$ORGFS
 		for f in ${LOG}; do
-			test -r $f && cat $f
-		done | grep -i $e
+			test -r "$f" && cat "$f"
+		done | grep -i "$e"
 	done | sort -M -k1,3
+	IFS=$ORGFS
 	# TODO: sort by timestamp OK ? "Sep 27 17:04:11 "
 	# TODO: sort error msgs.?
 }
@@ -205,12 +225,15 @@ function run_grep_count(){
 	echo "logs: $LOG" >/dev/stderr
 
 	# TODO: more efficient loop
+	IFS=$'\n'
 	for e in ${OSERR_PATTERN} ${CLUSTR_PATTERN} ${RESRC_PATTERN}; do
+		IFS=$ORGFS
         	echo -n "$e = "
 		for f in ${LOG}; do
-			test -r $f && cat $f
-		done | bzgrep -ic $e
+			test -r "$f" && cat "$f"
+		done | zgrep -ic "$e"
 	done
+	IFS=$ORGFS
 }
 
 
@@ -219,7 +242,7 @@ function run_grep_count(){
 function awk_migration(){
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
-		test -r $f && cat $f
+		test -r "$f" && cat "$f"
 	done | sort -M -k1,3 |\
 	awk '$0~/pengine.*LogActions:.Move/ {print}' 
 }
@@ -232,7 +255,7 @@ function awk_migration(){
 function awk_fencing(){
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
-		test -r $f && cat $f
+		test -r "$f" && cat "$f"
 	done | sort -M -k1,3 |\
 	grep -e "pengine:.*Node.*fenced" -e "sbd:.*reset"
 }
@@ -242,8 +265,9 @@ function awk_fencing(){
 # main()
 case $1 in
 	-v|--version)
-		echo -n "$(basename $EXE) "
-        	head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
+
 		exit
 	;;
 	-w|--writecfg)
@@ -251,32 +275,38 @@ case $1 in
 		exit
 	;;
 	-z|--zip)
+		test -n "${JCTL}" && journalctl --no-pager >$JCTL
 		LOG=""
 		for z in ${ZIPPED_LOG}; do
-			test -s $z && LOG="${LOG} ${z}"
+			test -s "$z" && LOG="${LOG} ${z}"
 		done
 		# unzipped log has to be last in loop :-/
-		test -s ${CLUSTER_LOG} && LOG="${LOG} ${CLUSTER_LOG}"
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${LOG} ${CLUSTER_LOG}"
+		
 		run_grep_count
 		exit
 	;;
 	-c|--count)
-		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		test -n "${JCTL}" && journalctl --no-pager >$JCTL
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${LOG} ${CLUSTER_LOG}"
 		run_grep_count
 		exit		
 	;;
 	-f|--fencing)
-		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		test -n "${JCTL}" && journalctl --no-pager >$JCTL
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${LOG} ${CLUSTER_LOG}"
 		awk_fencing
 		exit
 	;;
 	-m|--migration)
-		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		test -n "${JCTL}" && journalctl --no-pager >$JCTL
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${LOG} ${CLUSTER_LOG}"
 		awk_migration
 		exit
 	;;
 	-s|--show)
-		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		test -n "${JCTL}" && journalctl --no-pager >$JCTL
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${LOG} ${CLUSTER_LOG}"
 		run_grep_show
 		exit		
 	;;

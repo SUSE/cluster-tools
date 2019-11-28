@@ -7,7 +7,7 @@
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 2019-02-20 17:24
+# Version: 2019-11-28 17:24
 #
 
 EXE="$0"
@@ -16,8 +16,8 @@ EXE="$0"
 
 
 function help() {
-	echo "usage:	$(basename $0)"
-	echo "	$(basename $0) [OPTION]"
+	echo "usage:	$(basename "$EXE")"
+	echo "	$(basename "$EXE") [OPTION]"
 	echo
 	echo " --help		show help"
 	echo " --version	show version"
@@ -33,15 +33,15 @@ function show_initrd() {
 	#file $1 | awk '$2=="gzip"' >/dev/null &&\
 	#	/usr/bin/zcat $1 | cpio -it 2>/dev/null
 	# TODO verbose, e.g.: cpio -itv 2>/dev/null | colrm 43 54
-	file $1 | awk '$2=="XZ"' >/dev/null &&\
-		/usr/bin/xz --decompress --stdout $1 | cpio -it 2>/dev/null
+	file "$1" | awk '$2=="XZ"' >/dev/null &&\
+		/usr/bin/xz --decompress --stdout "$1" | cpio -it 2>/dev/null
 }
 
 
 function list_modules() {
-	INITRDMODS=$(show_initrd $1 | grep "lib/modules.*.ko" |\
-		while read; do
-			basename $REPLY .ko
+	INITRDMODS=$(show_initrd "$1" | grep "lib/modules.*.ko" |\
+		while read -r; do
+			basename "$REPLY" .ko
 		done | sort
 	)
 }
@@ -50,8 +50,8 @@ function list_modules() {
 # main()
 case $1 in
 	 -v|--version)
-		echo -n "$(basename $EXE) "
-		head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	-h|--help)
@@ -61,14 +61,22 @@ case $1 in
 	-m|--modules)
 		for f in /boot/initrd /boot/initrd-xen; do
 			echo $f:
-			show_initrd $f | grep "lib/modules.*.ko"
+			if [ -f $f ]; then
+				show_initrd $f | grep "lib/modules.*.ko"
+			else
+				echo "... skipping"
+			fi
 			echo
 		done
 	;;
 	-e|--etc)
 		for f in /boot/initrd /boot/initrd-xen; do
 			echo $f:
-			show_initrd $f | grep "etc/"
+			if [ -f $f ]; then
+				show_initrd $f | grep "etc/"
+			else
+				echo "...skipping"
+			fi
 			echo
 		done
 	;;
@@ -82,9 +90,9 @@ case $1 in
 		f="/boot/initrd"
 		list_modules $f
 		for m in $SYSCONFMODS; do
-			echo $INITRDMODS | grep -q $m 
-			test $? -eq 0 && echo "OK $f $m" 
-			test $? -ne 0 && echo "NO $f $m" 
+			echo "$INITRDMODS" | grep -q "$m"
+			test $? -eq 0 && echo "OK $f $m"
+			test $? -ne 0 && echo "NO $f $m"
 		done
 		
 		SYSCONFMODS=$(awk -F"=" '$1=="DOMU_INITRD_MODULES"{print $2}' /etc/sysconfig/kernel |\
@@ -92,16 +100,19 @@ case $1 in
 		f="/boot/initrd-xen"
 		list_modules $f
 		for m in $SYSCONFMODS; do
-			echo $INITRDMODS | grep -q $m 
-			test $? -eq 0 && echo "OK $f $m" 
-			test $? -ne 0 && echo "NO $f $m" 
+			echo "$INITRDMODS" | grep -q "$m"
+			test $? -eq 0 && echo "OK $f $m"
+			test $? -ne 0 && echo "NO $f $m"
 		done
 	;;
 	*)
-		# TODO check if file exists
 		for f in /boot/initrd /boot/initrd-xen; do
 			echo $f:
-			show_initrd $f
+			if [ -f $f ]; then
+				show_initrd $f
+			else
+				echo "... skipping"
+			fi
 			echo
 		done
 	exit

@@ -7,14 +7,17 @@
 # Author: L.Pinne.
 # GNU General Public License 2. No warranty.
 #
-# Version: SLES12 0.03 2019-08-12
+# Version: SLES12 0.03 2019-11-28
 #
 # For Supportconfig Script Version: 2.25-237
+#
+# shellcheck disable=SC1090,SC2128
 #
 
 EXE=$0
 ERR="/dev/null"
 TEMP="/dev/shm/cltl.$RANDOM"
+ORGFS=$IFS
 
 CFG="/etc/ClusterTools2/cs_show_supportconfig"
 test -s $CFG && source $CFG
@@ -75,12 +78,18 @@ HANA_SUSE_PTRN
 
 function writecfg(){
 	echo -e "# $CFG \n# For SLES12.\n#"
+	# to preserve blanks in the pattern
+	# else ${!c} will mangle the lines
+	IFS=$'\n'
 	for c in $CFGVAR; do
 		echo "${c}=\""
-		echo ${!c} | tr " " "\n"
+		# shellcheck disable=SC2086
+		printf "%s\n" ${!c}
+		#echo ${!c} | tr " " "\n"
 		echo "\""
 		echo "#"
 	done
+	IFS=$ORGFS
 }
 
 
@@ -91,12 +100,13 @@ function echo_msgsep(){
 
 function split_file(){
 	F=$1
-	mkdir -p ${TEMP}/$F
-	cp $F ${TEMP}/${F}/
-	cd ${TEMP}/$F
+	mkdir -p ${TEMP}/"$F"
+	cp "$F" ${TEMP}/"${F}"/
+	cd ${TEMP}/"$F" || exit
 #	csplit $F /^#==\[ [a-zA-Z] ^C \]==*#$/ {*}
-	csplit $F /^#==..Co.*===========================#$/ {*} >>$ERR
-	cd "${OLDPWD}"
+	# shellcheck disable=SC1083
+	csplit "$F" /^#==..Co.*===========================#$/ {*} >>$ERR
+	cd "${OLDPWD}" || exit
 }
 
 
@@ -106,7 +116,7 @@ function show_sys_scsi(){
 	split_file ${FIL}
 	f=$(grep -l "^# /usr/bin/systool -vb scsi$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		grep -e "Device.path.=.*/sys/devices/.*target.*/[0-9]" -e "timeout.*=..[1-9]" -e "model.*=" $f 
+		grep -e "Device.path.=.*/sys/devices/.*target.*/[0-9]" -e "timeout.*=..[1-9]" -e "model.*=" "$f"
 }
 
 
@@ -116,17 +126,17 @@ function show_sys_fcfabric(){
 	split_file ${FIL}
 	f=$(grep -l "^# /usr/bin/systool -vc fc_host$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		( grep -A13 "Class.Device.path.=.\"/sys/devices/" $f
+		( grep -A13 "Class.Device.path.=.\"/sys/devices/" "$f"
 		echo
 		#awk -F"=" '$1=="fabric_name" {print $2}' $f | sort -u
-		grep port_name $f | sort -f
+		grep port_name "$f" | sort -f
 		echo )
 }
 
 
 function chk_hardware(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	echo "machine:"
 	FIL="hardware.txt"
@@ -203,7 +213,7 @@ Device.File:
 	# TODO better loop
 	for f in $NIC_PTRN; do
 		grep --binary-file=text -A20 -e "^..: PCI.*Ethernet controller$" -e "HiperSocket.controller$" -e "IBM.Virtual.Ethernet.card" ${FIL} |\
-		grep $f
+		grep "$f"
 	done | sort -u | sed s/Device.File:/"NIC Device File:"/g
 	echo	
 }
@@ -211,7 +221,7 @@ Device.File:
 
 function chk_modules(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	# tainted [ 4086.446776]
 	grep -e "Modules.linked.in:.*(..)" -e "Modules.linked.in:.*(.)" boot.txt |\
@@ -281,8 +291,8 @@ lin_tape.ko
 	done
 	echo
 	for m in $HARDW_MOD; do
-		grep ${m} ${FIL} | sort -u
-		n=$(basename ${m} .ko)
+		grep "${m}" ${FIL} | sort -u
+		n=$(basename "${m}" .ko)
 		grep "modprobe ${n}" ${FIL}
 	done
 	echo
@@ -295,7 +305,7 @@ lin_tape.ko
 	done
 	echo
 	for m in $HARDW_MOD; do
-		n=$(basename ${m} .ko)
+		n=$(basename "${m}" .ko)
 		grep "options ${n}" ${FIL}
 	done
 	echo
@@ -303,8 +313,8 @@ lin_tape.ko
 	split_file ${FIL}
 	f=$(grep -l "^# /sbin/lsmod$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		grep -vh "^#==..Co.*==#" $f | sort -u | grep -v "#"
-	rm -rf ${TEMP}/${FIL}
+		grep -vh "^#==..Co.*==#" "$f" | sort -u | grep -v "#"
+	rm -rf ${TEMP:?}/${FIL}
 	echo	
 	echo -n "process on watchdog : "
         awk '$9=="/dev/watchdog" {print $1,$9}' open-files.txt
@@ -315,7 +325,7 @@ lin_tape.ko
 
 function chk_memory(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	# TODO page cache, anonymous
 	# TODO paging rate, swapspace usage, biggest process?
@@ -332,10 +342,10 @@ function chk_memory(){
 	echo
 	f=$(grep -l "^# /usr/bin/free -k$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		grep -vh "^#==..Co.*==#" $f
+		grep -vh "^#==..Co.*==#" "$f"
 	f=$(grep -l "^# /proc/meminfo$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		grep -vh "^#==..Co.*==#" $f
+		grep -vh "^#==..Co.*==#" "$f"
 	echo "# /proc/vmstat"
 	# TODO what else?
 	test -z "${MEM_VMSTAT}" &&\
@@ -348,7 +358,7 @@ compact_fail
 	f=$(grep -l "^# /proc/vmstat$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 	for m in $MEM_VMSTAT; do
-		grep $m $f
+		grep "$m" "$f"
 	done
 	echo
 	awk 'NF==2 && $0~/^numa_miss/ {print $0}' ${FIL}
@@ -379,15 +389,15 @@ vm.zone_reclaim_mode
 	f=$(grep -l "^# /sbin/sysctl -a 2>/dev/null | grep ^vm$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 	for m in $MEM_SYSCTL; do
-		grep $m $f
+		grep "$m" "$f"
 	done
 	echo
 	f=$(grep -l "^# /sys/kernel/mm/transparent_hugepage/enabled$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		grep -vh "^#==..Co.*==#" $f | tr -s "\n"
+		grep -vh "^#==..Co.*==#" "$f" | tr -s "\n"
 	f=$(grep -l "^# /sys/kernel/mm/transparent_hugepage/defrag$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		grep -vh "^#==..Co.*==#" $f | tr -s "\n"
+		grep -vh "^#==..Co.*==#" "$f" | tr -s "\n"
 	echo	
 	FIL="basic-health-check.txt"
 	echo "# tmpfs:"
@@ -400,39 +410,39 @@ vm.zone_reclaim_mode
 
 function chk_numa(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	FIL="memory.txt"
 	split_file ${FIL}
 	echo
 	f=$(grep -l "^# /usr/bin/numactl --hardware$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		grep -vh "^#==..Co.*==#" $f
+		grep -vh "^#==..Co.*==#" "$f"
 # TODO buddyinfo needed?
 #	f=$(grep -l "^# /proc/buddyinfo$" ${TEMP}/${FIL}/xx*)
 #	test -z "$f" ||\
-#		grep -vh "^#==..Co.*==#" $f
+#		grep -vh "^#==..Co.*==#" "$f"
 	f=$(grep -l "^# /usr/bin/numastat$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		grep -vh "^#==..Co.*==#" $f
+		grep -vh "^#==..Co.*==#" "$f"
 	echo "# /proc/vmstat"
 	# TODO what else?
 	f=$(grep -l "^# /proc/vmstat$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		grep -e "numa_miss" -e "zone_reclaim_" -e "htlb_buddy_alloc" $f
+		grep -e "numa_miss" -e "zone_reclaim_" -e "htlb_buddy_alloc" "$f"
 	echo
 	echo "# /sbin/sysctl -a"
 	# TODO what else?
 	f=$(grep -l "^# /sbin/sysctl -a 2>/dev/null | grep ^vm$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		grep -e "vm.zone_reclaim_mode" -e "vm.numa_zonelist_order"  $f
+		grep -e "vm.zone_reclaim_mode" -e "vm.numa_zonelist_order" "$f"
 	echo
 }
 
 
 function chk_services(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	FIL="boot.txt"
 	# TODO SLES12 what to look for? 
@@ -447,7 +457,7 @@ function chk_services(){
 		awk '$9=="default.target" && $10=="->" {print $9,"->",$11}' ${FIL}
 	echo
 	FIL="chkconfig.txt"
-	if $(test -r "${FIL}"); then
+	if test -r "${FIL}"; then
 		for p in "3:on" "3:off"; do
 			echo -n "${p} : "
 			grep -c "${p}" ${FIL}
@@ -456,7 +466,7 @@ function chk_services(){
 	# TODO split systemd.txt @ "# /bin/systemctl --no-pager --all list-units"
 	# TODO single+better awk for SLES12
 	FIL="systemd.txt"
-	if $(test -r "${FIL}"); then
+	if test -r "${FIL}"; then
 		awk '$1~/\.service/ && $2=="enabled" {print}' ${FIL}
 		awk '$1~/\.service/ && $2=="disabled" {print}' ${FIL}
 	fi
@@ -493,7 +503,7 @@ smartd
 uuidd
 "
 	FIL="chkconfig.txt"
-	if $(test -r "${FIL}"); then
+	if test -r "${FIL}"; then
 		echo "service should be on:"
 		for s in $SVC_YES; do
 			grep "${s}:..on" ${FIL}
@@ -511,7 +521,7 @@ uuidd
 		done
 	fi
 	FIL="systemd.txt"
-	if $(test -r "${FIL}"); then
+	if test -r "${FIL}"; then
 		# TODO SLES12
 		echo
 	fi
@@ -521,7 +531,7 @@ uuidd
 
 function chk_veritas(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	echo "Veritas Storage Foundation and Veritas Cluster Services"
 	echo
@@ -556,7 +566,7 @@ xprtld
 eccmad
 "
 	FIL="chkconfig.txt"
-	if $(test -r "${FIL}"); then
+	if test -r "${FIL}"; then
 		for s in $VRT_SVC_YES; do
 			grep "${s}:..on" ${FIL}
 			grep "${s}:..off" ${FIL}
@@ -565,7 +575,7 @@ eccmad
 	done
 	fi
 	FIL="systemd.txt"
-	if $(test -r "${FIL}"); then
+	if test -r "${FIL}"; then
 		# TODO SLES12
 		echo
 	fi
@@ -587,18 +597,18 @@ eccmad
 #
 	test -z "${VRT_ERR_PTRN}" &&\
 	VRT_ERR_PTRN="
-"GAB.*failed"
-"Symantec.Technical.Support"
-"error.*VRT"
-"VCS.CRITICAL"
-"vxvm.*volume.*not"
+GAB.*failed
+Symantec.Technical.Support
+error.*VRT
+VCS.CRITICAL
+vxvm.*volume.*not
 "
 	LOG="boot.txt messages.txt"
 	for e in ${VRT_ERR_PTRN}; do
 		echo -n "${e} : "
 		for f in ${LOG}; do
-			cat $f
-		done | grep -ic ${e} 
+			cat "$f"
+		done | grep -ic "${e}"
 	done
 	echo
 	grep "^#./etc/vx" etc.txt
@@ -616,25 +626,25 @@ eccmad
 
 function chk_network(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 	
 	test -z "${NETW_PTRN}" &&\
 	NETW_PTRN="
-"Setting.up.hostname"
-"Setting.up.loopback.interface"
-"eth.*IP.address:.*/"
-"bond.*enslaved.interface:"
-"bond.*IP.address:.*/"
+Setting.up.hostname
+Setting.up.loopback.interface
+eth.*IP.address:.*/
+bond.*enslaved.interface:
+bond.*IP.address:.*/
 "
 	FIL="boot.txt"
 	echo "boot setup:"
 	for p in $NETW_PTRN; do
-		grep $p ${FIL}
+		grep "$p" ${FIL}
 	done | sort -u
 	echo "last setup:"
 	FIL="network.txt"
 	for p in $NETW_PTRN; do
-		grep --binary-file=text $p ${FIL}
+		grep --binary-file=text "$p" ${FIL}
 	done | sort -u
 	echo
 	grep --binary-file=text "eth.*\ device:" ${FIL}
@@ -672,7 +682,7 @@ function chk_network(){
 
 function chk_nameres(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	# TODO SLES12
 	FIL="network.txt"
@@ -686,24 +696,24 @@ function chk_nameres(){
 	echo "# /etc/hosts:"
 	f=$(grep -l "^# /etc/hosts$" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
-        	grep -v "^#" $f | tr -s "\n"
+        	grep -v "^#" "$f" | tr -s "\n"
 	echo
 	echo "# /etc/resolv.conf:"
 	f=$(grep -l "^# /etc/resolv.conf$" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
-        	grep -v "^#" $f | tr -s "\n"
+        	grep -v "^#" "$f" | tr -s "\n"
 	echo
 #	echo "# /etc/nsswitch.conf:"
 #	f=$(grep -l "^# /etc/nsswitch.conf$" ${TEMP}/${FIL}/xx*)
 #	test -z "$f" ||\
-#       	grep -v "^#" $f | tr -s "\n"
+#       	grep -v "^#" "$f" | tr -s "\n"
 #	echo
 	echo "# /etc/host.conf:"
 	f=$(grep -l "^# /etc/host.conf$" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
-        	grep -v "^#" $f | tr -s "\n"
+        	grep -v "^#" "$f" | tr -s "\n"
 
-        rm -rf ${TEMP}/${FIL}
+        rm -rf ${TEMP:?}/${FIL}
 	echo
 
 # TODO DNS
@@ -712,7 +722,7 @@ function chk_nameres(){
 
 function chk_timeres(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	FIL="ntp.txt"
 	echo "software:"
@@ -730,24 +740,24 @@ function chk_timeres(){
 	split_file ${FIL} 
 	f=$(grep -l "^# /etc/ntp.conf$" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
-		grep -v "^#" $f | tr -s "\n"
+		grep -v "^#" "$f" | tr -s "\n"
 	f=$(grep -l "^NTPD_FORCE_SYNC_ON_STARTUP=" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
-		grep -v "^#" $f | tr -s "\n"
+		grep -v "^#" "$f" | tr -s "\n"
 
-        rm -rf ${TEMP}/${FIL}
+        rm -rf ${TEMP:?}/${FIL}
 	echo
 
 	test -z "${TIME_ERR}" &&\
 	TIME_ERR="
-"synchronized.to.LOCAL"
-"ntpd.*time.reset"
-"ntpd.*failed"
+synchronized.to.LOCAL
+ntpd.*time.reset
+ntpd.*failed
 "
 	echo "errors:"
 	for p in $TIME_ERR; do
 		echo -n "${p} : "
-		grep -c ${p} ${FIL}
+		grep -c "${p}" ${FIL}
 	done
 	echo
 
@@ -776,7 +786,7 @@ DEFAULT_TIMEZONE
 
 function chk_sleha(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
  
 	test -z "${CLUSTER_PKG}" &&\
 	CLUSTER_PKG="
@@ -809,8 +819,8 @@ sbd:
 /usr/lib64/heartbeat/mgmtd
 "
 	FIL="rpm.txt"
-	for f in $CLUSTER_PGK; do
-		grep $f ${FIL} 	
+	for f in $CLUSTER_PKG; do
+		grep "$f" ${FIL} 	
 	done | sort
 	echo
 	# TODO check /etc/corosync/
@@ -820,8 +830,8 @@ sbd:
 	WATCHMOD="hpwdt hangcheck_timer iTCO ibmasr softdog deadman"
 	echo -n "loaded watchdog: "
 	for m in $WATCHMOD; do
-		awk '$1=="'${m}'" {print $1}' modules.txt | sort -u
-		awk '$2=="'${m}'" {print $0}' boot.txt | sort -u
+		awk '$1=="'"${m}"'" {print $1}' modules.txt | sort -u
+		awk '$2=="'"${m}"'" {print $0}' boot.txt | sort -u
 	done
 	echo
         echo -n "process on watchdog: "
@@ -830,26 +840,26 @@ sbd:
 	echo
 
 	FIL="chkconfig.txt"
-	if $(test -r "${FIL}"); then
+	if test -r "${FIL}"; then
 		split_file ${FIL}
 		f=$(grep -l "^# /sbin/chkconfig.--list$" ${TEMP}/${FIL}/xx*)
 		echo "/sbin/chkconfig --list:"
-		test -z $f ||\
-			grep -e "^openais.*0:" -e "^hp-asrd.*0:" $f
+		test -z "$f" ||\
+			grep -e "^openais.*0:" -e "^hp-asrd.*0:" "$f"
 		echo
 		f=$(grep -l "^/etc/init.d/rc3.d:$" ${TEMP}/${FIL}/xx*)
         	echo "/etc/init.d/rc3.d:"
-       		test -z $f ||\
-			grep -e "K..openais" -e "S..hp-asrd" $f
+       		test -z "$f" ||\
+			grep -e "K..openais" -e "S..hp-asrd" "$f"
 		echo
 		f=$(grep -l "^/etc/init.d/rc5.d:$" ${TEMP}/${FIL}/xx*)
         	echo "/etc/init.d/rc5.d:"
-        	test -z $f ||\
-			grep -e "K..openais" -e "S..hp-asrd" $f
+        	test -z "$f" ||\
+			grep -e "K..openais" -e "S..hp-asrd" "$f"
 		echo
 	fi
 	FIL="systemd.txt"
-	if $(test -r "${FIL}"); then
+	if test -r "${FIL}"; then
 		# TODO SLES12
 		echo
 	fi
@@ -858,56 +868,56 @@ sbd:
         split_file ${FIL}
         f=$(grep -l "^# /etc/sysconfig/openais$" ${TEMP}/${FIL}/xx*)
 	echo "/etc/sysconfig/openais:"
-	test -z $f || grep -v "^#" $f | tr -s "\n"
+	test -z "$f" || grep -v "^#" "$f" | tr -s "\n"
 	echo
         f=$(grep -l "^# /etc/sysconfig/pacemaker$" ${TEMP}/${FIL}/xx*)
 	echo "/etc/sysconfig/pacemaker:"
-	test -z $f || grep -v "^#" $f | tr -s "\n"
+	test -z "$f" || grep -v "^#" "$f" | tr -s "\n"
 	echo	
 	f=$(grep -l "^# /etc/sysconfig/sbd$" ${TEMP}/${FIL}/xx*)
 	echo "/etc/sysconfig/sbd:"
-	test -z $f || grep -v "^#" $f | tr -s "\n"
+	test -z "$f" || grep -v "^#" "$f" | tr -s "\n"
 	echo
 
 	FIL="ha.txt"
         split_file ${FIL}
 	f=$(grep -l "^# /usr/sbin/sbd.-d.*dump$" ${TEMP}/${FIL}/xx*)
 	echo "sbd -d /dev/... dump:"
-	test -z $f || grep -v "^#" $f
+	test -z "$f" || grep -v "^#" "$f"
 	echo
 	f=$(grep -l "^# /usr/sbin/sbd.-d.*list$" ${TEMP}/${FIL}/xx*)
 	echo "sbd -d /dev/... list:"
-	test -z $f || grep -v "^#" $f
+	test -z "$f" || grep -v "^#" "$f"
 	echo
         f=$(grep -l "^# /etc/corosync/corosync.conf$" ${TEMP}/${FIL}/xx*)
 	echo "/etc/corosync/corosync.conf:"
-	test -z $f || grep -v "^#" $f
+	test -z "$f" || grep -v "^#" "$f"
 	echo
         f=$(grep -l "^# /usr/sbin/corosync-cfgtool -s$" ${TEMP}/${FIL}/xx*)
 	echo "/usr/sbin/corosync-cfgtool -s:"
-	test -z $f || grep -v "^#" $f
+	test -z "$f" || grep -v "^#" "$f"
 	echo
 	f=$(grep -l "^# /usr/sbin/sbd.-d.*dump$" ${TEMP}/${FIL}/xx*)
         f=$(grep -l "^# /usr/sbin/crm_mon.-r.-1$" ${TEMP}/${FIL}/xx*)
 	echo "crm_mon -r -1:"
-	test -z $f || grep -v "^#" $f
+	test -z "$f" || grep -v "^#" "$f"
 	echo
         f=$(grep -l "^# /var/lib/heartbeat/crm/cib.xml$" ${TEMP}/${FIL}/xx*)
 	echo "/var/lib/heartbeat/crm/cib.xml:"
-	test -z $f || grep -v "^#" $f
+	test -z "$f" || grep -v "^#" "$f"
         f=$(grep -l "^# /var/lib/pacemaker/cib/cib.xml$" ${TEMP}/${FIL}/xx*)
 	echo "/var/lib/pacemaker/cib/cib.xml:"
-	test -z $f || grep -v "^#" $f
+	test -z "$f" || grep -v "^#" "$f"
         f=$(grep -l "^# /usr/sbin/crm configure show$" ${TEMP}/${FIL}/xx*)
 	echo "/usr/sbin/crm configure show:"
-	test -z $f || grep -v "^#" $f
+	test -z "$f" || grep -v "^#" "$f"
 	echo
 	# TODO crm configure show?
 
 	FIL="basic-health-check.txt"
 	echo "cluster processes running:"
 	for p in $CLUSTER_PRCS; do 
-		awk '$10=="'${p}'" {print $0}' ${FIL}
+		awk '$10=="'"${p}"'" {print $0}' ${FIL}
 	done
 	echo
 
@@ -915,13 +925,13 @@ sbd:
         split_file ${FIL}
         echo "/etc/lvm/lvm.conf:"
         f=$(grep -l "# /etc/lvm/lvm.conf" ${TEMP}/${FIL}/xx*)
-        test -z "$f" || grep -vh "^#" $f | grep "filter"
+        test -z "$f" || grep -vh "^#" "$f" | grep "filter"
         echo
 	FIL="fs-softraid.txt"
         split_file ${FIL}
         echo "/etc/mdadm.conf:"
         f=$(grep -l "# /etc/mdadm.conf" ${TEMP}/${FIL}/xx*)
-        test -z "$f" || grep -vh "^#" $f # | grep "/dev/null"
+        test -z "$f" || grep -vh "^#" "$f" # | grep "/dev/null"
         echo
 
 	# TODO /proc/sys/net/ipv4/tcp_retries2 : 2 for NW Enqueue Replication
@@ -930,7 +940,7 @@ sbd:
 
 function chk_xenhost(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	# TODO what is really needed?
 	FIL="xen.txt"
@@ -938,18 +948,18 @@ function chk_xenhost(){
 	echo
 	echo "# /boot/grub/menu.lst"
 	f=$(grep -l "# /boot/grub/menu.lst" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -e "kernel /boot/xen.gz" -e "module /boot/vmlinuz.*-xen" -e "module /boot/initrd.*-xen" $f
+	test -z "$f" || grep -e "kernel /boot/xen.gz" -e "module /boot/vmlinuz.*-xen" -e "module /boot/initrd.*-xen" "$f"
 	echo
 	# TODO more xen specific RPMs?
 	grep -e "vmdp" -e "libvirt" rpm.txt
 	echo
 	f=$(grep -l "# /etc/xen/xend-config.sxp" ${TEMP}/${FIL}/xx*)
 	echo "# /etc/xen/xend-config.sxp"
-	test -z "$f" || grep -vh "^#" $f
+	test -z "$f" || grep -vh "^#" "$f"
 	echo
 	f=$(grep -l "# /etc/sysconfig/xendomains" ${TEMP}/${FIL}/xx*)
 	echo "# /etc/sysconfig/xendomains"
-	test -z "$f" || grep -vh "^#" $f
+	test -z "$f" || grep -vh "^#" "$f"
 	# TODO xm info, xm list
 	# TODO network, LUNs
 	# TODO Xen errors in syslog
@@ -959,29 +969,29 @@ function chk_xenhost(){
 	# TODO what filenames?
 	echo "# /etc/modprobe.d/xen-blkbk.conf"
 	f=$(grep -l "# /etc/modprobe.d/xen-blkbk.conf" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" $f
+	test -z "$f" || grep -vh "^#" "$f"
 	echo
 	echo "# /sbin/modinfo blkbk"
 	f=$(grep -l "# /sbin/modinfo blkbk" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" $f
+	test -z "$f" || grep -vh "^#" "$f"
 	echo
 	# TODO netbk some options only from /etc/modules.d/*; what filenames?
 	echo "# /etc/modprobe.d/xen-netbk.conf"
 	f=$(grep -l "# /etc/modprobe.d/xen-netbk.conf" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" $f
+	test -z "$f" || grep -vh "^#" "$f"
 	echo
 	echo "# /sbin/modinfo netbk"
 	f=$(grep -l "# /sbin/modinfo netbk" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" $f
+	test -z "$f" || grep -vh "^#" "$f"
 	echo
 	# TODO blkbk "max_ring_page_order=0..4" from /etc/modules.d/*; what filenames?
 	echo "# /etc/modprobe.d/iomemory-vsl.conf"
 	f=$(grep -l "# /etc/modprobe.d/iomemory-vsl.conf" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" $f
+	test -z "$f" || grep -vh "^#" "$f"
 	echo	
 	echo "# /sbin/modinfo iomemory_vsl (propietary Fusion-IO)"
 	f=$(grep -l "# /sbin/modinfo iomemory_vsl" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" $f
+	test -z "$f" || grep -vh "^#" "$f"
 	echo
 	echo "# grep for options [netbk|blkbk|iomemory_vsl]:"
 	grep -e "options netbk" -e "options blkbk" -e "options iomemory_vsl" ${FIL}
@@ -991,7 +1001,7 @@ function chk_xenhost(){
 
 function chk_powervm(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	# TODO IBM power tools
 	test -z "${PWVM_PKG}" &&\
@@ -1045,10 +1055,10 @@ softdog
 	# TODO which files?
 	test -z "${PWVM_ETC}" &&\
 	PWVM_ETC="
-"/etc/ntp.conf"
-"/etc/multipath.conf"
-"/etc/sysconfig/network/ifcfg-eth0"
-"/etc/sysconfig/network/ifcfg-eth1"
+/etc/ntp.conf
+/etc/multipath.conf
+/etc/sysconfig/network/ifcfg-eth0
+/etc/sysconfig/network/ifcfg-eth1
 "
 
 	echo "- packages installed:"
@@ -1056,7 +1066,7 @@ softdog
 	for p in $PWVM_PKG; do
 		echo -n "$p : "
 		# TODO awk only
-		grep $p ${FIL} | awk '{print $1}'
+		grep "$p" ${FIL} | awk '{print $1}'
 	done
 	echo
 	echo
@@ -1064,11 +1074,11 @@ softdog
 	FIL="modules.txt"
 	for p in $PWVM_MODUL; do
 		echo -n "$p : "
-		grep $p ${FIL}	
+		grep "$p" ${FIL}	
 	done
 	echo
 	FIL="chkconfig.txt"
-	if $(test -r "${FIL}"); then
+	if test -r "${FIL}"; then
 		echo "- service should be on:"
 		for s in $PWVM_SVC_YES; do
 			grep "${s}:..on" ${FIL}
@@ -1086,7 +1096,7 @@ softdog
 		done
 	fi
 	FIL="systemd.txt"
-	if $(test -r "${FIL}"); then
+	if test -r "${FIL}"; then
 		# TODO SLES12
 		echo
 	fi
@@ -1099,8 +1109,8 @@ softdog
 		echo
 		echo "$p :"
 		f=$(grep -l "^# ${p}$" ${TEMP}/${FIL}/xx*)
-		test -z $f && continue
-		test -r $f && grep -v "^#" $f | tr -s "\n"
+		test -z "$f" && continue
+		test -r "$f" && grep -v "^#" "$f" | tr -s "\n"
 	done
 	FIL="network.txt"
 	split_file ${FIL}
@@ -1108,8 +1118,8 @@ softdog
 		echo
 		echo "$p :"
 		f=$(grep -l "^# ${p}$" ${TEMP}/${FIL}/xx*)
-		test -z $f && continue
-		test -r $f && grep -v "^#" $f | tr -s "\n"
+		test -z "$f" && continue
+		test -r "$f" && grep -v "^#" "$f" | tr -s "\n"
 	done
 	echo
 	echo
@@ -1120,7 +1130,7 @@ softdog
 
 function chk_vmware(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	# http://www.vmware.com/download/packages.html
 	# http://packages.vmware.com/tools
@@ -1206,11 +1216,11 @@ xendomains
 "
 	test -z "${VMW_ETC}" &&\
 	VMW_ETC="
-"/etc/ntp.conf"
-"/etc/vmware-tools/tools.conf"
-"/etc/vmware-tools/plugins"
-"/etc/pam.d/vmtoolsd"
-"/etc/ld.so.conf.d/vmware-tools-libraries.conf"
+/etc/ntp.conf
+/etc/vmware-tools/tools.conf
+/etc/vmware-tools/plugins
+/etc/pam.d/vmtoolsd
+/etc/ld.so.conf.d/vmware-tools-libraries.conf
 "
 	# TODO  vmware user /usr/lib/vmware-tools/moduleScripts/user/vmware-config.pl --toConfigure=user
 
@@ -1219,7 +1229,7 @@ xendomains
 	for p in $VMW_PKG; do
 		echo -n "$p : "
 		# TODO awk only
-		grep $p ${FIL} | awk '{print $1}'
+		grep "$p" ${FIL} | awk '{print $1}'
 	done
 	echo
 	echo
@@ -1227,13 +1237,13 @@ xendomains
 	FIL="modules.txt"
 	for p in $VMW_MODUL; do
 		echo -n "$p : "
-		grep $p ${FIL}	
+		grep "$p" ${FIL}	
 	done
 	echo
 	# TODO common function for services, see chk_services, chk_sap, chk_oracle
 	echo "- service should be on:"
 	FIL="chkconfig.txt"
-	if $(test -r "${FIL}"); then
+	if test -r "${FIL}"; then
 		for s in $VMW_SVC_YES; do
 			grep "${s}:..on" ${FIL}
 			grep "${s}:..off" ${FIL}
@@ -1250,7 +1260,7 @@ xendomains
 		done
 	fi
 	FIL="systemd.txt"
-	if $(test -r "${FIL}"); then
+	if test -r "${FIL}"; then
 		# TODO SLES12
 		echo
 	fi
@@ -1266,8 +1276,8 @@ xendomains
 		echo
 		echo "$p :"
 		f=$(grep -l "^# ${p}$" ${TEMP}/${FIL}/xx*)
-		test -z $f && continue
-		test -r $f && grep -v "^#" $f | tr -s "\n"
+		test -z "$f" && continue
+		test -r "$f" && grep -v "^#" "$f" | tr -s "\n"
 	done
 	echo
 	show_sys_scsi
@@ -1277,7 +1287,7 @@ xendomains
 
 function chk_sap(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
         test -z "${SAP_SAP_PKG_NOT}" &&\
         SAP_SAP_PKG_NOT="
@@ -1289,7 +1299,7 @@ ulimit
 	split_file ${FIL}
 	f=$(grep -l "^# /etc/sysconfig/sapconf$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		grep -v "^#" $f | sort -u
+		grep -v "^#" "$f" | sort -u
 	echo
 	# TODO check ???, see sum_base_config, precheck_for_sap
 	grep -e "^@sapsys" -e "^@sdba" crash.txt
@@ -1299,7 +1309,7 @@ ulimit
 	split_file ${FIL}
 	f=$(grep -l "^# /proc/net/unix$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		awk '$8~/sap/ || $8~/oracle/ {print $8}' $f | sort -u
+		awk '$8~/sap/ || $8~/oracle/ {print $8}' "$f" | sort -u
 	echo
 	FIL=pam.txt
 	split_file ${FIL}
@@ -1318,15 +1328,15 @@ ulimit
 	echo "getent_group :"
 	f=$(grep -l "^# /usr/bin/getent group$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		awk -F: '$1=="sapinst" || $1=="sapsys" || $1=="oper"  {print}' $f | sort -u
+		awk -F: '$1=="sapinst" || $1=="sapsys" || $1=="oper"  {print}' "$f" | sort -u
 	echo
 	echo "proc :"
 	FIL=memory.txt
 	split_file ${FIL}
 	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		awk '$2=="sapstartsrv" || $2=="sapstart" || $2~/ms\.sap/ || $2~/en\.sap/  || $2~/ig\.sap/ || $2=="igsmux_mt" || $2=="igspw_mt" || $2=="gwrd" || $2=="icman" || $2~/jc\.sap/ || $2=="jstart" {print}' $f | sort -u
-		awk '$8~/sapstart/ || $8~/disp\+work/ || $8~/igswd_mt/ || $8~/igspw_mt/ || $8~/igsmux_mt/ || $8~/gwrd/ || $8~/icman/ || $8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ || $8~/dw_/ || $8~/jstart/  {print $8}' $f | sort -u
+		awk '$2=="sapstartsrv" || $2=="sapstart" || $2~/ms\.sap/ || $2~/en\.sap/  || $2~/ig\.sap/ || $2=="igsmux_mt" || $2=="igspw_mt" || $2=="gwrd" || $2=="icman" || $2~/jc\.sap/ || $2=="jstart" {print}' "$f" | sort -u
+		awk '$8~/sapstart/ || $8~/disp\+work/ || $8~/igswd_mt/ || $8~/igspw_mt/ || $8~/igsmux_mt/ || $8~/gwrd/ || $8~/icman/ || $8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ || $8~/dw_/ || $8~/jstart/  {print $8}' "$f" | sort -u
 	echo
 
 # TODO 1310037   SUSE LINUX Enterprise Server 11: Installation notes?
@@ -1358,7 +1368,7 @@ ulimit
 
 function chk_saphana(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 # TODO chk_sap for 1310037   SUSE LINUX Enterprise Server 11: Installation notes?
 # TODO chk_sap for 1275776   prepare SLES ...?
@@ -1524,8 +1534,8 @@ HANA-Firewall
 	FIL="rpm.txt"
 	echo "RPM with specific version recommended by SAP:"
 	for f in $HANA_VERS_MIN; do
-		FULL=$(echo $f | awk -F: '{print $1"-"$2}')
-		BASE=$(echo $f | awk -F: '{print $1}')
+		FULL=$(echo "$f" | awk -F: '{print $1"-"$2}')
+		BASE=$(echo "$f" | awk -F: '{print $1}')
 		# TODO xfsprogs-3.1.8-0.5.1 : xfsprogs-3.1.8-0.5.1 Mon Aug
 		echo -n "$FULL : "
 		q="$FULL"
@@ -1572,8 +1582,8 @@ HANA-Firewall
 	for f in $HANA_SAP_BOOTARG; do
 		echo -n "$f : "
 		p="NO"
-		q=$( echo $KRNLCMD | grep "$f" ) && p=$q
-		echo $p
+		q=$( echo "$KRNLCMD" | grep "$f" ) && p=$q
+		echo "$p"
 	done
 	echo
 	echo "SUSE recommended /proc/cmdline args:"
@@ -1581,8 +1591,8 @@ HANA-Firewall
 	for f in $HANA_SUSE_BOOTARG; do
 		echo -n "$f : "
 		p="NO"
-		q=$( echo $KRNLCMD | grep "$f" ) && p=$q
-		echo $p
+		q=$( echo "$KRNLCMD" | grep "$f" ) && p=$q
+		echo "$p"
 	done
 	echo
 	echo "Current /proc/cmdline:"
@@ -1598,9 +1608,9 @@ HANA-Firewall
 	echo "# /etc/sysconfig/bootloader:"
 	f=$(grep -l "^# /etc/sysconfig/bootloader$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		grep DEFAULT_APPEND $f
+		grep DEFAULT_APPEND "$f"
 	echo
-	rm -rf ${TEMP}/${FIL}
+	rm -rf ${TEMP:?}/${FIL}
 
 	# TODO HANA_SAP_SYSCTL, HANA_SUSE_SYSCTL as SAP_SYSCTL in chk_sap? 
 	FIL="etc.txt"
@@ -1612,17 +1622,17 @@ HANA-Firewall
 	test -z "$f" ||\
 		for p in $HANA_SAP_SYSCTL; do
 			echo -n "$p : "
-			grep $p $f || echo "NO"
+			grep "$p" "$f" || echo "NO"
 		done
 	echo
 	echo "SUSE recommended sysctl:"
 	test -z "$f" ||\
 		for p in $HANA_SUSE_SYSCTL; do
 			echo -n "$p : "
-			grep $p $f || echo "NO"
+			grep "$p" "$f" || echo "NO"
 		done
 	echo
-	rm -rf ${TEMP}/${FIL}
+	rm -rf ${TEMP:?}/${FIL}
 
 	# TODO /boot/grub/menu.lst
 	
@@ -1638,7 +1648,7 @@ HANA-Firewall
 	echo "# /etc/init.d/boot.local:"
 	F=$(grep -l "# /etc/init.d/boot.local" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')	
 		test -z "$F" ||\
-			grep -v "^#" $F
+			grep -v "^#" "$F"
 
 	FIL="sysfs.txt"
 	echo "SAP recommeded nr_anon_transparent_hugepages: 0 , nr_hugepages: 0"
@@ -1692,7 +1702,7 @@ HANA-Firewall
 	
 	echo "SAP recommeded filesystem type: XFS"
 	F=$(grep -l "# /etc/fstab" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
-	grep -v "#==" $F | tr -s " "
+	grep -v "#==" "$F" | tr -s " "
 	# TODO XFS create options
 
 	# TODO calculate 2x RAM, max.50GB
@@ -1709,7 +1719,7 @@ HANA-Firewall
 	echo
 
 	FIL="chkconfig.txt"
-	if $(test -r "${FIL}"); then
+	if test -r "${FIL}"; then
 		echo "SAP recommeded service ON:"
 		for s in $HANA_SAP_SVC_YES; do
 			echo -n "$s: "
@@ -1731,7 +1741,7 @@ HANA-Firewall
 		done
 	fi
 	FIL="systemd.txt"
-	if $(test -r "${FIL}"); then
+	if test -r "${FIL}"; then
 		# TODO SLES12
 		echo
 	fi
@@ -1740,14 +1750,14 @@ HANA-Firewall
 	split_file ${FIL}
 	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
-		awk ' $9~/HDB_/ {print $9}' $f | sort -u | tail -2
+		awk ' $9~/HDB_/ {print $9}' "$f" | sort -u | tail -2
 	echo
 }
 
 
 function chk_oracle(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	# TODO put this in config file, use it in function
 	# TODO see /srv/pinne/work/*/sap/technical/from_*/20130304/ps_*.txt
@@ -1778,6 +1788,7 @@ function chk_oracle(){
 # orawe2   27280  0.0  0.0 6885040 17004 ?       Ss   Feb24   2:46 ora_psp0_WE2
 # orawe2   31816  0.0  0.0 6885040 20592 ?       Ss   Feb24   0:25 ora_qmnc_WE2
 	# 
+	# shellcheck disable=SC2034
         ORA_PRCS="
 ora_pmon_
 ora_vktm_
@@ -1808,8 +1819,8 @@ oracle.*
 	# TODO fix test
         F=$(grep -l "# /etc/sysconfig/oracle" ${TEMP}/${FIL}/xx* |\
 		 tr -d ":#" | awk '{print $1}')
-	test -z $F ||\
-        	grep -v "^#" $F  | awk -F: '{print $2}' | tr -s "\n "
+	test -z "$F" ||\
+		grep -v "^#" "$F"  | awk -F: '{print $2}' | tr -s "\n "
         echo
 
 	grep -e "^oracle" -e "^@dba" crash.txt
@@ -1836,7 +1847,9 @@ oracle.*
         test -z "${ORA_SFT_PTRN}" &&\
         ORA_SFT_PTRN="
 orarun
-oracleasmlib oracleasm-support oracleasm-kmp-default
+oracleasmlib
+oracleasm-support
+oracleasm-kmp-default
 oracle-instantclient11.2-basic
 oracle-instantclient11.2-basiclite
 oracle-instantclient11.2-jdbc
@@ -1844,25 +1857,50 @@ oracle-instantclient11.2-sqlplus
 oracle-instantclient11.2-devel
 oracle-instantclient11.2-odbc
 oracle-instantclient11.2-tools
-cups-client cups-drivers cups-libs cups-libs-32bit cups cups-autoconfig
-xorg-x11-libs xorg-x11
+cups-client
+cups-drivers
+cups-libs
+cups-libs-32bit
+cups
+cups-autoconfig
+xorg-x11-libs
+xorg-x11
 nfs-client
-glibc glibc-32bit glibc-locale glibc-locale-32bit glibc-devel
-kernel-default linux-kernel-headers
-binutils gcc gcc-32bit gcc43 gcc-locale gcc-locale libgcc43 libgcc43-32bit
-libaio libaio-devel
-sysstat supportutils suse-sam
-multipath-tools mdadm device-mapper device-mapper-32bit libext2fs2
+glibc
+glibc-32bit
+glibc-locale
+glibc-locale-32bit
+glibc-devel
+kernel-default
+linux-kernel-headers
+binutils
+gcc
+gcc-32bit
+gcc43
+gcc-locale
+gcc-locale
+libgcc43
+libgcc43-32bit
+libaio
+libaio-devel
+sysstat
+supportutils
+suse-sam
+multipath-tools
+mdadm
+device-mapper
+device-mapper-32bit
+libext2fs2
 ClusterTools2
 "
 	echo "RPM needed :"
         for p in $ORA_SFT_PTRN; do
-                echo ${p}
+                echo "${p}"
         done
 	echo
 	echo "RPM found :"
         for p in $ORA_SFT_PTRN; do
-                awk '$1=="'${p}'" {print $0}' ${FIL}
+                awk '$1=="'"${p}"'" {print $0}' ${FIL}
         done
         echo
 # TODO
@@ -1893,10 +1931,10 @@ smartd
 sapinit
 "
 	FIL="chkconfig.txt"
-	if $(test -r "${FIL}"); then
+	if test -r "${FIL}"; then
 		echo "service needed :"
 		for s in $ORA_SVC_YES; do
-			echo $s
+			echo "$s"
 		done
 		echo
 		echo "service found :"
@@ -1916,7 +1954,7 @@ sapinit
 		done
 	fi
 	FIL="systemd.txt"
-	if $(test -r "${FIL}"); then
+	if test -r "${FIL}"; then
 		# TODO SLES12
 		echo
 	fi
@@ -1927,7 +1965,7 @@ sapinit
 	split_file ${FIL}
 	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		awk '$8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ || $8~/tnslsnr/ || $8~/libodmd11/ || $8~/oracle$/ {print $8}' $f | sort -u
+		awk '$8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ || $8~/tnslsnr/ || $8~/libodmd11/ || $8~/oracle$/ {print $8}' "$f" | sort -u
 	echo
 	# TODO oracle user, pfile
 	# TODO memory.txt: tnslsnr libclntsh oracle$ libodmd11
@@ -1936,14 +1974,14 @@ sapinit
 	split_file ${FIL}
 	f=$(grep -l "^# /usr/bin/env$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		awk '$1~/ORA/ {print}' $f | sort -u
+		awk '$1~/ORA/ {print}' "$f" | sort -u
 	echo
 }
 
 
 function chk_kernel(){
 	
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	FIL="boot.txt"
 	grep -A1 "^# /bin/uname -a" ${FIL}
@@ -1959,7 +1997,7 @@ function chk_kernel(){
 
 function chk_software(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	FIL="basic-environment.txt"
 
@@ -1989,22 +2027,22 @@ not.our.package:
 
 function chk_updates(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 	
 	FIL="updates.txt"
 	# TODO sles-for-sap
 	# TODO fix doubled entries artefact "SLES12-*"
 	test -z "${UPDT_PTRN}" &&\
 	UPDT_PTRN="
-"SLES12-"
-"SLES12-SP"
-"SLE12-HAE-SP"
-"SLE12-SP1-SAP-"
-"SLE12-SP2-SAP-"
+SLES12-
+SLES12-SP
+SLE12-HAE-SP
+SLE12-SP1-SAP-
+SLE12-SP2-SAP-
 "
 	for p in ${UPDT_PTRN}; do
-		grep "|.*|.${p}.*|.*|" ${FIL} | sort -u
-	done
+		grep "|.*|.${p}.*|.*|" ${FIL}
+	done | sort -u
 	echo
 	grep "patches.needed" ${FIL}
 	echo
@@ -2013,7 +2051,7 @@ function chk_updates(){
 
 function chk_multipath(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	FIL="mpio.txt"
 
@@ -2021,7 +2059,7 @@ function chk_multipath(){
 
 	F=$(grep -l "# /etc/multipath.conf" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 	echo "# /etc/multipath.conf:"
-	test -z "$F" || grep -v "^#" $F | tr -s "\n"
+	test -z "$F" || grep -v "^#" "$F" | tr -s "\n"
 
 	for p in "^#.rpm.-V" "^#.Verification.Status:"; do
 		grep "${p}" ${FIL}
@@ -2030,7 +2068,7 @@ function chk_multipath(){
 	echo
 
 	for p in "^boot.device-mapper.*o" "^boot.multipath.*o" "^multipathd.*0:.*3:on"; do
-		grep ${p} ${FIL}
+		grep "${p}" ${FIL}
 	done
 	echo
 	
@@ -2043,7 +2081,7 @@ function chk_multipath(){
 	# TODO multipath.conf: compare failback, rr_min_io, rr_min_io_rq, no_path_retry, polling_interval, dev_loss_tmo, user_friendly_names, async???
 	# TODO check for un-matched userfriendly names (mpath[a-z])
 	for p in "loading.*prioritizer" "path.checker.=" "prio.="; do
-		grep ${p} ${FIL}
+		grep "${p}" ${FIL}
 	done | awk '{print $6,$7,$8}' | sort -u
 	echo
 }
@@ -2051,21 +2089,21 @@ function chk_multipath(){
 
 function chk_filesys(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	FIL="fs-diskio.txt"
 
 	split_file ${FIL}
 	
 	F=$(grep -l "# /etc/fstab" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
-	grep -v "#==" $F | tr -s " "
+	grep -v "#==" "$F" | tr -s " "
 	F=$(grep -l "# /bin/mount" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
-	grep -v "#==" $F | tr -s " "
+	grep -v "#==" "$F" | tr -s " "
 	# TODO define meaningful limits for await and svctm	
 	# TODO make limits for await and svctm a config parameter
 	# TODO autofs	
 	F=$(grep "# /usr/bin/iostat" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
-	echo $F | awk ' $1=="Device:" {print $0}
+	echo "$F" | awk ' $1=="Device:" {print $0}
 		$10 > 100.0 {print $0}
 		$11 > 20.0 {print $0}' | sort -u
 	echo
@@ -2085,7 +2123,7 @@ function chk_filesys(){
 
 function chk_storage(){
 	
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	FIL="rpm.txt"
 	# TODO see whbsaprecheck
@@ -2104,7 +2142,7 @@ xfsprogs
 "
 	echo "software:"
 	for p in $STOR_PKG; do
-		awk '$1=="'$p'" {print $1,$NF} ' ${FIL}
+		awk '$1=="'"$p"'" {print $1,$NF} ' ${FIL}
 	done
 	echo
 	# TODO check if local disk is in multipath
@@ -2142,40 +2180,40 @@ xfs
 	split_file ${FIL}
 	echo "/etc/sysconfig/mdadm:"
 	f=$(grep -l "# /etc/sysconfig/mdadm" ${TEMP}/${FIL}/xx*)
-        test -z "$f" || grep -v "^#" $f | tr -s "\n"
+        test -z "$f" || grep -v "^#" "$f" | tr -s "\n"
         echo
 	
 	FIL="fs-softraid.txt"
 	split_file ${FIL}
 	echo "/etc/sysconfig/mdadm:"
 	f=$(grep -l "# /etc/mdadm.conf" ${TEMP}/${FIL}/xx*)
-        test -z "$f" || cat $f | tr -s "\n"
+        test -z "$f" || tr -s "\n" < "$f"
         echo
 	echo "/proc/mdstat:"
 	f=$(grep -l "# /proc/mdstat" ${TEMP}/${FIL}/xx*)
-        test -z "$f" || cat $f | tr -s "\n"
+        test -z "$f" || tr -s "\n" < "$f"
         echo
 
 	FIL="lvm.txt"
 	split_file ${FIL}
 	echo "/sbin/vgs:"
         f=$(grep -l "# /sbin/vgs" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" $f | tr -s "\n"
+	test -z "$f" || grep -vh "^#" "$f" | tr -s "\n"
 	echo
 	echo "/etc/sysconfig/lvm:"
         f=$(grep -l "# /etc/sysconfig/lvm" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" $f | tr -s "\n"
+	test -z "$f" || grep -vh "^#" "$f" | tr -s "\n"
 	echo
 	echo "/etc/lvm/lvm.conf:"
 	f=$(grep -l "# /etc/lvm/lvm.conf" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" $f | grep -vh "^    #" | tr -s "\n"
+	test -z "$f" || grep -vh "^#" "$f" | grep -vh "^    #" | tr -s "\n"
 	echo
 }
 
 
 function chk_overview(){
 	
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	#FIL="supportconfig.txt"
 	#grep "Script.Version:" ${FIL}
@@ -2186,10 +2224,10 @@ function chk_overview(){
 	# TODO no basic-health-report.txt in SLES12
 	# TODO D state, defunc (zombie), ...
 	FIL="basic-health-report.txt"
-	echo "Supportconfig: " $DIR
+	echo "Supportconfig: $DIR"
 	test -r ${FIL} &&\
 	for p in "^Date.Checked:" "^Status:" "\[...Red...\]" "\[.Yellow..\]"; do
-		grep ${p} ${FIL}
+		grep "${p}" ${FIL}
 	done
 	echo
 }
@@ -2197,7 +2235,7 @@ function chk_overview(){
 
 function chk_sysconf(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	SYSC_PTRN="
 fs.file-max
@@ -2245,7 +2283,7 @@ vm.vfs_cache_pressure
 	FIL="etc.txt"
 	echo "sysctl.conf : "
 	for m in ${SYSC_PTRN}; do	
-		grep ^$m ${FIL}
+		grep "^${m}" ${FIL}
 	done | sort -u
 	echo
 	# TODO security/limits.conf
@@ -2253,7 +2291,7 @@ vm.vfs_cache_pressure
 	FIL="env.txt"
 	split_file ${FIL}
 	F=$(grep -h "# ulimit -a" ${TEMP}/${FIL}/xx* | tr -d ":#")
-        echo $F | grep -v "#==" | tr -s " "
+        echo "$F" | grep -v "#==" | tr -s " "
 
 	FIL="sysconfig.txt"
 	split_file ${FIL}
@@ -2275,7 +2313,7 @@ vm.vfs_cache_pressure
 
 function chk_sysload(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 	
 	FIL="basic-health-report.txt"
 	echo "basic-health-report:"
@@ -2287,7 +2325,7 @@ function chk_sysload(){
 	dfull=$( grep "%.>=.90%" ${FIL} )
 	test "${dfull}" = "X" &&\
 	(	echo "Used Disk Space:"
-		echo $dfull
+		echo "$dfull"
 	)
 	echo
 
@@ -2302,13 +2340,13 @@ function chk_sysload(){
 	echo "max. load-avg15:"
 	echo "hh:mm:ss xM   runq-sz  plist-sz   ldavg-1   ldavg-5  ldavg-15"
 	for f in sa??; do
-		sar -q -f $f
+		sar -q -f "$f"
 	done | grep "^[0-9][0-9]:" | sort -n -k7 | tail
 
 	echo "max. user CPU utilisation:"
 	echo "hh:mm:ss xM     CPU     %user     %nice   %system   %iowait    %steal     %idle"
 	for f in sa??; do
-		sar -f $f
+		sar -f "$f"
 	done | grep "^[0-9][0-9]:" | grep -v "%" | sort -n -k4 | tail
 
 #	echo "max. system CPU utilisation:"
@@ -2320,7 +2358,7 @@ function chk_sysload(){
 	echo "max. iowait CPU utilisation:"
 	echo "hh:mm:ss xM     CPU     %user     %nice   %system   %iowait    %steal     %idle"
 	for f in sa??; do
-		sar -f $f
+		sar -f "$f"
 	done | grep "^[0-9][0-9]:" | grep -v "%" | sort -n -k7 | tail
 
 #	echo "max. interrupts:"
@@ -2338,7 +2376,7 @@ function chk_sysload(){
 	echo "max. disk write blocks:"
 	echo "hh:mm:ss xM       tps      rtps      wtps   bread/s   bwrtn/s"
 	for f in sa??; do
-		sar -f $f 
+		sar -f "$f"
 	done | grep "^[0-9][0-9]:" | sort -n -k7 | tail
 
 #	echo "max. disk read tps:"
@@ -2350,19 +2388,19 @@ function chk_sysload(){
 	echo "max. disk read blocks:"
 	echo "hh:mm:ss xM       tps      rtps      wtps   bread/s   bwrtn/s"
 	for f in sa??; do
-		sar -f $f 
+		sar -f "$f"
 	done | grep "^[0-9][0-9]:" | sort -n -k6 | tail
 
 	echo "max. swap used:"
 	echo "hh:mm:ss xM kbswpfree kbswpused  %swpused  kbswpcad   %swpcad"
 	for f in sa??; do
-		sar -f $f 
+		sar -f "$f"
 	done | grep "^[0-9][0-9]:" | sort -n -k4 | tail
 
 	echo "max. pageout:"
 	echo "hh:mm:ss xM pgpgin/s pgpgout/s   fault/s  majflt/s  pgfree/s pgscank/s pgscand/s pgsteal/s    %vmeff "
 	for f in sa??; do
-		sar -B -f $f 
+		sar -B -f "$f"
 	done | grep "^[0-9][0-9]:" | sort -n -k4 | tail
 
 #	# find lowest vmeff% that is not 0.00. 0.00 means "nothing done".
@@ -2377,13 +2415,13 @@ function chk_sysload(){
 	echo "max. memory commit:"
 	echo "hh:mm:ss xM kbmemfree kbmemused  %memused kbbuffers  kbcached  kbcommit   %commit"
 	for f in sa??; do
-		sar -r -f $f 
+		sar -r -f "$f"
 	done | grep "^[0-9][0-9]:" | sort -n -k8 | tail
 
 	echo "max. memory cache:"
 	echo "hh:mm:ss xM kbmemfree kbmemused  %memused kbbuffers  kbcached  kbcommit   %commit"
 	for f in sa??; do
-		sar -r -f $f 
+		sar -r -f "$f"
 	done | grep "^[0-9][0-9]:" | sort -n -k7 | tail
 
 #	echo "max. network write tps:"
@@ -2395,7 +2433,7 @@ function chk_sysload(){
 	echo "max. network write kB:"
 	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
 	for f in sa??; do
-		sar -n DEV -f $f 
+		sar -n DEV -f "$f"
 	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k7 | tail
 
 #	echo "max. network read tps :"
@@ -2407,21 +2445,21 @@ function chk_sysload(){
 	echo "max. network read kB:"
 	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
 	for f in sa??; do
-		sar -n DEV -f $f 
+		sar -n DEV -f "$f"
 	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k6 | tail
 
 	# TODO network errors?
 	# TODO NFS client and server reports?
 	# TODO grep -A6 "numastat" sysctl.txt 
 
-	cd $OWD 
+	cd "$OWD" || exit
 	echo
 }
 
 
 function chk_errors(){
 	
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	# TODO see cs_show_error_patterns
 	test -z "${ERRCFG}" &&\
@@ -2445,8 +2483,8 @@ function chk_errors(){
 	for e in ${ERROR_PATTERN} ${CLUERR_PATTERN}; do
 		echo -n "${e} : "
 		for f in ${LOG}; do
-			cat $f
-		done | grep -ic ${e} 
+			cat "$f"
+		done | grep -ic "${e}"
 	done
 	echo
 
@@ -2456,7 +2494,7 @@ function chk_errors(){
 	split_file ${FIL}
 	f=$(grep -l "^# /proc/net/dev$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		cat $f
+		cat "$f"
 
 NET_ERR="
 ICMP.message.failed
@@ -2466,7 +2504,7 @@ listen.queue.of.a.socket.overflowed
 "
 	FIL="network.txt"
 	for p in $NET_ERR; do
-		grep $p ${FIL}
+		grep "$p" ${FIL}
 	done
 	echo
 }
@@ -2476,7 +2514,7 @@ listen.queue.of.a.socket.overflowed
 
 case $1 in
 	--help|-h)
-		BEX=$(basename $EXE)
+		BEX=$(basename "$EXE")
 		echo "usage: $BEX OPTION"
 		echo "usage: $BEX --generic <DIR>"
 		echo "usage: $BEX --function <DIR> <FUNC>"
@@ -2491,17 +2529,17 @@ case $1 in
 		exit
 	;;
 	--version|-v)
-		echo -n "$(basename $EXE) "
-		head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	--listfunc|-l)
-		awk '$1=="function" && $2~/^chk_/ {print $2}' $EXE |\
+		awk '$1=="function" && $2~/^chk_/ {print $2}' "$EXE" |\
 			tr -d "{()" | sort
 		exit
 	;;
 	--generic|-g)
-		cd $DIR
+		cd "$DIR" || exit
 		chk_overview
 		chk_hardware
 		chk_kernel
@@ -2523,12 +2561,12 @@ case $1 in
 		exit
 	;;
 	--function|-f)
-		cd $DIR
+		cd "$DIR" || exit
 		shift
 		if [ $# -gt 1 ]; then	
-			for f in $*; do
-				EXE=$(type -p $0)
-				grep "^function ${f}().$" $EXE && $f
+			EXE=$(type -p "$0")
+			for f in "$@"; do
+				grep "^function ${f}().$" "$EXE" && $f
 				shift
 			done
 		else $FUN
@@ -2542,7 +2580,7 @@ case $1 in
 		exit
 	;;
 	--test|-t)
-		cd $DIR
+		cd "$DIR" || exit
 		#set -x
 		chk_sleha
 

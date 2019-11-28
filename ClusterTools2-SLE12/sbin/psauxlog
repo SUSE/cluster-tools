@@ -4,13 +4,13 @@
 # (c) 2018-2019 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
-# Version: 0.1 2011-04-29
+# Version: 0.1 2019-11-28
 #
 
 D=$(date +"%F %T")
 L=${1:-"/var/log/psaux.log"}
 
-ps aux | while read; do
-	echo $D: $REPLY
-done >>$L
+ps aux | while read -r; do
+	echo "$D": "$REPLY"
+done >>"$L"
 #

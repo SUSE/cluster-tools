@@ -35,6 +35,7 @@ dm_mirror.ko
 bonding.ko
 hpwdt.ko
 hangcheck-timer.ko
+deadman.ko
 ibmasr.ko
 iTCO_wdt.ko
 i6300esb.ko

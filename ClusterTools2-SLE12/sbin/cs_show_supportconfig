@@ -5,9 +5,9 @@
 # (c) 2011-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License 2. No warranty.
 #
-# Version: SLES12 0.03 2019-08-12
+# Version: SLES12 0.03 2019-11-28
 #
-# For Supportconfig Script Version: 2.25-237
+# For Supportconfig Script Version: 2.25-237 to 3.0.2-10
 #
 
 EXE=$0
@@ -2273,9 +2273,8 @@ vm.vfs_cache_pressure
 
 function chk_sysload(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep $FUNCNAME	
 	
-	FIL="basic-health-report.txt"
 	echo "basic-health-report:"
 	# TODO replace basic-health-report.txt
 	test -r ${FIL} &&\
@@ -2291,12 +2290,14 @@ function chk_sysload(){
 
 	OWD=$PWD
 	cd sar || exit
-	# TODO sa?? now is sar20190309.xz. There is also sar20190309 plain ASCII.
+	# TODO sa?? now is sar20190309.xz.
+	# sar20190309 plain ASCII is only about the rpm itself.
 	# TODO print date of sar file to each output line
 	#	either by adding date from sar-fiel header,
 	#	or by grep-ing the alreday known maxima out of the files
 	# TODO reduce number of columns
 
+	if test -f sa??; then
 	echo "max. load-avg15:"
 	echo "hh:mm:ss xM   runq-sz  plist-sz   ldavg-1   ldavg-5  ldavg-15"
 	for f in sa??; do
@@ -2411,6 +2412,7 @@ function chk_sysload(){
 	# TODO network errors?
 	# TODO NFS client and server reports?
 	# TODO grep -A6 "numastat" sysctl.txt 
+	fi
 
 	cd $OWD 
 	echo

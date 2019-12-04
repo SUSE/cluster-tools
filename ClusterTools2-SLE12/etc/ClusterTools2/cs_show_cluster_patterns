@@ -1,6 +1,8 @@
 #/etc/ClusterTools2/cs_show_cluster_patterns
 # For SLES12.
 #
+# Please use dot "." instead of blanks " " in patterns!
+#
 OSERR_PATTERN="
 "NMI.received"
 "NMI.*error"

@@ -5,7 +5,7 @@
 # (c) 2011-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: SLES12 0.2 2019-11-28
+# Version: SLES12 0.2 2019-12-04
 #
 
 EXE="$0"
@@ -48,6 +48,9 @@ test -z "${ZIPPED_LOG}" &&\
 	ZIPPED_LOG="${ZIPPED_LOG} $(echo ${CLUSTER_LOG}|tr -d \\n)*bz2"
 
 # TODO add more HBA errors: hpsa cciss
+# TODO function to check for unwanted blanks: grep "^\".*\ .*\"$" $EXE
+#
+# Please use dot "." instead of blanks " " in patterns!
 test -z "${ERROR_PATTERN}" &&\
 	 ERROR_PATTERN="
 "taint.flag"
@@ -73,7 +76,7 @@ test -z "${ERROR_PATTERN}" &&\
 "irq.*nobody.cared"
 "kthread.starved.for.*jiffies"
 "urandom.warning"
-"Signaling PME.*interrupt"
+"Signaling.PME.*interrupt"
 "Error.DRAM"
 "Uncorrectable.*rror"
 "error.detected.during.POST"

@@ -6,7 +6,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-05-28 SLES12
+# Version: 2019-12-04 SLES12
 #
 
 EXE="$0"
@@ -25,6 +25,9 @@ ZIPPED_LOG="${CLUSTER_LOG}*bz2"
 
 # TODO: what error msgs. make sense?
 # TODO: xfs_repair
+# TODO function to check for unwanted blanks: grep "^\".*\ .*\"$" $EXE
+#
+# Please use dot "." instead of blanks " " in patterns!
 test -z "${OSERR_PATTERN}" &&\
 	 OSERR_PATTERN="
 "NMI.received"

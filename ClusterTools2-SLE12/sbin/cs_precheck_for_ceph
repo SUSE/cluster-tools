@@ -353,7 +353,7 @@ function prck_basesoft(){
 	echo
 
 	# TODO abort zypper, if server not reached
-	INSTALLED_PTRN=$(zypper -n se -t pattern | awk '$1=="i" {print $3}')
+	INSTALLED_PTRN=$(zypper -n se -t pattern | awk '($1=="i" || $1=="i+") {print $3}')
 	for a in ${CEPH_PTRN}; do
 		FOUND=$(echo "$INSTALLED_PTRN" | tr " " "\n" | grep "$a")
 		test -z "${FOUND}" && FOUND="NA"

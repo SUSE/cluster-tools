@@ -1,6 +1,8 @@
 #!/bin/bash
 # pacemakill
 # 2018-09-06
+# shellcheck disable=SC2009,SC2086,SC2162
+#
 
 sync
 

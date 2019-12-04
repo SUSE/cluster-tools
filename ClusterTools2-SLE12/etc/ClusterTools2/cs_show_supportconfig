@@ -109,17 +109,17 @@ eccmad
 "
 #
 NETW_PTRN="
-Setting.up.hostname
-Setting.up.loopback.interface
-eth.*IP.address:.*/
-bond.*enslaved.interface:
-bond.*IP.address:.*/
+"Setting.up.hostname"
+"Setting.up.loopback.interface"
+"eth.*IP.address:.*/"
+"bond.*enslaved.interface:"
+"bond.*IP.address:.*/"
 "
 #
 TIME_ERR="
-synchronized.to.LOCAL
-ntpd.*time.reset
-ntpd.*failed
+"synchronized.to.LOCAL"
+"ntpd.*time.reset"
+"ntpd.*failed"
 "
 #
 TIME_PTRN="
@@ -136,11 +136,11 @@ not.our.package:
 "
 #
 UPDT_PTRN="
-SLES12-
-SLES12-SP
-SLE12-HAE-SP
-SLE12-SP1-SAP-
-SLE12-SP2-SAP-
+"SLES12-"
+"SLES12-SP"
+"SLE12-HAE-SP"
+"SLE12-SP1-SAP-"
+"SLE12-SP2-SAP-"
 "
 #
 STOR_PKG="
@@ -228,9 +228,7 @@ vm.zone_reclaim_mode
 #
 ORA_SFT_PTRN="
 orarun
-oracleasmlib
-oracleasm-support
-oracleasm-kmp-default
+oracleasmlib oracleasm-support oracleasm-kmp-default
 oracle-instantclient11.2-basic
 oracle-instantclient11.2-basiclite
 oracle-instantclient11.2-jdbc
@@ -238,40 +236,15 @@ oracle-instantclient11.2-sqlplus
 oracle-instantclient11.2-devel
 oracle-instantclient11.2-odbc
 oracle-instantclient11.2-tools
-cups-client
-cups-drivers
-cups-libs
-cups-libs-32bit
-cups
-cups-autoconfig
-xorg-x11-libs
-xorg-x11
+cups-client cups-drivers cups-libs cups-libs-32bit cups cups-autoconfig
+xorg-x11-libs xorg-x11
 nfs-client
-glibc
-glibc-32bit
-glibc-locale
-glibc-locale-32bit
-glibc-devel
-kernel-default
-linux-kernel-headers
-binutils
-gcc
-gcc-32bit
-gcc43
-gcc-locale
-gcc-locale
-libgcc43
-libgcc43-32bit
-libaio
-libaio-devel
-sysstat
-supportutils
-suse-sam
-multipath-tools
-mdadm
-device-mapper
-device-mapper-32bit
-libext2fs2
+glibc glibc-32bit glibc-locale glibc-locale-32bit glibc-devel
+kernel-default linux-kernel-headers
+binutils gcc gcc-32bit gcc43 gcc-locale gcc-locale libgcc43 libgcc43-32bit
+libaio libaio-devel
+sysstat supportutils suse-sam
+multipath-tools mdadm device-mapper device-mapper-32bit libext2fs2
 ClusterTools2
 "
 #
@@ -342,11 +315,11 @@ eccmad
 #"
 #
 VRT_ERR_PTRN="
-GAB.*failed
-Symantec.Technical.Support
-error.*VRT
-VCS.CRITICAL
-vxvm.*volume.*not
+"GAB.*failed"
+"Symantec.Technical.Support"
+"error.*VRT"
+"VCS.CRITICAL"
+"vxvm.*volume.*not"
 "
 #
 CLUSTER_PKG="
@@ -415,10 +388,10 @@ softdog
 "
 #
 PWVM_ETC="
-/etc/ntp.conf
-/etc/multipath.conf
-/etc/sysconfig/network/ifcfg-eth0
-/etc/sysconfig/network/ifcfg-eth1
+"/etc/ntp.conf"
+"/etc/multipath.conf"
+"/etc/sysconfig/network/ifcfg-eth0"
+"/etc/sysconfig/network/ifcfg-eth1"
 "
 #
 PWVM_SVC_YES="
@@ -508,11 +481,11 @@ xendomains
 "
 #
 VMW_ETC="
-/etc/ntp.conf
-/etc/vmware-tools/tools.conf
-/etc/vmware-tools/plugins
-/etc/pam.d/vmtoolsd
-/etc/ld.so.conf.d/vmware-tools-libraries.conf
+"/etc/ntp.conf"
+"/etc/vmware-tools/tools.conf"
+"/etc/vmware-tools/plugins"
+"/etc/pam.d/vmtoolsd"
+"/etc/ld.so.conf.d/vmware-tools-libraries.conf"
 "
 #
 SAP_SAP_PKG_NOT="

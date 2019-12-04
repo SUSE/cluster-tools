@@ -11,13 +11,14 @@
 #
 # For Supportconfig Script Version: 2.25-237
 #
-# shellcheck disable=SC1090,SC2128
+# shellcheck disable=SC1090,SC2128,SC2140,SC2125
+# SC2140 and SC2125 are needed because of the ongoing pattern declaration
+# discussion.
 #
 
 EXE=$0
 ERR="/dev/null"
 TEMP="/dev/shm/cltl.$RANDOM"
-ORGFS=$IFS
 
 CFG="/etc/ClusterTools2/cs_show_supportconfig"
 test -s $CFG && source $CFG
@@ -78,18 +79,13 @@ HANA_SUSE_PTRN
 
 function writecfg(){
 	echo -e "# $CFG \n# For SLES12.\n#"
-	# to preserve blanks in the pattern
-	# else ${!c} will mangle the lines
-	IFS=$'\n'
 	for c in $CFGVAR; do
 		echo "${c}=\""
 		# shellcheck disable=SC2086
-		printf "%s\n" ${!c}
-		#echo ${!c} | tr " " "\n"
+		echo ${!c} | tr " " "\n"
 		echo "\""
 		echo "#"
 	done
-	IFS=$ORGFS
 }
 
 
@@ -115,8 +111,9 @@ function show_sys_scsi(){
 	FIL="sysfs.txt"
 	split_file ${FIL}
 	f=$(grep -l "^# /usr/bin/systool -vb scsi$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		grep -e "Device.path.=.*/sys/devices/.*target.*/[0-9]" -e "timeout.*=..[1-9]" -e "model.*=" "$f"
+		grep -e "Device.path.=.*/sys/devices/.*target.*/[0-9]" -e "timeout.*=..[1-9]" -e "model.*=" $f
 }
 
 
@@ -125,11 +122,12 @@ function show_sys_fcfabric(){
 	FIL="sysfs.txt"
 	split_file ${FIL}
 	f=$(grep -l "^# /usr/bin/systool -vc fc_host$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		( grep -A13 "Class.Device.path.=.\"/sys/devices/" "$f"
+		( grep -A13 "Class.Device.path.=.\"/sys/devices/" $f
 		echo
 		#awk -F"=" '$1=="fabric_name" {print $2}' $f | sort -u
-		grep port_name "$f" | sort -f
+		grep port_name $f | sort -f
 		echo )
 }
 
@@ -312,8 +310,9 @@ lin_tape.ko
 	FIL="modules.txt"
 	split_file ${FIL}
 	f=$(grep -l "^# /sbin/lsmod$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		grep -vh "^#==..Co.*==#" "$f" | sort -u | grep -v "#"
+		grep -vh "^#==..Co.*==#" $f | sort -u | grep -v "#"
 	rm -rf ${TEMP:?}/${FIL}
 	echo	
 	echo -n "process on watchdog : "
@@ -341,11 +340,13 @@ function chk_memory(){
 	split_file ${FIL}
 	echo
 	f=$(grep -l "^# /usr/bin/free -k$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		grep -vh "^#==..Co.*==#" "$f"
+		grep -vh "^#==..Co.*==#" $f
 	f=$(grep -l "^# /proc/meminfo$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		grep -vh "^#==..Co.*==#" "$f"
+		grep -vh "^#==..Co.*==#" $f
 	echo "# /proc/vmstat"
 	# TODO what else?
 	test -z "${MEM_VMSTAT}" &&\
@@ -356,9 +357,10 @@ compact_pagemigrate_failed
 compact_fail
 "
 	f=$(grep -l "^# /proc/vmstat$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 	for m in $MEM_VMSTAT; do
-		grep "$m" "$f"
+		grep "$m" $f
 	done
 	echo
 	awk 'NF==2 && $0~/^numa_miss/ {print $0}' ${FIL}
@@ -387,17 +389,20 @@ vm.memory_failure_early_kill
 vm.zone_reclaim_mode
 "
 	f=$(grep -l "^# /sbin/sysctl -a 2>/dev/null | grep ^vm$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 	for m in $MEM_SYSCTL; do
-		grep "$m" "$f"
+		grep "$m" $f
 	done
 	echo
 	f=$(grep -l "^# /sys/kernel/mm/transparent_hugepage/enabled$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		grep -vh "^#==..Co.*==#" "$f" | tr -s "\n"
+		grep -vh "^#==..Co.*==#" $f | tr -s "\n"
 	f=$(grep -l "^# /sys/kernel/mm/transparent_hugepage/defrag$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		grep -vh "^#==..Co.*==#" "$f" | tr -s "\n"
+		grep -vh "^#==..Co.*==#" $f | tr -s "\n"
 	echo	
 	FIL="basic-health-check.txt"
 	echo "# tmpfs:"
@@ -416,26 +421,30 @@ function chk_numa(){
 	split_file ${FIL}
 	echo
 	f=$(grep -l "^# /usr/bin/numactl --hardware$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		grep -vh "^#==..Co.*==#" "$f"
+		grep -vh "^#==..Co.*==#" $f
 # TODO buddyinfo needed?
 #	f=$(grep -l "^# /proc/buddyinfo$" ${TEMP}/${FIL}/xx*)
 #	test -z "$f" ||\
-#		grep -vh "^#==..Co.*==#" "$f"
+#		grep -vh "^#==..Co.*==#" $f
 	f=$(grep -l "^# /usr/bin/numastat$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		grep -vh "^#==..Co.*==#" "$f"
+		grep -vh "^#==..Co.*==#" $f
 	echo "# /proc/vmstat"
 	# TODO what else?
 	f=$(grep -l "^# /proc/vmstat$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		grep -e "numa_miss" -e "zone_reclaim_" -e "htlb_buddy_alloc" "$f"
+		grep -e "numa_miss" -e "zone_reclaim_" -e "htlb_buddy_alloc" $f
 	echo
 	echo "# /sbin/sysctl -a"
 	# TODO what else?
 	f=$(grep -l "^# /sbin/sysctl -a 2>/dev/null | grep ^vm$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		grep -e "vm.zone_reclaim_mode" -e "vm.numa_zonelist_order" "$f"
+		grep -e "vm.zone_reclaim_mode" -e "vm.numa_zonelist_order"  $f
 	echo
 }
 
@@ -597,18 +606,19 @@ eccmad
 #
 	test -z "${VRT_ERR_PTRN}" &&\
 	VRT_ERR_PTRN="
-GAB.*failed
-Symantec.Technical.Support
-error.*VRT
-VCS.CRITICAL
-vxvm.*volume.*not
+"GAB.*failed"
+"Symantec.Technical.Support"
+"error.*VRT"
+"VCS.CRITICAL"
+"vxvm.*volume.*not"
 "
 	LOG="boot.txt messages.txt"
 	for e in ${VRT_ERR_PTRN}; do
 		echo -n "${e} : "
+		# shellcheck disable=SC2086
 		for f in ${LOG}; do
 			cat "$f"
-		done | grep -ic "${e}"
+		done | grep -ic ${e}
 	done
 	echo
 	grep "^#./etc/vx" etc.txt
@@ -630,11 +640,11 @@ function chk_network(){
 	
 	test -z "${NETW_PTRN}" &&\
 	NETW_PTRN="
-Setting.up.hostname
-Setting.up.loopback.interface
-eth.*IP.address:.*/
-bond.*enslaved.interface:
-bond.*IP.address:.*/
+"Setting.up.hostname"
+"Setting.up.loopback.interface"
+"eth.*IP.address:.*/"
+"bond.*enslaved.interface:"
+"bond.*IP.address:.*/"
 "
 	FIL="boot.txt"
 	echo "boot setup:"
@@ -695,23 +705,26 @@ function chk_nameres(){
 
 	echo "# /etc/hosts:"
 	f=$(grep -l "^# /etc/hosts$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
         test -z "$f" ||\
-        	grep -v "^#" "$f" | tr -s "\n"
+		grep -v "^#" $f | tr -s "\n"
 	echo
 	echo "# /etc/resolv.conf:"
 	f=$(grep -l "^# /etc/resolv.conf$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
         test -z "$f" ||\
-        	grep -v "^#" "$f" | tr -s "\n"
+		grep -v "^#" $f | tr -s "\n"
 	echo
 #	echo "# /etc/nsswitch.conf:"
 #	f=$(grep -l "^# /etc/nsswitch.conf$" ${TEMP}/${FIL}/xx*)
 #	test -z "$f" ||\
-#       	grep -v "^#" "$f" | tr -s "\n"
+#       	grep -v "^#" $f | tr -s "\n"
 #	echo
 	echo "# /etc/host.conf:"
 	f=$(grep -l "^# /etc/host.conf$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
         test -z "$f" ||\
-        	grep -v "^#" "$f" | tr -s "\n"
+		grep -v "^#" $f | tr -s "\n"
 
         rm -rf ${TEMP:?}/${FIL}
 	echo
@@ -739,20 +752,22 @@ function chk_timeres(){
 	echo "# /etc/ntp.conf:"
 	split_file ${FIL} 
 	f=$(grep -l "^# /etc/ntp.conf$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
         test -z "$f" ||\
-		grep -v "^#" "$f" | tr -s "\n"
+		grep -v "^#" $f | tr -s "\n"
 	f=$(grep -l "^NTPD_FORCE_SYNC_ON_STARTUP=" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
         test -z "$f" ||\
-		grep -v "^#" "$f" | tr -s "\n"
+		grep -v "^#" $f | tr -s "\n"
 
         rm -rf ${TEMP:?}/${FIL}
 	echo
 
 	test -z "${TIME_ERR}" &&\
 	TIME_ERR="
-synchronized.to.LOCAL
-ntpd.*time.reset
-ntpd.*failed
+"synchronized.to.LOCAL"
+"ntpd.*time.reset"
+"ntpd.*failed"
 "
 	echo "errors:"
 	for p in $TIME_ERR; do
@@ -820,7 +835,7 @@ sbd:
 "
 	FIL="rpm.txt"
 	for f in $CLUSTER_PKG; do
-		grep "$f" ${FIL} 	
+		grep "$f" ${FIL}
 	done | sort
 	echo
 	# TODO check /etc/corosync/
@@ -844,18 +859,21 @@ sbd:
 		split_file ${FIL}
 		f=$(grep -l "^# /sbin/chkconfig.--list$" ${TEMP}/${FIL}/xx*)
 		echo "/sbin/chkconfig --list:"
+		# shellcheck disable=SC2086
 		test -z "$f" ||\
-			grep -e "^openais.*0:" -e "^hp-asrd.*0:" "$f"
+			grep -e "^openais.*0:" -e "^hp-asrd.*0:" $f
 		echo
 		f=$(grep -l "^/etc/init.d/rc3.d:$" ${TEMP}/${FIL}/xx*)
         	echo "/etc/init.d/rc3.d:"
-       		test -z "$f" ||\
-			grep -e "K..openais" -e "S..hp-asrd" "$f"
+		# shellcheck disable=SC2086
+		test -z "$f" ||\
+			grep -e "K..openais" -e "S..hp-asrd" $f
 		echo
 		f=$(grep -l "^/etc/init.d/rc5.d:$" ${TEMP}/${FIL}/xx*)
         	echo "/etc/init.d/rc5.d:"
-        	test -z "$f" ||\
-			grep -e "K..openais" -e "S..hp-asrd" "$f"
+		# shellcheck disable=SC2086
+		test -z "$f" ||\
+			grep -e "K..openais" -e "S..hp-asrd" $f
 		echo
 	fi
 	FIL="systemd.txt"
@@ -868,49 +886,60 @@ sbd:
         split_file ${FIL}
         f=$(grep -l "^# /etc/sysconfig/openais$" ${TEMP}/${FIL}/xx*)
 	echo "/etc/sysconfig/openais:"
-	test -z "$f" || grep -v "^#" "$f" | tr -s "\n"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -v "^#" $f | tr -s "\n"
 	echo
         f=$(grep -l "^# /etc/sysconfig/pacemaker$" ${TEMP}/${FIL}/xx*)
 	echo "/etc/sysconfig/pacemaker:"
-	test -z "$f" || grep -v "^#" "$f" | tr -s "\n"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -v "^#" $f | tr -s "\n"
 	echo	
 	f=$(grep -l "^# /etc/sysconfig/sbd$" ${TEMP}/${FIL}/xx*)
 	echo "/etc/sysconfig/sbd:"
-	test -z "$f" || grep -v "^#" "$f" | tr -s "\n"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -v "^#" $f | tr -s "\n"
 	echo
 
 	FIL="ha.txt"
         split_file ${FIL}
 	f=$(grep -l "^# /usr/sbin/sbd.-d.*dump$" ${TEMP}/${FIL}/xx*)
 	echo "sbd -d /dev/... dump:"
-	test -z "$f" || grep -v "^#" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -v "^#" $f
 	echo
 	f=$(grep -l "^# /usr/sbin/sbd.-d.*list$" ${TEMP}/${FIL}/xx*)
 	echo "sbd -d /dev/... list:"
-	test -z "$f" || grep -v "^#" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -v "^#" $f
 	echo
         f=$(grep -l "^# /etc/corosync/corosync.conf$" ${TEMP}/${FIL}/xx*)
 	echo "/etc/corosync/corosync.conf:"
-	test -z "$f" || grep -v "^#" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -v "^#" $f
 	echo
         f=$(grep -l "^# /usr/sbin/corosync-cfgtool -s$" ${TEMP}/${FIL}/xx*)
 	echo "/usr/sbin/corosync-cfgtool -s:"
-	test -z "$f" || grep -v "^#" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -v "^#" $f
 	echo
 	f=$(grep -l "^# /usr/sbin/sbd.-d.*dump$" ${TEMP}/${FIL}/xx*)
         f=$(grep -l "^# /usr/sbin/crm_mon.-r.-1$" ${TEMP}/${FIL}/xx*)
 	echo "crm_mon -r -1:"
-	test -z "$f" || grep -v "^#" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -v "^#" $f
 	echo
         f=$(grep -l "^# /var/lib/heartbeat/crm/cib.xml$" ${TEMP}/${FIL}/xx*)
 	echo "/var/lib/heartbeat/crm/cib.xml:"
-	test -z "$f" || grep -v "^#" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -v "^#" $f
         f=$(grep -l "^# /var/lib/pacemaker/cib/cib.xml$" ${TEMP}/${FIL}/xx*)
 	echo "/var/lib/pacemaker/cib/cib.xml:"
-	test -z "$f" || grep -v "^#" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -v "^#" $f
         f=$(grep -l "^# /usr/sbin/crm configure show$" ${TEMP}/${FIL}/xx*)
 	echo "/usr/sbin/crm configure show:"
-	test -z "$f" || grep -v "^#" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -v "^#" $f
 	echo
 	# TODO crm configure show?
 
@@ -925,13 +954,15 @@ sbd:
         split_file ${FIL}
         echo "/etc/lvm/lvm.conf:"
         f=$(grep -l "# /etc/lvm/lvm.conf" ${TEMP}/${FIL}/xx*)
-        test -z "$f" || grep -vh "^#" "$f" | grep "filter"
+	# shellcheck disable=SC2086
+        test -z "$f" || grep -vh "^#" $f | grep "filter"
         echo
 	FIL="fs-softraid.txt"
         split_file ${FIL}
         echo "/etc/mdadm.conf:"
         f=$(grep -l "# /etc/mdadm.conf" ${TEMP}/${FIL}/xx*)
-        test -z "$f" || grep -vh "^#" "$f" # | grep "/dev/null"
+	# shellcheck disable=SC2086
+        test -z "$f" || grep -vh "^#" $f # | grep "/dev/null"
         echo
 
 	# TODO /proc/sys/net/ipv4/tcp_retries2 : 2 for NW Enqueue Replication
@@ -1055,10 +1086,10 @@ softdog
 	# TODO which files?
 	test -z "${PWVM_ETC}" &&\
 	PWVM_ETC="
-/etc/ntp.conf
-/etc/multipath.conf
-/etc/sysconfig/network/ifcfg-eth0
-/etc/sysconfig/network/ifcfg-eth1
+"/etc/ntp.conf"
+"/etc/multipath.conf"
+"/etc/sysconfig/network/ifcfg-eth0"
+"/etc/sysconfig/network/ifcfg-eth1"
 "
 
 	echo "- packages installed:"
@@ -1110,7 +1141,8 @@ softdog
 		echo "$p :"
 		f=$(grep -l "^# ${p}$" ${TEMP}/${FIL}/xx*)
 		test -z "$f" && continue
-		test -r "$f" && grep -v "^#" "$f" | tr -s "\n"
+		# shellcheck disable=SC2086
+		test -r $f && grep -v "^#" $f | tr -s "\n"
 	done
 	FIL="network.txt"
 	split_file ${FIL}
@@ -1119,7 +1151,8 @@ softdog
 		echo "$p :"
 		f=$(grep -l "^# ${p}$" ${TEMP}/${FIL}/xx*)
 		test -z "$f" && continue
-		test -r "$f" && grep -v "^#" "$f" | tr -s "\n"
+		# shellcheck disable=SC2086
+		test -r $f && grep -v "^#" $f | tr -s "\n"
 	done
 	echo
 	echo
@@ -1216,11 +1249,11 @@ xendomains
 "
 	test -z "${VMW_ETC}" &&\
 	VMW_ETC="
-/etc/ntp.conf
-/etc/vmware-tools/tools.conf
-/etc/vmware-tools/plugins
-/etc/pam.d/vmtoolsd
-/etc/ld.so.conf.d/vmware-tools-libraries.conf
+"/etc/ntp.conf"
+"/etc/vmware-tools/tools.conf"
+"/etc/vmware-tools/plugins"
+"/etc/pam.d/vmtoolsd"
+"/etc/ld.so.conf.d/vmware-tools-libraries.conf"
 "
 	# TODO  vmware user /usr/lib/vmware-tools/moduleScripts/user/vmware-config.pl --toConfigure=user
 
@@ -1277,7 +1310,8 @@ xendomains
 		echo "$p :"
 		f=$(grep -l "^# ${p}$" ${TEMP}/${FIL}/xx*)
 		test -z "$f" && continue
-		test -r "$f" && grep -v "^#" "$f" | tr -s "\n"
+		# shellcheck disable=SC2086
+		test -r $f && grep -v "^#" $f | tr -s "\n"
 	done
 	echo
 	show_sys_scsi
@@ -1298,8 +1332,9 @@ ulimit
 	FIL=etc.txt
 	split_file ${FIL}
 	f=$(grep -l "^# /etc/sysconfig/sapconf$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		grep -v "^#" "$f" | sort -u
+		grep -v "^#" $f | sort -u
 	echo
 	# TODO check ???, see sum_base_config, precheck_for_sap
 	grep -e "^@sapsys" -e "^@sdba" crash.txt
@@ -1308,8 +1343,9 @@ ulimit
 	FIL=proc.txt
 	split_file ${FIL}
 	f=$(grep -l "^# /proc/net/unix$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		awk '$8~/sap/ || $8~/oracle/ {print $8}' "$f" | sort -u
+		awk '$8~/sap/ || $8~/oracle/ {print $8}' $f | sort -u
 	echo
 	FIL=pam.txt
 	split_file ${FIL}
@@ -1327,16 +1363,20 @@ ulimit
 #	echo
 	echo "getent_group :"
 	f=$(grep -l "^# /usr/bin/getent group$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		awk -F: '$1=="sapinst" || $1=="sapsys" || $1=="oper"  {print}' "$f" | sort -u
+		awk -F: '$1=="sapinst" || $1=="sapsys" || $1=="oper"  {print}' $f | sort -u
 	echo
 	echo "proc :"
 	FIL=memory.txt
 	split_file ${FIL}
 	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		awk '$2=="sapstartsrv" || $2=="sapstart" || $2~/ms\.sap/ || $2~/en\.sap/  || $2~/ig\.sap/ || $2=="igsmux_mt" || $2=="igspw_mt" || $2=="gwrd" || $2=="icman" || $2~/jc\.sap/ || $2=="jstart" {print}' "$f" | sort -u
-		awk '$8~/sapstart/ || $8~/disp\+work/ || $8~/igswd_mt/ || $8~/igspw_mt/ || $8~/igsmux_mt/ || $8~/gwrd/ || $8~/icman/ || $8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ || $8~/dw_/ || $8~/jstart/  {print $8}' "$f" | sort -u
+		awk '$2=="sapstartsrv" || $2=="sapstart" || $2~/ms\.sap/ || $2~/en\.sap/  || $2~/ig\.sap/ || $2=="igsmux_mt" || $2=="igspw_mt" || $2=="gwrd" || $2=="icman" || $2~/jc\.sap/ || $2=="jstart" {print}' $f | sort -u
+	# shellcheck disable=SC2086
+	test -z "$f" ||\
+		awk '$8~/sapstart/ || $8~/disp\+work/ || $8~/igswd_mt/ || $8~/igspw_mt/ || $8~/igsmux_mt/ || $8~/gwrd/ || $8~/icman/ || $8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ || $8~/dw_/ || $8~/jstart/  {print $8}' $f | sort -u
 	echo
 
 # TODO 1310037   SUSE LINUX Enterprise Server 11: Installation notes?
@@ -1607,8 +1647,9 @@ HANA-Firewall
 	echo "SAP+SUSE recommended DEFAULT_APPEND: $hana_defapd"
 	echo "# /etc/sysconfig/bootloader:"
 	f=$(grep -l "^# /etc/sysconfig/bootloader$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		grep DEFAULT_APPEND "$f"
+		grep DEFAULT_APPEND $f
 	echo
 	rm -rf ${TEMP:?}/${FIL}
 
@@ -1619,17 +1660,19 @@ HANA-Firewall
 
 	f=$(grep -l "^# /etc/sysctl.conf$" ${TEMP}/${FIL}/xx*)
 	echo "SAP recommended sysctl:"
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		for p in $HANA_SAP_SYSCTL; do
 			echo -n "$p : "
-			grep "$p" "$f" || echo "NO"
+			grep "$p" $f || echo "NO"
 		done
 	echo
 	echo "SUSE recommended sysctl:"
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		for p in $HANA_SUSE_SYSCTL; do
 			echo -n "$p : "
-			grep "$p" "$f" || echo "NO"
+			grep "$p" $f || echo "NO"
 		done
 	echo
 	rm -rf ${TEMP:?}/${FIL}
@@ -1647,8 +1690,9 @@ HANA-Firewall
 	echo "SAP recommended boot.local: echo never > /sys/kernel/mm/transparent_hugepage/enabled"
 	echo "# /etc/init.d/boot.local:"
 	F=$(grep -l "# /etc/init.d/boot.local" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')	
-		test -z "$F" ||\
-			grep -v "^#" "$F"
+	# shellcheck disable=SC2086
+	test -z "$F" ||\
+		grep -v "^#" $F
 
 	FIL="sysfs.txt"
 	echo "SAP recommeded nr_anon_transparent_hugepages: 0 , nr_hugepages: 0"
@@ -1702,7 +1746,8 @@ HANA-Firewall
 	
 	echo "SAP recommeded filesystem type: XFS"
 	F=$(grep -l "# /etc/fstab" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
-	grep -v "#==" "$F" | tr -s " "
+	# shellcheck disable=SC2086
+	grep -v "#==" $F | tr -s " "
 	# TODO XFS create options
 
 	# TODO calculate 2x RAM, max.50GB
@@ -1749,8 +1794,9 @@ HANA-Firewall
 	FIL="memory.txt"
 	split_file ${FIL}
 	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
         test -z "$f" ||\
-		awk ' $9~/HDB_/ {print $9}' "$f" | sort -u | tail -2
+		awk ' $9~/HDB_/ {print $9}' $f | sort -u | tail -2
 	echo
 }
 
@@ -1819,8 +1865,9 @@ oracle.*
 	# TODO fix test
         F=$(grep -l "# /etc/sysconfig/oracle" ${TEMP}/${FIL}/xx* |\
 		 tr -d ":#" | awk '{print $1}')
-	test -z "$F" ||\
-		grep -v "^#" "$F"  | awk -F: '{print $2}' | tr -s "\n "
+	# shellcheck disable=SC2086
+	test -z $F ||\
+		grep -v "^#" $F  | awk -F: '{print $2}' | tr -s "\n "
         echo
 
 	grep -e "^oracle" -e "^@dba" crash.txt
@@ -1847,9 +1894,7 @@ oracle.*
         test -z "${ORA_SFT_PTRN}" &&\
         ORA_SFT_PTRN="
 orarun
-oracleasmlib
-oracleasm-support
-oracleasm-kmp-default
+oracleasmlib oracleasm-support oracleasm-kmp-default
 oracle-instantclient11.2-basic
 oracle-instantclient11.2-basiclite
 oracle-instantclient11.2-jdbc
@@ -1857,50 +1902,27 @@ oracle-instantclient11.2-sqlplus
 oracle-instantclient11.2-devel
 oracle-instantclient11.2-odbc
 oracle-instantclient11.2-tools
-cups-client
-cups-drivers
-cups-libs
-cups-libs-32bit
-cups
-cups-autoconfig
-xorg-x11-libs
-xorg-x11
+cups-client cups-drivers cups-libs cups-libs-32bit cups cups-autoconfig
+xorg-x11-libs xorg-x11
 nfs-client
-glibc
-glibc-32bit
-glibc-locale
-glibc-locale-32bit
-glibc-devel
-kernel-default
-linux-kernel-headers
-binutils
-gcc
-gcc-32bit
-gcc43
-gcc-locale
-gcc-locale
-libgcc43
-libgcc43-32bit
-libaio
-libaio-devel
-sysstat
-supportutils
-suse-sam
-multipath-tools
-mdadm
-device-mapper
-device-mapper-32bit
-libext2fs2
+glibc glibc-32bit glibc-locale glibc-locale-32bit glibc-devel
+kernel-default linux-kernel-headers
+binutils gcc gcc-32bit gcc43 gcc-locale gcc-locale libgcc43 libgcc43-32bit
+libaio libaio-devel
+sysstat supportutils suse-sam
+multipath-tools mdadm device-mapper device-mapper-32bit libext2fs2
 ClusterTools2
 "
 	echo "RPM needed :"
+	# shellcheck disable=SC2086
         for p in $ORA_SFT_PTRN; do
-                echo "${p}"
+                echo ${p}
         done
 	echo
 	echo "RPM found :"
+	# shellcheck disable=SC2086
         for p in $ORA_SFT_PTRN; do
-                awk '$1=="'"${p}"'" {print $0}' ${FIL}
+                awk '$1=="'${p}'" {print $0}' ${FIL}
         done
         echo
 # TODO
@@ -1964,8 +1986,9 @@ sapinit
 	FIL=memory.txt
 	split_file ${FIL}
 	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		awk '$8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ || $8~/tnslsnr/ || $8~/libodmd11/ || $8~/oracle$/ {print $8}' "$f" | sort -u
+		awk '$8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ || $8~/tnslsnr/ || $8~/libodmd11/ || $8~/oracle$/ {print $8}' $f | sort -u
 	echo
 	# TODO oracle user, pfile
 	# TODO memory.txt: tnslsnr libclntsh oracle$ libodmd11
@@ -1973,8 +1996,9 @@ sapinit
 	FIL=env.txt
 	split_file ${FIL}
 	f=$(grep -l "^# /usr/bin/env$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		awk '$1~/ORA/ {print}' "$f" | sort -u
+		awk '$1~/ORA/ {print}' $f | sort -u
 	echo
 }
 
@@ -2034,11 +2058,11 @@ function chk_updates(){
 	# TODO fix doubled entries artefact "SLES12-*"
 	test -z "${UPDT_PTRN}" &&\
 	UPDT_PTRN="
-SLES12-
-SLES12-SP
-SLE12-HAE-SP
-SLE12-SP1-SAP-
-SLE12-SP2-SAP-
+"SLES12-"
+"SLES12-SP"
+"SLE12-HAE-SP"
+"SLE12-SP1-SAP-"
+"SLE12-SP2-SAP-"
 "
 	for p in ${UPDT_PTRN}; do
 		grep "|.*|.${p}.*|.*|" ${FIL}
@@ -2059,7 +2083,8 @@ function chk_multipath(){
 
 	F=$(grep -l "# /etc/multipath.conf" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 	echo "# /etc/multipath.conf:"
-	test -z "$F" || grep -v "^#" "$F" | tr -s "\n"
+	# shellcheck disable=SC2086
+	test -z "$F" || grep -v "^#" $F | tr -s "\n"
 
 	for p in "^#.rpm.-V" "^#.Verification.Status:"; do
 		grep "${p}" ${FIL}
@@ -2096,9 +2121,11 @@ function chk_filesys(){
 	split_file ${FIL}
 	
 	F=$(grep -l "# /etc/fstab" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
-	grep -v "#==" "$F" | tr -s " "
+	# shellcheck disable=SC2086
+	grep -v "#==" $F | tr -s " "
 	F=$(grep -l "# /bin/mount" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
-	grep -v "#==" "$F" | tr -s " "
+	# shellcheck disable=SC2086
+	grep -v "#==" $F | tr -s " "
 	# TODO define meaningful limits for await and svctm	
 	# TODO make limits for await and svctm a config parameter
 	# TODO autofs	
@@ -2180,33 +2207,39 @@ xfs
 	split_file ${FIL}
 	echo "/etc/sysconfig/mdadm:"
 	f=$(grep -l "# /etc/sysconfig/mdadm" ${TEMP}/${FIL}/xx*)
-        test -z "$f" || grep -v "^#" "$f" | tr -s "\n"
+	# shellcheck disable=SC2086
+        test -z "$f" || grep -v "^#" $f | tr -s "\n"
         echo
 	
 	FIL="fs-softraid.txt"
 	split_file ${FIL}
 	echo "/etc/sysconfig/mdadm:"
 	f=$(grep -l "# /etc/mdadm.conf" ${TEMP}/${FIL}/xx*)
-        test -z "$f" || tr -s "\n" < "$f"
+	# shellcheck disable=SC2086,SC2002
+        test -z "$f" || cat $f | tr -s "\n"
         echo
 	echo "/proc/mdstat:"
 	f=$(grep -l "# /proc/mdstat" ${TEMP}/${FIL}/xx*)
-        test -z "$f" || tr -s "\n" < "$f"
+	# shellcheck disable=SC2086,SC2002
+        test -z "$f" || cat $f | tr -s "\n"
         echo
 
 	FIL="lvm.txt"
 	split_file ${FIL}
 	echo "/sbin/vgs:"
         f=$(grep -l "# /sbin/vgs" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" "$f" | tr -s "\n"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -vh "^#" $f | tr -s "\n"
 	echo
 	echo "/etc/sysconfig/lvm:"
         f=$(grep -l "# /etc/sysconfig/lvm" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" "$f" | tr -s "\n"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -vh "^#" $f | tr -s "\n"
 	echo
 	echo "/etc/lvm/lvm.conf:"
 	f=$(grep -l "# /etc/lvm/lvm.conf" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" "$f" | grep -vh "^    #" | tr -s "\n"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -vh "^#" $f | grep -vh "^    #" | tr -s "\n"
 	echo
 }
 
@@ -2322,7 +2355,7 @@ function chk_sysload(){
 	grep "^[A-Z].*\[....e....\]$" ${FIL} | grep -v "Kernel.Taint"
 	# TODO make dfull work
 	dfull="X"
-	dfull=$( grep "%.>=.90%" ${FIL} )
+	dfull=$( test -r ${FIL} && grep "%.>=.90%" ${FIL} )
 	test "${dfull}" = "X" &&\
 	(	echo "Used Disk Space:"
 		echo "$dfull"
@@ -2337,15 +2370,23 @@ function chk_sysload(){
 	#	or by grep-ing the alreday known maxima out of the files
 	# TODO reduce number of columns
 
+	# to support filenames like sa23 or sa20191104
+	# if we use extended globbing (add 'shopt -s extglob' right under the
+	# shebang line), we can use a more elegant way to collect the files
+	# for i in sa+([[:digit:]]); do
+	for i in sa?? sa????????; do
+		test -f "$i" && sarFiles="$sarFiles $i"
+	done
+	
 	echo "max. load-avg15:"
 	echo "hh:mm:ss xM   runq-sz  plist-sz   ldavg-1   ldavg-5  ldavg-15"
-	for f in sa??; do
+	for f in $sarFiles; do
 		sar -q -f "$f"
 	done | grep "^[0-9][0-9]:" | sort -n -k7 | tail
 
 	echo "max. user CPU utilisation:"
 	echo "hh:mm:ss xM     CPU     %user     %nice   %system   %iowait    %steal     %idle"
-	for f in sa??; do
+	for f in $sarFiles; do
 		sar -f "$f"
 	done | grep "^[0-9][0-9]:" | grep -v "%" | sort -n -k4 | tail
 
@@ -2357,7 +2398,7 @@ function chk_sysload(){
 
 	echo "max. iowait CPU utilisation:"
 	echo "hh:mm:ss xM     CPU     %user     %nice   %system   %iowait    %steal     %idle"
-	for f in sa??; do
+	for f in $sarFiles; do
 		sar -f "$f"
 	done | grep "^[0-9][0-9]:" | grep -v "%" | sort -n -k7 | tail
 
@@ -2375,7 +2416,7 @@ function chk_sysload(){
 
 	echo "max. disk write blocks:"
 	echo "hh:mm:ss xM       tps      rtps      wtps   bread/s   bwrtn/s"
-	for f in sa??; do
+	for f in $sarFiles; do
 		sar -f "$f"
 	done | grep "^[0-9][0-9]:" | sort -n -k7 | tail
 
@@ -2387,19 +2428,19 @@ function chk_sysload(){
 
 	echo "max. disk read blocks:"
 	echo "hh:mm:ss xM       tps      rtps      wtps   bread/s   bwrtn/s"
-	for f in sa??; do
+	for f in $sarFiles; do
 		sar -f "$f"
 	done | grep "^[0-9][0-9]:" | sort -n -k6 | tail
 
 	echo "max. swap used:"
 	echo "hh:mm:ss xM kbswpfree kbswpused  %swpused  kbswpcad   %swpcad"
-	for f in sa??; do
+	for f in $sarFiles; do
 		sar -f "$f"
 	done | grep "^[0-9][0-9]:" | sort -n -k4 | tail
 
 	echo "max. pageout:"
 	echo "hh:mm:ss xM pgpgin/s pgpgout/s   fault/s  majflt/s  pgfree/s pgscank/s pgscand/s pgsteal/s    %vmeff "
-	for f in sa??; do
+	for f in $sarFiles; do
 		sar -B -f "$f"
 	done | grep "^[0-9][0-9]:" | sort -n -k4 | tail
 
@@ -2414,13 +2455,13 @@ function chk_sysload(){
 	# TODO sum up buffer+cache, estimated use memory 
 	echo "max. memory commit:"
 	echo "hh:mm:ss xM kbmemfree kbmemused  %memused kbbuffers  kbcached  kbcommit   %commit"
-	for f in sa??; do
+	for f in $sarFiles; do
 		sar -r -f "$f"
 	done | grep "^[0-9][0-9]:" | sort -n -k8 | tail
 
 	echo "max. memory cache:"
 	echo "hh:mm:ss xM kbmemfree kbmemused  %memused kbbuffers  kbcached  kbcommit   %commit"
-	for f in sa??; do
+	for f in $sarFiles; do
 		sar -r -f "$f"
 	done | grep "^[0-9][0-9]:" | sort -n -k7 | tail
 
@@ -2432,7 +2473,7 @@ function chk_sysload(){
 
 	echo "max. network write kB:"
 	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
-	for f in sa??; do
+	for f in $sarFiles; do
 		sar -n DEV -f "$f"
 	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k7 | tail
 
@@ -2444,7 +2485,7 @@ function chk_sysload(){
 
 	echo "max. network read kB:"
 	echo "hh:mm:ss xM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s"
-	for f in sa??; do
+	for f in $sarFiles; do
 		sar -n DEV -f "$f"
 	done | grep "^[0-9][0-9]:" | grep bond | sort -n -k6 | tail
 
@@ -2480,11 +2521,12 @@ function chk_errors(){
 	echo "${FIL} starts $FRST"
 	
 	LOG="boot.txt messages.txt proc.txt ha.txt"
+	# shellcheck disable=SC2086
 	for e in ${ERROR_PATTERN} ${CLUERR_PATTERN}; do
 		echo -n "${e} : "
 		for f in ${LOG}; do
 			cat "$f"
-		done | grep -ic "${e}"
+		done | grep -ic ${e}
 	done
 	echo
 
@@ -2493,8 +2535,9 @@ function chk_errors(){
 	FIL="proc.txt"
 	split_file ${FIL}
 	f=$(grep -l "^# /proc/net/dev$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		cat "$f"
+		cat $f
 
 NET_ERR="
 ICMP.message.failed

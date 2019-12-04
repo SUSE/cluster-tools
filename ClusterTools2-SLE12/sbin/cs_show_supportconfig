@@ -979,18 +979,21 @@ function chk_xenhost(){
 	echo
 	echo "# /boot/grub/menu.lst"
 	f=$(grep -l "# /boot/grub/menu.lst" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -e "kernel /boot/xen.gz" -e "module /boot/vmlinuz.*-xen" -e "module /boot/initrd.*-xen" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -e "kernel /boot/xen.gz" -e "module /boot/vmlinuz.*-xen" -e "module /boot/initrd.*-xen" $f
 	echo
 	# TODO more xen specific RPMs?
 	grep -e "vmdp" -e "libvirt" rpm.txt
 	echo
 	f=$(grep -l "# /etc/xen/xend-config.sxp" ${TEMP}/${FIL}/xx*)
 	echo "# /etc/xen/xend-config.sxp"
-	test -z "$f" || grep -vh "^#" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -vh "^#" $f
 	echo
 	f=$(grep -l "# /etc/sysconfig/xendomains" ${TEMP}/${FIL}/xx*)
 	echo "# /etc/sysconfig/xendomains"
-	test -z "$f" || grep -vh "^#" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -vh "^#" $f
 	# TODO xm info, xm list
 	# TODO network, LUNs
 	# TODO Xen errors in syslog
@@ -1000,29 +1003,35 @@ function chk_xenhost(){
 	# TODO what filenames?
 	echo "# /etc/modprobe.d/xen-blkbk.conf"
 	f=$(grep -l "# /etc/modprobe.d/xen-blkbk.conf" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -vh "^#" $f
 	echo
 	echo "# /sbin/modinfo blkbk"
 	f=$(grep -l "# /sbin/modinfo blkbk" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -vh "^#" $f
 	echo
 	# TODO netbk some options only from /etc/modules.d/*; what filenames?
 	echo "# /etc/modprobe.d/xen-netbk.conf"
 	f=$(grep -l "# /etc/modprobe.d/xen-netbk.conf" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -vh "^#" $f
 	echo
 	echo "# /sbin/modinfo netbk"
 	f=$(grep -l "# /sbin/modinfo netbk" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -vh "^#" $f
 	echo
 	# TODO blkbk "max_ring_page_order=0..4" from /etc/modules.d/*; what filenames?
 	echo "# /etc/modprobe.d/iomemory-vsl.conf"
 	f=$(grep -l "# /etc/modprobe.d/iomemory-vsl.conf" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -vh "^#" $f
 	echo	
 	echo "# /sbin/modinfo iomemory_vsl (propietary Fusion-IO)"
 	f=$(grep -l "# /sbin/modinfo iomemory_vsl" ${TEMP}/${FIL}/xx*)
-	test -z "$f" || grep -vh "^#" "$f"
+	# shellcheck disable=SC2086
+	test -z "$f" || grep -vh "^#" $f
 	echo
 	echo "# grep for options [netbk|blkbk|iomemory_vsl]:"
 	grep -e "options netbk" -e "options blkbk" -e "options iomemory_vsl" ${FIL}

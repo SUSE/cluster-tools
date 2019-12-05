@@ -2,12 +2,15 @@
 #
 # cs_clusterstate 
 #
-# (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2017 SUSE Linux GmbH, Germany.
+# (c) 2018-2019 SUSE LLC
+# Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2016-04-12 SLES11
+# Version: 2019-11-28 SLES11, SLES12, SLES15
 #
+# shellcheck disable=SC1090
 
 EXE="$0"
 
@@ -27,8 +30,8 @@ DAT=$(date +"%Y-%m-%d %T")
 
 
 function help() {
-	echo "usage:    $(basename $0)"
-	echo "usage:    $(basename $0) OPTION"
+	echo "usage:    $(basename "$0")"
+	echo "usage:    $(basename "$0") OPTION"
 	echo
 	echo "OPTION:"
 	echo " --help		show help"
@@ -42,7 +45,7 @@ function help() {
 
 
 function get_idle() {
- s_state=$(crmadmin -q -S $(crmadmin -Dq 2>&1 1>/dev/null ) 2>&1 1>/dev/null)
+ s_state=$(crmadmin -q -S "$(crmadmin -Dq 2>&1 1>/dev/null )" 2>&1 1>/dev/null)
  echo "Cluster state: $s_state"
 }
 
@@ -74,7 +77,7 @@ sbd
 "
 echo -n "HA processes: "
 for f in $CLPROC; do
-	echo $PSAUX | grep -c $f >/dev/null && echo $f
+	echo "$PSAUX" | grep -c "$f" >/dev/null && echo "$f"
 done | wc -l
 echo
 
@@ -84,8 +87,8 @@ echo
 echo "SBDs:"
 # TODO crm_mon -r -1 | grep "stonith:external/sbd.:.Started"
 for s in $SBD; do
-	echo ${s}
-	sbd -d ${s} list 2>/dev/null
+	echo "${s}"
+	sbd -d "${s}" list 2>/dev/null
 done
 echo
 }
@@ -94,12 +97,12 @@ echo
 function get_network() {
 echo
 # limit to 64 ETHs
-ETH64=$(echo $ETH | cut -d" " -f1-16)
-for i in $ETH16; do
-	ip -o a s $i | awk '$0~/state/{print $2,$3}'
+ETH64=$(echo "$ETH" | cut -d" " -f1-16)
+for i in $ETH64; do
+	ip -o a s "$i" | awk '$0~/state/{print $2,$3}'
 	case $i in
 	bond?)
-		cat /proc/net/bonding/$i | grep -B1 "MII.Status" | grep -v "^--$"
+		grep -B1 "MII.Status" /proc/net/bonding/"$i" | grep -v "^--$"
 	 	# TODO ethtool
 	;;
 	eth?)
@@ -157,8 +160,8 @@ echo
 
 case $1 in
 	-v|--version)
-		echo -n "$(basename $EXE) "
-		head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	-h|--help)

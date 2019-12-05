@@ -2,11 +2,13 @@
 #
 # cs_dmesg
 #
-# (c) 2013-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2013-2017 SUSE Linux GmbH, Germany.
+# (c) 2018-2019 SUSE LLC
+# Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-03-05 SLES12
+# Version: 2019-11-28 SLES12
 #
 
 EXE="$0"
@@ -14,22 +16,22 @@ EXE="$0"
 # main()
 case $1 in
 	-h|--help)	
-		echo "usage:	$(basename $0) [OPTION]"
-		echo "usage:	$(basename $0)"
+		echo "usage:	$(basename "$EXE") [OPTION]"
+		echo "usage:	$(basename "$EXE")"
 		echo " --help		show help"	
 		echo " --version	show version"
 		exit
 	;;
 	-v|--version)
-		echo -n "$(basename $EXE) "
-		head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	*)
 		D=$(date +%s)
 		U=$(uptime | tr -d "," |\
 		awk 'NF==10{f=split($3,a,":"); print 60*60*a[1]+60*a[2]} 			NF==12{f=split($5,a,":"); print 24*60*60*$3+60*60*a[1]+60*a[2]}')
-		B=$[ $D - $U ]
+		B=$((D - U))
 		dmesg | awk '{E=int($2+'"$B"'); system("T=$(/bin/date -d @"E"); echo -n $T"); print "  "$0}'
 	;;
 esac

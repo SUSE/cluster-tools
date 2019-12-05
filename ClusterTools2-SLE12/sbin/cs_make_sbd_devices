@@ -2,11 +2,15 @@
 #
 # cs_make_sbd_devices
 #
-# (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne
+# (c) 2011-2016 SUSE Linux GmbH, Germany.
+# (c) 2017-2019 SUSE LLC
+# Author: L.Pinne
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 0.02 2016-12-03 18:38
+# Version: 0.03 2019-11-28
+#
+# shellcheck disable=SC1090,SC2128
 #
 #set -x
 
@@ -20,16 +24,16 @@ test -z "${TEMP}" &&\
 	TEMP="/dev/shm/cltl.$RANDOM"
 
 function help() {
-	echo "usage: $(basename $0) OPTION"
-	echo "usage: $(basename $0) --init [<SBD_OPTS> [<SBD_CONF>]]"
+	echo "usage: $(basename "$EXE") OPTION"
+	echo "usage: $(basename "$EXE") --init [<SBD_OPTS> [<SBD_CONF>]]"
 	echo
 	echo "OPTION:"
-	echo " --dump		show content of SBD devices."
-	echo " --guess	guess SBD config file."
-	echo " --help		show help."
-	echo " --version	show version."
-	echo " --init		initialise SBD devices."
-	echo " --clear		clear SBD devices."
+	echo " --dump         show content of SBD devices."
+	echo " --guess        guess SBD config file."
+	echo " --help         show help."
+	echo " --version      show version."
+	echo " --init         initialise SBD devices."
+	echo " --clear        clear SBD devices."
 	echo
 }
 
@@ -45,8 +49,7 @@ function guess_sysconfig_sbd() {
 	#cp -a $CFI $CFI.bak 2>/dev/null
 
 	test -z "${SBD_DEVICE}" || SBDEV=${SBD_DEVICE}
-	test -z "$SBDEV" || test -s $SBD_GUESS || exit 6
-	SBDEV=$( exec $SBD_GUESS 2>/dev/null )
+	test -z "$SBDEV" || exit 6
 	#echo "INFO: SBD_DEVICE=$SBDEV"
 	test -z "$SBDEV" &&\
 	{	# TODO do this better
@@ -64,7 +67,7 @@ function guess_sysconfig_sbd() {
 	# TODO use start opts from defaults
 	echo "SBD_OPTS=\"${SBDOPT}\""
 	echo "#"
-	} >$CFO &&
+	} >"$CFO" &&
 
 	echo "INFO: wrote $CFO"
 	echo "INFO: end $EXE $FUNCNAME"
@@ -74,11 +77,12 @@ function guess_sysconfig_sbd() {
 function make_sbd_devices() {
 	echo "INFO: start $EXE $FUNCNAME"
 	CFI=${SBD_CONF}
-	test -s $CFI || exit 4
-	grep "^SBD_DEVICE=" $CFI >/dev/null || exit 5
-	awk -F"=" '$1=="SBD_DEVICE" {print $2}' $CFI |tr -d "\""|tr ";" "\n"|\
+	test -s "$CFI" || exit 4
+	grep "^SBD_DEVICE=" "$CFI" >/dev/null || exit 5
+	# shellcheck disable=SC2162
+	awk -F"=" '$1=="SBD_DEVICE" {print $2}' "$CFI" |tr -d "\""|tr ";" "\n"|\
 	while read; do
-		sbd -d $REPLY ${SBD_INIT_OPTS} create
+		sbd -d "$REPLY" "${SBD_INIT_OPTS}" create
 	done
 	echo "INFO: end $EXE $FUNCNAME"
 }
@@ -87,11 +91,12 @@ function make_sbd_devices() {
 function clear_sbd_devices() {
 	echo "INFO: start $EXE $FUNCNAME"
 	CFI=${SBD_CONF}
-	test -s $CFI || exit 4
-	grep "^SBD_DEVICE=" $CFI >/dev/null || exit 5
-	awk -F"=" '$1=="SBD_DEVICE" {print $2}' $CFI |tr -d "\""|tr ";" "\n"|\
+	test -s "$CFI" || exit 4
+	grep "^SBD_DEVICE=" "$CFI" >/dev/null || exit 5
+	# shellcheck disable=SC2162
+	awk -F"=" '$1=="SBD_DEVICE" {print $2}' "$CFI" |tr -d "\""|tr ";" "\n"|\
 	while read; do
-		sbd -d $REPLY message $MYHOST clear
+		sbd -d "$REPLY" message "$MYHOST" clear
 	done
 	echo "INFO: end $EXE $FUNCNAME"
 }
@@ -101,14 +106,15 @@ function dump_sbd_devices() {
 	CFI=${SBD_CONF}
 	
 	RC=0
-	test -r $CFI; RC=$?
+	test -r "$CFI"; RC=$?
 	if [ $RC -ne 0 ]; then
 		echo "ERR: config not found: $CFI"
 	else
-		awk -F"=" '$1=="SBD_DEVICE" {print $2}' $CFI |tr -d "\""|tr ";" "\n"|\
+		# shellcheck disable=SC2162
+		awk -F"=" '$1=="SBD_DEVICE" {print $2}' "$CFI" |tr -d "\""|tr ";" "\n"|\
 		while read; do
-			sbd -d $REPLY dump 2>/dev/null; RC=$?
-			sbd -d $REPLY list 2>/dev/null; RC=$[ $RC + $? ]
+			sbd -d "$REPLY" dump 2>/dev/null; RC=$?
+			sbd -d "$REPLY" list 2>/dev/null; RC=$((RC + $?))
 		done
 	fi
 }
@@ -118,8 +124,8 @@ function dump_sbd_devices() {
 
 case $1 in
 	-v|--version)
-		echo -n "$(basename $EXE) "
-		head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	-d|--dump)
@@ -137,7 +143,7 @@ case $1 in
 		echo "INFO: start $EXE"
 		# TODO: more checks
 		RC=$(rcopenais status >/dev/null; echo $?) 
-		if [ $RC -eq 0 ]; then
+		if [ "$RC" -eq 0 ]; then
 			echo "ERR: openais already running."
 			exit 7 
 		fi

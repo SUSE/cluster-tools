@@ -2,15 +2,19 @@
 #
 # cs_convert_time
 #
-# (c) 2015-2019 SUSE Linux GmbH, Germany. Author: I.Manyugin, L.Pinne.
+# (c) 2015-2017 SUSE Linux GmbH, Germany.
+# (c) 2018-2019 SUSE LLC
+# Author: I.Manyugin, L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-02-20
+# Version: 2019-11-28
 #
+# shellcheck disable=SC2068
 
 function help(){
-	local script_name=$(basename $0)
+	local script_name
+	script_name=$(basename "$0")
 	echo "${script_name}: convert time values between wall time and seconds since Epoch format."
 	echo
 	echo "usage: $script_name time_value"
@@ -23,9 +27,9 @@ function help(){
 
 function convert_time(){
 	if [[ $# -gt 1 ]]; then
-		echo $(date -d "$*" +%s)
+		date -d "$*" +%s
 	else
-		echo $(date -d @$1)
+		date -d @"$1"
 	fi
 }
 
@@ -36,8 +40,8 @@ fi
 
 case $1 in
 	-v|--version)
-		ver_string=$(grep "^# Version:" $0 | cut -c3-)
-		echo -e "$(basename $0) $ver_string"
+		ver_string=$(grep "^# Version:" "$0" | cut -c3-)
+		echo -e "$(basename "$0") $ver_string"
 	;;
 	-h|--help)
 		help

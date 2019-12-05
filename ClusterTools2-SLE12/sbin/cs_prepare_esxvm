@@ -2,10 +2,14 @@
 #
 # cs_prepare_esxvm
 #
-# (c) 2014-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2014-2017 SUSE Linux GmbH, Germany.
+# (c) 2018-2019 SUSE LLC
+# Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 2016-02-10 14:25
+# Version: 2019-11-28 14:25
+#
+# shellcheck disable=SC1090,SC2128
 #
 
 EXE=${0}
@@ -15,7 +19,7 @@ test -s $CFG && source $CFG
 
 TMP="/tmp/$RANDOM"
 ERR="/dev/null"
-SFX=$(basename $EXE)
+SFX=$(basename "$EXE")
 
 test -z "${BAK}" &&\
 	BAK="/var/adm/backup/${SFX}-$(date +%Y%m%d-%H%M%S)"
@@ -142,9 +146,9 @@ function filesystem() {
 	# echo
 	# grep -v "^#" /etc/auto.*
 	echo
-	mount | awk '{print $1}' | while read; do
+	mount | awk '{print $1}' | while read -r; do
 		echo -e "\n$REPLY"
-		tune2fs -l $REPLY 2>$ERR |\
+		tune2fs -l "$REPLY" 2>$ERR |\
 		awk '( $0~/Block size:/ || $0~/Maximum mount count:/ || $0~/Check interval:/ || $0~/Filesystem features:/ || $0~/Filesystem flags:/ || $0~/Block count:/ || $0~/Inode count:/ ) { print }'
 	done 
 	# TODO hide pseudo filesystems
@@ -158,13 +162,13 @@ function ntpconf() {
  apply)
 	# TODO error handling, useful rerturn codes $RC
 	FIL="/etc/ntp.conf"
-	cp -a $FIL ${FIL}.$SFX || exit 1
+	cp -a $FIL ${FIL}."$SFX" || exit 1
 	# TODO
 	cat >$FIL <<EOF
 # /etc/ntp.conf
 tinker panic 0
 EOF
-	sed -e s/^server.127.127.1.0//g -e s/^fudge.127.127.1.0//g <${FIL}.$SFX >>$FIL
+	sed -e s/^server.127.127.1.0//g -e s/^fudge.127.127.1.0//g <${FIL}."$SFX" >>$FIL
 
 	/etc/init.d/ntp restart
 	/sbin/chkconfig on
@@ -195,14 +199,20 @@ function elevator() {
 	# TODO also look into udev rules	
 
 	FIL="/etc/sysconfig/bootloader"
-	cp -a $FIL ${FIL}.$SFX || exit 1
-	sed s/showopts\"$/showopts\ elevator=noop\ cgroup_disable=memory\"/ <${FIL}.$SFX >$FIL
+	cp -a $FIL ${FIL}."$SFX" || exit 1
+	sed s/showopts\"$/showopts\ elevator=noop\ cgroup_disable=memory\"/ <${FIL}."$SFX" >$FIL
 
 	FIL="/boot/grub/menu.lst"
-	cp -a $FIL ${FIL}.$SFX || exit 1
-	sed s/showopts\ vga=/showopts\ elevator=noop\ cgroup_disable=memory\ vga=/ <${FIL}.$SFX >$FIL
+	cp -a $FIL ${FIL}."$SFX" || exit 1
+	sed s/showopts\ vga=/showopts\ elevator=noop\ cgroup_disable=memory\ vga=/ <${FIL}."$SFX" >$FIL
 
-	find /sys -name "scheduler" | while read; do echo noop >$REPLY; done
+	find /sys -name "scheduler" | while read -r; do
+		if [ -d "${REPLY%/queue/scheduler}"/mq ]; then
+			echo none >"$REPLY"
+		else
+			echo noop >"$REPLY"
+		fi
+	done
  ;;
  list)
 	echo "=== $FUNCNAME ==="
@@ -216,7 +226,7 @@ function elevator() {
 	echo "$FIL:"
 	grep showopts $FIL | grep -v x11failsafe | grep -v "vmlinuz.*xen"
 	echo
-	find /sys -name "scheduler" | while read; do echo -n "$REPLY: "; cat $REPLY; done | grep -v "none$"
+	find /sys -name "scheduler" | while read -r; do echo -n "$REPLY: "; cat "$REPLY"; done | grep -v "none$"
 	echo
  ;;
  esac
@@ -228,9 +238,9 @@ function inittab() {
  apply)
 	# TODO $RC
 	FIL="/etc/inittab"
-	/sbin/runlevel >/root/runlevel.$SFX
-	cp -a $FIL ${FIL}.$SFX || exit 1
-	sed s/^id:.:initdefault:/id:${RLVL_OK}:initdefault:/ <${FIL}.$SFX >$FIL 
+	/sbin/runlevel >/root/runlevel."$SFX"
+	cp -a $FIL ${FIL}."$SFX" || exit 1
+	sed s/^id:.:initdefault:/id:${RLVL_OK}:initdefault:/ <${FIL}."$SFX" >$FIL
 
 	/sbin/telinit ${RLVL_OK}
  ;;
@@ -254,25 +264,25 @@ function services() {
 	# TODO $RC
  case $1 in
  apply)
-	/sbin/chkconfig -A >/root/chkconfig-a.$SFX || exit 1
+	/sbin/chkconfig -A >/root/chkconfig-a."$SFX" || exit 1
 	for f in $SRVC_NO; do
-		/sbin/chkconfig $f off
-		/etc/init.d/$f stop
+		/sbin/chkconfig "$f" off
+		/etc/init.d/"$f" stop
 	done
 	for f in $SRVC_OK; do
-		/sbin/chkconfig $f on
-		/etc/init.d/$f start
+		/sbin/chkconfig "$f" on
+		/etc/init.d/"$f" start
 	done
  ;;
  list)
 	echo "=== $FUNCNAME ==="
 
 	for f in $SRVC_NO; do
-                /sbin/chkconfig $f
+                /sbin/chkconfig "$f"
         done
 	echo
 	for f in $SRVC_OK; do
-                /sbin/chkconfig $f
+                /sbin/chkconfig "$f"
         done
 	echo
  ;;
@@ -285,10 +295,10 @@ function syscontr() {
  apply)
 	# TODO $RC
 
-	/sbin/sysctl -e -a >/root/sysctl-a.$SFX 2>$ERR
+	/sbin/sysctl -e -a >/root/sysctl-a."$SFX" 2>$ERR
 
 	FIL="/etc/sysctl.conf"
-	cp -a $FIL ${FIL}.$SFX || exit 1
+	cp -a $FIL ${FIL}."$SFX" || exit 1
 
 	# TODO TID if RAM > 4GB
 	# TODO numa and cstate settings
@@ -303,10 +313,9 @@ vm.dirty_ratio = 20
 vm.dirty_background_ratio = 5
 #
 EOF
-	cat ${FIL}.$SFX |\
-		grep -v "vm.dirty.*ratio" |\
-		grep -v "vm.dirty.*bytes" |\
-		grep -v "vm.swappiness" >>$FIL
+	grep -v "vm.dirty.*ratio" ${FIL}."$SFX" |\
+	grep -v "vm.dirty.*bytes" |\
+	grep -v "vm.swappiness" >>$FIL
 
 	/sbin/sysctl -e -p $FIL 2>$ERR 1>&2
  ;;
@@ -315,8 +324,8 @@ EOF
 
 	FIL="/etc/sysctl.conf"
 	for f in $SYCT_OK ; do
-		S=$( echo $f | awk -F= '{print $1}' )
-		/sbin/sysctl $S
+		S=$( echo "$f" | awk -F= '{print $1}' )
+		/sbin/sysctl "$S"
 	done
 	echo
 	echo "$FIL:"
@@ -334,20 +343,19 @@ function products() {
  ;;
  list)
 	echo "=== $FUNCNAME ==="
-	mkdir $TMP || exit 1
-	cd $TMP
+	mkdir $TMP && cd $TMP || exit 1
 	# outputs looks like sam-20140505-12:43.report
 	FIL="cs_sam.report"
 	SOPT="--no-rpm-verify --no-rpm-verify-md5 --skip-unmatched-prod"	
 	# TODO sam how to handle user input prompt?
 	# TODO sam Unsatisfied dependencies:
-	sam $SOPT >$FIL 2>$ERR
+	sam "$SOPT" >$FIL 2>$ERR
 	awk '$1=="Product:"{print "prod: "$2,"vers: "$3,"sp: "$4,"arch: "$6}
 		$1=="Baseproduct:"{print "base_prod: "$2}
 		$1=="Packages"&&$2=="not" {print "3rd-party: "$6} 
 		$1=="Unsupported"&&$2=="SUSE/Novell" {print "unsupported: "$4}' $FIL 
 	# TODO add-on products
-	cd $OLDPWD || exit 1 
+	cd "$OLDPWD" || exit 1
 	rm -rf $TMP
  ;;
  esac
@@ -360,9 +368,9 @@ function patterns() {
 	# TODO $RC
 	# TODO check
 
-	zypper -n se -t pattern | grep "^i" >/root/zypper-se-tpattern.$SFX || exit 1
+	zypper -n se -t pattern | grep "^i" >/root/zypper-se-tpattern."$SFX" || exit 1
 	for f in $PTRN_OK; do
-			zypper -n in -t pattern $f 
+			zypper -n in -t pattern "$f"
 	done
  ;;
  list)
@@ -378,15 +386,19 @@ function packages() {
  apply)
 	# TODO $RC
 	# TODO check
-	rpm -qa >/root/rpm-qa.$SFX || exit 1
+	rpm -qa >/root/rpm-qa."$SFX" || exit 1
 	zypper -n refs -r | exit 1
 	# TODO -y ?
+	# shellcheck disable=SC2086
 	zypper -n -q --no-gpg-checks in -l --no-recommends $PCKG_OK
+	# shellcheck disable=SC2086
 	zypper -n -q --no-gpg-checks in -l --no-recommends $PCLT_OK
  ;;
  list)
 	echo "=== $FUNCNAME ==="
+	# shellcheck disable=SC2086
 	zypper -n se $PCKG_OK 2>$ERR #| grep "|.package$" 
+	# shellcheck disable=SC2086
 	zypper -n se $PCLT_OK 2>$ERR #| grep "|.package$"
  ;;
  esac
@@ -399,17 +411,17 @@ function backup() {
 	mkdir $TMP
 	cd $TMP || exit 1
 
-	/sbin/sysctl -e -a >${TMP}/sysctl-a.$SFX 2>$ERR
-	/sbin/runlevel >${TMP}/runlevel.$SFX
-	rpm -qa >${TMP}/rpm-qa.$SFX
-	zypper se -t pattern | grep "^i" >${TMP}/zypper-se-tpattern.$SFX
+	/sbin/sysctl -e -a >${TMP}/sysctl-a."$SFX" 2>$ERR
+	/sbin/runlevel >${TMP}/runlevel."$SFX"
+	rpm -qa >${TMP}/rpm-qa."$SFX"
+	zypper se -t pattern | grep "^i" >${TMP}/zypper-se-tpattern."$SFX"
 	cp -a /boot/grub/menu.lst ${TMP}/
 	tar czf ${TMP}/etc.tgz /etc/ >$ERR 2>&1
 
-	cd $OLDPWD
-	tar czf ${BAK}.tgz $TMP >$ERR 2>&1; RC=$? && rm -rf $TMP
+	cd "$OLDPWD" || exit 1
+	tar czf "${BAK}".tgz $TMP >$ERR 2>&1; RC=$? && rm -rf $TMP
 	echo "RC: $RC"
-	ls -l ${BAK}.tgz
+	ls -l "${BAK}".tgz
 }
 
 
@@ -432,7 +444,7 @@ function hardware() {
 
 
 function help() {
-	echo "usage: $(basename $0) [OPTION]"
+	echo "usage: $(basename "$EXE") [OPTION]"
 	echo
 	echo " --save		save current settings, call first of all"
 	echo " --list		list current settings, not fully implemented"
@@ -450,8 +462,8 @@ function help() {
 
 case $1 in
 	-v|--version)
-		echo -n "$(basename $EXE) "
-		head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	-a|--apply)

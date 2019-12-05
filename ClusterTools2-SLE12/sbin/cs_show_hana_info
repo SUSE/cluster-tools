@@ -2,10 +2,13 @@
 #
 # cs_show_hana_info
 #
-# (c) 2018-2019 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2018-2019 SUSE LLC
+# Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 2019-08-07
+# Version: 2019-11-28
+#
+# shellcheck disable=SC2030,SC2031
 #
 # TODO /etc/ClusterTools2/cs_show_hana_info
 # TODO show logs
@@ -13,7 +16,7 @@
 #
 #set -x
 
-EXE=$(basename $0)
+EXE=$(basename "$0")
 
 #CFG="/etc/ClusterTools2/cs_show_hana_info"
 #test -s $CFG && source $CFG
@@ -21,10 +24,15 @@ EXE=$(basename $0)
 MYHOST=$(hostname)
 SAPSVC="/usr/sap/sapservices"
 SAPPFL=$(awk -F"=" '$1=="pf"{print $2}' $SAPSVC | awk -F" " '{print $1}')
+if [ -z "$SAPPFL" ]; then
+	SAPPFL=$(sed -n 's%.*pf=\(.[^ ]*\).*%\1%p' $SAPSVC)
+fi
 # TODO multiple pf= lines? 
 SUDOER="/etc/sudoers"
 # TODO /etc/sudoers.d/*
 GBLINI=""
+# TODO MYHOOK not used yet.
+# shellcheck disable=SC2034
 MYHOOK=""
 
 test -z "${TEMP}" &&\
@@ -46,18 +54,23 @@ function sudo_cmd() {
 	CMD="${1}"
 	( echo "# ==="
 	echo "# ${C}"
-	su - ${SID}adm -c "${CMD}"
-	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
+	su - "${SID}"adm -c "${CMD}"
+	# TODO check usage of RC_ALL
+	# Modification of RC_ALL is local, caused by subshell grouping ()
+	RC=$? ; RC_ALL=$((RC_ALL + RC))
 	echo "# ${CMD}: RC: "$RC
 	echo ) >>${TEMP}
 }
 
 function show_file() {
 	FIL="${1}"
+	[ -z "${FIL}" ] && return 0
 	( echo "# ==="	
 	echo "# cat ${FIL}"
-	cat ${FIL}
-	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
+	cat "${FIL}"
+	# TODO check usage of RC_ALL
+	# Modification of RC_ALL is local, caused by subshell grouping ()
+	RC=$? ; RC_ALL=$((RC_ALL + RC))
 	echo "# cat ${FIL}: RC: "$RC
 	echo ) >>${TEMP}
 }
@@ -73,7 +86,7 @@ function show_info() {
 	echo "hostname: ${MYHOST}"
 	echo "sid: $SID"
 	echo "inst_nr: $INR"
-	id ${SID}adm
+	id "${SID}"adm
 	echo ) >>${TEMP} || exit 2
 
 	# TODO sapinit status
@@ -125,13 +138,13 @@ function show_logs() {
 case $1 in
 	-v|--version)
 		echo -n "$EXE"
-		head -11 /usr/sbin/$EXE | grep "^# Version: "
+		head -11 /usr/sbin/"$EXE" | grep "^# Version: "
 		exit
 	;;
 	-i|--info)
 		test $# -eq 3 || show_help
-		UPSID=$(echo $2 | tr "[:lower:]" "[:upper:]")
-		SID=$(echo $2 | tr "[:upper:]" "[:lower:]")
+		UPSID=$(echo "$2" | tr "[:lower:]" "[:upper:]")
+		SID=$(echo "$2" | tr "[:upper:]" "[:lower:]")
 		# TODO bash 4.0: UPSID=${2^^}
 		# TODO bash 4.0: SID=${2,,}
 		INR=$3
@@ -147,8 +160,8 @@ case $1 in
 	;;
 	-l|--logs)
 		test $# -eq 3 || show_help
-		UPSID=$(echo $2 | tr "[:lower:]" "[:upper:]")
-		SID=$(echo $2 | tr "[:upper:]" "[:lower:]")
+		UPSID=$(echo "$2" | tr "[:lower:]" "[:upper:]")
+		SID=$(echo "$2" | tr "[:upper:]" "[:lower:]")
 		INR=$3
 		# TODO path to logs
 		show_logs

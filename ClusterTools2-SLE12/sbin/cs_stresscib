@@ -2,8 +2,11 @@
 #
 # cs_stresscib
 #
-# (c) 2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2017 SUSE Linux GmbH, Germany.
+# (c) 2018-2019 SUSE LLC
+# Author: L.Pinne.
 # GNU General Public License v2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
 #
 # Version: 2015-03-09 10:50
 #

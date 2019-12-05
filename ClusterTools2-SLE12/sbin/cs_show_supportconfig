@@ -1903,7 +1903,9 @@ oracle.*
         test -z "${ORA_SFT_PTRN}" &&\
         ORA_SFT_PTRN="
 orarun
-oracleasmlib oracleasm-support oracleasm-kmp-default
+oracleasmlib
+oracleasm-support
+oracleasm-kmp-default
 oracle-instantclient11.2-basic
 oracle-instantclient11.2-basiclite
 oracle-instantclient11.2-jdbc
@@ -1911,15 +1913,40 @@ oracle-instantclient11.2-sqlplus
 oracle-instantclient11.2-devel
 oracle-instantclient11.2-odbc
 oracle-instantclient11.2-tools
-cups-client cups-drivers cups-libs cups-libs-32bit cups cups-autoconfig
-xorg-x11-libs xorg-x11
+cups-client
+cups-drivers
+cups-libs
+cups-libs-32bit
+cups
+cups-autoconfig
+xorg-x11-libs
+xorg-x11
 nfs-client
-glibc glibc-32bit glibc-locale glibc-locale-32bit glibc-devel
-kernel-default linux-kernel-headers
-binutils gcc gcc-32bit gcc43 gcc-locale gcc-locale libgcc43 libgcc43-32bit
-libaio libaio-devel
-sysstat supportutils suse-sam
-multipath-tools mdadm device-mapper device-mapper-32bit libext2fs2
+glibc
+glibc-32bit
+glibc-locale
+glibc-locale-32bit
+glibc-devel
+kernel-default
+linux-kernel-headers
+binutils
+gcc
+gcc-32bit
+gcc43
+gcc-locale
+gcc-locale
+libgcc43
+libgcc43-32bit
+libaio
+libaio-devel
+sysstat
+supportutils
+suse-sam
+multipath-tools
+mdadm
+device-mapper
+device-mapper-32bit
+libext2fs2
 ClusterTools2
 "
 	echo "RPM needed :"

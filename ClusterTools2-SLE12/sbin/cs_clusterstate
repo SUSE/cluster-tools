@@ -2,11 +2,13 @@
 #
 # cs_clusterstate 
 #
-# (c) 2011-2016 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2017 SUSE Linux GmbH, Germany.
+# (c) 2018-2019 SUSE LLC
+# Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2016-04-12 SLES11
+# Version: 2019-12-05 SLES12
 #
 
 EXE="$0"

@@ -2,7 +2,9 @@
 #
 # cs_show_cluster_transition
 #
-# (c) 2011-2015 SUSE Linux GmbH, Germany. Author: L.Pinne.
+# (c) 2011-2017 SUSE Linux GmbH, Germany.
+# (c) 2018-2019 SUSE LLC
+# Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #

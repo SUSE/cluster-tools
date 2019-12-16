@@ -13,12 +13,12 @@
 # license that conforms to the Open Source Definition (Version 1.9)
 # published by the Open Source Initiative.
 
-# Please submit bugfixes or comments via http://bugs.opensuse.org/
+# Please submit bugfixes or comments via https://bugs.opensuse.org/
 #
 
 Name:           ClusterTools2
 Summary:        Tools for cluster management
-License:        GPL-2.0+
+License:        GPL-2.0-or-later
 Group:          Productivity/Clustering/HA
 Version:        3.1.0
 Release:        0
@@ -28,7 +28,6 @@ BuildArch:      noarch
 Requires:       logrotate
 Requires:       pacemaker > 1.1.1
 Requires:       perl-TermReadLine-Gnu >= 1.16
-Requires(post): man
 Obsoletes:      ClusterTools2-doc < %{version}
 Provides:       ClusterTools2-doc = %{version}
 Url:            http://www.suse.com

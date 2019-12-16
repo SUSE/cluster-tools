@@ -1,13 +1,79 @@
 -------------------------------------------------------------------
-Fri Nov  28 17:59:34 UTC 2019 - abriel@suse.com
+Mon Dec 16 10:58:37 UTC 2019 - abriel@suse.com
 
 - change version from 3.0.1 to 3.1.0
 - Update package to the latest upstream version
+
+  add missing man pages, config files and scripts:
+  add new man page man8/cs_show_hana_info.8, man8/cs_dmesg.8,
+  man8/cs_show_wwpn.8 , man8/cs_show_hana_autofailover_patterns.8,
+  man8/cs_show_cluster_transition.8
+
+  add new kernel modules (ibmvnic.ko, ibmvfc.ko, lin_tape.ko,
+  deadman.ko) to search for
+
+  add new config files etc/ClusterTools2/cs_show_memory,
+  etc/ClusterTools2/cs_show_cluster_transition
+
+  add new scripts sbin/cs_show_hana_info, sbin/cs_show_wwpn,
+  sbin/cs_show_hana_autofailover_patterns, sbin/cs_dmesg,
+  sbin/cs_show_cluster_transition, sbin/cs_show_xfs_patterns,
+
+  add new examples for helper scripts (samples/pacemakill)
+
+  enhance the scripts:
+  add check for multi-queue scheduler
+
+  change initrd check to support new SLES12/15 format
+
+  adapt the changed sar filename syntax
+
+  add 'systemctl get-default' for SLES12/15 instead of using
+  /etc/inittab
+
+  add checks for additional SAP Notes 2655238, 2205917 and 2686011
+
+  remove crontab in favour for systemd timer
+
+  use /etc/os-release instead of old /etc/SuSE-release
+
+  add check for powerVM
+
+  adapt the corosync checks to the new values in the best practice
+  documentation
+
+  add additional rpms to look for (e.g. saptune, rear, glibc2,
+  kernel-default, kernel-ppc64=4.12.14 ...)
+
+  add additional files (e.g. /boot/grub2/grub.cfg,
+  /var/log/mcelog, memory.txt (from supportconfig),
+  /etc/systemd/system.conf, /usr/sap/sapservices, /etc/sudoers ...)
+  to search for or to search in
+
+  add additional services to check (e.g. sbd.service,
+  tuned.service ...)
+
+  add additional error and info pattern to search for in log files
+  (e.g. "systemd.*start-limit" and similar search strings)
+
+  enhance the list of cluster related SUSE TIDs
+  7022678, 7023149, 7022921, 7021158, 7022255, 7022984, 7023127,
+  7021376, 7018571, 7021211, 7018408, 7023236, 7022001, 7019001,
+  7017985, 7023007, 7016640, 7018194, 7022644, 7017617, 7018594,
+  7022764, 7020256, 7022316, 7022840, 7021065, 7022467, 7022565,
+  7022152, 7018352, 7017651, 7023166, 7010249, 3044267, 7004659,
+  7018181, 7023324, 7016918, 7023526, 7022310, 7022681, 7023021,
+  7023732, 7018233, 7018329, 7018361, 7011860, 7023344, 7021064,
+  7022268, 7018744, 7023714, 7023713, 3684654, 3054866, 7022975,
+  7022293, 7017750, 7023805, 7021182
   (bsc#1097134, jsc#SLE-9199)
+
 - cleanup the package and the man pages, remove unavailable
   references, adjust Copyright string, adjust feedback address
 - script refinement and first steps for an adaption to SLE15 code
   stream
+  using 'shellcheck' to find and correct syntax problems,
+  spelling errors and other problems
 
 -------------------------------------------------------------------
 Thu Feb 21 15:11:30 UTC 2019 - kstreitova@suse.com

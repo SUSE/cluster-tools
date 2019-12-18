@@ -339,6 +339,8 @@ pacemaker-mgmt
 pacemaker-mgmt-client
 resource-agents
 sbd
+SAPHanaSR
+SAPHanaSR-ScaleOut
 "
 #
 CLUSTER_PRCS="
@@ -383,6 +385,7 @@ ibmvfc
 ibmpowernv
 ibmpex
 ibmaem
+lin_tape
 rpaphp
 scsi_dh_alua
 softdog

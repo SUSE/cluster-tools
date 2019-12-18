@@ -8,9 +8,10 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-12-05 SLES12 0.03
+# Version: 2019-12-18 SLES12 0.03
 #
 # For Supportconfig Script Version: 2.25-237 to 3.0.2-10
+# TODO what supportconfig supports sar xz files?
 #
 
 EXE=$0
@@ -224,8 +225,7 @@ function chk_modules(){
 	echo
 
 	# TODO add Cisco HBA
-	# TODO test HPE eth nx_nic, ibmvfc
-	# TODO watchdog ppc64le?, s390x vmwatchdog.ko?
+	# TODO watchdog ppc64le, vmware, xen?
 	# TODO check Fusion IO
 	test -z "${HARDW_MOD}" &&\
 	HARDW_MOD="
@@ -464,6 +464,7 @@ function chk_services(){
 	echo
 
 # TODO precheck_for_sap
+# TODO saptune, tuned
 # TODO boot.sapinit with AUTOSTART in instance profile?
 	test -z "${SVC_YES}" &&\
 	SVC_YES="
@@ -478,6 +479,7 @@ boot.sapinit
 multipathd
 ntp
 "
+# TODO lvm2-lvmetad
 	test -z "${SVC_OFF}" &&\
 	SVC_OFF="
 boot.dmraid
@@ -778,7 +780,8 @@ DEFAULT_TIMEZONE
 function chk_sleha(){
 
 	echo_msgsep $FUNCNAME
- 
+
+# TODO cluster md?
 	test -z "${CLUSTER_PKG}" &&\
 	CLUSTER_PKG="
 corosync
@@ -796,6 +799,8 @@ pacemaker-mgmt
 pacemaker-mgmt-client
 resource-agents
 sbd
+SAPHanaSR
+SAPHanaSR-ScaleOut
 "
 	test -z "${CLUSTER_PRCS}" &&\
 	CLUSTER_PRCS="
@@ -817,6 +822,7 @@ sbd:
 	# TODO check /etc/corosync/
 	# TODO check ???, see cs_sum_baseconfig, cs_precheck_for_sap
 	# TODO check watchdogs, define $WATCHMOD, see cs_disbale_other_watchdog
+	# TODO ipmi watchdog
 	# hangcheck_timer here, not "-" as in hangcheck-timer.ko
 	WATCHMOD="hpwdt hangcheck_timer iTCO ibmasr softdog deadman"
 	echo -n "loaded watchdog: "
@@ -1039,6 +1045,7 @@ ibmvfc
 ibmpowernv
 ibmpex
 ibmaem
+lin_tape
 rpaphp
 scsi_dh_alua
 softdog

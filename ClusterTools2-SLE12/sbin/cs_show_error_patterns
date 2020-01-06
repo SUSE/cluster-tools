@@ -3,12 +3,12 @@
 # cs_show_error_patterns
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2019 SUSE LLC
+# (c) 2018-2020 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: SLES12 0.2 2019-12-05
+# Version: SLES12 0.2 2020-01-06
 #
 
 EXE="$0"
@@ -74,6 +74,7 @@ test -z "${ERROR_PATTERN}" &&\
 "hfcldd.*Err"
 "unsupported.SFP.*module"
 "IO_PAGE_FAULT"
+"Power.key.pressed"
 "NMI.received"
 "NMI.*error"
 "irq.*nobody.cared"

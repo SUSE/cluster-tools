@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: SLES12 0.2 2020-01-06
+# Version: SLES12 0.2 2020-01-20
 #
 
 EXE="$0"
@@ -129,6 +129,7 @@ test -z "${ERROR_PATTERN}" &&\
 "Starting.XFS.recovery"
 "xfs_log_force.*error"
 "XFS.*allocation.deadlock"
+"XFS.*head.behind.tail"
 "sdrServ:.*err"
 "server.*not.responding"
 "iSCSI.connection.*error"

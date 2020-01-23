@@ -153,6 +153,7 @@ SVCERR_PATTERN="
 "postfix.*fatal"
 "cgroup:.fork.rejected"
 "sfcbd.*Fatal"
+"libvirt.error.code"
 "
 #
 CLUERR_PATTERN="

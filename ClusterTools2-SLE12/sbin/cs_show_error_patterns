@@ -202,6 +202,7 @@ test -z "${SVCERR_PATTERN}" &&\
 "postfix.*fatal"
 "cgroup:.fork.rejected"
 "sfcbd.*Fatal"
+"libvirt.error.code"
 "
 
 # TODO raid.set.*active.with.2.out.of.2.mirrors ?

@@ -68,6 +68,7 @@ CONF_FILES="
 /etc/opt/bravo/profiles/two-sets/*/*
 /etc/opt/bravo/profiles/three-sets/*/*
 /etc/sysctl.conf
+/etc/tuned/active_profile
 /etc/modprobe.conf.local
 /etc/modprobe.d/*
 /etc/modules-load.d/*
@@ -160,6 +161,7 @@ APPS_FILES="
 /etc/opt/novell/nici*
 /etc/profile.d/ndssource.sh
 /etc/sysconfig/sapconf
+/var/lib/sapconf/last_profile
 /etc/pam.d/sapstartsrv
 /etc/rc.d/sapinit
 /usr/sap/sapservices

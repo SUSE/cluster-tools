@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-12-05 SLES12
+# Version: 2020-03-02 SLES12
 #
 
 EXE="$0"
@@ -96,6 +96,7 @@ test -z "${CONF_FILES}" &&\
 /etc/opt/bravo/profiles/two-sets/*/*
 /etc/opt/bravo/profiles/three-sets/*/*
 /etc/sysctl.conf
+/etc/tuned/active_profile
 /etc/modprobe.conf.local
 /etc/modprobe.d/*
 /etc/modules-load.d/*
@@ -185,7 +186,9 @@ test -z "${APPS_FILES}" &&\
 /etc/opt/novell/eDirectory/conf/nds.conf
 /etc/logevent.conf
 /etc/opt/novell/nici*
+/etc/profile.d/ndssource.sh
 /etc/sysconfig/sapconf
+/var/lib/sapconf/last_profile
 /etc/pam.d/sapstartsrv
 /etc/rc.d/sapinit
 /usr/sap/sapservices

@@ -67,6 +67,7 @@ CONF_FILES="
 /etc/opt/bravo/*.conf
 /etc/opt/bravo/profiles/two-sets/*/*
 /etc/opt/bravo/profiles/three-sets/*/*
+/etc/sysctl.d/*.conf
 /etc/sysctl.conf
 /etc/tuned/active_profile
 /etc/modprobe.conf.local

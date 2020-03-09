@@ -3,12 +3,12 @@
 # cs_sum_base_config
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2019 SUSE LLC
+# (c) 2018-2020 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2020-03-02 SLES12
+# Version: 2020-03-09 SLES12
 #
 
 EXE="$0"
@@ -35,10 +35,10 @@ test -z "${CONF_FILES}" &&\
 /etc/zypp/zypper.conf
 /etc/zypp/repos.d/*.repo
 /etc/products.d/*.prod
-/boot/vmlinuz-3.*default
-/boot/initrd-3.*default
-/boot/vmlinuz-3.*xen
-/boot/initrd-3.*xen
+/boot/vmlinuz-.*default
+/boot/initrd-.*default
+/boot/vmlinuz-.*xen
+/boot/initrd-.*xen
 /proc/cmdline
 /proc/sys/kernel/tainted
 /etc/auto.{master,misc,net,smb}
@@ -63,6 +63,7 @@ test -z "${CONF_FILES}" &&\
 /etc/lvm/lvm.conf
 /etc/multipath.conf
 /etc/multipath.bind*
+/etc/multipath/*
 /etc/mdadm.conf*
 /etc/*mdadm.*.conf
 /clusterconf/*/mdadm.conf
@@ -97,6 +98,7 @@ test -z "${CONF_FILES}" &&\
 /etc/opt/bravo/profiles/three-sets/*/*
 /etc/sysctl.d/*.conf
 /etc/sysctl.conf
+/etc/saptune/*/*
 /etc/tuned/active_profile
 /etc/modprobe.conf.local
 /etc/modprobe.d/*
@@ -114,6 +116,8 @@ test -z "${CONF_FILES}" &&\
 /etc/vmware-tools/tools.conf
 /etc/vmware-tools/plugins/*/*
 /etc/pam.d/vmtoolsd
+/var/lib/saptune/*
+/var/lib/saptune/*/*
 "
 # TODO: exact grep patterns
 test -z "${CONF_CALLS}" &&\
@@ -144,7 +148,7 @@ test -z "${CONF_CALLS}" &&\
 '/usr/bin/zypper -n lu'
 '/usr/bin/zypper -n se -t pattern | grep "^i"'
 '/bin/cat /proc/mounts'
-'/usr/bin/find /sys/devices/ -name "scheduler" -exec grep -e deadline -e noop {} \;'
+'/usr/bin/find /sys/devices/ -name "scheduler" -exec grep -e '\[deadline\]' -e '\[no..\]' {} \;'
 '/sbin/multipath -ll'
 '/sbin/dmsetup table | sort'
 '/usr/bin/grep -v "^#" /etc/lvm/lvm.conf'
@@ -155,13 +159,13 @@ test -z "${CONF_CALLS}" &&\
 '/usr/bin/systemctl list-sockets --no-pager'
 '/usr/bin/systemctl list-timers --no-pager | awk °{print %NF}°'
 '/usr/bin/systemd-delta --no-pager'
-'/sbin/route -n'
+'/bin/ip route'
 '/usr/sbin/iptables -L'
 '/bin/ip a s | /usr/bin/grep "^[123456789]\:"'
 '/usr/bin/grep -v "IPADDR=" /etc/sysconfig/network/ifcfg-* | /usr/bin/grep -v "UNIQUE="'
 '/usr/bin/cset set -l'
-'/usr/bin/numactl -H | grep -v free; /usr/bin/numactl -s'
-'timedatectl --no-pager status'
+'/usr/bin/numactl -H | /usr/bin/grep -v free; /usr/bin/numactl -s'
+'/usr/bin/timedatectl --no-pager status | /usr/bin/tail -4'
 '/usr/bin/find /opt/'
 '/usr/bin/find /usr/'
 '/usr/bin/find /etc/'
@@ -190,9 +194,14 @@ test -z "${APPS_FILES}" &&\
 /etc/profile.d/ndssource.sh
 /etc/sysconfig/sapconf
 /var/lib/sapconf/last_profile
+/etc/sysconfig/saprouter
+/etc/sysconfig/hana-firewall
 /etc/pam.d/sapstartsrv
 /etc/rc.d/sapinit
 /usr/sap/sapservices
+/etc/sysconfig/saptune
+/etc/saptune/*/*
+/var/lib/saptune/*/*
 /etc/opt/sdb
 /etc/db2nodes.conf
 /etc/sysconfig/saphaws
@@ -203,6 +212,9 @@ test -z "${APPS_FILES}" &&\
 #
 test -z "${APPS_CALLS}" &&\
 	 APPS_CALLS="
+'/usr/sbin/saptune daemon status'
+'/usr/sbin/saptune solution list'
+'/usr/sbin/saptune solution verify | /usr/bin/grep -v °^#°'
 '/bin/ls -al /usr/spool/sql/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /sapdb/programs/lib/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /sapdb/programs/runtime/ | awk °{print %1,%2,%3,%4,%5,%9}°'

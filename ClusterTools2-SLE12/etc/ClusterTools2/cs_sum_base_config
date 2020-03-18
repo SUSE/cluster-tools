@@ -1,7 +1,7 @@
 # /etc/ClusterTools2/cs_sum_base_config
 # For SLES12.
 #
-# TODO check and adapt for SLE12
+# TODO check and adapt for SLE15
 CONF_FILES="
 /etc/os-release
 /etc/zypp/zypp.conf
@@ -62,6 +62,13 @@ CONF_FILES="
 /etc/sysconfig/o2cb
 /etc/sysconfig/bravo
 /etc/sysconfig/customfw
+/etc/sysconfig/saptune
+/var/lib/saptune/*
+/var/lib/saptune/*/*
+/etc/sysconfig/sapconf
+/var/lib/sapconf/last_profile
+/etc/sysconfig/saprouter
+/etc/sysconfig/hana-firewall
 /etc/default/*
 /etc/ocfs2/cluster.conf
 /etc/pam.d/login
@@ -70,6 +77,7 @@ CONF_FILES="
 /etc/opt/bravo/profiles/three-sets/*/*
 /etc/sysctl.d/*.conf
 /etc/sysctl.conf
+/etc/saptune/*/*
 /etc/tuned/active_profile
 /etc/modprobe.conf.local
 /etc/modprobe.d/*
@@ -136,6 +144,10 @@ CONF_CALLS="
 '/usr/bin/cset set -r'
 '/usr/bin/numactl -H | /usr/bin/grep -v free; /usr/bin/numactl -s'
 '/usr/bin/timedatectl --no-pager status | /usr/bin/tail -4'
+'chronic sources | awk -F" " °{print $1,$2,$3}°'
+'/usr/sbin/saptune daemon status'
+'/usr/sbin/saptune solution list'
+'/usr/sbin/saptune solution verify | /usr/bin/grep -v °^#°'
 '/usr/bin/find /opt/'
 '/usr/bin/find /usr/'
 '/usr/bin/find /etc/'
@@ -147,8 +159,8 @@ CONF_CALLS="
 APPS_FILES="
 /etc/oratab
 /etc/oraInst.loc
-/etc/tnsnames.ora
 /etc/sysconfig/oracle
+/etc/tnsnames.ora
 /opt/oracle/product/*/*/dbs/*.ora
 /opt/oracle/product/*/*/network/admin/*.ora
 /etc/sysconfig/postgresql
@@ -161,16 +173,12 @@ APPS_FILES="
 /etc/logevent.conf
 /etc/opt/novell/nici*
 /etc/profile.d/ndssource.sh
-/etc/sysconfig/sapconf
-/var/lib/sapconf/last_profile
-/etc/sysconfig/saprouter
-/etc/sysconfig/hana-firewall
 /etc/pam.d/sapstartsrv
 /etc/rc.d/sapinit
 /usr/sap/sapservices
-/etc/sysconfig/saptune
-/etc/saptune/*/*
-/var/lib/saptune/*/*
+/usr/sap/*/SYS/profile/???_*_*
+/usr/sap/*/SYS/global/hdb/custom/config/global.ini
+/hana/shared/myHooks/SAPHanaSR.py
 /etc/opt/sdb
 /etc/db2nodes.conf
 /etc/sysconfig/saphaws
@@ -181,9 +189,6 @@ APPS_FILES="
 #
 # TODO /home/$sidadm etc. for Netweaver
 APPS_CALLS="
-'/usr/sbin/saptune daemon status'
-'/usr/sbin/saptune solution list'
-'/usr/sbin/saptune solution verify | /usr/bin/grep -v °^#°'
 '/bin/ls -al /usr/spool/sql/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /sapdb/programs/lib/ | awk °{print %1,%2,%3,%4,%5,%9}°'
 '/bin/ls -al /sapdb/programs/runtime/ | awk °{print %1,%2,%3,%4,%5,%9}°'

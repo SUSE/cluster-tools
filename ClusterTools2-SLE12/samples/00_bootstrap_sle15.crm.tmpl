@@ -1,0 +1,17 @@
+configure \
+property cib-bootstrap-options: \
+	cluster-infrastructure=corosync \
+	pacemaker-strategy=balanced \
+	dc-deadtime=20 \
+	stonith-enabled=true \
+	stonith-timeout=187 \
+	stonith-action-=reboot \
+	have-watchdog=true
+configure \
+rsc_defaults rsc-options: \
+	resource-stickiness=120 \
+	migration-threshold=5 \
+	failure-timeout=86400
+configure \
+op_defaults op-options: \
+	timeout=120

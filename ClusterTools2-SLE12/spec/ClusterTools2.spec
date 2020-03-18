@@ -20,7 +20,7 @@ Summary:        Cluster Tools to control some functions easy
 License:        GPL-2.0
 Group:          Productivity/Clustering/HA
 Version:        3.1.0
-Release:        2 
+Release:        100 
 Source:         %{name}-%{version}.tbz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildArch:      noarch

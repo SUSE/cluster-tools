@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: SLES12 0.2 2020-01-20
+# Version: SLES12 0.2 2020-04-24
 #
 
 EXE="$0"
@@ -179,7 +179,7 @@ test -z "${SVCERR_PATTERN}" &&\
 "systemd.*nknown"
 "systemd.*Proceeding.anyway"
 "systemd.*No.such.file"
-"systemd.*Failed"
+"systemd.*ailed"
 "systemd-coredump.*dumped.core"
 "wickedd.*ouldn"
 "SMART.*failure"

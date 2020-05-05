@@ -3,16 +3,16 @@
 # cs_show_hana_info
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2019 SUSE LLC
+# (c) 2018-2020 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-12-05
+# Version: 2020-05-05
 #
 # TODO /etc/ClusterTools2/cs_show_hana_info
 # TODO show logs
-# TODO guess SID
+# TODO guess SID see thread with R.Juilfs
 #
 #set -x
 
@@ -145,6 +145,8 @@ case $1 in
 		# provider = SAPHanaSR
 		# path = /hana/shared/myHooks
 		# execution_order = 1
+		echo "# $0"
+		echo "# ==="
 		show_info
 		exit $RC_ALL
 	;;
@@ -154,6 +156,8 @@ case $1 in
 		SID=$(echo $2 | tr "[:upper:]" "[:lower:]")
 		INR=$3
 		# TODO path to logs
+		echo "# $0"
+		echo "# ==="
 		show_logs
 		exit $RC_ALL
 	;;

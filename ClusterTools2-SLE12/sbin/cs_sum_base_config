@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2020-03-09 SLES12
+# Version: 2020-05-10 SLE12, SLE15
 #
 
 EXE="$0"
@@ -171,7 +171,7 @@ test -z "${CONF_CALLS}" &&\
 '/usr/bin/cset set -l'
 '/usr/bin/numactl -H | /usr/bin/grep -v free; /usr/bin/numactl -s'
 '/usr/bin/timedatectl --no-pager status | /usr/bin/tail -4'
-'chronic sources | awk -F" " °{print $1,$2,$3}°'
+'/usr/bin/chronyc sources | awk -F" " °{print $1,$2,$3}°'
 '/usr/sbin/saptune daemon status'
 '/usr/sbin/saptune solution list'
 '/usr/sbin/saptune solution verify | /usr/bin/grep -v °^#°'

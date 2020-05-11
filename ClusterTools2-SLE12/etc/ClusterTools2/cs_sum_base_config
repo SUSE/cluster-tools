@@ -144,7 +144,7 @@ CONF_CALLS="
 '/usr/bin/cset set -r'
 '/usr/bin/numactl -H | /usr/bin/grep -v free; /usr/bin/numactl -s'
 '/usr/bin/timedatectl --no-pager status | /usr/bin/tail -4'
-'chronic sources | awk -F" " °{print $1,$2,$3}°'
+'/usr/bin/chronyc sources | awk -F" " °{print $1,$2,$3}°'
 '/usr/sbin/saptune daemon status'
 '/usr/sbin/saptune solution list'
 '/usr/sbin/saptune solution verify | /usr/bin/grep -v °^#°'

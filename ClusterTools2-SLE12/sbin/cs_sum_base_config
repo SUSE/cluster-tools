@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2020-05-10 SLE12, SLE15
+# Version: 2020-05-15 SLE12, SLE15
 #
 
 EXE="$0"
@@ -97,6 +97,8 @@ test -z "${CONF_FILES}" &&\
 /var/lib/sapconf/last_profile
 /etc/sysconfig/saprouter
 /etc/sysconfig/hana-firewall
+/etc/sysconfig/network/config
+/etc/sysconfig/network/routes
 /etc/default/*
 /etc/ocfs2/cluster.conf
 /etc/pam.d/login

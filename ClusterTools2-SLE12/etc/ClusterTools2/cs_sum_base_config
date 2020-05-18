@@ -69,6 +69,8 @@ CONF_FILES="
 /var/lib/sapconf/last_profile
 /etc/sysconfig/saprouter
 /etc/sysconfig/hana-firewall
+/etc/sysconfig/network/config
+/etc/sysconfig/network/routes
 /etc/default/*
 /etc/ocfs2/cluster.conf
 /etc/pam.d/login

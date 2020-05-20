@@ -1,4 +1,4 @@
-.TH ha_related_suse_tids 7 "24 Apr 2020" "" "ClusterTools2"
+.TH ha_related_suse_tids 7 "20 May 2020" "" "ClusterTools2"
 .\"
 .SH NAME
 ha_related_suse_tids - selection of SUSE Technical Information Documents, related to high availability
@@ -69,6 +69,10 @@ Usage of hb_report for SLES HAE (7007262)
 .br
 Config Report For Linux (7001936)
 .br
+How-to effectively work with SUSE Technical Support (000019452)
+.br
+SUSE technical support and High-secure environments (000019438)
+.br
 Supportconfig Self Service via SCC/FTP (7023007)
 .br
 Supportconfig hangs on SLE 11 SP3 after updating kernel (7012980)
@@ -97,7 +101,11 @@ Supportutils fails to update do "Failed dependencies: rpmlib(PayloadIsLzma)" (70
 .br
 supportconfig hangs at PROC.. (7023185)
 .br
+scatool fails with traceback (000004685)
+.br
 Best practice for applying Program Temporary Fixes (PTFs) (7016640)
+.br
+supportconfig crashes when run on an LPAR with huge pages configured (000019489)
 .br
 Tainted kernel (3582750)
 .br
@@ -112,6 +120,10 @@ Master TID: Migrating a regular SLES to SLES for SAP (7018744)
 SLES 11 HAE - Send cluster update and changes through email (7007619)
 .br
 pacemaker default behavior changed (7014282)
+.br
+Pacemaker fails to start with 100 exit status (000019498)
+.br
+How to recover pacemaker cluster where all controllers fencing (000019493)
 .br
 iTCO_wdt does not accept Watchdog Timeout bigger 63 seconds (7011426) 
 .br
@@ -132,6 +144,8 @@ Invalid /etc/sysconfig/sbd SBD_DEVICE format (7010931)
 SBD Stonith fails silently (OPENAIS HEARTBEAT CLUSTER) (7004306) 
 .br
 Use only one sbd_device instanace attribute for SBD partitions (7010925) 
+.br
+sbd.service disabled after running ha-cluster-join (000019624)
 .br
 Stonith unreliable (HEARTBEAT, COROSYNC) (7007731) 
 .br
@@ -165,9 +179,11 @@ external/riloe fails on ILO3 (OPENAIS HEARTBEAT COROSYNC STONITH) (7008802)
 .br
 Odd cluster membership changes in HAE cluster (7015215) 
 .br
+All Pacemaker nodes stuck UNCLEAN (offline) after corosync update (000019604)
+.br
 crm_ipc_prepare: Message exceeds the configured ipc limit (PACEMAKER COROSYNC) (7013215) 
 .br
-Cannot contact other cluster node (7006864) 
+Cannot contact other cluster node (7006864)
 .br
 Corosync crashed if node has more then one device in the same subnet. (7008804) 
 .br
@@ -221,6 +237,8 @@ ha-cluster-join fails on syncing configuration files (7020256)
 .br
 corosync[35436]: [TOTEM ] sendmsg(mcast) failed (non-critical)... (7022316)
 .br
+Dynamically changing the Cluster Size of an UDPU HAE Cluster (000019391)
+.br
 The memory footprint of "corosync" process increases when it has communication problems with the other cluster Nodes (7022840)
 .br
 sleha-join to a cluster using udpu will not join cluster until after restart of corosync on current nodes (7021065)
@@ -230,6 +248,8 @@ Preventing a Fence Race in Split Brain (COROSYNC,PACEMAKER) (7022467)
 Cluster node will not join after one node was upgraded. (7022565)
 .br
 Rear backup fails with "No space left on device" errors (7022152)
+.br
+fence_vmware_soap is missing (000019466)
 .br
 
 .\"
@@ -250,6 +270,11 @@ HAE Resources are not managed and won't failover (7012114)
 Changing Resource Attributes without Resource Restart (PACEMAKER COROSYNC) (7012872) 
 .br
 oracle resource agent fails silently to start Database (COROSYNC) (7012627)
+.br
+Run Oracle Database by Pacemaker (000019574)
+.br
+Avoid Oracle "Crash Recovery" on system startup (000019554)
+
 .br
 Cluster mount succeeds but resource shows as failed (OPENAIS, OCFS2, CLUSTER) (7004243) 
 .br
@@ -337,11 +362,17 @@ SAP S/4 HANA - Enqueue Replication 2 High Availability Cluster ... (7023714)
 .br
 SUSE SAP Best Practice Guide Errata (7023713)
 .br
+SAP S/4 HANA - Enque Replication 2 High Availability Cluster - Setup Guide - Errata (000019397)
+.br
 SUSE Cluster Support for SAP HANA System Replication Active / Active Read Enabled Feature (7023884)
 .br
 SAP Generating 'Database host operating system is not supported' alerts (7023744)
 .br
+Takeover not occurring as expected in SAP HANA environment on Azure (000019610)
+.br
 sapstartsrv does not respawn after a forceful kill of the master nameserver (7024291)
+.br
+Expected output results for HAGetFailoverConfig. (000019613)
 
 .\"
 .B * Related operating system settings and components:
@@ -363,6 +394,10 @@ HOWTO: Add, Resize and Remove LUN without restarting SLES or OES Linux (7009660)
 How to Expand a filesystem on a Multipath-Enabled LUN (3129645)
 .br
 Dynamically adding storage for use with multipath I/O (3000817)
+.br
+Installing SUSE Linux Enterprise Server 15 SP1 on a system using both Multipath and Raid fails (000019503)
+.br
+Using the "find_multipaths yes" option in multipath.conf (000019511)
 .br
 Can't open /dev/mapper/mpath* exclusively. Mounted filesystem? (7012050)
 .br
@@ -420,6 +455,10 @@ Overcommit Memory in SLES (7002775)
 .br
 Recommended SUSE SLES 4 SAP Settings (7024082)
 .br
+SAP Generating 'Database host operating system is not supported' alerts (000019412)
+.br
+SLES for SAP 12 Package Conflict Errors After Fresh Install (000019409)
+.br
 tuned-adm fails to set kernel scheduler for block devices (7024212)
 .br
 NTP fails to access time server on system boot. (3435100) 
@@ -428,9 +467,13 @@ NTP issue with VMWare (7008544)
 .br
 Time drifting when running a Linux guest under VMware ESX server (3858673) 
 .br
-NTP server does not resolve host names (7016873) 
+Clocksource "tsc" not available on virtual environment (000019562)
+.br
+NTP server does not resolve host names (7016873)
 .br
 NTP start command produces a warning about Cryptographic keys dir (7016814) 
+.br
+NTP not working properly in Cloud (NTP) (000019557)
 .br
 Fixes and workaround to avoid issues caused by Leap Second 2015 (7016150) 
 .br
@@ -459,6 +502,8 @@ ReaR does not support servers with SAN-attached storage/SAN boot (7008030)
 ReaR rescue environment fails to load on Blade Hardware (7008029) 
 .br
 Frequent ACPI errors starting with SMBus or IPMI write requires Buffer of length 42. (7010449)
+.br
+IPMI driver can be unloaded when being accessed by user space (000019602)
 .br
 XFS metadata corruption and invalid checksum on SAP Hana servers (7022921)
 .br
@@ -531,6 +576,32 @@ iSCSI LIO configuration with targetcli fails to saveconfig or exit (7022130)
 Slow boot boot initialization on machines with Intel Optane DC Memory causing auto-mount to fail (7023909)
 .br
 no /dev/disk/by-id for scsi LUNs on VMWare ESX (7002966)
+.br
+System crashes when the system is rebooted with SR-IOV enabled QLogic cards (000019630)
+.br
+vPMEM memory backed namespaces configured as a dump target for kdump/fadump takes a long time to save dump files (000019570)
+.br
+Hot plugging/unplugging of pmem memory having a size that is not in multiples of a specific size can lead to kernel panics (000019567)
+.br
+Configuring Persistent Memory Devices (PMEM) results in booting to the recovery shell (000019517)
+.br
+Unable to create XFS Filesystem on a PMEM (Persistent Memory) device (000019445)
+.br
+NVMe drive is not detected after multiple hot plug operations (000019625)
+.br
+NVMe drive is not accessible in UEFI mode with Intel Rapid RAID mode on (000019441)
+.br
+saptune: WARNING saptune.io.go:66: 'noop' is not a valid scheduler for device (000019572)
+.br
+sapconf: tuned.utils.commands: Writing to file /sys/block/.../queue/scheduler error: [Errno 22] Invalid argument (000019575)
+.br
+Communications fail between Azure Load Balancer and SLE instance (000019510)
+.br
+Pagecache bug can lead to hangs on SLES for SAP (000019479)
+.br
+Storage Performance Appears To Degrade After Upgrading To Later Service Packs (000019460)
+.br
+How to use fsperf and blktrace to quantify IO subsystem performance (000019465)
 
 .\" .br TODO Oracle 7023167
 .\"
@@ -553,6 +624,7 @@ https://www.suse.com/documentation/sles-12/stor_admin/data/stor_admin.html
 .\"
 .SH COPYRIGHT
 (c) 2015-2019 SUSE Linux GmbH, Germany.
+(c) 2020 SUSE Software Solutions Germany GmbH, Germany.
 ClusterTools2 comes with ABSOLUTELY NO WARRANTY.
 .br
 For details see the GNU General Public License at

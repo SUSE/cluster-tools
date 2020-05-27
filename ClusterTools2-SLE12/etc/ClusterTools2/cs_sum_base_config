@@ -26,6 +26,7 @@ CONF_FILES="
 /etc/passwd
 /etc/group
 /etc/sudoers
+/etc/sudoers.d/*
 /etc/services
 /etc/ldap.conf
 /etc/openldap/ldap.conf

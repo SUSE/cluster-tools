@@ -1,4 +1,4 @@
-.TH stonith_sbd 7 "06 Jun 2019" "" "ClusterTools2"
+.TH stonith_sbd 7 "28 May 2020" "" "ClusterTools2"
 .\"
 .SH NAME
 stonith_sbd \- Stonith Block Device
@@ -22,7 +22,7 @@ so-called split brain scenario were allowed to unfold, data corruption
 might occur. Hence, several layers of protection have been added to the
 cluster stack to mitigate this.
 
-Server fencing via STONITH (Shoot the other node into the head) is the
+Server fencing via STONITH (Shoot The Other Node Into The Head) is the
 primary component contributing to this goal,
 since they ensure that, prior to storage activation, all other access is
 terminated. cLVM2 (cluster Logical Volume Manager 2) exclusive activation or
@@ -31,13 +31,9 @@ other mechanisms, protecting against administrative or application
 faults. Combined appropriately for your setup, these can reliably
 prevent split-brain scenarios from causing harm.
 
-This chapter describes an IO fencing mechanism that leverages the
-storage itself, following by a description of an additional layer of
-protection to ensure exclusive storage access. These two mechanisms can
-even be combined for higher levels of protection.
 .\"
 .P
-\fB* Storage-based Fencing\fR
+\fB* STONITH Block Device Server Fencing\fR
 
 In scenarios where shared storage is used one can
 leverage said shared storage for very reliable server fencing and avoidance
@@ -138,6 +134,7 @@ location, just block storage.
 
 However, using storage-based RAID and multipathing is recommended for
 increased reliability.
+
 .\"
 .P
 \fB* SBD Partition\fR
@@ -172,6 +169,7 @@ Sharing one SBD device among several clusters is not recommended.
 Even if it is possible to run up to 127 two-node clusters on one single
 SBD device, this should never be done. For production, each cluster should
 have its own SBD device(s).
+
 .\"
 .P
 \fB* Testing and Starting the SBD Daemon\fR
@@ -181,13 +179,13 @@ be running when the cluster stack is up, or even when the rest of it has
 crashed, so that it can be fenced.
 The pacemaker init script starts and stops SBD if configured.
 
-On SLE-HA 12 add the following to /etc/sysconfig/sbd:
+On SLE-HA 12 and 15 add the following to /etc/sysconfig/sbd:
 .br
 ===
 .br
 #/etc/sysconfig/sbd
 .br
-# SBD devices (no trailing semicolon ";" please, but qutatio marks needed " "):
+# SBD devices (no trailing semicolon ";" please, quotation marks needed " "):
 .br
 SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
@@ -209,7 +207,7 @@ On SLE-HA 11 add the following to /etc/sysconfig/sbd:
 .br
 #/etc/sysconfig/sbd
 .br
-# SBD devices (no trailing semicolon ";" please, but qutation marks needed " "):
+# SBD devices (no trailing semicolon ";" please, quotation marks needed " "):
 .br
 SBD_DEVICE="/dev/<SBD_1>;/dev/<SBD_2>;/dev/<SBD_3>"
 .br
@@ -241,7 +239,7 @@ to not automatically start up openais on boot in such cases.
 .\"
 .PP
 Before proceeding, ensure that SBD has indeed started on all nodes through
-"rcopenais restart" (SLE-HA 11) or "systemctl pacemaker restart" (SLE-HA 12).
+"rcopenais restart" (SLE-HA 11) or "systemctl pacemaker restart" (SLE-HA 12+15).
 Once the sbd and pacemaker service has started, your cluster is now successfully
 configured for shared-storage fencing, and will utilize this method in
 case a node needs to be fenced.
@@ -257,20 +255,32 @@ The SBD mechanism normally is used instead of other fencing/stonith
 mechanisms. Please disable any others you might have configured before.
 An escalating STONITH topology usually makes no sense with stonith/sbd.
 
-A sbd device might be entered into the CIB like this:
+An sbd device might be entered into the CIB like this, for 2-node clusters:
 .br 
 ===
 .br
 primitive rsc_stonith_sbd stonith:external/sbd \\
 .br
- params pcmk_action_limit="-1" pcmk_delay_max="15"
+ params pcmk_delay_max="30"
 .br
 ===
+.br 
+
+An sbd device might be entered into the CIB like this, for multi-node clusters: 
+.br
+===
+.br
+primitive rsc_stonith_sbd stonith:external/sbd \\
+.br
+ params pcmk_action_limit="-1" pcmk_delay_max="1"
+.br
+===
+.br
 
 Instead of the parameter pcmk_delay_max, an option start-delay is needed
 before SLE-HA 11 SP3.
 In case of split-brain this makes the DC winning the fencing race.
-Recent versions of SLE-HA know the option pcmk_delay_max.
+Recent versions of SLE-HA know the options pcmk_delay_max and pcmk_delay_base.
 This adds a random delay for STONITH actions on the fencing device.
 
 The pcmk_action_limit was introduced with SLE-HA 11 SP4 to allow parallel
@@ -290,20 +300,24 @@ concurrent-fencing="true" \\
 .br
 ===
 
-For two-node clusters, the no-quorum-policy="ignore" has to be set as well. 
+In SLE-HA 11 for two-node clusters the no-quorum-policy="ignore" has to be
+set as well. 
+
 .\"
 .P
 \fB* Hardware Watchdog\fR
 
-Increased protection is offered through watchdog support. Modern
-systems support a "hardware watchdog" that has to be updated by the
+The SBD finally relies on a watchdog.
+It is required to up your Linux system for using a watchdog.
+Please refer to the SLES manual for this step.
+
+Modern systems support a "hardware watchdog" that has to be updated by the
 software client, or else the hardware will enforce a system restart.
 This protects against failures of the sbd process itself, such as
-dieing, or becoming stuck on an IO error.
+dying, or becoming stuck on an IO error.
 
 It is highly recommended that you set up your Linux system
-to use a watchdog. Please refer to the SLES manual for this step.
-
+to use a hardware watchdog.
 This involves loading the proper watchdog driver on system boot.
 On HP hardware, this is the "hpwdt" module.
 For systems with an Intel TCO, "iTCO_wdt" can be used.
@@ -312,19 +326,21 @@ Machines with an IPMI based watchdog need the "ipmi_watchdog".
 This might apply for recent Lenovo machines.
 Inside a VM on z/VM on an IBM mainframe, "vmwatchdog" might be used.
 Inside a Xen VM (aka DomU) "xen_wdt" is a good choice.
-Inside a KVM VM "i6300esb" might be used. The corresponding PCI device has to be
-emulated by the KVM host in that case.
-"softdog" is the most generic driver, but it is recommended that you use one
-with actual hardware integration. See
-/lib/modules/.../kernel/drivers/watchdog in the kernel package for a list
+Inside a KVM VM "i6300esb" might be used. The corresponding PCI device has
+to be emulated by the KVM host in that case.
+See /lib/modules/.../kernel/drivers/watchdog in the kernel package for a list
 of choices.
+If no hardware watchdog is available, the Linux kernel built-in
+"softdog" watchdog can be used. As already said, a real hardware watchdog
+is preferred over the softdog.
 
 No other software must access the watchdog timer. Some hardware vendors
 ship systems management software that use the watchdog for system resets
 (e.g. HP ASR daemon). Such software has to be disabled if the watchdog is
 used by SBD.
 
-SBD can be configured in /etc/sysconfig/sbd to use the systems' watchdog.
+SBD is configured in /etc/sysconfig/sbd to use the systems' watchdog.
+
 .\"
 .P
 \fB* Timeout Settings\fR
@@ -438,6 +454,8 @@ mentioned above.
 .\"
 .SH COPYRIGHT
 (c) 2009-2019 SUSE Linux GmbH, Germany.
+.br
+(c) 2020 SUSE Software Solutions Germany GmbH.
 .br
 sbd comes with ABSOLUTELY NO WARRANTY.
 .br

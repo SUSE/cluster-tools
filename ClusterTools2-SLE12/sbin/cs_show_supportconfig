@@ -755,6 +755,7 @@ function chk_timeres(){
 	done
 	echo
 	# TODO SLES12
+	# TODO SLES15 cronyd
 	echo "service:"
 	grep -A1 "^# /sbin/chkconfig" ${FIL}
 	grep -A5 "# /usr/sbin/ntpq -p" ${FIL} | grep -v "====="
@@ -833,6 +834,7 @@ sbd
 SAPHanaSR
 SAPHanaSR-ScaleOut
 "
+# TODO SLES15 pacemaker-...
 	test -z "${CLUSTER_PRCS}" &&\
 	CLUSTER_PRCS="
 sbd:

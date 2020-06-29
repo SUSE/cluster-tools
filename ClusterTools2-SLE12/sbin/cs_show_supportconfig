@@ -3,12 +3,12 @@
 # cs_show_supportconfig
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2019 SUSE LLC
+# (c) 2018-2020 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-12-18 SLES12 0.03
+# Version: 2020-06-29 SLES12 0.03
 #
 # For Supportconfig Script Version: 2.25-237 to 3.0.2-10
 # TODO what supportconfig supports sar xz files?
@@ -123,6 +123,37 @@ function show_sys_fcfabric(){
 		#awk -F"=" '$1=="fabric_name" {print $2}' $f | sort -u
 		grep port_name $f | sort -f
 		echo )
+}
+
+
+function show_pam_sap(){	
+# TODO
+	echo "pam_limits :"
+	f=$(grep -l "^# /etc/security/limits.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		awk'$1=="oracle" || $1~/sapsys/ || $1~/dba/ {print}' $f | sort -u
+	echo
+# TODO
+	echo "/etc/passwd :"
+	f=$(grep -l "^# /etc/passwd$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		awk -F: '$5~/SAP.*Administrator/ {print}' $f | sort -u	
+	echo
+	echo "getent_passwd :"
+	f=$(grep -l "^# /usr/bin/getent passwd$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		awk -F: '$5~/SAP.*Administrator/ {print}' $f | sort -u	
+	echo
+# TODO sapgw, ...
+	echo "/etc/group :"
+	f=$(grep -l "^# /etc/group$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		awk -F: '$1=="sapinst" || $1=="sapsys" || $1=="oper" || $1=="saprouter" || $1~/shm/ {print}' $f | sort -u
+	echo
+	echo "getent_group :"
+	f=$(grep -l "^# /usr/bin/getent group$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		awk -F: '$1=="sapinst" || $1=="sapsys" || $1=="oper" || $1=="saprouter" || $1~/shm/ {print}' $f | sort -u
 }
 
 
@@ -1311,22 +1342,7 @@ ulimit
 	echo
 	FIL=pam.txt
 	split_file ${FIL}
-# TODO
-#	echo "pam_limits :"
-#	f=$(grep -l "^# /etc/security/limits.conf$" ${TEMP}/${FIL}/xx*)
-#	test -z "$f" ||\
-#		awk'$1=="oracle" || $1~/sapsys/ || $1~/dba/ {print}' $f | sort -u
-#	echo
-# TODO
-#	echo "getent_passwd :"
-#	f=$(grep -l "^# /usr/bin/getent passwd$" ${TEMP}/${FIL}/xx*)
-#	test -z "$f" ||\
-#		awk -F: '$2~/SAP.*Administrator/ {print}' $f | sort -u	
-#	echo
-	echo "getent_group :"
-	f=$(grep -l "^# /usr/bin/getent group$" ${TEMP}/${FIL}/xx*)
-	test -z "$f" ||\
-		awk -F: '$1=="sapinst" || $1=="sapsys" || $1=="oper"  {print}' $f | sort -u
+	show_pam_sap
 	echo
 	echo "proc :"
 	FIL=memory.txt
@@ -1749,6 +1765,10 @@ HANA-Firewall
 	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
 		awk ' $9~/HDB_/ {print $9}' $f | sort -u | tail -2
+	echo
+	FIL=pam.txt
+	split_file ${FIL}
+	show_pam_sap
 	echo
 }
 

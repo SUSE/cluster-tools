@@ -3,12 +3,12 @@
 # cs_show_cluster_patterns
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2019 SUSE LLC
+# (c) 2018-2020 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-12-05 SLES12
+# Version: 2020-06-22
 #
 
 EXE="$0"
@@ -142,6 +142,7 @@ test -z "${RESRC_PATTERN}" &&\
 "SAP.*Unauthorized"
 "SAPHana.*Secure.store.users"
 "SAPHana.*RA.*rc=[1-7,9]"
+"SAPHana.*ERR:"
 "HANA_CALL.timed.out"
 "SAPHanaTopology.*failed"
 "eDirectory.*failed.*stop"

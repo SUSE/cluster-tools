@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: SLES12 0.2 2020-04-24
+# Version: SLES12 0.2 2020-06-26
 #
 
 EXE="$0"
@@ -221,6 +221,7 @@ test -z "${CLUERR_PATTERN}" &&\
 "corosync.*not.scheduled"
 "quorum.lost"
 "fenced.because.*.un-expectedly.down"
+"stonith.*warning"
 "stonith.*Device.*not.fond"
 "Node.*unclean"
 "pcmk.*Child.process.*exited"

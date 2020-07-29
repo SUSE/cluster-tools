@@ -23,7 +23,33 @@ test -z "${SCF}" &&\
 test -z "${SBD}" && test -s $SCF &&\
 	SBD=$( awk -F"=" '$1=="SBD_DEVICE" {print $2}' $SCF |\
 		tr -d "\""|tr ";" "\n" )
-
+test -z "${CLPROC}" &&\
+# SLE 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12
+#CLPROC="
+#stonithd
+#cib
+#attrd
+#pengine
+#crmd
+#lrmd
+#mgmtd
+#corosync
+#ha_logd
+#sbd
+#"
+# TODO double-check SLE 15
+CLPROC="
+pacemaker-based
+pacemaker-fenced
+pacemaker-execd
+pacemaker-attrd
+pacemaker-schedulerd
+pacemaker-controld
+pacemakerd
+corosync
+sbd
+"
+echo -n "HA processes: "
 HST=$(hostname -f)
 DAT=$(date +"%Y-%m-%d %T")
 
@@ -63,24 +89,11 @@ echo -n "Started resources: "
 crm_mon -r1 | awk '$3=="Started"{print $0}' | wc -l
 
 PSAUX=$(ps aux | awk '{print $11}')
-CLPROC="
-stonithd
-cib
-attrd
-pengine
-crmd
-lrmd
-mgmtd
-corosync
-ha_logd
-sbd
-"
 echo -n "HA processes: "
 for f in $CLPROC; do
 	echo $PSAUX | grep -c $f >/dev/null && echo $f
 done | wc -l
 echo
-
 echo "TOTEM: "
 corosync-cfgtool -s | grep -B1 "status.*=" | grep -v "^--$"
 echo

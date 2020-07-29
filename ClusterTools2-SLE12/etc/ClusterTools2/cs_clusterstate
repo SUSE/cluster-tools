@@ -1,8 +1,34 @@
 # /etc/ClusterTools2/cs_clusterstate
-# For SLES11.
+# For SLES12.
 #
 ETH="bond0 eth3"
 SCF="/etc/sysconfig/sbd"
 # SBD device is determined automatically from SBD Config File
 #SBD="/dev/sdb1"
+#
+# SLE 11, 12 cluster processes
+#CLPROC="
+#stonithd
+#cib
+#attrd
+#pengine
+#crmd
+#lrmd
+#mgmtd
+#corosync
+#ha_logd
+#sbd
+#"
+# SLE 15 cluster processes
+CLPROC="
+pacemaker-based
+pacemaker-fenced
+pacemaker-execd
+pacemaker-attrd
+pacemaker-schedulerd
+pacemaker-controld
+pacemakerd
+corosync
+sbd
+"
 #

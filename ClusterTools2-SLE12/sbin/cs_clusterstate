@@ -3,12 +3,12 @@
 # cs_clusterstate 
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2019 SUSE LLC
+# (c) 2018-2020 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-12-05 SLES12
+# Version: 2020-07-27 SLES12
 #
 
 EXE="$0"
@@ -36,9 +36,10 @@ function help() {
 	echo " --help		show help"
 	echo " --all		show all info"
 	echo " --basics	show basic info"
-	echo " --idle		show te idle info"
+	echo " --idle		show idle info"
 	echo " --network	show network info"
 	echo " --storage	show storage info"
+	echo " --replication	show SAPHanaSR info"
 	echo " --version	show version info"
 }
 
@@ -119,6 +120,7 @@ echo -n "IPs: "
 echo
 }
 
+
 function get_storage() {
 # TODO check for WWIDs 3600...=SAN/SCSI, 1494...=iSCSI 
 # TODO configurable pattern for SAN LUNs (f.e "HP,OPEN-V", "HP,HSV"), local LUNs (f.e. "HP,LOGICAL.VOLUME"), iSCSI LUNs (f.e. "IET,VIRTUAL-DISK")
@@ -152,6 +154,19 @@ echo
 echo -n "Filesystems rw: "
 	grep -c "^/dev/.*rw" /proc/mounts
 echo
+}
+
+
+function get_saphanasr() {
+# TODO error handling
+# TODO better filter
+echo
+echo "SAPHana RAs:"
+crm_mon -1r |\
+ grep  -e ":.*_SAPHana" -e "Clone.Set:" -e "Masters:.\[" -e "Slaves:.\["
+echo
+echo "SAPHanaSR-showAttr:"
+test -x /usr/sbin/SAPHanaSR-showAttr && SAPHanaSR-showAttr
 }
 
 
@@ -190,12 +205,14 @@ case $1 in
 		get_idle
 		exit
 	;;
+	-r|--replication)
+		get_saphanasr
+		exit
+	;;
 	-b|--basics|*)
 		echo "### $HST - $DAT ###"
 		get_basics
 		exit
 	;;
-	# TODO get_hana_scaleup (master-slave + clone)
-	# TODO get_hana_scaleout (master-slave + clone)
 esac
 #

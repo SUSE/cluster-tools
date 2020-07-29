@@ -20,7 +20,7 @@ Summary:        Cluster Tools to control some functions easy
 License:        GPL-2.0
 Group:          Productivity/Clustering/HA
 Version:        3.1.0
-Release:        100 
+Release:        101 
 Source:         %{name}-%{version}.tbz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildArch:      noarch
@@ -34,7 +34,7 @@ Requires(post): man
 ClusterTools2 provides tools for setting up and managing a corosync/
 pacemaker cluster.
 There are some other commandline tools to make life easier.
-Starting with version 3.0.0 supports SUSE Linux Enterprise Server 12.
+Starting with version 3.0.0 is support for SUSE Linux Enterprise Server 12.
 
 %prep
 %setup -c -T -a 0

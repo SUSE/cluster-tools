@@ -45,7 +45,8 @@ echo "# $EXE start"
 echo "###"
 echo "# cs_clusterstate -b"
 (/usr/sbin/cs_clusterstate -b; RC=$?) |\
-	grep -v "^Started.resources:" | grep -v "^Online:.\["
+	grep -v "^Started.resources:" | grep -v "^Online:.\[" |\
+	tr -s "\n"
 echo "# cs_clusterstate -b: RC=$RC"
 echo
 # TODO cluster processes?
@@ -53,13 +54,15 @@ echo
 echo "###"
 echo "# crm_mon -1r"
 (/usr/sbin/crm_mon -1r; RC=$?) |\
-	grep -v "^Current DC:" | grep -v "^Last updated:" | grep -v "^Stack"
+	grep -v "^Current DC:" | grep -v "^Last updated:" | grep -v "^Stack" |\
+	tr -s "\n"
 echo "# crm_mon -1r: RC=$RC"
 echo
 
 echo "###"
 echo "# cs_clusterstate -r"
-/usr/sbin/cs_clusterstate -r ; RC=$? 
+(/usr/sbin/cs_clusterstate -r ; RC=$?) |\
+	tr -s "\n" 
 echo "# cs_clusterstate -r: RC=$RC"
 echo
 echo "# $EXE end"

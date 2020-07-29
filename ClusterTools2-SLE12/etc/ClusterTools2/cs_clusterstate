@@ -3,7 +3,7 @@
 #
 ETH="bond0 eth3"
 SCF="/etc/sysconfig/sbd"
-# SBD device is determined automatically from SBD Config File
+# SBD device is determined automatically from SBD config file
 #SBD="/dev/sdb1"
 #
 # SLE 11, 12 cluster processes

@@ -24,7 +24,7 @@ test -z "${SBD}" && test -s $SCF &&\
 	SBD=$( awk -F"=" '$1=="SBD_DEVICE" {print $2}' $SCF |\
 		tr -d "\""|tr ";" "\n" )
 test -z "${CLPROC}" &&\
-# SLE 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12
+# SLE 11, 12
 #CLPROC="
 #stonithd
 #cib
@@ -49,7 +49,6 @@ pacemakerd
 corosync
 sbd
 "
-echo -n "HA processes: "
 HST=$(hostname -f)
 DAT=$(date +"%Y-%m-%d %T")
 
@@ -79,14 +78,19 @@ function get_idle() {
 function get_basics() {
 crm_mon -r1 |\
  awk '$1=="Current"||$1=="Online:"||$1=="OFFLINE:"||$3=="UNCLEAN"{print $0}'
-# TODO: show [standby] as well
-# TODO: efficient awk
+# TODO show [standby] as well
+# TODO efficient awk
 get_idle
-#
+# TODO call crm_mon once and re-use output
 echo -n "Stopped/FAILED resources: "
 crm_mon -r1 | awk '$3=="Stopped"||$0~/FAILED/{print $0}' | wc -l
-echo -n "Started resources: "
+# TODO count clone and multistate as well
+echo -n "Started primitive resources: "
 crm_mon -r1 | awk '$3=="Started"{print $0}' | wc -l
+
+echo -n "Left-over constraints: "
+crm configure show | grep "cli-" | wc -l
+echo
 
 PSAUX=$(ps aux | awk '{print $11}')
 echo -n "HA processes: "
@@ -173,12 +177,21 @@ echo
 function get_saphanasr() {
 # TODO error handling
 # TODO better filter
+# TODO call crm_mon once and re-use output
+# TODO awk instead of multiple grep
 echo
-echo "SAPHana RAs:"
-crm_mon -1r |\
- grep  -e ":.*_SAPHana" -e "Clone.Set:" -e "Masters:.\[" -e "Slaves:.\["
+HANA=$( crm_mon -1 |\
+ grep  -e "Clone.Set:.*_SAPHana" -e "Masters:.\[" -e "Slaves:.\[" -e "Started:.\[" |\
+ tr "\n" "§" )
+echo -n "SAPHanaSR masters: "
+echo ${HANA} | tr "§" "\n" | grep "Masters:.\[" | wc -l
+echo -n "SAPHanaSR slaves: "
+echo ${HANA} | tr "§" "\n" | grep "Slaves:.\[" | wc -l
 echo
-echo "SAPHanaSR-showAttr:"
+echo "SAPHanaSR resources:"
+echo ${HANA} | tr "§" "\n" 
+
+echo "SAPHanaSR attributes:"
 test -x /usr/sbin/SAPHanaSR-showAttr && SAPHanaSR-showAttr
 }
 

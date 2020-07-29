@@ -45,7 +45,7 @@ echo
 
 echo "###"
 echo "# cs_clusterstate -b: start"
-(/usr/sbin/cs_clusterstate -b; RC=$?) |\
+(/usr/sbin/cs_clusterstate -b; RC=$?) | tr -d "#" |\
 	grep -v "^Started.resources:" | grep -v "^Online:.\[" |\
 	tr -s "\n"
 echo "# cs_clusterstate -b: RC=$RC"
@@ -68,12 +68,12 @@ echo
 
 echo "###"
 echo "# cs_clusterstate -i: start"
-/usr/sbin/cs_clusterstate -i; RC=$?
+(/usr/sbin/cs_clusterstate -i; RC=$?) | tr -d "#"
 echo "# cs_clusterstate -i: RC=$RC"
 echo
 
 echo "# ${EXE}: RC="
-echo "################################################"
 # TODO useful overall return code
-exit
+echo "################################################"
+exit $RC
 #

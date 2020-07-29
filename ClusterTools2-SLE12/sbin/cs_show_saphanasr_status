@@ -44,7 +44,7 @@ echo "# ${EXE}: start"
 echo
 
 echo "###"
-echo "# cs_clusterstate -b"
+echo "# cs_clusterstate -b: start"
 (/usr/sbin/cs_clusterstate -b; RC=$?) |\
 	grep -v "^Started.resources:" | grep -v "^Online:.\[" |\
 	tr -s "\n"
@@ -52,7 +52,7 @@ echo "# cs_clusterstate -b: RC=$RC"
 echo
 
 echo "###"
-echo "# crm_mon -1r"
+echo "# crm_mon -1r: start"
 (/usr/sbin/crm_mon -1r; RC=$?) |\
 	grep -v "^Current DC:" | grep -v "^Last updated:" | grep -v "^Stack" |\
 	tr -s "\n"
@@ -60,19 +60,19 @@ echo "# crm_mon -1r: RC=$RC"
 echo
 
 echo "###"
-echo "# cs_clusterstate -r"
+echo "# cs_clusterstate -r: start"
 (/usr/sbin/cs_clusterstate -r ; RC=$?) |\
 	tr -s "\n" 
 echo "# cs_clusterstate -r: RC=$RC"
 echo
 
 echo "###"
-echo "# cs_clusterstate -i"
+echo "# cs_clusterstate -i: start"
 /usr/sbin/cs_clusterstate -i; RC=$?
 echo "# cs_clusterstate -i: RC=$RC"
 echo
 
-echo "# ${EXE}: end"
+echo "# ${EXE}: RC="
 echo "################################################"
 # TODO useful overall return code
 exit

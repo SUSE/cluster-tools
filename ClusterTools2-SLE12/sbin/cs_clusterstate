@@ -179,7 +179,6 @@ function get_saphanasr() {
 # TODO better filter
 # TODO call crm_mon once and re-use output
 # TODO awk instead of multiple grep
-echo
 HANA=$( crm_mon -1 |\
  grep  -e "Clone.Set:.*_SAPHana" -e "Masters:.\[" -e "Slaves:.\[" -e "Started:.\[" |\
  tr "\n" "§" )
@@ -188,7 +187,6 @@ echo ${HANA} | tr "§" "\n" | grep "Masters:.\[" | wc -l
 echo -n "Started SAPHanaSR slaves: "
 echo ${HANA} | tr "§" "\n" | grep "Slaves:.\[" | wc -l
 # TODO started Topology clones
-#echo
 #echo "SAPHanaSR resources:"
 #echo ${HANA} | tr "§" "\n" 
 

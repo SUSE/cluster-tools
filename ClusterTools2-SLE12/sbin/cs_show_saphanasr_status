@@ -58,13 +58,6 @@ echo "# crm_mon -1r: RC=$RC"
 echo
 
 echo "###"
-echo "# crm configure show | grep cli-"
-/usr/sbin/crm configure show |\
-	grep cli- ; RC=$? # TODO
-echo "# crm configure show | grep cli-: RC=$RC"
-echo
-
-echo "###"
 echo "# cs_clusterstate -r"
 /usr/sbin/cs_clusterstate -r ; RC=$? 
 echo "# cs_clusterstate -r: RC=$RC"

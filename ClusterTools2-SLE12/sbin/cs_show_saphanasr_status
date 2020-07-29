@@ -41,6 +41,8 @@ esac
 
 echo "################################################"
 echo "# ${EXE}: start"
+echo
+
 echo "###"
 echo "# cs_clusterstate -b"
 (/usr/sbin/cs_clusterstate -b; RC=$?) |\
@@ -48,7 +50,6 @@ echo "# cs_clusterstate -b"
 	tr -s "\n"
 echo "# cs_clusterstate -b: RC=$RC"
 echo
-# TODO cluster processes?
 
 echo "###"
 echo "# crm_mon -1r"
@@ -64,6 +65,13 @@ echo "# cs_clusterstate -r"
 	tr -s "\n" 
 echo "# cs_clusterstate -r: RC=$RC"
 echo
+
+echo "###"
+echo "# cs_clusterstate -i"
+/usr/sbin/cs_clusterstate -i; RC=$?
+echo "# cs_clusterstate -i: RC=$RC"
+echo
+
 echo "# ${EXE}: end"
 echo "################################################"
 # TODO useful overall return code

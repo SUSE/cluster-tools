@@ -11,7 +11,6 @@
 #
 
 # TODO reliable function return codes
-# TODO useful overall return code
 
 EXE=$(basename $0)
 # TODO function run_cmd
@@ -41,7 +40,7 @@ case $1 in
 esac
 
 echo "################################################"
-echo "# $EXE start"
+echo "# ${EXE}: start"
 echo "###"
 echo "# cs_clusterstate -b"
 (/usr/sbin/cs_clusterstate -b; RC=$?) |\
@@ -65,8 +64,8 @@ echo "# cs_clusterstate -r"
 	tr -s "\n" 
 echo "# cs_clusterstate -r: RC=$RC"
 echo
-echo "# $EXE end"
+echo "# ${EXE}: end"
 echo "################################################"
-
+# TODO useful overall return code
 exit
 #

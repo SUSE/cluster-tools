@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2020-07-27 SLES12
+# Version: 2020-07-28 SLES12
 #
 
 EXE="$0"
@@ -24,19 +24,7 @@ test -z "${SBD}" && test -s $SCF &&\
 	SBD=$( awk -F"=" '$1=="SBD_DEVICE" {print $2}' $SCF |\
 		tr -d "\""|tr ";" "\n" )
 test -z "${CLPROC}" &&\
-# SLE 11, 12
-#CLPROC="
-#stonithd
-#cib
-#attrd
-#pengine
-#crmd
-#lrmd
-#mgmtd
-#corosync
-#ha_logd
-#sbd
-#"
+# for SLE 11, 12 see $CFG
 # TODO double-check SLE 15
 CLPROC="
 pacemaker-based
@@ -182,14 +170,16 @@ function get_saphanasr() {
 HANA=$( crm_mon -1 |\
  grep  -e "Clone.Set:.*_SAPHana" -e "Masters:.\[" -e "Slaves:.\[" -e "Started:.\[" |\
  tr "\n" "§" )
-echo -n "Started SAPHanaSR masters: "
+echo -n "SAPHanaSR started masters: "
 echo ${HANA} | tr "§" "\n" | grep "Masters:.\[" | wc -l
-echo -n "Started SAPHanaSR slaves: "
+echo -n "SAPHanaSR started slaves: "
 echo ${HANA} | tr "§" "\n" | grep "Slaves:.\[" | wc -l
+echo -n "SAPHanaSR master node: "
+P_HANA=$(crm_resource list | awk '$5=="(promotable)" {print $4}' | tr -d "[]")
+crm_resource -W --master -r $P_HANA | awk '$7=="Master" {print $6}'
 # TODO started Topology clones
 #echo "SAPHanaSR resources:"
-#echo ${HANA} | tr "§" "\n" 
-
+#echo ${HANA} | tr "§" "\n"
 echo "SAPHanaSR attributes:"
 test -x /usr/sbin/SAPHanaSR-showAttr && SAPHanaSR-showAttr | tr -s "\n"
 }
@@ -234,6 +224,7 @@ case $1 in
 	-r|--replication)
 		echo "### $HST - $DAT ###"
 		get_saphanasr
+		get_idle
 		exit
 	;;
 	-b|--basics|*)

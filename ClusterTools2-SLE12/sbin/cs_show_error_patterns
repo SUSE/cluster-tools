@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: SLES12 0.2 2020-06-26
+# Version: SLES12 0.2 2020-08-11
 #
 
 EXE="$0"
@@ -195,6 +195,9 @@ test -z "${SVCERR_PATTERN}" &&\
 "ntpd.*failed"
 "ntpd.*time.reset"
 "ntpd.TIME_ERROR"
+"chronyd.*clock.wrong"
+"chronyd.*time.jump"
+"chronyd.*no.selectable.sources"
 "time.sync.status.changed"
 "Frequency.format.error"
 "failed.to.bind.to.LDAP"

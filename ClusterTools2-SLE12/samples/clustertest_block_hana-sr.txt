@@ -1,0 +1,11 @@
+
+- allow HANA system replication:
+
+secondary # ss -tulpan | grep hdb.*server | grep -v 127.0.0.1 |\
+ grep -v "\*" | awk '{print $6}' | awk -F: '{print $2}'
+
+secondary # iptables -I INPUT -p tcp -m multiport --ports 40001,40002,40003 -j ACCEPT
+
+- remove above rule:
+
+secondary # iptables -D INPUT -p tcp -m multiport --ports 40001,40002,40003 -j ACCEPT

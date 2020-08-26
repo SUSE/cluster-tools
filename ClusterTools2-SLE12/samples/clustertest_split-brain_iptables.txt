@@ -2,6 +2,8 @@ https://www.cloudera.com/documentation/enterprise/5-8-x/topics/admin_cm_ha_failo
 
 allow corosync totem:
 
+$ grep mcastport /etc/corosync/corosync.conf
+
 $ sudo iptables -I INPUT -m state --state NEW -p udp -m multiport --dports 5404,5405 -j ACCEPT
 $ sudo iptables -I OUTPUT -m state --state NEW -p udp -m multiport --sports 5404,5405 -j ACCEPT
 

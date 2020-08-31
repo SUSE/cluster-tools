@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: SLES12 0.2 2020-08-11
+# Version: SLES12 0.2 2020-08-31
 #
 
 EXE="$0"
@@ -241,6 +241,7 @@ test -z "${CLUERR_PATTERN}" &&\
 "crmd.*High.CPU.load"
 "sbd.*mbox.read.failed"
 "sbd.*Latency"
+"sbd.*Header.*changed"
 "oft.og.*not"
 "dlm.*link.*down"
 "ocfs2.*has.evicted"

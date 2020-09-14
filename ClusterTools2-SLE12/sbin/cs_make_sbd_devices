@@ -87,6 +87,7 @@ function make_sbd_devices() {
 
 
 function clear_sbd_devices() {
+	# TODO just call cs_clear_bsd_devices instead of local code
 	echo "INFO: start $EXE $FUNCNAME"
 	CFI=${SBD_CONF}
 	test -s $CFI || exit 4

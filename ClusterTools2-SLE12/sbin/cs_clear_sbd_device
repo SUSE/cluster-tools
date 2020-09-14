@@ -1,0 +1,122 @@
+#!/bin/bash
+#
+# cs_clear_sbd_device
+#
+# Author: L.Pinne.
+# GNU General Public License v2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
+#
+# Version: 2020-09-14
+#
+
+EXE="$0"
+BEX=$(basename "$0")
+NODE="$2"
+SBD_CONF="/etc/sysconfig/sbd"
+
+test -f $SBD_CONF || (echo "${BEX}: $SBD_CONF not found"; exit)
+# TODO check node is short name
+test -z $NODE && NODE=$HOSTNAME
+
+function show_help() {
+	echo "usage: $BEX [ --help | --version | --all | --local ]"
+#	echo "usage: $BEX --node <node>"
+	echo " --help           show help."
+	echo " --version        show version."
+	echo " --all            clear all reset nodes on all devices."
+	echo " --local          clear local node on all devices."
+#	echo " --node           clear node <node> on all devices."
+	echo
+}
+
+
+# TODO read SBD_DEVICEs once an store in variable
+function list_device_names() {
+        awk -F"=" '$1=="SBD_DEVICE" {print $2}' $SBD_CONF |tr -d "\""|tr ";" "\n"
+}
+
+
+MSGWAIT=$(list_device_names | while read DEV; do
+                sbd -d $DEV dump
+		break # get first only
+        done | awk '$2=="(msgwait)" {print $4}')
+
+
+function clear_node() {
+	list_device_names | while read DEV; do
+                echo "${BEX}: clearing $1 ..."
+                sbd -d $DEV message $1 clear &
+ 	done
+}
+
+
+# TODO clear only named node (cs_clear_sbd_devices --node <node>)
+# TODO clear only local node (cs_clear_sbd_devices --local)
+# TODO change inner and outer loop to handle single nodes
+function clear_devices() {
+ case $1 in
+	all)
+	list_device_names | while read DEV; do
+       		sbd -d $DEV list |\
+		awk '$3=="reset" {print $2}' | while read NODE; do
+                	echo "${BEX}: clearing $NODE ..."
+                	sbd -d $DEV message $NODE clear &
+        	done
+ 	done
+	;;
+	node)
+	# TODO always short name
+	# TODO what about cluster node id?
+	# TODO global var instead?
+	clear_node $2
+	;;
+	*) 
+	exit
+	;;
+ esac
+ echo "${BEX}: good clearing takes a while ..."
+ sleep $MSGWAIT
+ # sleep 10
+}
+
+
+function list_devices() {
+	list_device_names | while read DEV; do
+        	sbd -d $DEV list
+	done
+}
+
+
+# function main()
+# TODO return codes
+case $1 in
+	-v|--version)
+		echo -n "${BEX} "
+		head -11 ${EXE} | grep "^# Version: "
+		exit
+	;;
+	-a|--all)
+		echo "${BEX}: start"
+		clear_devices all
+		echo "${BEX}: done"
+		exit
+	;;
+	-l|--local)
+		echo "${BEX}: start"
+		clear_devices node $HOSTNAME
+		echo "${BEX}: done"
+		exit
+	;;
+	-n|--node)
+		[ $# -eq 2 ] || exit
+		echo "${BEX}: start"
+		clear_devices node $NODE
+		echo "${BEX}: done"
+		exit
+	;;
+	*)
+		show_help
+		exit
+	;;	
+esac
+#

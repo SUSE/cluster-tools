@@ -220,7 +220,7 @@ test -z "${SVCERR_PATTERN}" &&\
 
 test -z "${CLUERR_PATTERN}" &&\
 	 CLUERR_PATTERN="
-"TOTEM.*FAILED.*RECEIVE"
+"TOTEM.*Falied.*receive"
 "TOTEM.*processor.failed"
 "TOTEM.*Incrementing.problem"
 "TOTEM.*Retransmit.List"

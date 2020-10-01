@@ -163,7 +163,7 @@ SVCERR_PATTERN="
 "
 #
 CLUERR_PATTERN="
-"TOTEM.*FAILED.*RECEIVE"
+"TOTEM.*Failed.*receive"
 "TOTEM.*processor.failed"
 "TOTEM.*Incrementing.problem"
 "TOTEM.*Retransmit.List"

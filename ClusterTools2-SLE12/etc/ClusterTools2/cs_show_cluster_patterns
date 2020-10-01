@@ -26,7 +26,7 @@ OSERR_PATTERN="
 #
 CLUSTR_PATTERN="
 "CLM.*Members.Left:"
-"TOTEM.*FAILED.*RECEIVE"
+"TOTEM.*failed.*receive"
 "TOTEM.*processor.failed"
 "TOTEM.*Incrementing.problem"
 "TOTEM.*Retransmit.List"

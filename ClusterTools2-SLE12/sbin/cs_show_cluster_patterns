@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2020-06-22
+# Version: 2020-09-30
 #
 
 EXE="$0"
@@ -59,7 +59,7 @@ test -z "${OSERR_PATTERN}" &&\
 test -z "${CLUSTR_PATTERN}" &&\
 	 CLUSTR_PATTERN="
 "CLM.*Members.Left:"
-"TOTEM.*FAILED.*RECEIVE"
+"TOTEM.*failed.*receive"
 "TOTEM.*processor.failed"
 "TOTEM.*Incrementing.problem"
 "TOTEM.*Retransmit.List"

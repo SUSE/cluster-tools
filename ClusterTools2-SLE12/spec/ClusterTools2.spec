@@ -1,7 +1,8 @@
 #
 # spec file for package ClusterTools2
 #
-# Copyright (c) 2018 SUSE LINUX GmbH, Nuernberg, Germany.
+# Copyright (c) 2011-2018 SUSE LINUX GmbH, Nuernberg, Germany.
+# Copyright (c) 2018-2020 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -20,11 +21,11 @@ Summary:        Cluster Tools to control some functions easy
 License:        GPL-2.0
 Group:          Productivity/Clustering/HA
 Version:        3.1.0
-Release:        101 
+Release:        101
 Source:         %{name}-%{version}.tbz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildArch:      noarch
-Requires:       cron
+Requires:       systemd
 Requires:       logrotate
 Requires:       pacemaker > 1.1.1
 Requires:       perl-TermReadLine-Gnu >= 1.16
@@ -64,12 +65,14 @@ mkdir -p %{buildroot}/usr/share/man/man5
 mkdir -p %{buildroot}/usr/share/man/man7
 mkdir -p %{buildroot}/usr/share/man/man8
 mkdir -p %{buildroot}/usr/lib/ClusterTools2/supportconfig/plugins
+mkdir -p %{buildroot}/usr/lib/systemd/system
 
 #
 # "binaries"
 #
 cp -va sbin/* %{buildroot}/usr/sbin/
-cp -va plugins/* %{buildroot}/usr/lib/ClusterTools2/supportconfig/plugins
+cp -va system/* %{buildroot}/usr/lib/systemd/system
+cp -va plugins/* %{buildroot}/usr/lib/ClusterTools2/supportconfig/plugins/
 #
 # etc
 #
@@ -95,6 +98,7 @@ cp -a man7/*.gz %{buildroot}/usr/share/man/man7/
 cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 
 %post
+mkdir -p /usr/lib/systemd/system
 mkdir -p /usr/lib/supportconfig/plugins
 cp /usr/lib/ClusterTools2/supportconfig/plugins/* /usr/lib/supportconfig/plugins
 for f in /usr/lib/man/man/man8/cs_* /usr/lib/man/man8/{ClusterService,psauxlog,meminfolog,lsoflog,wow} /usr/lib/man/man7/ha_related_*; do mandb -q $f; done
@@ -104,6 +108,7 @@ for f in /usr/lib/man/man/man8/cs_* /usr/lib/man/man8/{ClusterService,psauxlog,m
 /usr/sbin/*
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
+/usr/lib/systemd/system
 %config(noreplace) /etc/ClusterTools2
 #%config(noreplace) /etc/cron.d/*
 %config(noreplace) /etc/logrotate.d/*

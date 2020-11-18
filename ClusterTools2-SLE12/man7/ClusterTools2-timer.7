@@ -30,7 +30,7 @@ ClusterTools2-timer \- systemd timer example for collecting data
 .br
 # systemctl daemon-reload
 .br
-systemctl restart ClusterTools2-timer.timer
+# systemctl restart ClusterTools2-timer.timer
 .\"
 .SH FILES
 .TP
@@ -52,6 +52,8 @@ please use https://www.suse.com/support/report-a-bug/ .
 .\"
 .SH SEE ALSO
 \fBsystemd.timer\fP(5), \fBsystemctl\fP(8), \fBjournalctl\fP(8),
+\fBlogrotate\fP(8), \fBlsoflog\fP.8, \fBpsauxlog\fP.8, \fBmeminfolog\fP.8,
+\fBsupportconfig_plugins\fP.5,
 .br
 https://opensource.com/article/20/7/systemd-timers
 .\"

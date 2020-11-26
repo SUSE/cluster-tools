@@ -1,7 +1,7 @@
 [Unit]
 Description=Collect data
 Documentation=man:ClusterTools2-timer
-Wants=logrotate.timer,syslog.service
+Wants=logrotate.timer syslog.service
 
 [Service]
 Type=oneshot

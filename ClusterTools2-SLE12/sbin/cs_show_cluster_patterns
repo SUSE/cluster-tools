@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2020-09-30
+# Version: 2020-12-14
 #
 
 EXE="$0"
@@ -87,6 +87,7 @@ test -z "${CLUSTR_PATTERN}" &&\
 "pengine.*LogActions:.Leave.*\(Started.unmanaged\)"
 "pengine.*LogActions:.Leave.*\(Stopped.unmanaged\)"
 "cib.*failed"
+"cib.*wanted.to.shut.down"
 "High.CIB.load"
 "crm_resource.*Error"
 "crmd.*quorum.lost"

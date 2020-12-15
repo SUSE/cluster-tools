@@ -33,3 +33,5 @@ configure \
 colocation ASCS@@ANR@@_ERS@@INR@@_separated_@@SID@@ \
  -5000: grp_@@SID@@_ERS@@INR@@ grp_@@SID@@_ASCS@@ANR@@
 #
+order ord_SAPInstance_@@SID@@_first_start_ascs Optional: rsc_SAPInstance_@@SID@@_ASCS@@ANR@@:start rsc_SAPInstance_@@SID@@_ERS@@INR@@:stop symmetrical=false
+#

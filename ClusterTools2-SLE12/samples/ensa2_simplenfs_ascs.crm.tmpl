@@ -14,7 +14,7 @@ primitive rsc_SAPStartSrv_@@SID@@_ASCS@@INR@@ SAPStartSrv \
 configure \
 primitive rsc_SAPInstance_@@SID@@_ASCS@@INR@@ SAPInstance \
  op monitor interval=11 timeout=60 on-fail=restart \
- params InstanceName=@@SID@@_ASCS@@INR@@_sapeva \
+ params InstanceName=@@SID@@_ASCS@@INR@@_@@VHOST@@ \
  START_PROFILE=/sapmnt/@@SID@@/profile/@@SID@@_ASCS@@INR@@_@@VHOST@@ \
  AUTOMATIC_RECOVER=false \
  MINIMAL_PROBE=true \

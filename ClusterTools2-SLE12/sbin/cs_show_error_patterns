@@ -83,6 +83,7 @@ test -z "${ERROR_PATTERN}" &&\
 "urandom.warning"
 "Signaling.PME.*interrupt"
 "Error.DRAM"
+"nvme.*error"
 "Uncorrectable.*rror"
 "error.detected.during.POST"
 "mce:.CPU.supports.0.MCE.banks"

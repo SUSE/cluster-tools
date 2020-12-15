@@ -22,10 +22,10 @@ primitive rsc_SAPInstance_@@SID@@_ASCS@@INR@@ SAPInstance \
 #
 configure \
 primitive rsc_IPAddr2_@@SID@@_ASC@@INR@@ IPaddr2 \
- params ip=@@VIP@@ cidr_netmask=32
+ params ip=@@VIP@@
 #
 configure \
-group grp_@@SID@@_ASC@@INR@@ \
+group grp_@@SID@@_ASCS@@INR@@ \
  rsc_IPAddr2_@@SID@@_ASC@@INR@@ \
  rsc_SAPStartSrv_@@SID@@_ASC@@INR@@ \
  rsc_SAPInstance_@@SID@@_ASCS@@INR@@ \

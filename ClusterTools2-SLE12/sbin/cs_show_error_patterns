@@ -163,6 +163,7 @@ test -z "${ERROR_PATTERN}" &&\
 "cgroup:.*rejected"
 "shutdown.*shutting.down"
 "systemd.*Reached.target.Shutdown"
+"dbus-daemon.*ailed"
 "kernel.*segfault.at"
 "Out.of.memory"
 "invoked.oom-killer"

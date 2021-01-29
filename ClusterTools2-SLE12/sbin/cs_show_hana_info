@@ -3,12 +3,12 @@
 # cs_show_hana_info
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2020 SUSE LLC
+# (c) 2018-2021 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2020-05-05
+# Version: 2021-01-29
 #
 # TODO /etc/ClusterTools2/cs_show_hana_info
 # TODO show logs
@@ -79,10 +79,20 @@ function show_info() {
 	id ${SID}adm
 	echo ) >>${TEMP} || exit 2
 
-	# TODO sapinit status
-	# ( echo "# ==="
-	# /etc/init.d/sapinit status 
-	# echo ) >>${TEMP} || exit 2
+	# TODO $rc
+	( echo "# ==="
+	echo "sapinit status"
+	/etc/init.d/sapinit status
+	echo
+	echo "systemctl sapinit status"
+	systemctl sapinit status 
+	echo ) >>${TEMP} || exit 2
+
+	# TODO $rc
+	( echo "# ==="
+	echo "ps aux"
+	ps aux | grep ^${SID}adm
+	echo ) >>${TEMP} || exit 2
 
 	# TODO call sap cmds with --sapcontrol=1 to get parseable output
 	sudo_cmd "sapcontrol -nr $INR -function GetProcessList"

@@ -194,6 +194,7 @@ test -z "${SVCERR_PATTERN}" &&\
 "multipathd.*timed.out"
 "multipathd.*mpath.*unable"
 "multipathd.*reinstated"
+"multipathd.*too.much"
 "multi.*path.*down"
 "lvmetad.*failed"
 "fstrim:.*FITRIM.ioctl.failed:"

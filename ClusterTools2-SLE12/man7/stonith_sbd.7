@@ -387,6 +387,32 @@ Putting it all together:
 .br
 - SBD must always be used together with a watchdog.
 .\"
+.SH EXAMPLES
+.TP
+* show available watchdog drivers
+.br
+# ls /lib/modules/*/kernel/drivers/watchdog/
+.TP
+* show loaded watchdog modules
+.br
+# lsmod | grep -e wdt -e dog
+.TP
+* show which process accesses the watchdog
+.br
+# lsof /dev/watchdog
+.TP
+* show which settings are defined on SBD disk, e.g. timeouts
+.br
+# cs_show_sbd_devices  
+.TP
+* show currently used parameters for watchdog, e.g. timeout
+.br
+# systool -vc watchdog
+.TP
+* show how often the IPMI watchdog is tickled
+.br
+# ipmitool mc watchdog get
+.\"
 .SH FILES
 .TP
 /usr/sbin/sbd

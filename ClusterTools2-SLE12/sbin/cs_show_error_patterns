@@ -141,6 +141,7 @@ test -z "${ERROR_PATTERN}" &&\
 "server.*not.responding"
 "iSCSI.connection.*error"
 "Sense.*error"
+"bond.*without.any.active.interface"
 "bond.*link.*down"
 "bond.*duplicate.address"
 "bond.*not.detect.*failures"

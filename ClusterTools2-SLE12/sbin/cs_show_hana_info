@@ -84,8 +84,8 @@ function show_info() {
 	echo "sapinit status"
 	/etc/init.d/sapinit status
 	echo
-	echo "systemctl sapinit status"
-	systemctl sapinit status 
+	echo "systemctl status sapinit"
+	systemctl status sapinit
 	echo ) >>${TEMP} || exit 2
 
 	# TODO $rc

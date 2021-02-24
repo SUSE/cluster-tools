@@ -23,12 +23,14 @@ EXE=$(basename $0)
 
 MYHOST=$(hostname)
 SAPSVC="/usr/sap/sapservices"
-SAPPFL=$(awk -F"=" '$1=="pf"{print $2}' $SAPSVC | awk -F" " '{print $1}')
+# TODO
+SAPPFL=$(cat $SAPSVC | tr " " "\n"  | awk -F"=" '$1=="pf"{print $2}')
 # TODO multiple pf= lines? 
 SUDOER="/etc/sudoers"
 # TODO /etc/sudoers.d/*
 GBLINI=""
-MYHOOK=""
+# TODO get MYHOOK from global.ini
+MYHOOK="/usr/share/SAPHanaSR/SAPHanaSR.py"
 
 test -z "${TEMP}" &&\
 	TEMP="/dev/shm/cltl.$RANDOM"
@@ -74,7 +76,7 @@ function show_info() {
 	echo > ${TEMP} || exit 1
 	( echo "# ==="
 	echo "hostname: ${MYHOST}"
-	echo "sid: $SID"
+	echo "sid: $UPSID"
 	echo "inst_nr: $INR"
 	id ${SID}adm
 	echo ) >>${TEMP} || exit 2

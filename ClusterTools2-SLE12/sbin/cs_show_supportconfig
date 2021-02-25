@@ -3,12 +3,12 @@
 # cs_show_supportconfig
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2020 SUSE LLC
+# (c) 2018-2021 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2020-10-22 SLES12 0.03
+# Version: 2021-02-22 SLES12 0.03
 #
 # For Supportconfig Script Version: 2.25-237 to 3.0.2-10
 # TODO what supportconfig supports sar xz files?
@@ -263,7 +263,12 @@ function chk_modules(){
 ixgbe.ko
 netxen_nic.ko
 nx_nic.ko
+mlx3_en.ko
 mlx4_en.ko
+mlx5_en.ko
+mlx3_ib.ko
+mlx4_ib.ko
+mlx5_ib.ko
 i40e.ko
 bfa.ko
 lpfc.ko
@@ -467,7 +472,7 @@ function chk_services(){
 	echo_msgsep $FUNCNAME
 
 	FIL="boot.txt"
-	# TODO SLES12 what to look for? 
+	# TODO SLES15 what to look for? 
 	grep "exits with status" ${FIL} | grep -v "exits with status 0$"
  	grep "Skipped.features:" ${FIL} | sort -u
 	echo
@@ -497,6 +502,7 @@ function chk_services(){
 # TODO precheck_for_sap
 # TODO saptune, tuned
 # TODO boot.sapinit with AUTOSTART in instance profile?
+# TODO ipmi?
 	test -z "${SVC_YES}" &&\
 	SVC_YES="
 boot.clock
@@ -506,25 +512,48 @@ boot.multipath
 boot.sapconf
 boot.sysstat
 boot.sysctl
-boot.sapinit
+after.local
 multipathd
 ntp
+sapinit
 "
-# TODO lvm2-lvmetad
 	test -z "${SVC_OFF}" &&\
 	SVC_OFF="
 boot.dmraid
 boot.md
 alsasound
 hp-asrd
-ipmi
+lvm2-lvmetad
 mdadmd
 oracle
 pacemaker
 powerd
 slpd
 smartd
+tuned
 uuidd
+boot.vxfs
+qlremote
+amf
+gab
+isisd
+llt
+vcs
+vras-vradmind.sh
+vxatd
+vxdbdctrl
+vxdcli
+vxfen
+vxnm-vxnetd
+vxodm
+vxpbx_exchanged
+vxrsyncd.sh
+vxvm-boot
+vxvm-reconfig
+vxvm-recover
+sfmh-discovery
+xprtld
+eccmad
 "
 	FIL="chkconfig.txt"
 	if $(test -r "${FIL}"); then
@@ -819,6 +848,7 @@ function chk_sleha(){
 corosync
 cluster-glue
 crmsh
+ClusterTools2
 drbd-heartbeat
 drbd-pacemaker
 libopenais3
@@ -831,6 +861,8 @@ pacemaker-mgmt
 pacemaker-mgmt-client
 resource-agents
 sbd
+sapstartsrv-resource-agents
+sap-suse-cluster-connector
 SAPHanaSR
 SAPHanaSR-ScaleOut
 "
@@ -1166,6 +1198,7 @@ function chk_vmware(){
 	# http://www.vmware.com/download/packages.html
 	# http://packages.vmware.com/tools
 	# TODO what is really needed?
+	# TODO chrony
 	test -z "${VMW_PKG}" &&\
 	VMW_PKG="
 ntp-4
@@ -1223,6 +1256,7 @@ vmw_balloon
 mptbase
 "
 	# TODO vmware tools services?
+	# TODO chrony
 	test -z "${VMW_SVC_YES}" &&\
 	VMW_SVC_YES="
 boot.clock
@@ -1462,6 +1496,7 @@ libgcc_s1:6.2.1
 libstdc++6:6.2.1
 libuuid1=2.25-22
 sapinit-systemd-compat=1.0-2.1
+saptune=2.0.3-3.11.1
 util-linux=2.25-22
 xfsprogs:3.1.8-0.5.1
 "
@@ -1499,6 +1534,7 @@ sensors
 	HANA_SAP_PKG_NOT="
 ulimit
 "
+	# TODO chrony
 	test -z "${HANA_SAP_SVC_YES}" &&\
 	HANA_SAP_SVC_YES="
 boot.sysstat
@@ -1775,6 +1811,102 @@ HANA-Firewall
 }
 
 
+function chk_hpehana(){
+
+	echo_msgsep $FUNCNAME
+
+	test -z "${HPE_HANA_PTRN}" &&\
+	HPE_HANA_PTRN="
+"after.local"
+"
+	test -z "${HPE_HANA_NIC}" &&\
+	HPE_HANA_NIC="
+p3p1
+p3p2
+p6p1
+p6p2
+bond0
+bond1
+hana.prod
+hana.nfs
+em[0-9][0-9]
+"
+	echo "/etc/init.d/after.local:"
+	FIL=boot.txt
+	split_file ${FIL}
+	f=$(grep -l "^# /etc/init.d/after.local" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==..Configuration.File" $f
+	echo
+
+	echo "NICs:"
+	echo
+	FIL=network.txt
+	split_file ${FIL}
+	f=$(grep -l "# /usr/sbin/wicked ifstatus --verbose all" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "^#" $f |\
+		# TODO better exclusion
+		grep -v "uuid:" | grep -v "route:.*ipv" | grep -v "leases:" | grep -v "addr:.*ipv6"
+	echo
+
+	FIL=hardware.txt
+	# /usr/sbin/dmidecode
+	# /sbin/lspci -nn
+	# /sbin/lspci -vvv
+	# /usr/bin/lsusb -vv
+	# /bin/ls -al /dev | egrep "fd.*|dvd.*|cdr.*"
+	split_file ${FIL}
+	f=$(grep -l "# /usr/bin/dmidecode" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		for p in $HPEHANA_NIC; do
+			# TODO meaningfull stanza limits
+			grep -A40 "SysFS.ID:./class/net/$p" $f |\
+			grep -e "Link.detected:" -e "Driver:"
+		done
+	f=$(grep -l "# /usr/sbin/hwinfo -braille" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		for p in $HPEHANA_NIC; do
+			echo "$p"
+			# TODO meaningfull stanza limits
+			grep -A 30 "net.interface..name.=.$p" $f |\
+			grep -e "ethtool.driver:" -e "mlx._.*:" 
+		done
+	echo
+
+	# TODO make it work
+	# /usr/bin/systool -vc net
+	# /usr/bin/systool -vb pci
+	FIL=sysfs.txt
+	split_file ${FIL}
+	f=$(grep -l "# /usr/bin/systool -vc net" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		for p in $HPEHANA_NIC; do
+			# TODO meaningfull stanza limits
+			grep -v "00 00 00 00 00 00 00 00" $f |\
+			grep -A90 "Class.Device.=..$p" |\
+			grep -e "Class.Device.=" -e "mtu.*=" -e "speed.*=" -e "tx_.*=" -e "rx_.*=" -e "duplex.*=" -e "flags.*=" -e "mlx._port.*=" -e "numa_node.*="
+		done
+	echo
+	f=$(grep -l "# /usr/bin/systool -vb pci" ${TEMP}/${FIL}/xx*)
+		for p in $HPEHANA_NIC; do
+			# TODO meaningfull stanza limits
+			grep -v "00 00 00 00 00 00 00 00" $f |\
+			grep -A90 "Class.Device.=..$p" |\
+			grep -e "Class.Device.=" -e "mtu.*=" -e "speed.*=" -e "tx_.*=" -e "rx_.*=" -e "duplex.*=" -e "flags.*=" -e "mlx._port.*=" -e "numa_node.*="
+		done
+	# TODO what about messages-YYYYMMDD.txt?
+	FIL=messages.txt
+	split_file ${FIL}
+	f=$(grep -l "# /var/log/messages" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		for p in $HPEHANA_PTRN; do
+			grep $p $f
+		done
+	echo
+}
+
+
 function chk_oracle(){
 
 	echo_msgsep $FUNCNAME
@@ -1895,7 +2027,7 @@ ClusterTools2
                 awk '$1=="'${p}'" {print $0}' ${FIL}
         done
         echo
-# TODO
+# TODO chrony
 	test -z "${ORA_SVC_YES}" &&\
 	ORA_SVC_YES="
 boot.clock
@@ -2309,11 +2441,11 @@ vm.vfs_cache_pressure
 function chk_sysload(){
 
 	echo_msgsep $FUNCNAME	
-	
+
 	# Thanks ralph.roth@suse.com
 	echo "basic-health-check:"
 	FIL="basic-health-check.txt"
-	# TODO make dfull work
+	# TODO make dfull work on SLE12 and 15
 	dfull="X"
 	dfull=$( grep "%.>=.90%" ${FIL} )
 	test "${dfull}" = "X" &&\
@@ -2321,6 +2453,10 @@ function chk_sysload(){
 		echo $dfull
 	)
 	echo
+	
+	# TODO hardare.txt:
+	FIL="hardware.txt"
+	grep -v "^#" $FIL | head -17 | tail -15
 
 	OWD=$PWD
 	cd sar || exit

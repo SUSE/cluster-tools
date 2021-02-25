@@ -42,6 +42,8 @@ CONF_FILES="
 /clusterconf/*/mdadm.conf
 /clusterconf/mdadm.*.conf
 /etc/CLUSTER
+/etc/init.d/boot.local
+/etc/init.d/after.local
 /etc/iscsi/iscsid.conf
 /etc/iscsi/initiatorname.iscsi
 /etc/sysstat/*

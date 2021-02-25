@@ -3,12 +3,12 @@
 # cs_sum_base_config
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2020 SUSE LLC
+# (c) 2018-2021 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2020-05-25 SLE12, SLE15
+# Version: 2021-02-21 SLE12, SLE15
 #
 
 EXE="$0"
@@ -70,6 +70,8 @@ test -z "${CONF_FILES}" &&\
 /clusterconf/*/mdadm.conf
 /clusterconf/mdadm.*.conf
 /etc/CLUSTER
+/etc/init.d/boot.local
+/etc/init.d/after.local
 /etc/iscsi/iscsid.conf
 /etc/iscsi/initiatorname.iscsi
 /etc/sysstat/*

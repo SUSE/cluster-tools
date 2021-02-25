@@ -500,9 +500,10 @@ function chk_services(){
 	echo
 
 # TODO precheck_for_sap
-# TODO saptune, tuned
+# TODO saptune, tuned see chk_saptune
 # TODO boot.sapinit with AUTOSTART in instance profile?
 # TODO ipmi?
+# TODO chrony
 	test -z "${SVC_YES}" &&\
 	SVC_YES="
 boot.clock
@@ -1350,6 +1351,66 @@ xendomains
 }
 
 
+function chk_saptune2(){
+
+	echo_msgsep $FUNCNAME
+
+	FIL=rpm.txt
+	echo "RPM OK:"
+	grep saptune-2 $FIL
+	echo "RPM NO:"
+	grep -e sapconf -e saptune-1 $FIL
+	echo
+
+	# TODO tuned saptune profile
+	# TODO /etc/systemd/logind.conf.d: sap-hana.conf saptune-UserTasksMax.conf
+	FIL=systemd.txt
+	# TODO awk
+	echo "service OK:"
+	grep -e ^tuned.service.*enabled -e tuned.service.*running $FIL |\
+		awk '{print $1,$2,$3,$4}'
+	echo service NO:
+	grep -e ^tuned.service.*disabled -e tuned.service.*dead $FIL |\
+		awk '{print $1,$2,$3,$4}'
+	echo
+
+	# TODO sysconfig.txt:
+	# TODO /etc/sysconfig/sapnote-1680803 /etc/sysconfig/sapnote-1557506 /etc/sysconfig/sapconf
+	FIL=sysconfig.txt
+	split_file ${FIL}
+	f=$(grep -l "^# /etc/sysconfig/saptune$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+	echo
+
+	FIL=etc.txt
+	split_file ${FIL}
+	f=$(grep -l "^# /etc/security/limits.d/saptune-\@sapsys-nofile-hard.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+	f=$(grep -l "^# /etc/security/limits.d/saptune-\@sapsys-nofile-soft.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+	
+	f=$(grep -l "^# /etc/sysconfig/saptune$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "^#" $f | sort -u
+	f=$(grep -l "^# /etc/sysctl.d/99-sysctl.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+	f=$(grep -l "^# /etc/systemd/logind.conf.d/saptune-UserTasksMax.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+	echo
+	echo "file OK:"
+	grep -e "/etc/saptune/" -e "/saptune-" $FIL | sort -u | tr -d "#"
+	echo "file NO:"
+	FIL=sysconfig.txt
+	grep -e "/etc/sysconfig/sapconf$" -e "/etc/sysconfig/sapnote-" $FIL | tr -d "#"
+	echo
+}
+ 
+
 function chk_sap(){
 
 	echo_msgsep $FUNCNAME
@@ -1500,6 +1561,7 @@ saptune=2.0.3-3.11.1
 util-linux=2.25-22
 xfsprogs:3.1.8-0.5.1
 "
+	# TODO chrony
 	test -z "${HANA_SAP_PKG_YES}" &&\
 	HANA_SAP_PKG_YES="
 hal

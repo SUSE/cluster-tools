@@ -1362,8 +1362,6 @@ function chk_saptune2(){
 	grep -e sapconf -e saptune-1 $FIL
 	echo
 
-	# TODO tuned saptune profile
-	# TODO /etc/systemd/logind.conf.d: sap-hana.conf saptune-UserTasksMax.conf
 	FIL=systemd.txt
 	# TODO awk
 	echo "service OK:"
@@ -1374,30 +1372,65 @@ function chk_saptune2(){
 		awk '{print $1,$2,$3,$4}'
 	echo
 
-	# TODO sysconfig.txt:
-	# TODO /etc/sysconfig/sapnote-1680803 /etc/sysconfig/sapnote-1557506 /etc/sysconfig/sapconf
+	FIL=tuned.txt
+	split_file ${FIL}
+	f=$(grep -l "^# /bin/systemctl status tuned.service$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -e "Loaded:" -e "Active:" $f
+
+	f=$(grep -l "^# /usr/sbin/tuned-adm active$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "^#" $f
+
+	f=$(grep -l "^# /usr/lib/tuned/saptune/tuned.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		echo "/usr/lib/tuned/saptune/tuned.conf:"
+		grep -v "^#" $f
+
+	f=$(grep -l "^# /var/log/tuned/tuned.log$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		echo "/var/log/tuned/tuned.log:"
+		grep -v "^#" $f | grep -v "^[1-9].*[0-9][0-9][0-9].INFO"
+
+	# TODO sap-hana.conf
+	echo
+
 	FIL=sysconfig.txt
 	split_file ${FIL}
 	f=$(grep -l "^# /etc/sysconfig/saptune$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		grep -v "#==\[" $f
+		grep -v "^#" $f
 	echo
 
 	FIL=etc.txt
 	split_file ${FIL}
+	# TODO loop for below 6 files
 	f=$(grep -l "^# /etc/security/limits.d/saptune-\@sapsys-nofile-hard.conf$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -v "#==\[" $f
 	f=$(grep -l "^# /etc/security/limits.d/saptune-\@sapsys-nofile-soft.conf$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -v "#==\[" $f
-	
+	f=$(grep -l "^# /etc/security/limits.d/saptune-\@dba-nofile-hard.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+	f=$(grep -l "^# /etc/security/limits.d/saptune-\@dba-nofile-soft.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+	f=$(grep -l "^# /etc/security/limits.d/saptune-\@sdba-nofile-hard.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+	f=$(grep -l "^# /etc/security/limits.d/saptune-\@sdba-nofile-soft.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+
 	f=$(grep -l "^# /etc/sysconfig/saptune$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -v "^#" $f | sort -u
 	f=$(grep -l "^# /etc/sysctl.d/99-sysctl.conf$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -v "#==\[" $f
+	# TODO SLE12 only: saptune-UserTasksMax.conf
 	f=$(grep -l "^# /etc/systemd/logind.conf.d/saptune-UserTasksMax.conf$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -v "#==\[" $f
@@ -1406,7 +1439,9 @@ function chk_saptune2(){
 	grep -e "/etc/saptune/" -e "/saptune-" $FIL | sort -u | tr -d "#"
 	echo "file NO:"
 	FIL=sysconfig.txt
-	grep -e "/etc/sysconfig/sapconf$" -e "/etc/sysconfig/sapnote-" $FIL | tr -d "#"
+	grep -e "/etc/sysconfig/sapconf$" $FIL | tr -d "#"
+	echo "file NO:"
+	grep "/etc/sysconfig/sapnote-" $FIL | tr -d "#"
 	echo
 }
  
@@ -1901,6 +1936,15 @@ em[0-9][0-9]
 		grep -v "#==..Configuration.File" $f
 	echo
 
+	# TODO "/usr/lib/tuned/sap-hpe-hana/tuned.conf"
+
+	FIL=tuned.txt
+	split_file ${FIL}
+	f=$(grep -l "^# /usr/lib/tuned/sap-hpe-hana/tuned.conf" ${TEMP}/${FIL}/xx*) 
+	test -z "$f" ||\
+		cat $f
+	echo
+	
 	echo "NICs:"
 	echo
 	FIL=network.txt
@@ -1909,7 +1953,8 @@ em[0-9][0-9]
 	test -z "$f" ||\
 		grep -v "^#" $f |\
 		# TODO better exclusion
-		grep -v "uuid:" | grep -v "route:.*ipv" | grep -v "leases:" | grep -v "addr:.*ipv6"
+		grep -v "uuid:" | grep -v "route:.*ipv" | grep -v "leases:" |\
+		grep -v "addr:.*ipv6"
 	echo
 
 	FIL=hardware.txt
@@ -1921,17 +1966,18 @@ em[0-9][0-9]
 	split_file ${FIL}
 	f=$(grep -l "# /usr/bin/dmidecode" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		for p in $HPEHANA_NIC; do
+		for p in $HPE_HANA_NIC; do
+			echo "p: $p   f: $f"
 			# TODO meaningfull stanza limits
 			grep -A40 "SysFS.ID:./class/net/$p" $f |\
 			grep -e "Link.detected:" -e "Driver:"
 		done
 	f=$(grep -l "# /usr/sbin/hwinfo -braille" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		for p in $HPEHANA_NIC; do
+		for p in $HPE_HANA_NIC; do
 			echo "$p"
 			# TODO meaningfull stanza limits
-			grep -A 30 "net.interface..name.=.$p" $f |\
+			grep -A40 "net.interface..name.=.$p" $f |\
 			grep -e "ethtool.driver:" -e "mlx._.*:" 
 		done
 	echo
@@ -1943,7 +1989,7 @@ em[0-9][0-9]
 	split_file ${FIL}
 	f=$(grep -l "# /usr/bin/systool -vc net" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		for p in $HPEHANA_NIC; do
+		for p in $HPE_HANA_NIC; do
 			# TODO meaningfull stanza limits
 			grep -v "00 00 00 00 00 00 00 00" $f |\
 			grep -A90 "Class.Device.=..$p" |\
@@ -1951,7 +1997,7 @@ em[0-9][0-9]
 		done
 	echo
 	f=$(grep -l "# /usr/bin/systool -vb pci" ${TEMP}/${FIL}/xx*)
-		for p in $HPEHANA_NIC; do
+		for p in $HPE_HANA_NIC; do
 			# TODO meaningfull stanza limits
 			grep -v "00 00 00 00 00 00 00 00" $f |\
 			grep -A90 "Class.Device.=..$p" |\
@@ -1962,7 +2008,7 @@ em[0-9][0-9]
 	split_file ${FIL}
 	f=$(grep -l "# /var/log/messages" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
-		for p in $HPEHANA_PTRN; do
+		for p in $HPE_HANA_PTRN; do
 			grep $p $f
 		done
 	echo

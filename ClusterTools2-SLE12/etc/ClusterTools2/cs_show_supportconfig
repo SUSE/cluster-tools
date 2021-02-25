@@ -8,7 +8,12 @@ HARDW_MOD="
 ixgbe.ko
 netxen_nic.ko
 nx_nic.ko
+mlx3_en.ko
 mlx4_en.ko
+mlx5_en.ko
+mlx3_ib.ko
+mlx4_ib.ko
+mlx5_ib.ko
 i40e.ko
 bfa.ko
 lpfc.ko
@@ -66,8 +71,10 @@ boot.multipath
 boot.sapconf
 boot.sysstat
 boot.sysctl
+after.local
 multipathd
 ntp
+sapinit
 "
 #
 SVC_OFF="
@@ -75,14 +82,14 @@ boot.dmraid
 boot.md
 alsasound
 hp-asrd
-ipmi
+lvm2-lvmetad
 mdadmd
 oracle
 pacemaker
 powerd
 slpd
 smartd
-sapinit
+tuned
 uuidd
 boot.vxfs
 qlremote
@@ -90,7 +97,6 @@ amf
 gab
 isisd
 llt
-mcelog
 vcs
 vras-vradmind.sh
 vxatd
@@ -327,6 +333,7 @@ CLUSTER_PKG="
 corosync
 cluster-glue
 crmsh
+ClusterTools2
 drbd-heartbeat
 drbd-pacemaker
 libopenais3
@@ -339,6 +346,8 @@ pacemaker-mgmt
 pacemaker-mgmt-client
 resource-agents
 sbd
+sapstartsrv-resource-agents
+sap-suse-cluster-connector
 SAPHanaSR
 SAPHanaSR-ScaleOut
 "

@@ -1914,7 +1914,7 @@ function chk_hpehana(){
 
 	test -z "${HPE_HANA_PTRN}" &&\
 	HPE_HANA_PTRN="
-"after.local"
+after.local
 "
 	test -z "${HPE_HANA_NIC}" &&\
 	HPE_HANA_NIC="
@@ -1926,7 +1926,7 @@ bond0
 bond1
 hana.prod
 hana.nfs
-em[0-9][0-9]
+"em[0-9][0-9]"
 "
 	echo "/etc/init.d/after.local:"
 	FIL=boot.txt

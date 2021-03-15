@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2021-02-22 SLES12 0.03
+# Version: 2021-03-15 SLES12 0.03
 #
 # For Supportconfig Script Version: 2.25-237 to 3.0.2-10
 # TODO what supportconfig supports sar xz files?
@@ -1939,8 +1939,6 @@ hana.rep
 		grep -v "#==..Configuration.File" $f
 	echo
 
-	# TODO "/usr/lib/tuned/sap-hpe-hana/tuned.conf"
-
 	FIL=tuned.txt
 	split_file ${FIL}
 	f=$(grep -l "^# /usr/lib/tuned/sap-hpe-hana/tuned.conf" ${TEMP}/${FIL}/xx*) 
@@ -1953,11 +1951,19 @@ hana.rep
 	FIL=network.txt
 	split_file ${FIL}
 	f=$(grep -l "# /usr/sbin/wicked ifstatus --verbose all" ${TEMP}/${FIL}/xx*)
-	test -z "$f" ||\
+	test -z "$f" || (
+		echo -n "number of slave devices: "
+		grep -c "\ enslaved$" $f
+		echo -n "number of bond devices: "
+		grep -c "type:.....bond, mode " $f
+		echo -n "number of vlans: "
+		grep -c "type:.....vlan bond.*, " $f
+		echo	
 		grep -v "^#" $f |\
 		# TODO better exclusion
 		grep -v "uuid:" | grep -v "route:.*ipv" | grep -v "leases:" |\
 		grep -v "addr:.*ipv6"
+	)
 	echo
 
 	FIL=hardware.txt
@@ -1980,8 +1986,10 @@ hana.rep
 		for p in $HPE_HANA_NIC; do
 			echo "$p"
 			# TODO meaningfull stanza limits
+			# TODO NIC drivers as HPE_... variable
+			# TODO "net.interface..name." does not exist for all drivers
 			grep -A40 "net.interface..name.=.$p" $f |\
-			grep -e "ethtool.driver:" -e "mlx._.*:" 
+			grep -e "ethtool.driver:" -e "mlx._.*:" -e "be2net:" -e "ixgbe:" 
 		done
 	echo
 

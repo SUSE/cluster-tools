@@ -1387,10 +1387,11 @@ function chk_saptune2(){
 		echo "/usr/lib/tuned/saptune/tuned.conf:"
 		grep -v "^#" $f
 
-	f=$(grep -l "^# /var/log/tuned/tuned.log$" ${TEMP}/${FIL}/xx*)
-	test -z "$f" ||\
-		echo "/var/log/tuned/tuned.log:"
-		grep -v "^#" $f | grep -v "^[1-9].*[0-9][0-9][0-9].INFO"
+	# TODO make this work
+#	f=$(grep -l "^# /var/log/tuned/tuned.log$" ${TEMP}/${FIL}/xx*)
+#	test -z "$f" ||\
+#		echo "/var/log/tuned/tuned.log:"
+#		grep -v "^#" $f #| grep -v "^[1-9].*[0-9][0-9][0-9].INFO"
 
 	# TODO sap-hana.conf
 	echo
@@ -1918,15 +1919,17 @@ after.local
 "
 	test -z "${HPE_HANA_NIC}" &&\
 	HPE_HANA_NIC="
-p3p1
-p3p2
-p6p1
-p6p2
-bond0
-bond1
-hana.prod
-hana.nfs
+"p3p[12]"
+"p6p[12]"
+"p[0-9]...[0-9]p[12]"
+"bond[0-7]"
 "em[0-9][0-9]"
+hana.prod
+hana.prd
+hana.nfs
+hana.int
+hana.qor
+hana.rep
 "
 	echo "/etc/init.d/after.local:"
 	FIL=boot.txt

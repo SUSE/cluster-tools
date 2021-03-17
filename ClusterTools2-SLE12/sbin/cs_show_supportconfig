@@ -681,7 +681,36 @@ eccmad
 function chk_network(){
 
 	echo_msgsep $FUNCNAME
-	
+
+	test -z "${NETW_SYSCTL}" &&\
+	NETW_SYSCTL="
+net.core.somaxconn
+net.ipv4.tcp_slow_start_after_idle
+net.ipv4.ip_local_port_range
+net.ipv4.tcp_max_syn_backlog
+net.ipv4.tcp_window_scaling
+net.core.netdev_max_backlog
+net.core.optmem_max
+net.core.rmem_default
+net.core.rmem_max
+net.core.wmem_default
+net.core.wmem_max
+net.ipv4.conf.all.rp_filter
+net.ipv4.tcp_adv_win_scale
+net.ipv4.tcp_app_win
+net.ipv4.tcp_max_orphans
+net.ipv4.tcp_max_tw_buckets
+net.ipv4.tcp_mem
+net.ipv4.tcp_moderate_rcvbuf
+net.ipv4.tcp_no_metrics_save
+net.ipv4.tcp_rmem
+net.ipv4.tcp_timestamps
+net.ipv4.tcp_tw_reuse
+net.ipv4.tcp_slow_start_after_idle
+net.ipv4.tcp_wmem
+net.ipv4.udp_rmem_min
+net.ipv4.udp_wmem_min
+"
 	test -z "${NETW_PTRN}" &&\
 	NETW_PTRN="
 "Setting.up.hostname"
@@ -731,6 +760,16 @@ function chk_network(){
 	echo "iptables:"	
 	grep "iptable_" ${FIL}
 	echo
+
+	FIL="env.txt"
+        split_file ${FIL}
+        f=$(grep -l "^# /sbin/sysctl -a$" ${TEMP}/${FIL}/xx*)
+	echo "kernel sysctl settings:"
+	test -z "$f" ||\
+		for p in $NETW_SYSCTL; do
+		grep $p $f || echo "$p = NO"
+	done
+	echo
 }
 
 
@@ -745,8 +784,8 @@ function chk_nameres(){
 	grep --binary-file=text -A1 "^# /sbin/chkconfig nscd" ${FIL} ) |\
 		 grep -v "^#==\[ " 
 	echo
-	split_file ${FIL} 
 
+	split_file ${FIL}
 	echo "# /etc/hosts:"
 	f=$(grep -l "^# /etc/hosts$" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
@@ -1517,6 +1556,7 @@ function chk_saphana(){
 
 	echo_msgsep $FUNCNAME
 
+# TODO current SAP notes 19xxxx and  2xxxx for HANA 2.0
 # TODO chk_sap for 1310037   SUSE LINUX Enterprise Server 11: Installation notes?
 # TODO chk_sap for 1275776   prepare SLES ...?
 # 1514967   SAP HANA: Central Note
@@ -1546,10 +1586,12 @@ function chk_saphana(){
 
 	test -z "${HANA_SAP_BOOTARG}" &&\
 	HANA_SAP_BOOTARG="
-intel_idle.max_cstate=0
-processor.max_cstate=0
+intel_idle.max_cstate=1
+processor.max_cstate=1
 transparent_hugepage=never
+numa_balancing=disable
 "
+# TODO nospectre_v2 nopti?
 	test -z "${HANA_SUSE_BOOTARG}" &&\
 	HANA_SUSE_BOOTARG="
 elevator=noop
@@ -1582,6 +1624,25 @@ net.ipv4.tcp_window_scaling
 	HANA_SUSE_SYSCTL="
 vm.dirty_bytes
 vm.dirty_background_bytes
+net.core.netdev_max_backlog
+net.core.optmem_max
+net.core.rmem_default
+net.core.rmem_max
+net.core.wmem_default
+net.core.wmem_max
+net.ipv4.conf.all.rp_filter
+net.ipv4.tcp_adv_win_scale
+net.ipv4.tcp_app_win
+net.ipv4.tcp_max_orphans
+net.ipv4.tcp_max_tw_buckets
+net.ipv4.tcp_mem
+net.ipv4.tcp_moderate_rcvbuf
+net.ipv4.tcp_no_metrics_save
+net.ipv4.tcp_rmem
+net.ipv4.udp_rmem_min
+net.ipv4.tcp_slow_start_after_idle
+net.ipv4.tcp_wmem
+net.ipv4.udp_wmem_min
 "
 	test -z "${HANA_VERS_MIN}" &&\
 	HANA_VERS_MIN="
@@ -1750,9 +1811,7 @@ HANA-Firewall
 	echo
 	
 	FIL="sysconfig.txt"
-
 	split_file ${FIL}
-
 	hana_defapd=$(echo "${HANA_SAP_BOOTARG}" "${HANA_SUSE_BOOTARG}" | tr -d "\n")
 	echo "SAP+SUSE recommended DEFAULT_APPEND: $hana_defapd"
 	echo "# /etc/sysconfig/bootloader:"
@@ -1764,9 +1823,7 @@ HANA-Firewall
 
 	# TODO HANA_SAP_SYSCTL, HANA_SUSE_SYSCTL as SAP_SYSCTL in chk_sap? 
 	FIL="etc.txt"
-
 	split_file ${FIL}
-
 	f=$(grep -l "^# /etc/sysctl.conf$" ${TEMP}/${FIL}/xx*)
 	echo "SAP recommended sysctl:"
 	test -z "$f" ||\
@@ -1787,9 +1844,7 @@ HANA-Firewall
 	# TODO /boot/grub/menu.lst
 	
 	FIL="boot.txt"
-	
 	split_file ${FIL}
-
 	# TODO
 	echo
 	grep -A1 "^# /sys/kernel/mm/transparent_hugepage/enabled" memory.txt |\
@@ -1931,6 +1986,34 @@ hana.int
 hana.qor
 hana.rep
 "
+# TODO check and complete HPE_HANA_PKG
+	test -z "${HPE_HANA_PKG}" &&\
+	HPE_HANA_PKG="
+HPE-HANA-Bundle-Release
+csDrift
+csurUpdate
+firmware-cna-emulex
+firmware-hca-mellanox-vpi-eth-ib
+firmware-nic-broadcom
+firmware-system-u17
+firmware-system-p89
+hp-firmware-fc-qlogic
+hp-ams
+hp-smx
+mlnx-ofa_kernel
+mlnx-ofa_kernel-kmp-default
+rear
+serviceguard
+serviceguard-extension-for-sap
+"
+	FIL="rpm.txt"
+	echo "RPMs for HPE HANA appliance:"
+	for f in $HPE_HANA_PKG; do
+		echo -n "$f : "
+		grep -v -- "-32bit" ${FIL} | grep "^${f}-[0-9]" || echo "NO"
+        done | awk '{print $1,":",$3}' | sort
+	echo
+
 	echo "/etc/init.d/after.local:"
 	FIL=boot.txt
 	split_file ${FIL}
@@ -2300,9 +2383,7 @@ function chk_multipath(){
 	echo_msgsep $FUNCNAME
 
 	FIL="mpio.txt"
-
 	split_file ${FIL}
-
 	F=$(grep -l "# /etc/multipath.conf" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 	echo "# /etc/multipath.conf:"
 	test -z "$F" || grep -v "^#" $F | tr -s "\n"
@@ -2338,9 +2419,7 @@ function chk_filesys(){
 	echo_msgsep $FUNCNAME
 
 	FIL="fs-diskio.txt"
-
 	split_file ${FIL}
-	
 	F=$(grep -l "# /etc/fstab" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 	grep -v "#==" $F | tr -s " "
 	F=$(grep -l "# /bin/mount" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
@@ -2355,9 +2434,7 @@ function chk_filesys(){
 	echo
 
 	FIL="fs-btrfs.txt"
-
 	split_file ${FIL}
-
 	( grep -A4 "# /sbin/btrfs filesystem show" ${TEMP}/${FIL}/xx*
 	grep -A5 "# /sbin/btrfs scrub status /$" ${TEMP}/${FIL}/xx*
 	grep -A5 "# /sbin/btrfs filesystem df /$" ${TEMP}/${FIL}/xx*

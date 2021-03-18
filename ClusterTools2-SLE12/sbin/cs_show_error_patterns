@@ -110,6 +110,7 @@ test -z "${ERROR_PATTERN}" &&\
 "kernel.*clocksource:.*witched"
 "kernel.*NUMA.turned.off"
 "kernel.Lockdown*"
+"kernel.*Duplicate.cookie"
 "BUG:.*workqueue.lockup"
 "Section.*circular.dependency"
 "double.fault:"

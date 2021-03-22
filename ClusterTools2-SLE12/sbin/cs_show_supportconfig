@@ -1974,11 +1974,13 @@ HPE-HANA-Bundle-Release
 csDrift
 csurUpdate
 firmware-cna-emulex
+firmware-fc-qlogic
 firmware-hca-mellanox-vpi-eth-ib
 firmware-nic-broadcom
 firmware-system-u17
 firmware-system-p89
 hp-firmware-fc-qlogic
+hpsmh
 hp-ams
 hp-smx
 mlnx-ofa_kernel
@@ -1989,9 +1991,11 @@ serviceguard-extension-for-sap
 "
 	FIL="rpm.txt"
 	echo "RPMs for HPE HANA appliance:"
+	# TODO better pattern for package versions
 	for f in $HPE_HANA_PKG; do
 		echo -n "$f : "
-		grep -v -- "-32bit" ${FIL} | grep "^${f}-[0-9]" || echo "NO"
+		grep -v -- "-32bit" ${FIL} |\
+		grep -e "^${f}-[0-9]" -e "^${f}-[A-Z].[0-9]" || echo "NO"
         done | awk '{print $1,":",$3}' | sort
 	echo
 
@@ -2293,9 +2297,7 @@ function chk_kernel(){
 	FIL="boot.txt"
 	grep -A1 "^# /bin/uname -a" ${FIL}
 	grep -A1 "^# /proc/cmdline" ${FIL}
-
 	grep "^\[.*Booting paravirtualized kernel on bare hardware" ${FIL}
-
 	echo -n "kernel.tainted : "
 	grep "^kernel.tainted.=" env.txt
 
@@ -2310,7 +2312,6 @@ function chk_software(){
 	echo_msgsep $FUNCNAME
 
 	FIL="basic-environment.txt"
-
 	grep -A7 "# /etc/os-release" ${FIL}
 	echo
 	grep -A1 "# /etc/lsb-release" ${FIL}
@@ -2327,7 +2328,7 @@ function chk_software(){
 System.architecture:
 Baseproduct:
 not.our.package:
-"	
+"
 	for p in $SOFTW_PTRN; do
 		grep "${p}" ${FIL}
 	done
@@ -2342,6 +2343,7 @@ function chk_updates(){
 	FIL="updates.txt"
 	# TODO sles-for-sap
 	# TODO fix doubled entries artefact "SLES12-*"
+	# TODO fix SLE-12 patterns, add SLE-15
 	test -z "${UPDT_PTRN}" &&\
 	UPDT_PTRN="
 "SLES12-"
@@ -2349,6 +2351,9 @@ function chk_updates(){
 "SLE12-HAE-SP"
 "SLE12-SP1-SAP-"
 "SLE12-SP2-SAP-"
+"SLE12-SP3-SAP-"
+"SLE12-SP4-SAP-"
+"SLE12-SP5-SAP-"
 "
 	for p in ${UPDT_PTRN}; do
 		grep "|.*|.${p}.*|.*|" ${FIL} | sort -u

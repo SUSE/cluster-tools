@@ -825,6 +825,7 @@ function chk_timeres(){
 	echo
 	# TODO SLES12
 	# TODO SLES15 cronyd
+	# TODO split_file to get complete output of ntpq -p
 	echo "service:"
 	grep -A1 "^# /sbin/chkconfig" ${FIL}
 	grep -A5 "# /usr/sbin/ntpq -p" ${FIL} | grep -v "====="

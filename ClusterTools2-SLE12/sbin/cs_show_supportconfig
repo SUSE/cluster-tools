@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2021-03-15 SLES12 0.03
+# Version: 2021-03-23 SLES12 0.03
 #
 # For Supportconfig Script Version: 2.25-237 to 3.0.2-10
 # TODO what supportconfig supports sar xz files?
@@ -826,13 +826,21 @@ function chk_timeres(){
 	# TODO SLES12
 	# TODO SLES15 cronyd
 	# TODO split_file to get complete output of ntpq -p
+	split_file ${FIL} 
 	echo "service:"
-	grep -A1 "^# /sbin/chkconfig" ${FIL}
-	grep -A5 "# /usr/sbin/ntpq -p" ${FIL} | grep -v "====="
-
+	f=$(grep -l "^# /usr/sbin/ntpq -p$" ${TEMP}/${FIL}/xx*)
+        test -z "$f" ||\
+		grep -v "^#" $f | tr -s "\n"
+	echo
+	f=$(grep -l "^# /sbin/chkconfig$" ${TEMP}/${FIL}/xx*)
+        test -z "$f" ||\
+		grep -v "^#" $f
+	f=$(grep -l "^# /bin/systemctl status ntpd.service$" ${TEMP}/${FIL}/xx*)
+        test -z "$f" ||\
+		grep -v "^#" $f
+	echo
 	echo "config:"
 	echo "# /etc/ntp.conf:"
-	split_file ${FIL} 
 	f=$(grep -l "^# /etc/ntp.conf$" ${TEMP}/${FIL}/xx*)
         test -z "$f" ||\
 		grep -v "^#" $f | tr -s "\n"
@@ -1400,6 +1408,7 @@ function chk_saptune2(){
 	grep saptune-2 $FIL
 	echo "RPM NO:"
 	grep -e sapconf -e saptune-1 $FIL
+	rm -rf ${TEMP}/${FIL}
 	echo
 
 	FIL=systemd.txt
@@ -1410,6 +1419,7 @@ function chk_saptune2(){
 	echo service NO:
 	grep -e ^tuned.service.*disabled -e tuned.service.*dead $FIL |\
 		awk '{print $1,$2,$3,$4}'
+	rm -rf ${TEMP}/${FIL}
 	echo
 
 	FIL=tuned.txt
@@ -1434,6 +1444,7 @@ function chk_saptune2(){
 #		grep -v "^#" $f #| grep -v "^[1-9].*[0-9][0-9][0-9].INFO"
 
 	# TODO sap-hana.conf
+	rm -rf ${TEMP}/${FIL}
 	echo
 
 	FIL=sysconfig.txt
@@ -1441,6 +1452,7 @@ function chk_saptune2(){
 	f=$(grep -l "^# /etc/sysconfig/saptune$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -v "^#" $f
+	rm -rf ${TEMP}/${FIL}
 	echo
 
 	FIL=etc.txt
@@ -1475,6 +1487,7 @@ function chk_saptune2(){
 	f=$(grep -l "^# /etc/systemd/logind.conf.d/saptune-UserTasksMax.conf$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -v "#==\[" $f
+	rm -rf ${TEMP}/${FIL}
 	echo
 	echo "file OK:"
 	grep -e "/etc/saptune/" -e "/saptune-" $FIL | sort -u | tr -d "#"
@@ -2000,12 +2013,13 @@ serviceguard-extension-for-sap
         done | awk '{print $1,":",$3}' | sort
 	echo
 
-	echo "/etc/init.d/after.local:"
 	FIL=boot.txt
+	echo "/etc/init.d/after.local:"
 	split_file ${FIL}
 	f=$(grep -l "^# /etc/init.d/after.local" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		grep -v "#==..Configuration.File" $f
+	rm -rf ${TEMP}/${FIL}
 	echo
 
 	FIL=tuned.txt
@@ -2013,10 +2027,12 @@ serviceguard-extension-for-sap
 	f=$(grep -l "^# /usr/lib/tuned/sap-hpe-hana/tuned.conf" ${TEMP}/${FIL}/xx*) 
 	test -z "$f" ||\
 		cat $f
+	rm -rf ${TEMP}/${FIL}
 	echo
 	
 	echo "NICs:"
 	echo
+
 	FIL=network.txt
 	split_file ${FIL}
 	f=$(grep -l "# /usr/sbin/wicked ifstatus --verbose all" ${TEMP}/${FIL}/xx*)
@@ -2033,6 +2049,7 @@ serviceguard-extension-for-sap
 		grep -v "uuid:" | grep -v "route:.*ipv" | grep -v "leases:" |\
 		grep -v "addr:.*ipv6"
 	)
+	rm -rf ${TEMP}/${FIL}
 	echo
 
 	FIL=hardware.txt
@@ -2060,11 +2077,13 @@ serviceguard-extension-for-sap
 			grep -A40 "net.interface..name.=.$p" $f |\
 			grep -e "ethtool.driver:" -e "mlx._.*:" -e "be2net:" -e "ixgbe:" 
 		done
+	rm -rf ${TEMP}/${FIL}
 	echo
 
 	# TODO make it work
 	# /usr/bin/systool -vc net
 	# /usr/bin/systool -vb pci
+
 	FIL=sysfs.txt
 	split_file ${FIL}
 	f=$(grep -l "# /usr/bin/systool -vc net" ${TEMP}/${FIL}/xx*)
@@ -2075,6 +2094,7 @@ serviceguard-extension-for-sap
 			grep -A90 "Class.Device.=..$p" |\
 			grep -e "Class.Device.=" -e "mtu.*=" -e "speed.*=" -e "tx_.*=" -e "rx_.*=" -e "duplex.*=" -e "flags.*=" -e "mlx._port.*=" -e "numa_node.*="
 		done
+	rm -rf ${TEMP}/${FIL}
 	echo
 	f=$(grep -l "# /usr/bin/systool -vb pci" ${TEMP}/${FIL}/xx*)
 		for p in $HPE_HANA_NIC; do
@@ -2084,6 +2104,8 @@ serviceguard-extension-for-sap
 			grep -e "Class.Device.=" -e "mtu.*=" -e "speed.*=" -e "tx_.*=" -e "rx_.*=" -e "duplex.*=" -e "flags.*=" -e "mlx._port.*=" -e "numa_node.*="
 		done
 	# TODO what about messages-YYYYMMDD.txt?
+	rm -rf ${TEMP}/${FIL}
+
 	FIL=messages.txt
 	split_file ${FIL}
 	f=$(grep -l "# /var/log/messages" ${TEMP}/${FIL}/xx*)
@@ -2091,6 +2113,7 @@ serviceguard-extension-for-sap
 		for p in $HPE_HANA_PTRN; do
 			grep $p $f
 		done
+	rm -rf ${TEMP}/${FIL}
 	echo
 }
 

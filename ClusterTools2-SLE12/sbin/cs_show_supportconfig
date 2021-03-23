@@ -2094,7 +2094,6 @@ serviceguard-extension-for-sap
 			grep -A90 "Class.Device.=..$p" |\
 			grep -e "Class.Device.=" -e "mtu.*=" -e "speed.*=" -e "tx_.*=" -e "rx_.*=" -e "duplex.*=" -e "flags.*=" -e "mlx._port.*=" -e "numa_node.*="
 		done
-	rm -rf ${TEMP}/${FIL}
 	echo
 	f=$(grep -l "# /usr/bin/systool -vb pci" ${TEMP}/${FIL}/xx*)
 		for p in $HPE_HANA_NIC; do

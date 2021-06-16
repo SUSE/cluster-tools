@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2021-01-29
+# Version: 2021-06-16
 #
 # TODO /etc/ClusterTools2/cs_show_hana_info
 # TODO show logs
@@ -27,9 +27,8 @@ SAPSVC="/usr/sap/sapservices"
 SAPPFL=$(cat $SAPSVC | tr " " "\n"  | awk -F"=" '$1=="pf"{print $2}')
 # TODO multiple pf= lines? 
 SUDOER="/etc/sudoers"
-# TODO /etc/sudoers.d/*
 GBLINI=""
-# TODO get MYHOOK from global.ini
+# TODO get MYHOOK from global.ini, SAPHanaSrMultiTarget
 MYHOOK="/usr/share/SAPHanaSR/SAPHanaSR.py"
 
 test -z "${TEMP}" &&\
@@ -50,7 +49,7 @@ function show_help() {
 function sudo_cmd() {
 	CMD="${1}"
 	( echo "# ==="
-	echo "# ${C}"
+	echo "# ${CMD}"
 	su - ${SID}adm -c "${CMD}"
 	RC=$? ; RC_ALL=$[ $RC_ALL + $RC ]
 	echo "# ${CMD}: RC: "$RC
@@ -83,7 +82,7 @@ function show_info() {
 
 	# TODO $rc
 	( echo "# ==="
-	echo "sapinit status"
+	echo "# sapinit status"
 	/etc/init.d/sapinit status
 	echo
 	echo "systemctl status sapinit"
@@ -92,7 +91,7 @@ function show_info() {
 
 	# TODO $rc
 	( echo "# ==="
-	echo "ps aux"
+	echo "# ps aux"
 	ps aux | grep ^${SID}adm
 	echo ) >>${TEMP} || exit 2
 
@@ -103,11 +102,15 @@ function show_info() {
 	sudo_cmd "HDBSettings.sh systemReplicationStatus.py"
 	sudo_cmd "HDB info"
 	sudo_cmd "HDBSettings.sh systemOverview.py"
+	
+	( echo "# ==="
+	echo "# sudo -l"
+	sudo -U ${SID}adm -l
+	echo ) >>${TEMP} || exit 2
 
 	show_file "$SAPSVC"
 	show_file "$SAPPFL"
 	show_file "$GBLINI"
-	show_file "$SUDOER"
 	# TODO show HANA hook file, see main()
 	# TODO systemd sapinit unitfile
 	# show_file "/proc/meminfo"

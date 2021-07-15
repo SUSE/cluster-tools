@@ -15,13 +15,13 @@ SEC=${2:-5}
 
 
 function help() {
-        echo "usage:    $(basename $0) -s <seconds>"
+        echo "usage:    $(basename $0) --sleep <seconds>"
         echo "usage:    $(basename $0) [ --help | --version ]"
         echo
         echo "OPTION:"
         echo " --help		show help"
         echo " --version	show version info"
-	echo " -s <seconds>	loop every <seconds>" 
+	echo " --sleep <seconds>	loop every <seconds>" 
 }
 
 
@@ -40,7 +40,7 @@ case $1 in
 		head -11 $EXE | grep "^# Version: "
  		exit
 	;;
-	-s)	# TODO cmdline parsing
+	-s|--sleep)	# TODO cmdline parsing
 		sleep $SEC
 		while !( get_idle | grep "Cluster state: S_IDLE" ); do
 			sleep $SEC;

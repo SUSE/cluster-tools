@@ -15,8 +15,8 @@ SEC=${2:-5}
 
 
 function help() {
-        echo "usage:    $(basename $0) --sleep <seconds>"
-        echo "usage:    $(basename $0) [ --help | --version ]"
+        echo "usage:    $(basename "$EXE") --sleep <seconds>"
+        echo "usage:    $(basename "$EXE") [ --help | --version ]"
         echo
         echo "OPTION:"
         echo " --help		show help"
@@ -27,6 +27,7 @@ function help() {
 
 # same as in cs_clusterstate
 function get_idle() {
+ # shellcheck disable=SC2046
  s_state=$(crmadmin -q -S $(crmadmin -Dq 2>&1 1>/dev/null ) 2>&1 1>/dev/null)
  echo "Cluster state: $s_state"
 }
@@ -36,14 +37,14 @@ function get_idle() {
 
 case $1 in
 	-v|--version)
-		echo -n "$(basename $EXE) "
-		head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
  		exit
 	;;
 	-s|--sleep)	# TODO cmdline parsing
-		sleep $SEC
-		while !( get_idle | grep "Cluster state: S_IDLE" ); do
-			sleep $SEC;
+		sleep "$SEC"
+		while ! ( get_idle | grep "Cluster state: S_IDLE" ); do
+			sleep "$SEC";
 		done
 	;;
 	*)

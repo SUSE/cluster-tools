@@ -10,7 +10,7 @@
 #
 # Version: 2021-06-16
 #
-# shellcheck disable=SC2030,SC2031
+# shellcheck disable=SC2030,SC2031,SC2002,SC2034,SC2009
 #
 # TODO /etc/ClusterTools2/cs_show_hana_info
 # TODO show logs
@@ -55,7 +55,7 @@ function sudo_cmd() {
 	CMD="${1}"
 	( echo "# ==="
 	echo "# ${CMD}"
-	su - ${SID}adm -c "${CMD}"
+	su - "${SID}"adm -c "${CMD}"
 	# TODO check usage of RC_ALL
 	# Modification of RC_ALL is local, caused by subshell grouping ()
 	RC=$? ; RC_ALL=$((RC_ALL + RC))
@@ -102,7 +102,7 @@ function show_info() {
 	# TODO $rc
 	( echo "# ==="
 	echo "# ps aux"
-	ps aux | grep ^${SID}adm
+	ps aux | grep ^"${SID}"adm
 	echo ) >>${TEMP} || exit 2
 
 	# TODO call sap cmds with --sapcontrol=1 to get parseable output
@@ -115,7 +115,7 @@ function show_info() {
 	
 	( echo "# ==="
 	echo "# sudo -l"
-	sudo -U ${SID}adm -l
+	sudo -U "${SID}"adm -l
 	echo ) >>${TEMP} || exit 2
 
 	show_file "$SAPSVC"

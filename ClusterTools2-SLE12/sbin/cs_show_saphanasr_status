@@ -9,10 +9,11 @@
 #
 # Version: 2020-07-27
 #
+# shellcheck disable=SC2030,SC2031
 
 # TODO reliable function return codes
 
-EXE=$(basename $0)
+EXE=$(basename "$0")
 # TODO function run_cmd
 
 function show_help() {

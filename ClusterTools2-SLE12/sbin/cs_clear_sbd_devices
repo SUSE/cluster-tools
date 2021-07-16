@@ -8,6 +8,7 @@
 #
 # Version: 2020-09-14
 #
+# shellcheck disable=SC2162
 
 EXE="$0"
 BEX=$(basename "$0")
@@ -16,7 +17,7 @@ SBD_CONF="/etc/sysconfig/sbd"
 
 test -f $SBD_CONF || (echo "${BEX}: $SBD_CONF not found"; exit)
 # TODO check node is short name
-test -z $NODE && NODE=$HOSTNAME
+test -z "$NODE" && NODE=$HOSTNAME
 
 function show_help() {
 	echo "usage: $BEX [ --help | --version | --all | --local ]"
@@ -37,7 +38,7 @@ function list_device_names() {
 
 
 MSGWAIT=$(list_device_names | while read DEV; do
-                sbd -d $DEV dump
+                sbd -d "$DEV" dump
 		break # get first only
         done | awk '$2=="(msgwait)" {print $4}')
 
@@ -45,7 +46,7 @@ MSGWAIT=$(list_device_names | while read DEV; do
 function clear_node() {
 	list_device_names | while read DEV; do
                 echo "${BEX}: clearing $1 ..."
-                sbd -d $DEV message $1 clear &
+                sbd -d "$DEV" message "$1" clear &
  	done
 }
 
@@ -57,10 +58,11 @@ function clear_devices() {
  case $1 in
 	all)
 	list_device_names | while read DEV; do
-       		sbd -d $DEV list |\
+		# shellcheck disable=SC2030
+       		sbd -d "$DEV" list |\
 		awk '$3=="reset" {print $2}' | while read NODE; do
                 	echo "${BEX}: clearing $NODE ..."
-                	sbd -d $DEV message $NODE clear &
+                	sbd -d "$DEV" message "$NODE" clear &
         	done
  	done
 	;;
@@ -68,21 +70,21 @@ function clear_devices() {
 	# TODO always short name
 	# TODO what about cluster node id?
 	# TODO global var instead?
-	clear_node $2
+	clear_node "$2"
 	;;
 	*) 
 	exit
 	;;
  esac
  echo "${BEX}: good clearing takes a while ..."
- sleep $MSGWAIT
+ sleep "$MSGWAIT"
  # sleep 10
 }
 
 
 function list_devices() {
 	list_device_names | while read DEV; do
-        	sbd -d $DEV list
+        	sbd -d "$DEV" list
 	done
 }
 
@@ -92,7 +94,7 @@ function list_devices() {
 case $1 in
 	-v|--version)
 		echo -n "${BEX} "
-		head -11 ${EXE} | grep "^# Version: "
+		head -11 "${EXE}" | grep "^# Version: "
 		exit
 	;;
 	-a|--all)
@@ -103,14 +105,15 @@ case $1 in
 	;;
 	-l|--local)
 		echo "${BEX}: start"
-		clear_devices node $HOSTNAME
+		clear_devices node "$HOSTNAME"
 		echo "${BEX}: done"
 		exit
 	;;
 	-n|--node)
 		[ $# -eq 2 ] || exit
 		echo "${BEX}: start"
-		clear_devices node $NODE
+		# shellcheck disable=SC2031
+		clear_devices node "$NODE"
 		echo "${BEX}: done"
 		exit
 	;;

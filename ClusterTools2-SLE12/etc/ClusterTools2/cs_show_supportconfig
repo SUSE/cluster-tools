@@ -594,7 +594,7 @@ HANA_SAP_PKG_NOT="
 ulimit
 "
 #
-HANA_SUSE_PGK_YES="
+HANA_SUSE_PKG_YES="
 rear1172a
 sysstat
 supportutils

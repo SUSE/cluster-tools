@@ -8,6 +8,7 @@
 #
 # Version: 2020-11-18 
 #
+# shellcheck disable=SC2120,SC2009,SC2062,SC2119
 
 EXE=$(basename "$0")
 #CFG="/etc/ClusterTools2/cs_show_hana_info"

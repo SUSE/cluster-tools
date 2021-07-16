@@ -10,7 +10,7 @@
 #
 # Version: 2020-07-28 SLES12
 #
-# shellcheck disable=SC1090
+# shellcheck disable=SC1090,SC2126
 
 EXE="$0"
 
@@ -172,12 +172,12 @@ HANA=$( crm_mon -1 |\
  grep  -e "Clone.Set:.*_SAPHana" -e "Masters:.\[" -e "Slaves:.\[" -e "Started:.\[" |\
  tr "\n" "§" )
 echo -n "SAPHanaSR started masters: "
-echo ${HANA} | tr "§" "\n" | grep "Masters:.\[" | wc -l
+echo "${HANA}" | tr "§" "\n" | grep "Masters:.\[" | wc -l
 echo -n "SAPHanaSR started slaves: "
-echo ${HANA} | tr "§" "\n" | grep "Slaves:.\[" | wc -l
+echo "${HANA}" | tr "§" "\n" | grep "Slaves:.\[" | wc -l
 echo -n "SAPHanaSR master node: "
 P_HANA=$(crm_resource list | awk '$5=="(promotable)" {print $4}' | tr -d "[]")
-crm_resource -W --master -r $P_HANA | awk '$7=="Master" {print $6}'
+crm_resource -W --master -r "$P_HANA" | awk '$7=="Master" {print $6}'
 # TODO started Topology clones
 #echo "SAPHanaSR resources:"
 #echo ${HANA} | tr "§" "\n"

@@ -138,28 +138,33 @@ function show_pam_sap(){
 # TODO
 	echo "pam_limits :"
 	f=$(grep -l "^# /etc/security/limits.conf$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		awk '$1=="oracle" || $1~/sapsys/ || $1~/dba/ {print}' $f | sort -u
 	echo
 # TODO
 	echo "/etc/passwd :"
 	f=$(grep -l "^# /etc/passwd$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		awk -F: '$5~/SAP.*Administrator/ {print}' $f | sort -u	
 	echo
 	echo "getent_passwd :"
 	f=$(grep -l "^# /usr/bin/getent passwd$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		awk -F: '$5~/SAP.*Administrator/ {print}' $f | sort -u	
 	echo
 # TODO sapgw, ...
 	echo "/etc/group :"
 	f=$(grep -l "^# /etc/group$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		awk -F: '$1=="sapinst" || $1=="sapsys" || $1=="oper" || $1=="saprouter" || $1~/shm/ {print}' $f | sort -u
 	echo
 	echo "getent_group :"
 	f=$(grep -l "^# /usr/bin/getent group$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		awk -F: '$1=="sapinst" || $1=="sapsys" || $1=="oper" || $1=="saprouter" || $1~/shm/ {print}' $f | sort -u
 }
@@ -225,6 +230,7 @@ function chk_hardware(){
 		grep -c ${f} ${FIL}
 	done
 	FIL="messages.txt"
+	# shellcheck disable=SC2043
 	for f in "disabling.barriers"; do
 		echo -n "${f} : "
 		grep -c ${f} ${FIL}
@@ -785,9 +791,10 @@ net.ipv4.udp_wmem_min
         split_file ${FIL}
         f=$(grep -l "^# /sbin/sysctl -a$" ${TEMP}/${FIL}/xx*)
 	echo "kernel sysctl settings:"
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		for p in $NETW_SYSCTL; do
-		grep $p $f || echo "$p = NO"
+		grep "$p" $f || echo "$p = NO"
 	done
 	echo
 }
@@ -852,13 +859,16 @@ function chk_timeres(){
 	split_file ${FIL} 
 	echo "service:"
 	f=$(grep -l "^# /usr/sbin/ntpq -p$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
         test -z "$f" ||\
 		grep -v "^#" $f | tr -s "\n"
 	echo
 	f=$(grep -l "^# /sbin/chkconfig$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
         test -z "$f" ||\
 		grep -v "^#" $f
 	f=$(grep -l "^# /bin/systemctl status ntpd.service$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
         test -z "$f" ||\
 		grep -v "^#" $f
 	echo
@@ -1454,41 +1464,46 @@ xendomains
 
 function chk_saptune2(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	FIL=rpm.txt
 	echo "RPM OK:"
 	grep saptune-2 $FIL
 	echo "RPM NO:"
 	grep -e sapconf -e saptune-1 $FIL
-	rm -rf ${TEMP}/${FIL}
+	rm -rf ${TEMP:?}/${FIL}
 	echo
 
 	FIL=systemd.txt
 	# TODO awk
 	echo "service OK:"
+	# shellcheck disable=SC2062
 	grep -e ^tuned.service.*enabled -e tuned.service.*running $FIL |\
 		awk '{print $1,$2,$3,$4}'
 	echo service NO:
+	# shellcheck disable=SC2062
 	grep -e ^tuned.service.*disabled -e tuned.service.*dead $FIL |\
 		awk '{print $1,$2,$3,$4}'
-	rm -rf ${TEMP}/${FIL}
+	rm -rf ${TEMP:?}/${FIL}
 	echo
 
 	FIL=tuned.txt
 	split_file ${FIL}
 	f=$(grep -l "^# /bin/systemctl status tuned.service$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		grep -e "Loaded:" -e "Active:" $f
 
 	f=$(grep -l "^# /usr/sbin/tuned-adm active$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		grep -v "^#" $f
 
 	f=$(grep -l "^# /usr/lib/tuned/saptune/tuned.conf$" ${TEMP}/${FIL}/xx*)
 	test -z "$f" ||\
 		echo "/usr/lib/tuned/saptune/tuned.conf:"
-		grep -v "^#" $f
+	# shellcheck disable=SC2086
+	grep -v "^#" $f
 
 	# TODO make this work
 #	f=$(grep -l "^# /var/log/tuned/tuned.log$" ${TEMP}/${FIL}/xx*)
@@ -1497,50 +1512,60 @@ function chk_saptune2(){
 #		grep -v "^#" $f #| grep -v "^[1-9].*[0-9][0-9][0-9].INFO"
 
 	# TODO sap-hana.conf
-	rm -rf ${TEMP}/${FIL}
+	rm -rf ${TEMP:?}/${FIL}
 	echo
 
 	FIL=sysconfig.txt
 	split_file ${FIL}
 	f=$(grep -l "^# /etc/sysconfig/saptune$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		grep -v "^#" $f
-	rm -rf ${TEMP}/${FIL}
+	rm -rf ${TEMP:?}/${FIL}
 	echo
 
 	FIL=etc.txt
 	split_file ${FIL}
 	# TODO loop for below 6 files
 	f=$(grep -l "^# /etc/security/limits.d/saptune-\@sapsys-nofile-hard.conf$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		grep -v "#==\[" $f
 	f=$(grep -l "^# /etc/security/limits.d/saptune-\@sapsys-nofile-soft.conf$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		grep -v "#==\[" $f
 	f=$(grep -l "^# /etc/security/limits.d/saptune-\@dba-nofile-hard.conf$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		grep -v "#==\[" $f
 	f=$(grep -l "^# /etc/security/limits.d/saptune-\@dba-nofile-soft.conf$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		grep -v "#==\[" $f
 	f=$(grep -l "^# /etc/security/limits.d/saptune-\@sdba-nofile-hard.conf$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		grep -v "#==\[" $f
 	f=$(grep -l "^# /etc/security/limits.d/saptune-\@sdba-nofile-soft.conf$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		grep -v "#==\[" $f
 
 	f=$(grep -l "^# /etc/sysconfig/saptune$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		grep -v "^#" $f | sort -u
 	f=$(grep -l "^# /etc/sysctl.d/99-sysctl.conf$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		grep -v "#==\[" $f
 	# TODO SLE12 only: saptune-UserTasksMax.conf
 	f=$(grep -l "^# /etc/systemd/logind.conf.d/saptune-UserTasksMax.conf$" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		grep -v "#==\[" $f
-	rm -rf ${TEMP}/${FIL}
+	rm -rf ${TEMP:?}/${FIL}
 	echo
 	echo "file OK:"
 	grep -e "/etc/saptune/" -e "/saptune-" $FIL | sort -u | tr -d "#"
@@ -2024,7 +2049,7 @@ HANA-Firewall
 
 function chk_hpehana(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	test -z "${HPE_HANA_PTRN}" &&\
 	HPE_HANA_PTRN="
@@ -2080,17 +2105,19 @@ serviceguard-extension-for-sap
 	echo "/etc/init.d/after.local:"
 	split_file ${FIL}
 	f=$(grep -l "^# /etc/init.d/after.local" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		grep -v "#==..Configuration.File" $f
-	rm -rf ${TEMP}/${FIL}
+	rm -rf ${TEMP:?}/${FIL}
 	echo
 
 	FIL=tuned.txt
 	split_file ${FIL}
 	f=$(grep -l "^# /usr/lib/tuned/sap-hpe-hana/tuned.conf" ${TEMP}/${FIL}/xx*) 
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		cat $f
-	rm -rf ${TEMP}/${FIL}
+	rm -rf ${TEMP:?}/${FIL}
 	echo
 	
 	echo "NICs:"
@@ -2099,6 +2126,7 @@ serviceguard-extension-for-sap
 	FIL=network.txt
 	split_file ${FIL}
 	f=$(grep -l "# /usr/sbin/wicked ifstatus --verbose all" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" || (
 		echo -n "number of slave devices: "
 		grep -c "\ enslaved$" $f
@@ -2112,7 +2140,7 @@ serviceguard-extension-for-sap
 		grep -v "uuid:" | grep -v "route:.*ipv" | grep -v "leases:" |\
 		grep -v "addr:.*ipv6"
 	)
-	rm -rf ${TEMP}/${FIL}
+	rm -rf ${TEMP:?}/${FIL}
 	echo
 
 	FIL=hardware.txt
@@ -2123,6 +2151,7 @@ serviceguard-extension-for-sap
 	# /bin/ls -al /dev | egrep "fd.*|dvd.*|cdr.*"
 	split_file ${FIL}
 	f=$(grep -l "# /usr/bin/dmidecode" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		for p in $HPE_HANA_NIC; do
 			echo "p: $p   f: $f"
@@ -2131,6 +2160,7 @@ serviceguard-extension-for-sap
 			grep -e "Link.detected:" -e "Driver:"
 		done
 	f=$(grep -l "# /usr/sbin/hwinfo -braille" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		for p in $HPE_HANA_NIC; do
 			echo "$p"
@@ -2140,7 +2170,7 @@ serviceguard-extension-for-sap
 			grep -A40 "net.interface..name.=.$p" $f |\
 			grep -e "ethtool.driver:" -e "mlx._.*:" -e "be2net:" -e "ixgbe:" 
 		done
-	rm -rf ${TEMP}/${FIL}
+	rm -rf ${TEMP:?}/${FIL}
 	echo
 
 	# TODO make it work
@@ -2150,6 +2180,7 @@ serviceguard-extension-for-sap
 	FIL=sysfs.txt
 	split_file ${FIL}
 	f=$(grep -l "# /usr/bin/systool -vc net" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		for p in $HPE_HANA_NIC; do
 			# TODO meaningfull stanza limits
@@ -2159,6 +2190,7 @@ serviceguard-extension-for-sap
 		done
 	echo
 	f=$(grep -l "# /usr/bin/systool -vb pci" ${TEMP}/${FIL}/xx*)
+		# shellcheck disable=SC2086
 		for p in $HPE_HANA_NIC; do
 			# TODO meaningfull stanza limits
 			grep -v "00 00 00 00 00 00 00 00" $f |\
@@ -2166,16 +2198,17 @@ serviceguard-extension-for-sap
 			grep -e "Class.Device.=" -e "mtu.*=" -e "speed.*=" -e "tx_.*=" -e "rx_.*=" -e "duplex.*=" -e "flags.*=" -e "mlx._port.*=" -e "numa_node.*="
 		done
 	# TODO what about messages-YYYYMMDD.txt?
-	rm -rf ${TEMP}/${FIL}
+	rm -rf ${TEMP:?}/${FIL}
 
 	FIL=messages.txt
 	split_file ${FIL}
 	f=$(grep -l "# /var/log/messages" ${TEMP}/${FIL}/xx*)
+	# shellcheck disable=SC2086
 	test -z "$f" ||\
 		for p in $HPE_HANA_PTRN; do
 			grep $p $f
 		done
-	rm -rf ${TEMP}/${FIL}
+	rm -rf ${TEMP:?}/${FIL}
 	echo
 }
 
@@ -2899,7 +2932,6 @@ function chk_sysload(){
 	# TODO network errors?
 	# TODO NFS client and server reports?
 	# TODO grep -A6 "numastat" sysctl.txt 
-	fi
 
 	cd "$OWD" || exit
 	echo

@@ -1,0 +1,34 @@
+#
+# ENSA2 simplified NFS structure ASCS resource
+# 2020-12-15
+#
+# SID:          @@SID@@
+# inst nr:      @@INR@@
+# virt host:    @@VHOST@@
+# virt IP:      @@VIP@@
+#
+configure \
+primitive rsc_SAPStartSrv_@@SID@@_ASCS@@INR@@ SAPStartSrv \
+ params InstanceName=@@SID@@_ASCS@@INR@@_@@VHOST@@
+#
+configure \
+primitive rsc_SAPInstance_@@SID@@_ASCS@@INR@@ SAPInstance \
+ op monitor interval=11 timeout=60 on-fail=restart \
+ params InstanceName=@@SID@@_ASCS@@INR@@_@@VHOST@@ \
+ START_PROFILE=/sapmnt/@@SID@@/profile/@@SID@@_ASCS@@INR@@_@@VHOST@@ \
+ AUTOMATIC_RECOVER=false \
+ MINIMAL_PROBE=true \
+ meta resource-stickiness=5000
+#
+configure \
+primitive rsc_IPAddr2_@@SID@@_ASC@@INR@@ IPaddr2 \
+ params ip=@@VIP@@
+#
+configure \
+group grp_@@SID@@_ASCS@@INR@@ \
+ rsc_IPAddr2_@@SID@@_ASC@@INR@@ \
+ rsc_SAPStartSrv_@@SID@@_ASC@@INR@@ \
+ rsc_SAPInstance_@@SID@@_ASCS@@INR@@ \
+ meta resource-stickiness=3000
+#
+

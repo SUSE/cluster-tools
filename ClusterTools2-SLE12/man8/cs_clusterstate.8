@@ -1,4 +1,4 @@
-.TH cs_clusterstate 8 "01 Nov 2019" "" "ClusterTools2"
+.TH cs_clusterstate 8 "27 Jul 2020" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_clusterstate \- show status of pacemaker HA cluster 
@@ -29,6 +29,9 @@ cs_clusterstate \- show status of pacemaker HA cluster
 .HP
 \fB --storage\fR
 	show storage info
+.HP
+\fB --replication\fR
+	show SAPHanaSR info
 .\"
 .SH EXIT STATUS
 .B 0
@@ -49,15 +52,18 @@ Usage, syntax or execution errors.
 Currently very limited functionality.
 No other STONITH than SBD is known.
 No other data mirroring than MD RAID is known.
+No other data replication than SAP HANA SR is known.
+Feedback is welcome, please use the project page at
 .br
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
-\fBClusterTools2\fP(7), \fBcrm_mon\fP(8),  \fBcorosync-cfgtool\fP(8), \fBethtool\fP(8),  \fBsbd\fP(8), \fBmdadm\fP(8), \fBClusterService\fP(8)
-.\"
+\fBClusterTools2\fP(7), \fBcs_show_saphanasr_status\fP(8),
+\fBcrm_mon\fP(8),  \fBcorosync-cfgtool\fP(8), \fBethtool\fP(8),
+\fBsbd\fP(8), \fBmdadm\fP(8), \fBSAPHanaSR-showAttr\fP(8)
 .\"
 .SH COPYRIGHT
-(c) 2011-2019 L.Pinne, Germany.
+(c) 2011-2020 L.Pinne, Germany.
 .br
 cs_clusterstate comes with ABSOLUTELY NO WARRANTY.
 .br

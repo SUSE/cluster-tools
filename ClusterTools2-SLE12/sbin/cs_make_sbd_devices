@@ -2,13 +2,13 @@
 #
 # cs_make_sbd_devices
 #
-# (c) 2011-2016 SUSE Linux GmbH, Germany.
-# (c) 2017-2019 SUSE LLC
-# Author: L.Pinne
+# (c) 2011-2017 SUSE Linux GmbH, Germany.
+# (c) 2018-2019 SUSE LLC
+# Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 0.03 2019-11-28
+# Version: 0.02 2019-12-05
 #
 # shellcheck disable=SC1090,SC2128
 #
@@ -89,6 +89,7 @@ function make_sbd_devices() {
 
 
 function clear_sbd_devices() {
+	# TODO just call cs_clear_bsd_devices instead of local code
 	echo "INFO: start $EXE $FUNCNAME"
 	CFI=${SBD_CONF}
 	test -s "$CFI" || exit 4

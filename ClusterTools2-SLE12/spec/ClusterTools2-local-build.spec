@@ -4,7 +4,7 @@
 # Copyright (c) 2008-2010 SUSE LINUX GmbH, Germany.
 # Copyright (c) 2011-2014 SUSE LINUX Products GmbH, Germany.
 # Copyright (c) 2015-2018 SUSE LINUX GmbH, Germany.
-# Copyright (c) 2019 SUSE LLC
+# Copyright (c) 2019-2020 SUSE LLC
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
@@ -17,7 +17,7 @@ License:      GPL
 Group:        Productivity/Clustering/HA
 Autoreqprov:  on
 Summary:      Cluster Tools to control some functions easy
-Version:      3.0.1 
+Version:      3.0.1
 Release:      109
 Source:       %{name}-%{version}.tgz
 BuildRoot:    %{_tmppath}/%{name}-%{version}-build
@@ -60,12 +60,14 @@ mkdir -p %{buildroot}/usr/share/man/man5
 mkdir -p %{buildroot}/usr/share/man/man7
 mkdir -p %{buildroot}/usr/share/man/man8
 mkdir -p %{buildroot}/usr/lib/supportconfig/plugins
+mkdir -p %{buildroot}/usr/lib/systemd/system
 
 #
 # "binaries"
 #
 cp -va sbin/* %{buildroot}/usr/sbin/
-cp -va plugins/* %{buildroot}/usr/lib/supportconfig/plugins
+cp -va system/* %{buildroot}/usr/lib/systemd/system/
+cp -va plugins/* %{buildroot}/usr/lib/supportconfig/plugins/
 #
 # etc
 #
@@ -95,6 +97,7 @@ cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 /usr/sbin/*
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
+/usr/lib/systemd/system
 %config(noreplace) /etc/ClusterTools2
 #%config(noreplace) /etc/cron.d/*
 %config(noreplace) /etc/logrotate.d/*

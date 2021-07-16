@@ -1,0 +1,41 @@
+# SAPHanaSR Scale-Up
+# 2020-07-16 SLE-HA 15 SP1
+# SID: @@SID@@
+# InstNr: @@NR@@
+# IP: @@IPADDR@@
+#
+configure \
+primitive rsc_SAPHanaTop_@@SID@@_HDB@@NR@@ ocf:suse:SAPHanaTopology \
+ op monitor interval="10" timeout="600" \
+ op start interval="0" timeout="3600" \
+ op stop interval="0" timeout="300" \
+ params SID="@@SID@@" InstanceNumber="@@NR@@"
+#
+configure \
+primitive rsc_SAPHana_@@SID@@_HDB@@NR@@ ocf:suse:SAPHana \
+ op start interval="0" timeout="3600" \
+ op stop interval="0" timeout="3600" \
+ op promote interval="0" timeout="3600" \
+ op monitor interval="15" role="Master" timeout="700" \
+ op monitor interval="20" role="Slave" timeout="700" \
+ params SID="@@SID@@" InstanceNumber="@@NR@@" PREFER_SITE_TAKEOVER="yes" DUPLICATE_PRIMARY_TIMEOUT="600" AUTOMATED_REGISTER="no"
+#
+configure \
+primitive rsc_ip_@@SID@@ ocf:heartbeat:IPaddr2 \
+ params ip="@@IPADDR@@" \
+ op monitor interval="60" timeout="20" on_fail="restart"
+#
+configure \
+ms msl_SAPHana_@@SID@@_HDB@@NR@@ rsc_SAPHana_@@SID@@_HDB@@NR@@ \
+ meta master-node-max="1" master-max="1" clone-node-max="1" interleave="true"
+#
+configure \
+clone cln_SAPHanaTop_@@SID@@_HDB@@NR@@ rsc_SAPHanaTop_@@SID@@_HDB@@NR@@ \
+ meta clone-node-max="1" interleave="true"
+#
+configure \
+colocation col_ip_pri_HA1_HDB00 2000: rsc_ip_@@SID@@:Started msl_SAPHana_@@SID@@_HDB@@NR@@:Master
+#
+configure \
+order ord_SAPHana_HA1_HDB00 Optional: cln_SAPHanaTop_@@SID@@_HDB@@NR@@ msl_SAPHana_@@SID@@_HDB@@NR@@
+#

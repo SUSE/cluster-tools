@@ -1,0 +1,8 @@
+[Unit]
+Description=Collect data
+Documentation=man:ClusterTools2-timer
+Wants=logrotate.timer syslog.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/ClusterTools2-timer 

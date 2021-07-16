@@ -1,0 +1,37 @@
+#
+# ENSA2 simplified NFS structure ERS resource
+# 2020-12-15
+#
+# SID:          @@SID@@
+# inst nr:      @@INR@@
+# ascs inst nr: @@ANR@@
+# virt host:    @@VHOST@@
+# virt IP:      @@VIP@@
+#
+configure \
+primitive rsc_SAPStartSrv_@@SID@@_ERS@@INR@@ ocf:suse:SAPStartSrv \
+ params InstanceName=@@SID@@_ERS@@INR@@_@@VHOST@@
+#
+configure \
+primitive rsc_SAPInstance_@@SID@@_ERS@@INR@@ SAPInstance \
+ op monitor interval=11s timeout=60s \
+ params InstanceName=@@SID@@_ERS@@INR@@_@@VHOST@@ \
+ START_PROFILE=/sapmnt/@@SID@@/profile/@@SID@@_ERS@@INR@@_@@VHOST@@ \
+ AUTOMATIC_RECOVER=false IS_ERS=true MINIMAL_PROBE=true
+#
+configure \
+primitive rsc_IPAddr2_@@SID@@_ERS@@INR@@ IPaddr2 \
+ params ip=@@VIP@@
+#
+configure \
+group grp_@@SID@@_ERS@@INR@@ \
+ rsc_IPAddr2_@@SID@@_ERS@@INR@@ \
+ rsc_SAPStartSrv_@@SID@@_ERS@@INR@@ \
+ rsc_SAPInstance_@@SID@@_ERS@@INR@@
+#
+configure \
+colocation ASCS@@ANR@@_ERS@@INR@@_separated_@@SID@@ \
+ -5000: grp_@@SID@@_ERS@@INR@@ grp_@@SID@@_ASCS@@ANR@@
+#
+order ord_SAPInstance_@@SID@@_first_start_ascs Optional: rsc_SAPInstance_@@SID@@_ASCS@@ANR@@:start rsc_SAPInstance_@@SID@@_ERS@@INR@@:stop symmetrical=false
+#

@@ -1,0 +1,82 @@
+.TH cs_clear_sbd_devices 8 "14 Sep 2020" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_clear_sbd_devices \- clears reset message on SBD devices 
+.\"
+.SH SYNOPSIS
+.P
+.B cs_clear_sbd_devices \fI[ --help | --version ]\fR
+.P
+.B cs_clear_sbd_devices \fI[ --all | --local ]\fR
+.P
+.B cs_clear_sbd_devices --node \fINODE\fR
+.\"
+.SH DESCRIPTION
+\fBcs_clear_sbd_devices\fP clears reset message on SBD devices.
+This might be neccessary once a node got fenced and should be brought back
+into the cluster.
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+	show help.
+.HP
+\fB --version\fR
+	show version.
+.HP
+\fB --all\fR
+	clear all reset nodes on all devices.
+.HP
+\fB --local\fR
+	clear local node on all devices.
+.HP
+\fB --node\fR \fINODE\fR
+	clear node \fINODE\fR on all devices.
+.\"
+.SH EXAMPLES
+.TP
+* Clear all reset nodes on all SBD devices.
+.br
+# cs_clear_sbd_devices --all
+.TP
+* Clear local node ($HOSTNAME) on all SBD devices.
+.br
+# cs_clear_sbd_devices --local
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_clear_sbd_devices
+	the program itself.
+.TP
+/etc/sysconfig/sbd
+	the SBD configuration.
+.\"
+.SH BUGS
+Currently only Linux hostnames are handled.
+If Corosync node IDs are used on SBD, that nodes are not found.  
+.br
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBcs_make_sbd_devices\fP(8), \fBcs_show_sbd_devices\fP(8),
+\fBstonith_sbd\fP(7), \fBsbd\fP(8), \fBClusterTools2\fP(7),
+https://www.suse.com/support/kb/doc.php?id=7016305
+.\"
+.\"
+.SH COPYRIGHT
+(c) 2020 L.Pinne, Germany.
+.br
+cs_clear_sbd_devices comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

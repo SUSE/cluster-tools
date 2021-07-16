@@ -2,12 +2,13 @@
 #
 # cs_delcib
 #
-# (c) 2011-2016 SUSE Linux GmbH, Germany.
-# (c) 2017-2019 SUSE LLC
-# Authors: I.Manyugin, L.Pinne.
+# (c) 2011-2017 SUSE Linux GmbH, Germany.
+# (c) 2018-2019 SUSE LLC
+# Author: L.Pinne.
 # GNU General Public License v2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
 #
-# Version: SLES12 0.3 2019-11-28
+# Version: SLES12 0.2 2019-12-05
 #
 # shellcheck disable=SC1090
 

@@ -1,8 +1,8 @@
 #
 # spec file for package ClusterTools2
 #
-# Copyright (c) 2008-2018 SUSE LINUX GmbH, Germany.
-# Copyright (c) 2019 SUSE LLC
+# Copyright (c) 2011-2018 SUSE LINUX GmbH, Nuernberg, Germany.
+# Copyright (c) 2019-2020 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -25,6 +25,7 @@ Release:        0
 Source:         %{name}-%{version}.tgz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildArch:      noarch
+Requires:       systemd
 Requires:       logrotate
 Requires:       pacemaker > 1.1.1
 Requires:       perl-TermReadLine-Gnu >= 1.16
@@ -37,7 +38,7 @@ Url:            http://www.suse.com
 ClusterTools2 provides tools for setting up and managing a corosync/
 pacemaker cluster.
 There are some other commandline tools to make life easier.
-Starting with version 3.0.0 supports SUSE Linux Enterprise Server 12.
+Starting with version 3.0.0 is support for SUSE Linux Enterprise Server 12.
 
 %prep
 %setup -c -T -a 0
@@ -63,12 +64,15 @@ mkdir -p %{buildroot}/usr/share/ClusterTools2/samples
 mkdir -p %{buildroot}/usr/share/man/man5
 mkdir -p %{buildroot}/usr/share/man/man7
 mkdir -p %{buildroot}/usr/share/man/man8
+mkdir -p %{buildroot}/usr/lib/ClusterTools2/supportconfig/plugins
+mkdir -p %{buildroot}/usr/lib/systemd/system
 
 #
 # "binaries"
 #
 cp -va sbin/* %{buildroot}/usr/sbin/
-cp -va plugins/* %{buildroot}/usr/lib/ClusterTools2/supportconfig/plugins
+cp -va system/* %{buildroot}/usr/lib/systemd/system
+cp -va plugins/* %{buildroot}/usr/lib/ClusterTools2/supportconfig/plugins/
 #
 # etc
 #
@@ -88,6 +92,7 @@ cp -a man7/*.gz %{buildroot}/usr/share/man/man7/
 cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 
 %post
+mkdir -p /usr/lib/systemd/system
 mkdir -p /usr/lib/supportconfig/plugins
 cp /usr/lib/ClusterTools2/supportconfig/plugins/* /usr/lib/supportconfig/plugins
 
@@ -96,6 +101,7 @@ cp /usr/lib/ClusterTools2/supportconfig/plugins/* /usr/lib/supportconfig/plugins
 /usr/sbin/*
 /usr/share/ClusterTools2
 /usr/lib/ClusterTools2
+/usr/lib/systemd/system
 %config(noreplace) /etc/ClusterTools2
 %config(noreplace) /etc/logrotate.d/*
 %doc /usr/share/man/man5/*.gz

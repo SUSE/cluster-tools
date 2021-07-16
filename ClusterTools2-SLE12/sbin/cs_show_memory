@@ -2,12 +2,13 @@
 #
 # cs_show_memory
 #
-# (c) 2016-2017 SUSE Linux GmbH, Germany.
+# (c) 2011-2017 SUSE Linux GmbH, Germany.
 # (c) 2018-2019 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-11-28 16:10
+# Version: 2019-12-05
 #
 # shellcheck disable=SC1090,SC2128
 #

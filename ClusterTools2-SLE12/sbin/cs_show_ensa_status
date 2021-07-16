@@ -1,0 +1,57 @@
+#!/bin/bash
+#
+# cs_show_ensa_status
+#
+# (c) 2020 SUSE LLC
+# Author: L.Pinne.
+# GNU General Public License v2. No warranty.
+#
+# Version: 2020-11-18 
+#
+
+EXE=$(basename "$0")
+#CFG="/etc/ClusterTools2/cs_show_hana_info"
+#test -s $CFG && source $CFG
+
+
+function show_info() {
+	D=$(date +%F_%T)
+	echo "### $D" "${*}" "###"
+	crm_mon -1r
+	echo "==="                      
+	cs_clusterstate -i | grep -v "###"
+	echo "==="
+	ps aux | grep -e ASCS[0-9][0-9] -e ERS[0-9][0-9] | grep -v grep
+	echo "###"
+}
+
+
+function show_help() {
+	echo "usage	$EXE [ --help | --version ]"
+	# echo "	$EXE [ --info | --logs ] <SID> <inst_nr>"
+	echo "	$EXE"
+	echo
+	echo " --help		show help"
+	echo " --version	show version"
+	echo
+	exit
+}
+
+
+# main
+case $1 in
+	-v|--version)
+		echo -n "$EXE"
+		head -11 /usr/sbin/"$EXE" | grep "^# Version: "
+		exit
+	;;
+	-h|--help)
+		show_help
+		exit
+	;;
+	*)
+		show_info
+		exit
+	;;
+esac
+#

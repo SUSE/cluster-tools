@@ -3,12 +3,12 @@
 # cs_clusterstate 
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2019 SUSE LLC
+# (c) 2018-2020 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-11-28 SLES11, SLES12, SLES15
+# Version: 2020-07-28 SLES12
 #
 # shellcheck disable=SC1090
 
@@ -24,7 +24,20 @@ test -z "${SCF}" &&\
 test -z "${SBD}" && test -s $SCF &&\
 	SBD=$( awk -F"=" '$1=="SBD_DEVICE" {print $2}' $SCF |\
 		tr -d "\""|tr ";" "\n" )
-
+test -z "${CLPROC}" &&\
+# for SLE 11, 12 see $CFG
+# TODO double-check SLE 15
+CLPROC="
+pacemaker-based
+pacemaker-fenced
+pacemaker-execd
+pacemaker-attrd
+pacemaker-schedulerd
+pacemaker-controld
+pacemakerd
+corosync
+sbd
+"
 HST=$(hostname -f)
 DAT=$(date +"%Y-%m-%d %T")
 
@@ -37,9 +50,10 @@ function help() {
 	echo " --help		show help"
 	echo " --all		show all info"
 	echo " --basics	show basic info"
-	echo " --idle		show te idle info"
+	echo " --idle		show idle info"
 	echo " --network	show network info"
 	echo " --storage	show storage info"
+	echo " --replication	show SAPHanaSR info"
 	echo " --version	show version info"
 }
 
@@ -53,34 +67,26 @@ function get_idle() {
 function get_basics() {
 crm_mon -r1 |\
  awk '$1=="Current"||$1=="Online:"||$1=="OFFLINE:"||$3=="UNCLEAN"{print $0}'
-# TODO: show [standby] as well
-# TODO: efficient awk
+# TODO show [standby] as well
+# TODO efficient awk
 get_idle
-#
+# TODO call crm_mon once and re-use output
 echo -n "Stopped/FAILED resources: "
 crm_mon -r1 | awk '$3=="Stopped"||$0~/FAILED/{print $0}' | wc -l
-echo -n "Started resources: "
+# TODO count clone and multistate as well
+echo -n "Started primitive resources: "
 crm_mon -r1 | awk '$3=="Started"{print $0}' | wc -l
 
+echo -n "Left-over constraints: "
+crm configure show | grep "cli-" | wc -l
+echo
+
 PSAUX=$(ps aux | awk '{print $11}')
-CLPROC="
-stonithd
-cib
-attrd
-pengine
-crmd
-lrmd
-mgmtd
-corosync
-ha_logd
-sbd
-"
 echo -n "HA processes: "
 for f in $CLPROC; do
 	echo "$PSAUX" | grep -c "$f" >/dev/null && echo "$f"
 done | wc -l
 echo
-
 echo "TOTEM: "
 corosync-cfgtool -s | grep -B1 "status.*=" | grep -v "^--$"
 echo
@@ -120,6 +126,7 @@ echo -n "IPs: "
 echo
 }
 
+
 function get_storage() {
 # TODO check for WWIDs 3600...=SAN/SCSI, 1494...=iSCSI 
 # TODO configurable pattern for SAN LUNs (f.e "HP,OPEN-V", "HP,HSV"), local LUNs (f.e. "HP,LOGICAL.VOLUME"), iSCSI LUNs (f.e. "IET,VIRTUAL-DISK")
@@ -156,6 +163,29 @@ echo
 }
 
 
+function get_saphanasr() {
+# TODO error handling
+# TODO better filter
+# TODO call crm_mon once and re-use output
+# TODO awk instead of multiple grep
+HANA=$( crm_mon -1 |\
+ grep  -e "Clone.Set:.*_SAPHana" -e "Masters:.\[" -e "Slaves:.\[" -e "Started:.\[" |\
+ tr "\n" "§" )
+echo -n "SAPHanaSR started masters: "
+echo ${HANA} | tr "§" "\n" | grep "Masters:.\[" | wc -l
+echo -n "SAPHanaSR started slaves: "
+echo ${HANA} | tr "§" "\n" | grep "Slaves:.\[" | wc -l
+echo -n "SAPHanaSR master node: "
+P_HANA=$(crm_resource list | awk '$5=="(promotable)" {print $4}' | tr -d "[]")
+crm_resource -W --master -r $P_HANA | awk '$7=="Master" {print $6}'
+# TODO started Topology clones
+#echo "SAPHanaSR resources:"
+#echo ${HANA} | tr "§" "\n"
+echo "SAPHanaSR attributes:"
+test -x /usr/sbin/SAPHanaSR-showAttr && SAPHanaSR-showAttr | tr -s "\n"
+}
+
+
 # main()
 
 case $1 in
@@ -184,10 +214,17 @@ case $1 in
 		get_basics
 		get_network
 		get_storage
+		get_saphanasr
 		exit
 	;;
 	-i|--idle)
 		echo "### $HST - $DAT ###"
+		get_idle
+		exit
+	;;
+	-r|--replication)
+		echo "### $HST - $DAT ###"
+		get_saphanasr
 		get_idle
 		exit
 	;;
@@ -196,7 +233,5 @@ case $1 in
 		get_basics
 		exit
 	;;
-	# TODO get_hana_scaleup (master-slave + clone)
-	# TODO get_hana_scaleout (master-slave + clone)
 esac
 #

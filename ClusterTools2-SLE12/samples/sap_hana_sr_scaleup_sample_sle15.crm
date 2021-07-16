@@ -1,0 +1,29 @@
+#
+primitive rsc_SAPHanaTopology_HAE_HDB96 ocf:suse:SAPHanaTopology \
+  op monitor interval="10" timeout="600" \
+  op start interval="0" timeout="3600" \
+  op stop interval="0" timeout="300" \
+  params SID="HAE" InstanceNumber="96"
+#
+primitive rsc_SAPHana_HAE_HDB96 ocf:suse:SAPHana \
+  op start interval="0" timeout="3600" \
+  op stop interval="0" timeout="3600" \
+  op promote interval="0" timeout="3600" \
+  op monitor interval="15" role="Master" timeout="700" \
+  op monitor interval="20" role="Slave" timeout="700" \
+  params SID="HAE" InstanceNumber="96" PREFER_SITE_TAKEOVER="yes" DUPLICATE_PRIMARY_TIMEOUT="600" AUTOMATED_REGISTER="no"
+#
+primitive rsc_ip_hae ocf:heartbeat:IPaddr2 \
+  params ip="10.210.4.234" \
+  op monitor interval="60" timeout="20" on_fail="restart"
+#
+ms msl_SAPHana_HAE_HDB96 rsc_SAPHana_HAE_HDB96 \
+  meta master-node-max="1" master-max="1" clone-node-max="1" interleave="true"
+#
+clone cln_SAPHanaTopology_HAE_HDB96 rsc_SAPHanaTopology_HAE_HDB96 \
+  meta clone-node-max="1" interleave="true"
+#
+colocation col_ip_prim_SAPHana_HAE_HDB96 2000: rsc_ip_hae:Started msl_SAPHana_HAE_HDB96:Master
+#
+order ord_SAPHana_HAE_HDB96 Optional: cln_SAPHanaTopology_HAE_HDB96 msl_SAPHana_HAE_HDB96
+#

@@ -2,13 +2,13 @@
 #
 # cs_man2pdf
 #
-# (c) 2016-2017 SUSE Linux GmbH, Germany.
+# (c) 2011-2017 SUSE Linux GmbH, Germany.
 # (c) 2018-2019 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-11-28 SLES12, SLES15
+# Version: 2019-12-05 SLES12
 #
 # TODO handle perl man pages with "::" in filenames
 

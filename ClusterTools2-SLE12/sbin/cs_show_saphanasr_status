@@ -1,0 +1,79 @@
+#!/bin/bash
+#
+# cs_show_saphanasr_status
+#
+# (c) 2020 SUSE LLC
+# Author: L.Pinne.
+# GNU General Public License v2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
+#
+# Version: 2020-07-27
+#
+
+# TODO reliable function return codes
+
+EXE=$(basename $0)
+# TODO function run_cmd
+
+function show_help() {
+	echo "usage:    $(basename "$0")"
+	echo "usage:    $(basename "$0") OPTION"
+	echo
+	echo "OPTION:"
+	echo " --help           show help"
+	echo " --version        show version info"
+}
+
+
+# main()
+
+case $1 in
+	-v|--version)
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
+		exit
+	;;
+	-h|--help)
+		show_help
+		exit
+	;;
+esac
+
+echo "################################################"
+echo "# ${EXE}: start"
+echo
+
+echo "###"
+echo "# cs_clusterstate -b: start"
+(/usr/sbin/cs_clusterstate -b; RC=$?) | tr -d "#" |\
+	grep -v "^Started.resources:" | grep -v "^Online:.\[" |\
+	tr -s "\n"
+echo "# cs_clusterstate -b: RC=$RC"
+echo
+
+echo "###"
+echo "# crm_mon -1r: start"
+(/usr/sbin/crm_mon -1r; RC=$?) |\
+	grep -v "^Current DC:" | grep -v "^Last updated:" | grep -v "^Stack" |\
+	tr -s "\n"
+echo "# crm_mon -1r: RC=$RC"
+echo
+
+echo "###"
+echo "# cs_clusterstate -r: start"
+(/usr/sbin/cs_clusterstate -r ; RC=$?) |\
+	tr -s "\n" 
+echo "# cs_clusterstate -r: RC=$RC"
+echo
+
+echo "###"
+echo "# cs_clusterstate -i: start"
+(/usr/sbin/cs_clusterstate -i; RC=$?) | tr -d "#"
+echo "# cs_clusterstate -i: RC=$RC"
+echo
+
+echo "# ${EXE}: RC="
+# TODO useful overall return code
+echo "################################################"
+exit $RC
+#

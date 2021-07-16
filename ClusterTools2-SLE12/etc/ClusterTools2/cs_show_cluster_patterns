@@ -1,6 +1,8 @@
 #/etc/ClusterTools2/cs_show_cluster_patterns
 # For SLES12.
 #
+# Please use dot "." instead of blanks " " in patterns!
+#
 OSERR_PATTERN="
 "NMI.received"
 "NMI.*error"
@@ -24,7 +26,7 @@ OSERR_PATTERN="
 #
 CLUSTR_PATTERN="
 "CLM.*Members.Left:"
-"TOTEM.*FAILED.*RECEIVE"
+"TOTEM.*failed.*receive"
 "TOTEM.*processor.failed"
 "TOTEM.*Incrementing.problem"
 "TOTEM.*Retransmit.List"
@@ -52,6 +54,7 @@ CLUSTR_PATTERN="
 "pengine.*LogActions:.Leave.*\(Started.unmanaged\)"
 "pengine.*LogActions:.Leave.*\(Stopped.unmanaged\)"
 "cib.*failed"
+"cib.*wanted.to.shut.down"
 "High.CIB.load"
 "crm_resource.*Error"
 "crmd.*quorum.lost"
@@ -105,6 +108,7 @@ RESRC_PATTERN="
 "SAP.*Unauthorized"
 "SAPHana.*Secure.store.users"
 "SAPHana.*RA.*rc=[1-7,9]"
+"SAPHana.*ERR:"
 "HANA_CALL.timed.out"
 "SAPHanaTopology.*failed"
 "eDirectory.*failed.*stop"

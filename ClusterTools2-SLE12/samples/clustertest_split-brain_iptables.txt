@@ -1,9 +1,14 @@
 https://www.cloudera.com/documentation/enterprise/5-8-x/topics/admin_cm_ha_failover.html
 
-allow corosync totem:
+- allow corosync totem:
 
-$ sudo iptables -I INPUT -m state --state NEW -p udp -m multiport --dports 5404,5405 -j ACCEPT
-$ sudo iptables -I OUTPUT -m state --state NEW -p udp -m multiport --sports 5404,5405 -j ACCEPT
+# grep mcastport: /etc/corosync/corosync.conf | awk '{print $2}'
 
+# sudo iptables -I INPUT -m state --state NEW -p udp -m multiport --dports 5405,5407 -j ACCEPT
+# sudo iptables -I OUTPUT -m state --state NEW -p udp -m multiport --sports 5405,5407 -j ACCEPT
 
+- remove above rules:
+
+# sudo iptables -D INPUT -m state --state NEW -p udp -m multiport --dports 5405,5407 -j ACCEPT
+# sudo iptables -D OUTPUT -m state --state NEW -p udp -m multiport --sports 5405,5407 -j ACCEPT
 

@@ -3,11 +3,12 @@
 # cs_show_error_patterns
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2019 SUSE LLC
+# (c) 2018-2020 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
 #
-# Version: SLES12,SLES15 0.2 2019-11-28
+# Version: SLES12 0.2 2020-08-31
 #
 # shellcheck disable=SC1090,SC2140,SC2125,SC2037,SC2211
 # SC2140,SC2125,SC2037 and SC2211 are needed because of the ongoing
@@ -55,6 +56,9 @@ test -n "${CLUSTER_LOG}" &&\
 	ZIPPED_LOG="${ZIPPED_LOG} $(echo "${CLUSTER_LOG}"|tr -d \\n)*bz2"
 
 # TODO add more HBA errors: hpsa cciss
+# TODO function to check for unwanted blanks: grep "^\".*\ .*\"$" $EXE
+#
+# Please use dot "." instead of blanks " " in patterns!
 test -z "${ERROR_PATTERN}" &&\
 	 ERROR_PATTERN="
 "taint.flag"
@@ -63,18 +67,24 @@ test -z "${ERROR_PATTERN}" &&\
 "be2net.*Error"
 "bnx2x.*failed"
 "mlx4_en.*error"
+"mlx5_core.*failed"
 "bfa.*err"
 "lpfc.*err"
 "lpfc.*failed"
 "lpfc.*Not.supported"
 "ibmvfc.*failed"
+"ixgbe.*rror"
 "qla.*err"
 "qla.*failed"
+"qla.Unable"
 "qlge.*error"
+"hpilo.*could.not"
 "Ramping.down.queue"
 "hfcldd.*Err"
 "unsupported.SFP.*module"
+"Unable.*SFP"
 "IO_PAGE_FAULT"
+"Power.key.pressed"
 "NMI.received"
 "NMI.*error"
 "irq.*nobody.cared"
@@ -82,6 +92,7 @@ test -z "${ERROR_PATTERN}" &&\
 "urandom.warning"
 "Signaling.PME.*interrupt"
 "Error.DRAM"
+"nvme.*error"
 "Uncorrectable.*rror"
 "error.detected.during.POST"
 "mce:.CPU.supports.0.MCE.banks"
@@ -91,16 +102,22 @@ test -z "${ERROR_PATTERN}" &&\
 "Firmware.Bug"
 "BIOS.bug"
 "Broken.BIOS"
+"BMC.*not"
 "kernel.*task.*abort"
 "kernel.*ACPI.Error"
 "kernel.*Hardware.Error"
 "kernel.*page.allocation.failure"
 "kernel.*failed.to.assign"
 "kernel.*medium.error"
+"kernel.*mmu.*suppressed"
+"kernel.*supported.only"
 "kernel.*pci.*failed"
 "kernel.*lost.*interrupt"
 "kernel.*not.have.kernel.memory.protection"
 "kernel.*clocksource:.*witched"
+"kernel.*NUMA.turned.off"
+"kernel.Lockdown*"
+"kernel.*Duplicate.cookie"
 "BUG:.*workqueue.lockup"
 "Section.*circular.dependency"
 "double.fault:"
@@ -129,10 +146,12 @@ test -z "${ERROR_PATTERN}" &&\
 "Starting.XFS.recovery"
 "xfs_log_force.*error"
 "XFS.*allocation.deadlock"
+"XFS.*head.behind.tail"
 "sdrServ:.*err"
 "server.*not.responding"
 "iSCSI.connection.*error"
 "Sense.*error"
+"bond.*without.any.active.interface"
 "bond.*link.*down"
 "bond.*duplicate.address"
 "bond.*not.detect.*failures"
@@ -140,6 +159,8 @@ test -z "${ERROR_PATTERN}" &&\
 "bond.*No.*response"
 "link.*not.ready"
 "ink..ailure"
+"ERROR.*egress"
+"not.*offload"
 "RPC.*multiple.fragments"
 "martian.source.*dev"
 "unexpectedly.shrunk.window"
@@ -156,6 +177,9 @@ test -z "${ERROR_PATTERN}" &&\
 "exits.with.status.*[1-9]"
 "cgroup:.*rejected"
 "shutdown.*shutting.down"
+"systemd.*Reached.target.Shutdown"
+"dbus-daemon.*ailed"
+"kernel.*segfault.at"
 "Out.of.memory"
 "invoked.oom-killer"
 "Call.Trace"
@@ -178,13 +202,14 @@ test -z "${SVCERR_PATTERN}" &&\
 "systemd.*nknown"
 "systemd.*Proceeding.anyway"
 "systemd.*No.such.file"
-"systemd.*Failed"
-"systemd-coredump.*dumped.core"
+"systemd.*ailed"
+"systemd.*dumped.core"
 "wickedd.*ouldn"
 "SMART.*failure"
 "multipathd.*timed.out"
 "multipathd.*mpath.*unable"
 "multipathd.*reinstated"
+"multipathd.*too.much"
 "multi.*path.*down"
 "lvmetad.*failed"
 "fstrim:.*FITRIM.ioctl.failed:"
@@ -192,6 +217,9 @@ test -z "${SVCERR_PATTERN}" &&\
 "ntpd.*failed"
 "ntpd.*time.reset"
 "ntpd.TIME_ERROR"
+"chronyd.*clock.wrong"
+"chronyd.*time.jump"
+"chronyd.*no.selectable.sources"
 "time.sync.status.changed"
 "Frequency.format.error"
 "failed.to.bind.to.LDAP"
@@ -201,6 +229,7 @@ test -z "${SVCERR_PATTERN}" &&\
 "postfix.*fatal"
 "cgroup:.fork.rejected"
 "sfcbd.*Fatal"
+"libvirt.error.code"
 "
 
 # TODO raid.set.*active.with.2.out.of.2.mirrors ?
@@ -212,13 +241,14 @@ test -z "${SVCERR_PATTERN}" &&\
 
 test -z "${CLUERR_PATTERN}" &&\
 	 CLUERR_PATTERN="
-"TOTEM.*FAILED.*RECEIVE"
+"TOTEM.*Falied.*receive"
 "TOTEM.*processor.failed"
 "TOTEM.*Incrementing.problem"
 "TOTEM.*Retransmit.List"
 "corosync.*not.scheduled"
 "quorum.lost"
 "fenced.because.*.un-expectedly.down"
+"stonith.*warning"
 "stonith.*Device.*not.fond"
 "Node.*unclean"
 "pcmk.*Child.process.*exited"
@@ -233,6 +263,7 @@ test -z "${CLUERR_PATTERN}" &&\
 "crmd.*High.CPU.load"
 "sbd.*mbox.read.failed"
 "sbd.*Latency"
+"sbd.*Header.*changed"
 "oft.og.*not"
 "dlm.*link.*down"
 "ocfs2.*has.evicted"
@@ -250,8 +281,11 @@ test -z "${APPERR_PATTERN}" &&\
 "error.*VRT"
 "VCS.CRITICAL"
 "vxvm.*volume.*not"
+"mfeaack.*loading.module"
 "Hangcheck.*clock"
 "lin_tape.*failed"
+"lin-tape.*device.reset"
+"vasd.*hutting.down"
 "vasd.will.not.synchronize.time"
 "vascache.*error"
 "sapstartsrv.*pam_systemd.*Failed"
@@ -268,6 +302,7 @@ test -z "${APPERR_PATTERN}" &&\
 "tclink.*error"
 "salt.*ERROR"
 "discagent.*Error"
+"cmclconfd.*does.not"
 "
 
 function help() {

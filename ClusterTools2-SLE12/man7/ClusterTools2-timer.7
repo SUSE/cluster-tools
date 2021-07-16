@@ -1,0 +1,70 @@
+.TH ClusterTools2-timer 7 "18 Nov 2020" "" "ClusterTools2"
+.\"
+.SH NAME
+ClusterTools2-timer \- systemd timer example for collecting data
+.\"
+.SH DESCRIPTION
+\fBClusterTools2-timer\fP is a systemd timer example for collecting data.
+.\"
+.SH EXAMPLES
+.TP
+* Enabling pre-defined ClusterTools2-timer timer
+.br
+# systemctl start ClusterTools2-timer.timer
+.TP
+* Showing journal entries since given time
+.br
+# journalctl -S "2020-11-18 11:18:00"
+.TP
+* Showing journal entries for ClusterTools2-timer
+.br
+# journalctl -u ClusterTools2-timer
+.TP
+* Creating custom monitoring service
+.br
+# cp /usr/lib/systemd/system/ClusterTools2-timer.service /etc/systemd/user/
+.br
+# vi /etc/systemd/user/ClusterTools2-timer.service
+.br
+  ...
+.br
+# systemctl daemon-reload
+.br
+# systemctl restart ClusterTools2-timer.timer
+.\"
+.SH FILES
+.TP
+/usr/lib/sbin/ClusterTools2-timer
+ default script to run
+.TP
+/usr/lib/systemd/system/ClusterTools2-timer.timer
+ timer definition
+.TP
+/usr/lib/systemd/system/ClusterTools2-timer.service
+ service definition
+.TP
+/etc/systemd/user/
+ directory for custom service definitions
+.\"
+.SH BUGS
+Feedback is welcome. To report bugs for SUSE product components,
+please use https://www.suse.com/support/report-a-bug/ .
+.\"
+.SH SEE ALSO
+\fBsystemd.timer\fP(5), \fBsystemctl\fP(8), \fBjournalctl\fP(8),
+\fBlogrotate\fP(8), \fBlsoflog\fP.8, \fBpsauxlog\fP.8, \fBmeminfolog\fP.8,
+\fBsupportconfig_plugins\fP.5,
+.br
+https://opensource.com/article/20/7/systemd-timers
+.\"
+.SH AUTHORS
+L.Pinne
+.\"
+.SH COPYRIGHT
+(c) 2020 SUSE Software Solutions Germany GmbH.
+.br
+ClusterTools2 comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

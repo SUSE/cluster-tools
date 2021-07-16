@@ -3,13 +3,15 @@
 # cs_show_supportconfig
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2019 SUSE LLC
+# (c) 2018-2021 SUSE LLC
 # Author: L.Pinne.
-# GNU General Public License 2. No warranty.
+# GNU General Public License v2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
 #
-# Version: SLES12 0.03 2019-11-28
+# Version: 2021-03-23 SLES12 0.03
 #
-# For Supportconfig Script Version: 2.25-237
+# For Supportconfig Script Version: 2.25-237 to 3.0.2-10
+# TODO what supportconfig supports sar xz files?
 #
 # shellcheck disable=SC1090,SC2128,SC2140,SC2125
 # SC2140 and SC2125 are needed because of the ongoing pattern declaration
@@ -132,6 +134,37 @@ function show_sys_fcfabric(){
 }
 
 
+function show_pam_sap(){	
+# TODO
+	echo "pam_limits :"
+	f=$(grep -l "^# /etc/security/limits.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		awk '$1=="oracle" || $1~/sapsys/ || $1~/dba/ {print}' $f | sort -u
+	echo
+# TODO
+	echo "/etc/passwd :"
+	f=$(grep -l "^# /etc/passwd$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		awk -F: '$5~/SAP.*Administrator/ {print}' $f | sort -u	
+	echo
+	echo "getent_passwd :"
+	f=$(grep -l "^# /usr/bin/getent passwd$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		awk -F: '$5~/SAP.*Administrator/ {print}' $f | sort -u	
+	echo
+# TODO sapgw, ...
+	echo "/etc/group :"
+	f=$(grep -l "^# /etc/group$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		awk -F: '$1=="sapinst" || $1=="sapsys" || $1=="oper" || $1=="saprouter" || $1~/shm/ {print}' $f | sort -u
+	echo
+	echo "getent_group :"
+	f=$(grep -l "^# /usr/bin/getent group$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		awk -F: '$1=="sapinst" || $1=="sapsys" || $1=="oper" || $1=="saprouter" || $1~/shm/ {print}' $f | sort -u
+}
+
+
 function chk_hardware(){
 
 	echo_msgsep "$FUNCNAME"
@@ -231,15 +264,19 @@ function chk_modules(){
 	echo
 
 	# TODO add Cisco HBA
-	# TODO test HPE eth nx_nic, ibmvfc
-	# TODO watchdog ppc64le?, s390x vmwatchdog.ko?
+	# TODO watchdog ppc64le, vmware, xen?
 	# TODO check Fusion IO
 	test -z "${HARDW_MOD}" &&\
 	HARDW_MOD="
 ixgbe.ko
 netxen_nic.ko
 nx_nic.ko
+mlx3_en.ko
 mlx4_en.ko
+mlx5_en.ko
+mlx3_ib.ko
+mlx4_ib.ko
+mlx5_ib.ko
 i40e.ko
 bfa.ko
 lpfc.ko
@@ -454,7 +491,7 @@ function chk_services(){
 	echo_msgsep "$FUNCNAME"
 
 	FIL="boot.txt"
-	# TODO SLES12 what to look for? 
+	# TODO SLES15 what to look for? 
 	grep "exits with status" ${FIL} | grep -v "exits with status 0$"
  	grep "Skipped.features:" ${FIL} | sort -u
 	echo
@@ -482,7 +519,10 @@ function chk_services(){
 	echo
 
 # TODO precheck_for_sap
+# TODO saptune, tuned see chk_saptune
 # TODO boot.sapinit with AUTOSTART in instance profile?
+# TODO ipmi?
+# TODO chrony
 	test -z "${SVC_YES}" &&\
 	SVC_YES="
 boot.clock
@@ -492,9 +532,10 @@ boot.multipath
 boot.sapconf
 boot.sysstat
 boot.sysctl
-boot.sapinit
+after.local
 multipathd
 ntp
+sapinit
 "
 	test -z "${SVC_OFF}" &&\
 	SVC_OFF="
@@ -502,14 +543,37 @@ boot.dmraid
 boot.md
 alsasound
 hp-asrd
-ipmi
+lvm2-lvmetad
 mdadmd
 oracle
 pacemaker
 powerd
 slpd
 smartd
+tuned
 uuidd
+boot.vxfs
+qlremote
+amf
+gab
+isisd
+llt
+vcs
+vras-vradmind.sh
+vxatd
+vxdbdctrl
+vxdcli
+vxfen
+vxnm-vxnetd
+vxodm
+vxpbx_exchanged
+vxrsyncd.sh
+vxvm-boot
+vxvm-reconfig
+vxvm-recover
+sfmh-discovery
+xprtld
+eccmad
 "
 	FIL="chkconfig.txt"
 	if test -r "${FIL}"; then
@@ -637,7 +701,36 @@ eccmad
 function chk_network(){
 
 	echo_msgsep "$FUNCNAME"
-	
+
+	test -z "${NETW_SYSCTL}" &&\
+	NETW_SYSCTL="
+net.core.somaxconn
+net.ipv4.tcp_slow_start_after_idle
+net.ipv4.ip_local_port_range
+net.ipv4.tcp_max_syn_backlog
+net.ipv4.tcp_window_scaling
+net.core.netdev_max_backlog
+net.core.optmem_max
+net.core.rmem_default
+net.core.rmem_max
+net.core.wmem_default
+net.core.wmem_max
+net.ipv4.conf.all.rp_filter
+net.ipv4.tcp_adv_win_scale
+net.ipv4.tcp_app_win
+net.ipv4.tcp_max_orphans
+net.ipv4.tcp_max_tw_buckets
+net.ipv4.tcp_mem
+net.ipv4.tcp_moderate_rcvbuf
+net.ipv4.tcp_no_metrics_save
+net.ipv4.tcp_rmem
+net.ipv4.tcp_timestamps
+net.ipv4.tcp_tw_reuse
+net.ipv4.tcp_slow_start_after_idle
+net.ipv4.tcp_wmem
+net.ipv4.udp_rmem_min
+net.ipv4.udp_wmem_min
+"
 	test -z "${NETW_PTRN}" &&\
 	NETW_PTRN="
 "Setting.up.hostname"
@@ -687,6 +780,16 @@ function chk_network(){
 	echo "iptables:"	
 	grep "iptable_" ${FIL}
 	echo
+
+	FIL="env.txt"
+        split_file ${FIL}
+        f=$(grep -l "^# /sbin/sysctl -a$" ${TEMP}/${FIL}/xx*)
+	echo "kernel sysctl settings:"
+	test -z "$f" ||\
+		for p in $NETW_SYSCTL; do
+		grep $p $f || echo "$p = NO"
+	done
+	echo
 }
 
 
@@ -701,8 +804,8 @@ function chk_nameres(){
 	grep --binary-file=text -A1 "^# /sbin/chkconfig nscd" ${FIL} ) |\
 		 grep -v "^#==\[ " 
 	echo
-	split_file ${FIL} 
 
+	split_file ${FIL}
 	echo "# /etc/hosts:"
 	f=$(grep -l "^# /etc/hosts$" ${TEMP}/${FIL}/xx*)
 	# shellcheck disable=SC2086
@@ -744,13 +847,23 @@ function chk_timeres(){
 	done
 	echo
 	# TODO SLES12
+	# TODO SLES15 cronyd
+	# TODO split_file to get complete output of ntpq -p
+	split_file ${FIL} 
 	echo "service:"
-	grep -A1 "^# /sbin/chkconfig" ${FIL}
-	grep -A5 "# /usr/sbin/ntpq -p" ${FIL} | grep -v "====="
-
+	f=$(grep -l "^# /usr/sbin/ntpq -p$" ${TEMP}/${FIL}/xx*)
+        test -z "$f" ||\
+		grep -v "^#" $f | tr -s "\n"
+	echo
+	f=$(grep -l "^# /sbin/chkconfig$" ${TEMP}/${FIL}/xx*)
+        test -z "$f" ||\
+		grep -v "^#" $f
+	f=$(grep -l "^# /bin/systemctl status ntpd.service$" ${TEMP}/${FIL}/xx*)
+        test -z "$f" ||\
+		grep -v "^#" $f
+	echo
 	echo "config:"
 	echo "# /etc/ntp.conf:"
-	split_file ${FIL} 
 	f=$(grep -l "^# /etc/ntp.conf$" ${TEMP}/${FIL}/xx*)
 	# shellcheck disable=SC2086
         test -z "$f" ||\
@@ -802,12 +915,14 @@ DEFAULT_TIMEZONE
 function chk_sleha(){
 
 	echo_msgsep "$FUNCNAME"
- 
+
+# TODO cluster md?
 	test -z "${CLUSTER_PKG}" &&\
 	CLUSTER_PKG="
 corosync
 cluster-glue
 crmsh
+ClusterTools2
 drbd-heartbeat
 drbd-pacemaker
 libopenais3
@@ -820,7 +935,12 @@ pacemaker-mgmt
 pacemaker-mgmt-client
 resource-agents
 sbd
+sapstartsrv-resource-agents
+sap-suse-cluster-connector
+SAPHanaSR
+SAPHanaSR-ScaleOut
 "
+# TODO SLES15 pacemaker-...
 	test -z "${CLUSTER_PRCS}" &&\
 	CLUSTER_PRCS="
 sbd:
@@ -841,6 +961,7 @@ sbd:
 	# TODO check /etc/corosync/
 	# TODO check ???, see cs_sum_baseconfig, cs_precheck_for_sap
 	# TODO check watchdogs, define $WATCHMOD, see cs_disbale_other_watchdog
+	# TODO ipmi watchdog
 	# hangcheck_timer here, not "-" as in hangcheck-timer.ko
 	WATCHMOD="hpwdt hangcheck_timer iTCO ibmasr softdog deadman"
 	echo -n "loaded watchdog: "
@@ -1088,6 +1209,7 @@ ibmvfc
 ibmpowernv
 ibmpex
 ibmaem
+lin_tape
 rpaphp
 scsi_dh_alua
 softdog
@@ -1177,6 +1299,7 @@ function chk_vmware(){
 	# http://www.vmware.com/download/packages.html
 	# http://packages.vmware.com/tools
 	# TODO what is really needed?
+	# TODO chrony
 	test -z "${VMW_PKG}" &&\
 	VMW_PKG="
 ntp-4
@@ -1234,6 +1357,7 @@ vmw_balloon
 mptbase
 "
 	# TODO vmware tools services?
+	# TODO chrony
 	test -z "${VMW_SVC_YES}" &&\
 	VMW_SVC_YES="
 boot.clock
@@ -1328,6 +1452,107 @@ xendomains
 }
 
 
+function chk_saptune2(){
+
+	echo_msgsep $FUNCNAME
+
+	FIL=rpm.txt
+	echo "RPM OK:"
+	grep saptune-2 $FIL
+	echo "RPM NO:"
+	grep -e sapconf -e saptune-1 $FIL
+	rm -rf ${TEMP}/${FIL}
+	echo
+
+	FIL=systemd.txt
+	# TODO awk
+	echo "service OK:"
+	grep -e ^tuned.service.*enabled -e tuned.service.*running $FIL |\
+		awk '{print $1,$2,$3,$4}'
+	echo service NO:
+	grep -e ^tuned.service.*disabled -e tuned.service.*dead $FIL |\
+		awk '{print $1,$2,$3,$4}'
+	rm -rf ${TEMP}/${FIL}
+	echo
+
+	FIL=tuned.txt
+	split_file ${FIL}
+	f=$(grep -l "^# /bin/systemctl status tuned.service$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -e "Loaded:" -e "Active:" $f
+
+	f=$(grep -l "^# /usr/sbin/tuned-adm active$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "^#" $f
+
+	f=$(grep -l "^# /usr/lib/tuned/saptune/tuned.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		echo "/usr/lib/tuned/saptune/tuned.conf:"
+		grep -v "^#" $f
+
+	# TODO make this work
+#	f=$(grep -l "^# /var/log/tuned/tuned.log$" ${TEMP}/${FIL}/xx*)
+#	test -z "$f" ||\
+#		echo "/var/log/tuned/tuned.log:"
+#		grep -v "^#" $f #| grep -v "^[1-9].*[0-9][0-9][0-9].INFO"
+
+	# TODO sap-hana.conf
+	rm -rf ${TEMP}/${FIL}
+	echo
+
+	FIL=sysconfig.txt
+	split_file ${FIL}
+	f=$(grep -l "^# /etc/sysconfig/saptune$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "^#" $f
+	rm -rf ${TEMP}/${FIL}
+	echo
+
+	FIL=etc.txt
+	split_file ${FIL}
+	# TODO loop for below 6 files
+	f=$(grep -l "^# /etc/security/limits.d/saptune-\@sapsys-nofile-hard.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+	f=$(grep -l "^# /etc/security/limits.d/saptune-\@sapsys-nofile-soft.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+	f=$(grep -l "^# /etc/security/limits.d/saptune-\@dba-nofile-hard.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+	f=$(grep -l "^# /etc/security/limits.d/saptune-\@dba-nofile-soft.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+	f=$(grep -l "^# /etc/security/limits.d/saptune-\@sdba-nofile-hard.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+	f=$(grep -l "^# /etc/security/limits.d/saptune-\@sdba-nofile-soft.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+
+	f=$(grep -l "^# /etc/sysconfig/saptune$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "^#" $f | sort -u
+	f=$(grep -l "^# /etc/sysctl.d/99-sysctl.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+	# TODO SLE12 only: saptune-UserTasksMax.conf
+	f=$(grep -l "^# /etc/systemd/logind.conf.d/saptune-UserTasksMax.conf$" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==\[" $f
+	rm -rf ${TEMP}/${FIL}
+	echo
+	echo "file OK:"
+	grep -e "/etc/saptune/" -e "/saptune-" $FIL | sort -u | tr -d "#"
+	echo "file NO:"
+	FIL=sysconfig.txt
+	grep -e "/etc/sysconfig/sapconf$" $FIL | tr -d "#"
+	echo "file NO:"
+	grep "/etc/sysconfig/sapnote-" $FIL | tr -d "#"
+	echo
+}
+ 
+
 function chk_sap(){
 
 	echo_msgsep "$FUNCNAME"
@@ -1358,23 +1583,7 @@ ulimit
 	echo
 	FIL=pam.txt
 	split_file ${FIL}
-# TODO
-#	echo "pam_limits :"
-#	f=$(grep -l "^# /etc/security/limits.conf$" ${TEMP}/${FIL}/xx*)
-#	test -z "$f" ||\
-#		awk'$1=="oracle" || $1~/sapsys/ || $1~/dba/ {print}' $f | sort -u
-#	echo
-# TODO
-#	echo "getent_passwd :"
-#	f=$(grep -l "^# /usr/bin/getent passwd$" ${TEMP}/${FIL}/xx*)
-#	test -z "$f" ||\
-#		awk -F: '$2~/SAP.*Administrator/ {print}' $f | sort -u	
-#	echo
-	echo "getent_group :"
-	f=$(grep -l "^# /usr/bin/getent group$" ${TEMP}/${FIL}/xx*)
-	# shellcheck disable=SC2086
-	test -z "$f" ||\
-		awk -F: '$1=="sapinst" || $1=="sapsys" || $1=="oper"  {print}' $f | sort -u
+	show_pam_sap
 	echo
 	echo "proc :"
 	FIL=memory.txt
@@ -1382,10 +1591,9 @@ ulimit
 	f=$(grep -l "^# /usr/bin/pmap [1-9]" ${TEMP}/${FIL}/xx*)
 	# shellcheck disable=SC2086
 	test -z "$f" ||\
-		awk '$2=="sapstartsrv" || $2=="sapstart" || $2~/ms\.sap/ || $2~/en\.sap/  || $2~/ig\.sap/ || $2=="igsmux_mt" || $2=="igspw_mt" || $2=="gwrd" || $2=="icman" || $2~/jc\.sap/ || $2=="jstart" {print}' $f | sort -u
-	# shellcheck disable=SC2086
-	test -z "$f" ||\
-		awk '$8~/sapstart/ || $8~/disp\+work/ || $8~/igswd_mt/ || $8~/igspw_mt/ || $8~/igsmux_mt/ || $8~/gwrd/ || $8~/icman/ || $8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ || $8~/dw_/ || $8~/jstart/  {print $8}' $f | sort -u
+		awk '$2=="sapstartsrv" || $2=="sapstart" || $2~/ms\.sap/ || $2~/en\.sap/ || $2~/ig\.sap/ || $2=="igsmux_mt" || $2=="igspw_mt" || $2=="gwrd" || $2=="icman" || $2~/jc\.sap/ || $2=="jstart" {print}' $f | sort -u
+		# shellcheck disable=SC2086
+		awk '$8~/sapstart/ || $8~/disp\+work/ || $8~/igswd_mt/ || $8~/igspw_mt/ || $8~/igsmux_mt/ || $8~/gwrd/ || $8~/icman/ || $8~/dboraslib/ || $8~/libaio/ || $8~/libclntsh.so/ || $8~/dw_/ || $8~/jstart/ {print $8}' $f | sort -u
 	echo
 
 # TODO 1310037   SUSE LINUX Enterprise Server 11: Installation notes?
@@ -1419,6 +1627,7 @@ function chk_saphana(){
 
 	echo_msgsep "$FUNCNAME"
 
+# TODO current SAP notes 19xxxx and  2xxxx for HANA 2.0
 # TODO chk_sap for 1310037   SUSE LINUX Enterprise Server 11: Installation notes?
 # TODO chk_sap for 1275776   prepare SLES ...?
 # 1514967   SAP HANA: Central Note
@@ -1448,10 +1657,12 @@ function chk_saphana(){
 
 	test -z "${HANA_SAP_BOOTARG}" &&\
 	HANA_SAP_BOOTARG="
-intel_idle.max_cstate=0
-processor.max_cstate=0
+intel_idle.max_cstate=1
+processor.max_cstate=1
 transparent_hugepage=never
+numa_balancing=disable
 "
+# TODO nospectre_v2 nopti?
 	test -z "${HANA_SUSE_BOOTARG}" &&\
 	HANA_SUSE_BOOTARG="
 elevator=noop
@@ -1495,9 +1706,11 @@ libgcc_s1:6.2.1
 libstdc++6:6.2.1
 libuuid1=2.25-22
 sapinit-systemd-compat=1.0-2.1
+saptune=2.0.3-3.11.1
 util-linux=2.25-22
 xfsprogs:3.1.8-0.5.1
 "
+	# TODO chrony
 	test -z "${HANA_SAP_PKG_YES}" &&\
 	HANA_SAP_PKG_YES="
 hal
@@ -1532,6 +1745,7 @@ sensors
 	HANA_SAP_PKG_NOT="
 ulimit
 "
+	# TODO chrony
 	test -z "${HANA_SAP_SVC_YES}" &&\
 	HANA_SAP_SVC_YES="
 boot.sysstat
@@ -1649,9 +1863,7 @@ HANA-Firewall
 	echo
 	
 	FIL="sysconfig.txt"
-
 	split_file ${FIL}
-
 	hana_defapd=$(echo "${HANA_SAP_BOOTARG}" "${HANA_SUSE_BOOTARG}" | tr -d "\n")
 	echo "SAP+SUSE recommended DEFAULT_APPEND: $hana_defapd"
 	echo "# /etc/sysconfig/bootloader:"
@@ -1664,9 +1876,7 @@ HANA-Firewall
 
 	# TODO HANA_SAP_SYSCTL, HANA_SUSE_SYSCTL as SAP_SYSCTL in chk_sap? 
 	FIL="etc.txt"
-
 	split_file ${FIL}
-
 	f=$(grep -l "^# /etc/sysctl.conf$" ${TEMP}/${FIL}/xx*)
 	echo "SAP recommended sysctl:"
 	# shellcheck disable=SC2086
@@ -1689,9 +1899,7 @@ HANA-Firewall
 	# TODO /boot/grub/menu.lst
 	
 	FIL="boot.txt"
-	
 	split_file ${FIL}
-
 	# TODO
 	echo
 	grep -A1 "^# /sys/kernel/mm/transparent_hugepage/enabled" memory.txt |\
@@ -1806,6 +2014,168 @@ HANA-Firewall
 	# shellcheck disable=SC2086
         test -z "$f" ||\
 		awk ' $9~/HDB_/ {print $9}' $f | sort -u | tail -2
+	echo
+	FIL=pam.txt
+	split_file ${FIL}
+	show_pam_sap
+	echo
+}
+
+
+function chk_hpehana(){
+
+	echo_msgsep $FUNCNAME
+
+	test -z "${HPE_HANA_PTRN}" &&\
+	HPE_HANA_PTRN="
+after.local
+"
+	test -z "${HPE_HANA_NIC}" &&\
+	HPE_HANA_NIC="
+"p3p[12]"
+"p6p[12]"
+"p[0-9]...[0-9]p[12]"
+"bond[0-7]"
+"em[0-9][0-9]"
+hana.prod
+hana.prd
+hana.nfs
+hana.int
+hana.qor
+hana.rep
+"
+# TODO check and complete HPE_HANA_PKG
+	test -z "${HPE_HANA_PKG}" &&\
+	HPE_HANA_PKG="
+HPE-HANA-Bundle-Release
+csDrift
+csurUpdate
+firmware-cna-emulex
+firmware-fc-qlogic
+firmware-hca-mellanox-vpi-eth-ib
+firmware-nic-broadcom
+firmware-system-u17
+firmware-system-p89
+hp-firmware-fc-qlogic
+hpsmh
+hp-ams
+hp-smx
+mlnx-ofa_kernel
+mlnx-ofa_kernel-kmp-default
+rear
+serviceguard
+serviceguard-extension-for-sap
+"
+	FIL="rpm.txt"
+	echo "RPMs for HPE HANA appliance:"
+	# TODO better pattern for package versions
+	for f in $HPE_HANA_PKG; do
+		echo -n "$f : "
+		grep -v -- "-32bit" ${FIL} |\
+		grep -e "^${f}-[0-9]" -e "^${f}-[A-Z].[0-9]" || echo "NO"
+        done | awk '{print $1,":",$3}' | sort
+	echo
+
+	FIL=boot.txt
+	echo "/etc/init.d/after.local:"
+	split_file ${FIL}
+	f=$(grep -l "^# /etc/init.d/after.local" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		grep -v "#==..Configuration.File" $f
+	rm -rf ${TEMP}/${FIL}
+	echo
+
+	FIL=tuned.txt
+	split_file ${FIL}
+	f=$(grep -l "^# /usr/lib/tuned/sap-hpe-hana/tuned.conf" ${TEMP}/${FIL}/xx*) 
+	test -z "$f" ||\
+		cat $f
+	rm -rf ${TEMP}/${FIL}
+	echo
+	
+	echo "NICs:"
+	echo
+
+	FIL=network.txt
+	split_file ${FIL}
+	f=$(grep -l "# /usr/sbin/wicked ifstatus --verbose all" ${TEMP}/${FIL}/xx*)
+	test -z "$f" || (
+		echo -n "number of slave devices: "
+		grep -c "\ enslaved$" $f
+		echo -n "number of bond devices: "
+		grep -c "type:.....bond, mode " $f
+		echo -n "number of vlans: "
+		grep -c "type:.....vlan bond.*, " $f
+		echo	
+		grep -v "^#" $f |\
+		# TODO better exclusion
+		grep -v "uuid:" | grep -v "route:.*ipv" | grep -v "leases:" |\
+		grep -v "addr:.*ipv6"
+	)
+	rm -rf ${TEMP}/${FIL}
+	echo
+
+	FIL=hardware.txt
+	# /usr/sbin/dmidecode
+	# /sbin/lspci -nn
+	# /sbin/lspci -vvv
+	# /usr/bin/lsusb -vv
+	# /bin/ls -al /dev | egrep "fd.*|dvd.*|cdr.*"
+	split_file ${FIL}
+	f=$(grep -l "# /usr/bin/dmidecode" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		for p in $HPE_HANA_NIC; do
+			echo "p: $p   f: $f"
+			# TODO meaningfull stanza limits
+			grep -A40 "SysFS.ID:./class/net/$p" $f |\
+			grep -e "Link.detected:" -e "Driver:"
+		done
+	f=$(grep -l "# /usr/sbin/hwinfo -braille" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		for p in $HPE_HANA_NIC; do
+			echo "$p"
+			# TODO meaningfull stanza limits
+			# TODO NIC drivers as HPE_... variable
+			# TODO "net.interface..name." does not exist for all drivers
+			grep -A40 "net.interface..name.=.$p" $f |\
+			grep -e "ethtool.driver:" -e "mlx._.*:" -e "be2net:" -e "ixgbe:" 
+		done
+	rm -rf ${TEMP}/${FIL}
+	echo
+
+	# TODO make it work
+	# /usr/bin/systool -vc net
+	# /usr/bin/systool -vb pci
+
+	FIL=sysfs.txt
+	split_file ${FIL}
+	f=$(grep -l "# /usr/bin/systool -vc net" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		for p in $HPE_HANA_NIC; do
+			# TODO meaningfull stanza limits
+			grep -v "00 00 00 00 00 00 00 00" $f |\
+			grep -A90 "Class.Device.=..$p" |\
+			grep -e "Class.Device.=" -e "mtu.*=" -e "speed.*=" -e "tx_.*=" -e "rx_.*=" -e "duplex.*=" -e "flags.*=" -e "mlx._port.*=" -e "numa_node.*="
+		done
+	echo
+	f=$(grep -l "# /usr/bin/systool -vb pci" ${TEMP}/${FIL}/xx*)
+		for p in $HPE_HANA_NIC; do
+			# TODO meaningfull stanza limits
+			grep -v "00 00 00 00 00 00 00 00" $f |\
+			grep -A90 "Class.Device.=..$p" |\
+			grep -e "Class.Device.=" -e "mtu.*=" -e "speed.*=" -e "tx_.*=" -e "rx_.*=" -e "duplex.*=" -e "flags.*=" -e "mlx._port.*=" -e "numa_node.*="
+		done
+	# TODO what about messages-YYYYMMDD.txt?
+	rm -rf ${TEMP}/${FIL}
+
+	FIL=messages.txt
+	split_file ${FIL}
+	f=$(grep -l "# /var/log/messages" ${TEMP}/${FIL}/xx*)
+	test -z "$f" ||\
+		for p in $HPE_HANA_PTRN; do
+			grep $p $f
+		done
+	rm -rf ${TEMP}/${FIL}
 	echo
 }
 
@@ -1961,7 +2331,7 @@ ClusterTools2
                 awk '$1=="'${p}'" {print $0}' ${FIL}
         done
         echo
-# TODO
+# TODO chrony
 	test -z "${ORA_SVC_YES}" &&\
 	ORA_SVC_YES="
 boot.clock
@@ -2046,12 +2416,13 @@ function chk_kernel(){
 	FIL="boot.txt"
 	grep -A1 "^# /bin/uname -a" ${FIL}
 	grep -A1 "^# /proc/cmdline" ${FIL}
-
 	grep "^\[.*Booting paravirtualized kernel on bare hardware" ${FIL}
-
 	echo -n "kernel.tainted : "
 	grep "^kernel.tainted.=" env.txt
-	echo
+
+	FIL="basic-health-check.txt"
+	test -r ${FIL} &&\
+	grep -e "TAINT:.\(.\)" -e "^Kernel.Status.--" ${FIL}
 }
 
 
@@ -2060,7 +2431,6 @@ function chk_software(){
 	echo_msgsep "$FUNCNAME"
 
 	FIL="basic-environment.txt"
-
 	grep -A7 "# /etc/os-release" ${FIL}
 	echo
 	grep -A1 "# /etc/lsb-release" ${FIL}
@@ -2077,7 +2447,7 @@ function chk_software(){
 System.architecture:
 Baseproduct:
 not.our.package:
-"	
+"
 	for p in $SOFTW_PTRN; do
 		grep "${p}" ${FIL}
 	done
@@ -2092,6 +2462,7 @@ function chk_updates(){
 	FIL="updates.txt"
 	# TODO sles-for-sap
 	# TODO fix doubled entries artefact "SLES12-*"
+	# TODO fix SLE-12 patterns, add SLE-15
 	test -z "${UPDT_PTRN}" &&\
 	UPDT_PTRN="
 "SLES12-"
@@ -2099,6 +2470,9 @@ function chk_updates(){
 "SLE12-HAE-SP"
 "SLE12-SP1-SAP-"
 "SLE12-SP2-SAP-"
+"SLE12-SP3-SAP-"
+"SLE12-SP4-SAP-"
+"SLE12-SP5-SAP-"
 "
 	for p in ${UPDT_PTRN}; do
 		grep "|.*|.${p}.*|.*|" ${FIL}
@@ -2114,9 +2488,7 @@ function chk_multipath(){
 	echo_msgsep "$FUNCNAME"
 
 	FIL="mpio.txt"
-
 	split_file ${FIL}
-
 	F=$(grep -l "# /etc/multipath.conf" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 	echo "# /etc/multipath.conf:"
 	# shellcheck disable=SC2086
@@ -2153,9 +2525,7 @@ function chk_filesys(){
 	echo_msgsep "$FUNCNAME"
 
 	FIL="fs-diskio.txt"
-
 	split_file ${FIL}
-	
 	F=$(grep -l "# /etc/fstab" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
 	# shellcheck disable=SC2086
 	grep -v "#==" $F | tr -s " "
@@ -2172,9 +2542,7 @@ function chk_filesys(){
 	echo
 
 	FIL="fs-btrfs.txt"
-
 	split_file ${FIL}
-
 	( grep -A4 "# /sbin/btrfs filesystem show" ${TEMP}/${FIL}/xx*
 	grep -A5 "# /sbin/btrfs scrub status /$" ${TEMP}/${FIL}/xx*
 	grep -A5 "# /sbin/btrfs filesystem df /$" ${TEMP}/${FIL}/xx*
@@ -2383,13 +2751,11 @@ vm.vfs_cache_pressure
 function chk_sysload(){
 
 	echo_msgsep "$FUNCNAME"
-	
-	FIL="basic-health-report.txt"
-	echo "basic-health-report:"
-	# TODO replace basic-health-report.txt
-	test -r ${FIL} &&\
-	grep "^[A-Z].*\[....e....\]$" ${FIL} | grep -v "Kernel.Taint"
-	# TODO make dfull work
+
+	# Thanks ralph.roth@suse.com
+	echo "basic-health-check:"
+	FIL="basic-health-check.txt"
+	# TODO make dfull work on SLE12 and 15
 	dfull="X"
 	dfull=$( test -r ${FIL} && grep "%.>=.90%" ${FIL} )
 	test "${dfull}" = "X" &&\
@@ -2397,10 +2763,15 @@ function chk_sysload(){
 		echo "$dfull"
 	)
 	echo
+	
+	# TODO hardare.txt:
+	FIL="hardware.txt"
+	grep -v "^#" $FIL | head -17 | tail -15
 
 	OWD=$PWD
 	cd sar || exit
-	# TODO sa?? now is sar20190309.xz. There is also sar20190309 plain ASCII.
+	# TODO sa?? now is sar20190309.xz.
+	# sar20190309 plain ASCII is only about the rpm itself.
 	# TODO print date of sar file to each output line
 	#	either by adding date from sar-fiel header,
 	#	or by grep-ing the alreday known maxima out of the files
@@ -2528,6 +2899,7 @@ function chk_sysload(){
 	# TODO network errors?
 	# TODO NFS client and server reports?
 	# TODO grep -A6 "numastat" sysctl.txt 
+	fi
 
 	cd "$OWD" || exit
 	echo

@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# ClusterTools2-timer
+#
+# Version: 2020-11-18
+#
+/usr/sbin/meminfolog /var/log/meminfo.log
+/usr/sbin/lsoflog /var/log/lsof.log "+D/opt +D/srv +D/home"
+/usr/sbin/psauxlog /var/log/psaux.log
+#

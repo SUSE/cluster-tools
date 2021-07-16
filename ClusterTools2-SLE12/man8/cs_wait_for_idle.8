@@ -1,0 +1,62 @@
+.TH cs_wait_for_idle 8 "14 Jul 2021" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_wait_for_idle \- wait until HA cluster is idle
+.\"
+.SH SYNOPSIS
+.B cs_wait_for_idle \fP--sleep \fI<seconds>\fR
+.br
+.B cs_wait_for_idle \fI[OPTION]\fR
+.\"
+.SH DESCRIPTION
+\fBcs_wait_for_idle\fP waits until the HA cluster is idle before returning.
+.br
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+        show help
+.HP
+\fB --version\fR
+        show version
+.HP
+\fB --sleep\fR
+        sleep for <s> seconds between probings
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH EXAMPLES
+.TP
+* Refresh HANA topology and HANA controller resources, as required before setting those resources from maintenance back to managed. Perform the actions once the cluster is idle to avoid possible problems with incorrectly detected resource status.
+.br
+# cs_wait_for_idle -s 3 && crm resource refresh cln_SAPHanaTop_HA1_HDB00;
+cs_wait_for_idle -s 3 && crm resource refresh msl_SAPHanaCon_HA1_HDB00;
+cs_wait_for_idle -s 3
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_wait_for_idle
+        the program itself
+.\"
+.SH BUGS
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBClusterTools2\fP(7), \fBcs_clusterstate\fP(8), \fBSAPHanaSR_maintenance_examples\fP(7)
+.\"
+.SH COPYRIGHT
+(c) 2021 L.Pinne, Germany.
+.br
+cs_wait_for_idle comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"
+

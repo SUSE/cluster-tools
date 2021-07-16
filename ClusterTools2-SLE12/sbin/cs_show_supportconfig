@@ -1931,10 +1931,10 @@ HANA-Firewall
 		tr -d "#"
 	echo "SAP recommended boot.local: echo never > /sys/kernel/mm/transparent_hugepage/enabled"
 	echo "# /etc/init.d/boot.local:"
-	F=$(grep -l "# /etc/init.d/boot.local" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')	
-	# shelltest -z "$F" ||\check disable=SC2086
-		test -z "$F" ||\
-			grep -v "^#" $F
+	F=$(grep -l "# /etc/init.d/boot.local" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')
+	# shellcheck disable=SC2086
+	test -z "$F" ||\
+		grep -v "^#" $F
 
 	FIL="sysfs.txt"
 	echo "SAP recommeded nr_anon_transparent_hugepages: 0 , nr_hugepages: 0"

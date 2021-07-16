@@ -8,13 +8,18 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2015-12-02 SLES11
+# Version: 2019-11-28 SLES11
+#
+# shellcheck disable=SC1090
 #
 
 EXE="$0"
 
 CFG="/etc/ClusterTools2/cs_show_cluster_transition"
 test -s $CFG && source $CFG
+
+RDM=$RANDOM
+JCTL=""
 
 test -z "/etc/corosync/corosync.conf" &&\
 test -z "${CLUSTER_LOG}" &&\
@@ -24,6 +29,13 @@ test -z "${CLUSTER_LOG}" &&\
 	 CLUSTER_LOG="/var/log/messages"
 
 ZIPPED_LOG="${CLUSTER_LOG}*bz2"
+
+if [ ! -s "${CLUSTER_LOG}" ]; then
+	if command -v journalctl 2>/dev/null; then
+		JCTL="/tmp/journalctl.$RDM"
+		CLUSTER_LOG=${JCTL}
+	fi
+fi
 
 #	 TRANST_PATTERN="
 #"crmd.*State.transition.S_IDLE"
@@ -38,8 +50,8 @@ ZIPPED_LOG="${CLUSTER_LOG}*bz2"
 #"
 
 function help() {
-	echo "	$(basename $0)"
-	echo "	$(basename $0) OPTION"
+	echo "	$(basename "$EXE")"
+	echo "	$(basename "$EXE") OPTION"
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
@@ -50,11 +62,10 @@ function help() {
 
 function show_sleha_release() {
 	# TODO
-	for b in SUSE_SLES_SAP sle-hae; do
+	for b in SUSE_SLES_SAP sle-hae sle-ha SLES_SAP; do
 	f=/etc/products.d/$b.prod
-	test -r $f &&\
-		grep "<version>[1-9][0-9]\.[0-9]</version>$" $f |\
-		tr "<>" "::"| awk -F":" '{print $3}'  ##'{print "'$b'",$3}'
+	test -r "$f" &&\
+		sed -n "s%.*<version>\([1-9][0-9].*[0-9]*\)</version>$%\1%p" "$f"
 	done
 }
 
@@ -66,7 +77,7 @@ function awk_transition_11-34() {
 	# for SLE-HA11 sp3,sp4
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
-		test -r $f && cat $f
+		test -r "$f" && cat "$f"
 	done | sort -M -k1,3 |\
 	awk '	$0~/crmd.*State.transition/ {print $1,$2,$3,$4,$10,"->",$12}
 		$0~/syslog-ng.s...ting.[du][po]/ {print $1,$2,$3,$4,$6,$7,$8}
@@ -82,10 +93,10 @@ function awk_transition_12-34() {
 	# TODO for SLE-HA12 sp3,sp4
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
-		test -r $f && cat $f
+		test -r "$f" && cat "$f"
 	done | sort -M -k1,3 |\
 	awk '	$0~/crmd.*State.transition/ {print $1,$7,"->",$9}
-		$0~/kernel.*bootconsole.*enabled/ {print $0} |\
+		$0~/kernel.*bootconsole.*enabled/ {print $0}' |\
 	awk '$7=="S_IDLE"{print $0,"\n"}; $7!="S_IDLE"{print $0}'
 }
 
@@ -99,7 +110,7 @@ function filter_transition() {
 	# for SLE-HA11 sp3,sp4
         echo "logs: $LOG" >/dev/stderr
         for f in ${LOG}; do
-                test -r $f && cat $f
+                test -r "$f" && cat "$f"
         done | sort -M -k1,3 |\
         perl -e 'while (<>) {
                   if ( /((\S+\s+){4}).*crmd.*State.transition.*(S_\w+)\s*->\s*(S_\w+)/ ) {
@@ -113,7 +124,7 @@ function filter_transition() {
 function awk_crmd-error() {
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
-		test -r $f && cat $f
+		test -r "$f" && cat "$f"
 	done | sort -M -k1,3 |\
 	grep -e "crmd:.*ERROR"
 }
@@ -129,30 +140,33 @@ case $1 in
 		exit
 	;;
 	-v|--version)
-		echo -n "$(basename $EXE) "
-        	head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	-z|--zip)
+		test -n "${JCTL}" && journalctl --no-pager >$JCTL
 		LOG=""
 		for z in ${ZIPPED_LOG}; do
-			test -s $z && LOG="${LOG} ${z}"
+			test -s "$z" && LOG="${LOG} ${z}"
 		done
 		# unzipped log has to be last in loop :-/
-		test -s ${CLUSTER_LOG} && LOG="${LOG} ${CLUSTER_LOG}"
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${LOG} ${CLUSTER_LOG}"
 		#awk_transition_11-34
 		echo noop	
 		exit
 	;;
 	-e|--error)
-		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		test -n "${JCTL}" && journalctl --no-pager >$JCTL
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${CLUSTER_LOG}"
 		awk_crmd-error
 		exit
 	;;
 	*)
-		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		test -n "${JCTL}" && journalctl --no-pager >$JCTL
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${CLUSTER_LOG}"
 		rel=$(show_sleha_release)
-		if [ "$rel" == "11.3" -o "$rel" == "11.4" ]; then
+		if [ "$rel" == "11.3" ] || [ "$rel" == "11.4" ]; then
 			#filter_transition
 			awk_transition_11-34
 		else

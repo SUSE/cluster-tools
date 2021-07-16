@@ -1,0 +1,6 @@
+#/etc/ClusterTools2/cs_show_cluster_transition
+# For SLES11.
+#
+# calculated, if empty:
+# CLUSTER_LOG="/var/log/messages"
+#

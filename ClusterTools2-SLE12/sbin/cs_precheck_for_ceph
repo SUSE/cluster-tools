@@ -8,7 +8,9 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2015-08-20 15:35
+# Version: 2019-11-28 15:35
+#
+# shellcheck disable=SC1090,SC2128
 #
 
 EXE="$0"
@@ -120,8 +122,8 @@ xfsdump
 
 
 function help() {
-	echo "usage:	$(basename $0)"
-	echo "	$(basename $0) [OPTION]"
+	echo "usage:	$(basename "$EXE")"
+	echo "	$(basename "$EXE") [OPTION]"
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
@@ -142,7 +144,7 @@ function echo_msgsep(){
 function prck_hardware(){
 
 	echo "INFO: start $EXE $FUNCNAME"
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	echo -n "cpu "
 	/usr/bin/grep "model.name" /proc/cpuinfo | sort -u
@@ -165,7 +167,7 @@ function prck_hardware(){
 function prck_kernel(){
 
 	echo "INFO: start $EXE $FUNCNAME"
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	# TODO show recommeded version from HANA_VERS_MIN
 	echo -n "Kernel: "; /bin/uname -s -r -v -m -p -i -o
@@ -174,7 +176,7 @@ function prck_kernel(){
 	FIL="/proc/cmdline"
 	for f in $FIL; do
 		for a in ${CEPH_BOOTARG} ${CEPH_BOOTARG}; do
-			FOUND=$(grep $a $f)
+			FOUND=$(grep "$a" $f)
 			test -z "${FOUND}" && FOUND="NA"
 			echo "${f}: ${a} :	${FOUND}"
 		done
@@ -189,7 +191,7 @@ function prck_kernel(){
 	OPT="/sys/devices/system/cpu/cpu*/cpufreq/scaling_governor /sys/kernel/mm/transparent_hugepage/enabled /sys/.*/scheduler"
 	f="/etc/init.d/boot.local"
 	for a in $OPT ; do
-		FOUND=$(grep $a $f)
+		FOUND=$(grep "$a" $f 2>/dev/null)
 		test -z "${FOUND}" && FOUND="NA"
 		echo "${f}: ${a} :      ${FOUND}"
 	done
@@ -212,6 +214,15 @@ function prck_kernel(){
 	echo -n "Elevator: cfq (=0): "
 	find /sys/devices/ -name "scheduler" -exec grep "\[cfq\]" {} \; | wc -l
 	echo
+	echo -n "Elevator: mq-deadline: "
+	find /sys/devices/ -name "scheduler" -exec grep "\[mq-deadline\]" {} \; | wc -l
+	echo -n "Elevator: none: "
+	find /sys/devices/ -name "scheduler" -exec grep "\[none\]" {} \; | wc -l
+	echo -n "Elevator: kyber: "
+	find /sys/devices/ -name "scheduler" -exec grep "\[kyber\]" {} \; | wc -l
+	echo -n "Elevator: bfq: "
+	find /sys/devices/ -name "scheduler" -exec grep "\[bfq\]" {} \; | wc -l
+	echo
 
 	FOUND=$(lsmod | grep -e dog -e wdt | cut -d" " -f1 | tr "\n" " ")
 	test -z "${FOUND}" && FOUND="NA"
@@ -225,7 +236,7 @@ function prck_kernel(){
 function prck_network(){
 
 	echo "INFO: start $EXE $FUNCNAME"
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	# TODO fix output
 	a="bond"
@@ -246,12 +257,12 @@ function prck_network(){
 function prck_sysconf(){
 
 	echo "INFO: start $EXE $FUNCNAME"
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
-	FIL="/boot/grub/menu.lst /etc/sysconfig/bootloader"
+	FIL="/boot/grub/menu.lst /etc/sysconfig/bootloader /boot/grub2/grub.cfg"
 	for f in $FIL; do
 		for a in ${CEPH_BOOTARG}; do
-			FOUND=$(grep $a $f)
+			FOUND=$(grep "$a" "$f" 2>/dev/null)
 			test -z "${FOUND}" && FOUND="NA"
 			echo "${f}: ${a} :	${FOUND}"
 		done
@@ -261,7 +272,7 @@ function prck_sysconf(){
 	OPT="/sys/devices/system/cpu/cpu*/cpufreq/scaling_governor /sys/kernel/mm/transparent_hugepage/enabled /sys/.*/scheduler"
 	f="/etc/init.d/boot.local"
 	for a in $OPT ; do
-		FOUND=$(grep $a $f)
+		FOUND=$(grep "$a" $f 2>/dev/null)
 		test -z "${FOUND}" && FOUND="NA"
 		echo "${f}: ${a} :      ${FOUND}"
 	done
@@ -269,7 +280,7 @@ function prck_sysconf(){
 
 	f=/etc/sysctl.conf
 	for a in ${CEPH_SYSCTL}; do
-		FOUND=$(grep $a $f)
+		FOUND=$(grep "$a" $f)
 		test -z "${FOUND}" && FOUND="NA"
 		echo "${f}: ${a} :	${FOUND}"
 	done
@@ -278,19 +289,25 @@ function prck_sysconf(){
 	# TODO variable
 	for f in bootloader kernel kdump; do
 		g="/etc/sysconfig/$f"
+		test -r $g || echo "${g}: NA"; continue
 		echo "${g}:"
 		grep -v "^#" $g | tr -s "\n" | grep -v "\"\"$"
 		echo 
 	done	
 	echo
-
-	FOUND=$(/usr/bin/zcat /boot/initrd | cpio -itv 2>/dev/null |\
-		colrm 43 54 | grep -e dog.*.ko -e wdt.*.ko |\
+	
+	CMD=/usr/bin/zcat
+	INITRD=$(readlink /boot/initrd 2>/dev/null)
+	if [ "$(file /boot/"$INITRD" | sed 's%.*:%%')" == " XZ compressed data" ]; then
+		CMD=/usr/bin/xzcat
+	fi
+	FOUND=$($CMD /boot/"$INITRD" | cpio -itv 2>/dev/null |\
+		colrm 43 54 | grep -e "dog.*.ko" -e "wdt.*.ko" |\
 		awk '{print $6}' | tr "\n" " ")
 	test -z "${FOUND}" && FOUND="NA"
 	echo "Watchdog in initrd:      ${FOUND}"
 
-	FOUND=$(/usr/bin/zcat /boot/initrd | cpio -itv 2>/dev/null |\
+	FOUND=$($CMD /boot/"$INITRD" | cpio -itv 2>/dev/null |\
 		colrm 43 54 | grep -e "/etc/multipath.*"  -e lvm.conf |\
 		awk '{print $6}' | tr "\n" " ")
 	test -z "${FOUND}" && FOUND="NA"
@@ -304,19 +321,20 @@ function prck_sysconf(){
 function prck_runlvl(){
 
 	echo "INFO: start $EXE $FUNCNAME"
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
-	FOUND=$(awk -F: '$1=="id" && $3=="initdefault" {print $2}' /etc/inittab)
+	test -r /etc/inittab && FOUND=$(awk -F: '$1=="id" && $3=="initdefault" {print $2}' /etc/inittab) || FOUND=$(systemctl get-default)
 	test -z "${FOUND}" && FOUND="NA"
 	echo "default runlevel (3):	${FOUND}"
+	echo
 
 	for a in ${CEPH_SVC_YES}; do
-		FOUND=$(chkconfig -A | grep $a | awk '{print $2}')
+		FOUND=$(chkconfig -A | grep "$a" | awk '{print $2}')
 		test -z "${FOUND}" && FOUND="NA"
 		echo "chkconfig ${a} ON:	${FOUND}"
 	done
 	for a in ${CEPH_SVC_OFF} ${CEPH_SVC_OFF}; do
-		FOUND=$(chkconfig -A | grep $a | awk '{print $2}')
+		FOUND=$(chkconfig -A | grep "$a" | awk '{print $2}')
 		test -z "${FOUND}" && FOUND="NA"
 		echo "chkconfig ${a} OFF:	${FOUND}"
 	done
@@ -329,16 +347,16 @@ function prck_runlvl(){
 function prck_basesoft(){
 
 	echo "INFO: start $EXE $FUNCNAME"
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	echo
 	zypper lr
 	echo
 
 	# TODO abort zypper, if server not reached
-	INSTALLED_PTRN=$(zypper -n se -t pattern | awk '$1=="i" {print $3}')
+	INSTALLED_PTRN=$(zypper -n se -t pattern | awk '($1=="i" || $1=="i+") {print $3}')
 	for a in ${CEPH_PTRN}; do
-		FOUND=$(echo $INSTALLED_PTRN | tr " " "\n" | grep $a)
+		FOUND=$(echo "$INSTALLED_PTRN" | tr " " "\n" | grep "$a")
 		test -z "${FOUND}" && FOUND="NA"
 		echo "pattern ${a}:       ${FOUND}"
 	done
@@ -346,7 +364,7 @@ function prck_basesoft(){
 
 	RPMLIST=$(rpm -qa | sort)
 	for a in ${CEPH_PKG_YES}; do
-		FOUND=$(echo $RPMLIST | tr " " "\n" | grep $a | tr "\n" " ")
+		FOUND=$(echo "$RPMLIST" | tr " " "\n" | grep "$a" | tr "\n" " ")
 		test -z "${FOUND}" && FOUND="NA"
 		echo "${a} :      ${FOUND}"
 	done
@@ -360,7 +378,7 @@ function prck_basesoft(){
 function prck_apps() {
 
 	echo "INFO: start $EXE $FUNCNAME"
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	# TODO check for CEPH
 	echo
@@ -371,8 +389,8 @@ function prck_apps() {
 # main()
 case $1 in
 	-v|--version)
-		echo -n "$(basename $EXE) "
-        	head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	-b|--base)
@@ -380,14 +398,14 @@ case $1 in
 
 		test $UID -gt 0 && echo "please call as root." && exit
 		mkdir $TEMP
-		cd $TEMP
+		cd $TEMP || exit
 		prck_hardware
 		prck_kernel
 		prck_sysconf
 		prck_runlvl
 		prck_network
 		prck_basesoft
-		cd $OLDPWD
+		cd "$OLDPWD" || exit
 		rm -rf $TEMP
 
 		echo "INFO: normal_end $EXE"

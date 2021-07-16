@@ -10,20 +10,33 @@
 #
 # Version: 2020-12-14
 #
+# shellcheck disable=SC1090,SC2140,SC2125
+# SC2140 and SC2125 are needed because of the ongoing pattern declaration
+# discussion.
+#
 
 EXE="$0"
 
 CFG="/etc/ClusterTools2/cs_show_cluster_patterns"
 test -s $CFG && source $CFG
 
+RDM=$RANDOM
+JCTL=""
+
 test -z "/etc/corosync/corosync.conf" &&\
 test -z "${CLUSTER_LOG}" &&\
 	 CLUSTER_LOG=$(grep "^[^#]*logfile:.*/" /etc/corosync/corosync.conf |\
 		 tr -d "    " | cut -d":" -f2)
 test -z "${CLUSTER_LOG}" &&\
-	 CLUSTER_LOG="/var/log/messages"
-
+	CLUSTER_LOG="/var/log/messages"
 ZIPPED_LOG="${CLUSTER_LOG}*bz2"
+
+if [ ! -s "${CLUSTER_LOG}" ]; then
+	if command -v journalctl 2>/dev/null; then
+		JCTL="/tmp/journalctl.$RDM"
+		CLUSTER_LOG=${JCTL}
+	fi
+fi
 
 # TODO: what error msgs. make sense?
 # TODO: xfs_repair
@@ -167,7 +180,7 @@ RESRC_PATTERN
 
 
 function help(){
-	echo "	$(basename $0) OPTION"
+	echo "	$(basename "$EXE") OPTION"
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
@@ -182,9 +195,10 @@ function help(){
 
 
 function writecfg(){
-	echo -e "# $CFG \n# For SLES11.\n#"
+	echo -e "# $CFG \n# For SLES12 and SLES15.\n#"
 	for c in $CFGVAR; do
 		echo "${c}=\""
+		# shellcheck disable=SC2086
 		echo ${!c} | tr " " "\n"
 		echo "\""
 		echo "#"
@@ -196,9 +210,10 @@ function run_grep_show(){
 	echo "logs: $LOG" >/dev/stderr
 
         # TODO: more efficient loop
+	# shellcheck disable=SC2086
 	for e in ${OSERR_PATTERN} ${CLUSTR_PATTERN} ${RESRC_PATTERN}; do
 		for f in ${LOG}; do
-			test -r $f && cat $f
+			test -r "$f" && cat "$f"
 		done | grep -i $e
 	done | sort -M -k1,3
 	# TODO: sort by timestamp OK ? "Sep 27 17:04:11 "
@@ -210,11 +225,12 @@ function run_grep_count(){
 	echo "logs: $LOG" >/dev/stderr
 
 	# TODO: more efficient loop
+	# shellcheck disable=SC2086
 	for e in ${OSERR_PATTERN} ${CLUSTR_PATTERN} ${RESRC_PATTERN}; do
         	echo -n "$e = "
 		for f in ${LOG}; do
-			test -r $f && cat $f
-		done | bzgrep -ic $e
+			test -r "$f" && cat "$f"
+		done | zgrep -ic $e
 	done
 }
 
@@ -224,7 +240,7 @@ function run_grep_count(){
 function awk_migration(){
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
-		test -r $f && cat $f
+		test -r "$f" && cat "$f"
 	done | sort -M -k1,3 |\
 	awk '$0~/pengine.*LogActions:.Move/ {print}' 
 }
@@ -237,7 +253,7 @@ function awk_migration(){
 function awk_fencing(){
 	echo "logs: $LOG" >/dev/stderr
 	for f in ${LOG}; do
-		test -r $f && cat $f
+		test -r "$f" && cat "$f"
 	done | sort -M -k1,3 |\
 	grep -e "pengine:.*Node.*fenced" -e "sbd:.*reset"
 }
@@ -247,8 +263,8 @@ function awk_fencing(){
 # main()
 case $1 in
 	-v|--version)
-		echo -n "$(basename $EXE) "
-        	head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	-w|--writecfg)
@@ -256,32 +272,37 @@ case $1 in
 		exit
 	;;
 	-z|--zip)
+		test -n "${JCTL}" && journalctl --no-pager >$JCTL
 		LOG=""
 		for z in ${ZIPPED_LOG}; do
-			test -s $z && LOG="${LOG} ${z}"
+			test -s "$z" && LOG="${LOG} ${z}"
 		done
 		# unzipped log has to be last in loop :-/
-		test -s ${CLUSTER_LOG} && LOG="${LOG} ${CLUSTER_LOG}"
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${LOG} ${CLUSTER_LOG}"
 		run_grep_count
 		exit
 	;;
 	-c|--count)
-		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		test -n "${JCTL}" && journalctl --no-pager >$JCTL
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${LOG} ${CLUSTER_LOG}"
 		run_grep_count
 		exit		
 	;;
 	-f|--fencing)
-		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		test -n "${JCTL}" && journalctl --no-pager >$JCTL
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${LOG} ${CLUSTER_LOG}"
 		awk_fencing
 		exit
 	;;
 	-m|--migration)
-		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		test -n "${JCTL}" && journalctl --no-pager >$JCTL
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${LOG} ${CLUSTER_LOG}"
 		awk_migration
 		exit
 	;;
 	-s|--show)
-		test -s ${CLUSTER_LOG} && LOG="${CLUSTER_LOG}"
+		test -n "${JCTL}" && journalctl --no-pager >$JCTL
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${LOG} ${CLUSTER_LOG}"
 		run_grep_show
 		exit		
 	;;

@@ -10,6 +10,10 @@
 #
 # Version: SLES12 0.2 2020-08-31
 #
+# shellcheck disable=SC1090,SC2140,SC2125,SC2037,SC2211
+# SC2140,SC2125,SC2037 and SC2211 are needed because of the ongoing
+# pattern declaration discussion.
+#
 
 EXE="$0"
 
@@ -34,7 +38,7 @@ test -z "${SYSTEM_LOG}" &&\
 	 SYSTEM_LOG="/var/log/messages /var/log/boot.msg /var/log/boot.omsg /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0 /var/log/mcelog"
 
 # TODO SLES12 bond ...?
-if which journalctl 2>/dev/null; then
+if command -v journalctl 2>/dev/null; then
 	JCTL="/tmp/journalctl.$RDM"
 	test -z "${SYSTEM_LOG}" &&\
 		SYSTEM_LOG="/var/log/messages /var/spool/mail/root /proc/mdstat /proc/net/bonding/bond0 /var/log/mcelog"
@@ -43,12 +47,13 @@ SYSTEM_LOG="${SYSTEM_LOG} ${DMSG} ${JCTL}"
 
 test -z "/etc/corosync/corosync.conf" &&\
 test -z "${CLUSTER_LOG}" &&\
-	 CLUSTER_LOG=$(grep "logfile:.*/" /etc/corosync/corosync.conf |\
+	 CLUSTER_LOG=$(grep "^[^#]*logfile:.*/" /etc/corosync/corosync.conf |\
 		 tr -d "    " | cut -d":" -f2)
 
 test -z "${ZIPPED_LOG}" &&\
 	ZIPPED_LOG="/var/log/messages*bz2"
-	ZIPPED_LOG="${ZIPPED_LOG} $(echo ${CLUSTER_LOG}|tr -d \\n)*bz2"
+test -n "${CLUSTER_LOG}" &&\
+	ZIPPED_LOG="${ZIPPED_LOG} $(echo "${CLUSTER_LOG}"|tr -d \\n)*bz2"
 
 # TODO add more HBA errors: hpsa cciss
 # TODO function to check for unwanted blanks: grep "^\".*\ .*\"$" $EXE
@@ -301,8 +306,8 @@ test -z "${APPERR_PATTERN}" &&\
 "
 
 function help() {
-	echo "usage:	$(basename $0)"
-	echo "	$(basename $0) [OPTION]"
+	echo "usage:	$(basename "$EXE")"
+	echo "	$(basename "$EXE") [OPTION]"
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
@@ -312,9 +317,10 @@ function help() {
 
 
 function writecfg(){
-	echo -e "# $CFG \n# For SLES12.\n#"
+	echo -e "# $CFG \n# For SLES12 and SLES15.\n#"
 	for c in $CFGVAR; do
 		echo "${c}=\""
+		# shellcheck disable=SC2086
 		echo ${!c} | tr " " "\n"
 		echo "\""
 		echo "#"
@@ -326,19 +332,21 @@ function run_grep() {
 	echo -e "logs: $LOG\n" >/dev/stderr
 
 	dmesg >$DMSG
-	which journalctl 2>/dev/null && journalctl --no-pager >$JCTL
+	command -v journalctl 2>/dev/null && journalctl --no-pager >$JCTL
 
 	# TODO more efficient loop
+	# shellcheck disable=SC2086
 	for e in ${ERROR_PATTERN} ${SVCERR_PATTERN}; do
         	echo -n "$e = "
 		for f in ${LOG}; do
-			test -r $f && cat $f
+			test -r "$f" && cat "$f"
 		done | zgrep -ic $e
 	done
+	# shellcheck disable=SC2086
 	for e in ${CLUERR_PATTERN} ${APPERR_PATTERN}; do
         	echo -n "$e = "
 		for f in ${LOG}; do
-			test -r $f && cat $f
+			test -r "$f" && cat "$f"
 		done | zgrep -ic $e
 	done
 
@@ -349,8 +357,8 @@ function run_grep() {
 # main()
 case $1 in
 	-v|--version)
-		echo -n "$(basename $EXE) "
-        	head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	-h|--help)
@@ -363,16 +371,16 @@ case $1 in
 	;;
 	-z|--zip)
 		LOG="${SYSTEM_LOG}"
-		test -s ${CLUSTER_LOG} && LOG="${LOG} ${CLUSTER_LOG}"
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${LOG} ${CLUSTER_LOG}"
 		for z in ${ZIPPED_LOG}; do
-			test -s $z && LOG="${LOG} ${z}"
+			test -s "$z" && LOG="${LOG} ${z}"
 		done
 		run_grep
 		exit
 	;;
 	*)
 		LOG="${SYSTEM_LOG}"
-		test -s ${CLUSTER_LOG} && LOG="${LOG} ${CLUSTER_LOG}"
+		{ test -n "${CLUSTER_LOG}" && test -s "${CLUSTER_LOG}"; } && LOG="${LOG} ${CLUSTER_LOG}"
 		run_grep
 		exit		
 	;;

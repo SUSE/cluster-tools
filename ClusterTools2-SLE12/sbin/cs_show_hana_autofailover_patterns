@@ -17,15 +17,16 @@
 # TODO FCHBA needed?
 #
 
-DATE=${2:-"2019-01-27"}
+D=$(date +"%F")
+DATE=${2:-"$D"}
 LOGS=${3:-"messages*"}
 FCHBA=${4:-"ibmvfc"}
 
 EXE=$0
-ERR="/dev/null"
-TEMP="/dev/shm/cltl.$RANDOM"
+#TEMP="/dev/shm/cltl.$RANDOM"
 
-NLOG=$(ls -1 ${LOGS} | wc -l)
+# shellcheck disable=SC2086
+NLOG=$(find ${LOGS} | wc -l)
 #echo $LOGS
 #echo $NLOG
 #exit
@@ -34,12 +35,13 @@ NLOG=$(ls -1 ${LOGS} | wc -l)
 # find pattern
 function find_line() {
 	# TODO date and time
+	# shellcheck disable=SC2086
 	grep "${DATE}.*${1}" $LOGS | cut_line | show_info "${2}"
 }
 
 # select colums
 function cut_line() {
-	if ( test $NLOG -eq 1 ); then 
+	if test "$NLOG" -eq 1; then
 		awk -F" " '{print $1}' |\
 		awk -F":" '{print $1":"$2":"$3}' |\
 		awk -F"." '{print $1}' | sort -u
@@ -52,7 +54,7 @@ function cut_line() {
 
 # show additional info
 function show_info() {
-	while read; do echo ${REPLY}" - "${1} ; done
+	while read -r; do echo "${REPLY}"" - ""${1}" ; done
 }
 
 # find SCSI reservation 
@@ -122,7 +124,7 @@ function find_boot() {
 
 # show help
 function show_help() {
-	BEX=$(basename $EXE)
+	BEX=$(basename "$EXE")
 	echo "usage: $BEX [--help | --version]"
 	echo "usage: $BEX OPTION [<date> [<logfile> [<hba>]]]"
 	echo
@@ -146,8 +148,8 @@ case $1 in
 		exit
 	;;
 	--version|-v)
-		echo -n "$(basename $EXE) "
-		head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	--scsi)

@@ -10,9 +10,11 @@
 #
 # Version: 2019-12-05
 #
+# shellcheck disable=SC2068
 
 function help(){
-	local script_name=$(basename $0)
+	local script_name
+	script_name=$(basename "$0")
 	echo "${script_name}: convert time values between wall time and seconds since Epoch format."
 	echo
 	echo "usage: $script_name time_value"
@@ -25,9 +27,9 @@ function help(){
 
 function convert_time(){
 	if [[ $# -gt 1 ]]; then
-		echo $(date -d "$*" +%s)
+		date -d "$*" +%s
 	else
-		echo $(date -d @$1)
+		date -d @"$1"
 	fi
 }
 
@@ -38,8 +40,8 @@ fi
 
 case $1 in
 	-v|--version)
-		ver_string=$(grep "^# Version:" $0 | cut -c3-)
-		echo -e "$(basename $0) $ver_string"
+		ver_string=$(grep "^# Version:" "$0" | cut -c3-)
+		echo -e "$(basename "$0") $ver_string"
 	;;
 	-h|--help)
 		help

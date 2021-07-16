@@ -10,6 +10,8 @@
 #
 # Version: 0.1 2011-10-17
 #
+# shellcheck disable=SC2086
+#
 
 D=$(date +"%F %T")
 E="/dev/null"
@@ -17,7 +19,7 @@ L=${1:-"/var/log/lsof.log"}
 P=${2:-"+D/opt +D/srv"}
 T=${3:-"42"}
 
-lsof -n -P -X -w -S $T +fg +x ${P} 2>$E | while read; do
-	echo $D: $REPLY
-done >>$L
+lsof -n -P -X -w -S "$T" +fg +x ${P} 2>$E | while read -r; do
+	echo "$D": "$REPLY"
+done >>"$L"
 #

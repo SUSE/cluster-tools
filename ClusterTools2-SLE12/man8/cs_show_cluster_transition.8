@@ -1,0 +1,105 @@
+.TH cs_show_cluster_transition 8 "03 Aug 2014" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_show_cluster_transition \- search log files for cluster transition patterns
+.\"
+.SH SYNOPSIS
+.B cs_show_cluster_transition \fI[OPTION]\fR
+.\"
+.SH DESCRIPTION
+\fBcs_show_cluster_transition\fP searches log files for crmd cluster transition
+patterns. Please note that crmd writes to log on the DC node only.
+
+All cluster state transitions are triggered by an event. Any change of the
+cluster state is an event. The cluster also generates events on a regular base,
+f.e. every 900 seconds. Normal state of the cluster is IDLE.
+
+Currrently known states are:
+.br
+ S_IDLE
+.br
+ S_POLICY_ENGINE
+.br
+ S_TRANSITION_ENGINE
+.br
+ S_STARTING
+.br
+ S_PENDING
+.br
+ S_ELECTION
+.br
+ S_INTEGRATION
+.br
+ S_FINALIZE_JOIN
+.br
+ S_NOT_DC
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+	show help.
+.HP
+\fB --version\fR
+	show version.
+.\" .HP
+.\" \fB --zip\fR
+.\"	show transitions compressed logs, too. This could take some time.
+.HP
+\fB --error\fR
+	show crmd errors.
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH EXAMPLES
+.HP
+# cs_show_cluster_transition
+.HP
+# cs_show_cluster_transition | grep -e "DC" -e "o.*line"
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_show_cluster_transition
+	the program itself.
+.TP
+/etc/ClusterTools2/cs_show_cluster_transition
+	the configuration.
+.TP
+/etc/corosync/corosync.conf
+	the corosync configuration, maybe defining log file. 
+.TP
+/etc/products.d/
+	the directory with product identification files.
+.TP
+/var/log/messages
+	the default log file.
+.\"
+.SH BUGS
+Currently SLES11 SP1 and SP2 are handled correctly.
+For SLES11 SP3 and SP4 only a sub-set of patterns is shown, because fields differ.
+Only /var/log/messages is parsed correctly.
+The optional corosync log has a different format.
+Feedback is welcome, please use the project page at
+.br
+https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
+.\"
+.SH SEE ALSO
+\fBcs_show_error_patterns\fP(8), \fBcs_show_cluster_patterns\fP(8),
+\fBptest\fP(8), \fBcrm_attribute\fP(8), \fBcrm_simulate\fP(8),
+\fBgrep\fP(1), \fBsyslog\fP(8), \fBlogrotate\fP(8), \fBClusterTools2\fP(7),
+.br
+http://www.clusterlabs.org/man/
+.\"
+.\"
+.SH COPYRIGHT
+(c) 2011-2014 L.Pinne, Germany.
+.br
+cs_show_cluster_transition comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

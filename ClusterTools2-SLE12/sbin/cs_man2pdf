@@ -13,14 +13,12 @@
 # TODO handle perl man pages with "::" in filenames
 
 EXE="$0"
-ERR="/dev/null"
-
 
 function show_help(){
-	echo "usage: $(basename $0) --help | --version"
-	echo "usage: $(basename $0) --dir <dir>"
-	echo "usage: $(basename $0) --rpm <rpm>"
-	echo "usage: $(basename $0) <man_page> <section>"
+	echo "usage: $(basename "$EXE") --help | --version"
+	echo "usage: $(basename "$EXE") --dir <dir>"
+	echo "usage: $(basename "$EXE") --rpm <rpm>"
+	echo "usage: $(basename "$EXE") <man_pag> <section>"
 	echo
 	echo " --dir <dir>	convert man pages from directory"
 	echo " --rpm <rpm>	convert man pages from installed RPM"
@@ -32,28 +30,30 @@ function show_help(){
 function from_dir(){
 	# TODO .gz.pdf -> .pdf
 	R=${1}
-	ls "${R}" | grep -v "pdf$" | while read; do echo ${REPLY} |\
-		man -Tps ${R}/${REPLY} 2>/dev/null |\
-		ps2pdf - >${REPLY}.pdf 2>/dev/null
+	# shellcheck disable=SC2010
+	ls "${R}" | grep -v "pdf$" | while read -r; do echo "${REPLY}" |\
+		man -Tps "${R}"/"${REPLY}" 2>/dev/null |\
+		ps2pdf - >"${REPLY}".pdf 2>/dev/null
 	done
 }
 
 
 function from_rpm(){
 	R=${1}
-	rpm -ql ${R} | grep "/man/" | while read; do basename $REPLY; done |\
+	# shellcheck disable=SC2086
+	rpm -ql ${R} | grep "/man/" | while read -r; do basename "$REPLY"; done |\
 	awk -F"." 'NF==2 && $2!="gz" {print $1,$2}
 		   NF==3 && $3=="gz" {print $1,$2}
 		   NF==4 && $4=="gz" {print $1"."$2,$3}
 		   NF==3 && $3!="gz" {print $1"."$2,$3}' |\
-	while read; do do_man2pdf $REPLY; done
+	while read -r; do do_man2pdf $REPLY; done
 }
 
 
 function do_man2pdf(){
 	M=${1}
 	S=${2}
-	man -Tps ${M} ${S} 2>/dev/null | ps2pdf - >${M}.${S}.pdf 2>/dev/null
+	man -Tps "${M}" "${S}" 2>/dev/null | ps2pdf - >"${M}"."${S}".pdf 2>/dev/null
 }
 
 
@@ -61,8 +61,8 @@ function do_man2pdf(){
 
 case $1 in
 	-v|--version)
-		echo -n "$(basename $EXE) "
-		head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	-h|--help)
@@ -70,17 +70,17 @@ case $1 in
 		exit
 	;;
 	-d|--dir)
-		from_dir $2
+		from_dir "$2"
 		exit
 	;;
 	-r|--rpm)
-		from_rpm $2
+		from_rpm "$2"
 		exit
 	;;
 	*)
 		# TODO better checks
 		test $# -eq 2 || show_help
-		do_man2pdf $1 $2
+		do_man2pdf "$1" "$2"
 		exit
 	;;
 esac

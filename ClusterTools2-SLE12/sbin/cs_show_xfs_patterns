@@ -8,14 +8,15 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-02-20 20:20 SLES12
+# Version: 2019-11-28 20:20 SLES12
 #
 # TODO /etc/ClusterTools2/cs_show_xfs_patterns
 # TODO  --help
 # TODO  -g and -f like cs_show_supportconfig
 #
 
-DATE=${1:-"2019-01-27"}
+D=$(date +"%F")
+DATE=${1:-"$D"}
 LOGS="messages*"
 
 # TODO enable run in live system
@@ -33,26 +34,30 @@ function cut_line() {
 }
 
 function show_info() {
-        while read; do echo ${REPLY}" - "${1} ; done
+        while read -r; do echo "${REPLY}"" - ""${1}" ; done
 }
 
 function show_xfs_mnt() {
-	grep ${DATE}".*XFS.*${1}.*clean.mount" $LOGS |\
+	# shellcheck disable=SC2086
+	grep "${DATE}.*XFS.*${1}.*clean.mount" $LOGS |\
 	cut_line
 }
 
 function show_xfs_umnt() {
-	grep ${DATE}".*XFS.*${1}.*Unmounting.Filesystem" $LOGS |\
+	# shellcheck disable=SC2086
+	grep "${DATE}.*XFS.*${1}.*Unmounting.Filesystem" $LOGS |\
 	cut_line
 }
 
 function show_xfs_recv() {
-	grep ${DATE}".*XFS.*${1}.*Ending.recovery" $LOGS |\
+	# shellcheck disable=SC2086
+	grep "${DATE}.*XFS.*${1}.*Ending.recovery" $LOGS |\
 	cut_line
 }
 
 function show_xfs_shut() {
-	grep ${DATE}".*XFS.*${1}.*Shutting.down.filesystem" $LOGS |\
+	# shellcheck disable=SC2086
+	grep "${DATE}.*XFS.*${1}.*Shutting.down.filesystem" $LOGS |\
 	cut_line
 }
 
@@ -60,12 +65,14 @@ function get_luns() {
  LOG_LUNS=$(grep "cache.*cache:./dev/.*/by-id/.*now.in.VG.${VG_LOG}" $FIL_LVM |\
 	 awk -F" " 'NF==11 {print $3}' | sort -u | tr -d ":" | colrm 1 24)
 
+ # shellcheck disable=SC2046,SC2005
  LOG_DM=$(echo $(grep "dm-name-${VG_LOG}" ${FIL_MPT}) |\
 	awk -F" " '{print $10}' | awk -F"/" '{print $3}')
 
  DAT_LUNS=$(grep "cache.*cache:./dev/.*/by-id/.*now.in.VG.${VG_DAT}" $FIL_LVM |\
 	 awk -F" " 'NF==11 {print $3}' | sort -u | tr -d ":" | colrm 1 24)
 
+ # shellcheck disable=SC2046,SC2005
  DAT_DM=$(echo $(grep "dm-name-${VG_DAT}" ${FIL_MPT}) |\
 	awk -F" " '{print $10}' | awk -F"/" '{print $3}')
 }
@@ -74,21 +81,21 @@ function get_luns() {
 # main
 
 get_luns
-echo "# log_luns: "$LOG_LUNS #| tr -s " " "\n"
-echo "# log_dm: "$LOG_DM
-echo "# dat_luns: "$DAT_LUNS #| tr -s " " "\n"
-echo "# dat_dm: "$DAT_DM
+echo "# log_luns: $LOG_LUNS" #| tr -s " " "\n"
+echo "# log_dm: $LOG_DM"
+echo "# dat_luns: $DAT_LUNS" #| tr -s " " "\n"
+echo "# dat_dm: $DAT_DM"
 echo
 
 (
- show_xfs_mnt ${LOG_DM} | show_info "${LOG_DM} log xfs_mnt"
- show_xfs_umnt ${LOG_DM} | show_info "${LOG_DM} log xfs_umnt"
- show_xfs_recv ${LOG_DM} | show_info "${LOG_DM} log xfs_recv"
- show_xfs_shut ${LOG_DM} | show_info "${LOG_DM} log xfs_shut !!!"
- show_xfs_mnt ${DAT_DM} | show_info "${DAT_DM} dat xfs_mnt"
- show_xfs_umnt ${DAT_DM} | show_info "${DAT_DM} dat xfs_umnt"
- show_xfs_recv ${DAT_DM} | show_info "${DAT_DM} dat xfs_recv"
- show_xfs_shut ${DAT_DM} | show_info "${DAT_DM} dat xfs_shut !!!"
+ test -n "${LOG_DM}" && show_xfs_mnt "${LOG_DM}" | show_info "${LOG_DM} log xfs_mnt"
+ test -n "${LOG_DM}" && show_xfs_umnt "${LOG_DM}" | show_info "${LOG_DM} log xfs_umnt"
+ test -n "${LOG_DM}" && show_xfs_recv "${LOG_DM}" | show_info "${LOG_DM} log xfs_recv"
+ test -n "${LOG_DM}" && show_xfs_shut "${LOG_DM}" | show_info "${LOG_DM} log xfs_shut !!!"
+ test -n "${DAT_DM}" && show_xfs_mnt "${DAT_DM}" | show_info "${DAT_DM} dat xfs_mnt"
+ test -n "${DAT_DM}" && show_xfs_umnt "${DAT_DM}" | show_info "${DAT_DM} dat xfs_umnt"
+ test -n "${DAT_DM}" && show_xfs_recv "${DAT_DM}" | show_info "${DAT_DM} dat xfs_recv"
+ test -n "${DAT_DM}" && show_xfs_shut "${DAT_DM}" | show_info "${DAT_DM} dat xfs_shut !!!"
 
 ) | sort
 #

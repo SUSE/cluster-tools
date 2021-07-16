@@ -2327,6 +2327,8 @@ function chk_kernel(){
 	FIL="basic-health-check.txt"
 	test -r ${FIL} &&\
 	grep -e "TAINT:.\(.\)" -e "^Kernel.Status.--" ${FIL}
+	
+	echo
 }
 
 

@@ -14,7 +14,7 @@ echo "### $LOGF ###"
 test -r $LOGF && cat $LOGF
 for f in $ZLOG; do
 	echo "### $f ###"
-	test -r $f && bzcat $f
+	test -r "$f" && bzcat "$f"
 done
 echo "Completed"
 #

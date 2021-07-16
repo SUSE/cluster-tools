@@ -10,6 +10,7 @@
 #
 # Version: SLES12 0.2 2019-12-05
 #
+# shellcheck disable=SC1090
 
 EXE="$0"
 ERR="/dev/null"
@@ -35,12 +36,12 @@ test -z "${BAK}" &&\
 function clear_cib(){
 	local CIB_HBT="/var/lib/heartbeat/crm/cib.xml"
 	local CIB_PCM="/var/lib/pacemaker/cib/cib.xml"
-	( mv $CIB_HBT $BAK 2>$ERR &&\
+	( mv $CIB_HBT "$BAK" 2>$ERR &&\
 		 echo "Moved $CIB_HBT to $BAK" >/dev/stderr) ||\
-	( mv $CIB_PCM $BAK 2>$ERR &&\
+	( mv $CIB_PCM "$BAK" 2>$ERR &&\
 		 echo "Moved $CIB_PCM to $BAK" >/dev/stderr)
 	for f in $FIL; do
-		rm -f $f
+		rm -f "$f"
 	done
 }
 
@@ -49,8 +50,8 @@ function clear_cib(){
 
 case $1 in
 	-v|--version)
-		echo -n "$(basename $EXE) "
-        	head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	-f|--force)
@@ -61,8 +62,7 @@ case $1 in
 	;;
 	-o|--offline)
 		# 12sp1...
-		/usr/bin/systemctl is-active pacemaker 2>/dev/null 2>&1
-		if [[ $? -eq  0 ]]; then
+		if /usr/bin/systemctl is-active pacemaker 2>/dev/null 2>&1; then
 			echo "Pacemaker is active, exiting."
 			exit
 		fi
@@ -70,7 +70,7 @@ case $1 in
 		exit
 	;;
 	*)
-		echo "usage: $(basename $0) [OPTION]"
+		echo "usage: $(basename "$EXE") [OPTION]"
 		echo
 		echo " --offline	remove CIB and PE logs"
 		echo " --force	stop cluster service and resources, remove CIB and PE logs"

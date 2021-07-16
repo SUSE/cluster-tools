@@ -8,14 +8,14 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2016-03-31
+# Version: 2019-11-28
 #
 
 EXE="$0"
 
 function help() {
-	echo "usage: $(basename $0)"
-	echo "usage: $(basename $0) OPTION"
+	echo "usage: $(basename "$EXE")"
+	echo "usage: $(basename "$EXE") OPTION"
 	echo
 	echo "OPTION:"
 	echo " --help           show help."
@@ -28,8 +28,8 @@ function help() {
 
 case $1 in
 	-v|--version)
-		echo -n "$(basename $EXE) "
-		head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	-h|--help)

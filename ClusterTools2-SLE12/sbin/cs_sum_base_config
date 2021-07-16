@@ -10,6 +10,8 @@
 #
 # Version: 2021-02-21 SLE12, SLE15
 #
+# shellcheck disable=SC1090
+#
 
 EXE="$0"
 
@@ -132,16 +134,16 @@ test -z "${CONF_FILES}" &&\
 # TODO: exact grep patterns
 test -z "${CONF_CALLS}" &&\
 	 CONF_CALLS="
-'/usr/sbin/dmidecode -t system | /usr/bin/grep -v "UUID:" | /usr/bin/grep -v "Serial.Number:"'
+'/usr/sbin/dmidecode -t system | /usr/bin/grep -v \"UUID:\" | /usr/bin/grep -v \"Serial.Number:\"'
 '/sbin/lspci'
-'/usr/bin/grep "model.name" /proc/cpuinfo'
-'/usr/bin/grep -e "MemTotal:" -e "SwapTotal:" -e "VmallocTotal:" /proc/meminfo'
+'/usr/bin/grep \"model.name\" /proc/cpuinfo'
+'/usr/bin/grep -e \"MemTotal:\" -e \"SwapTotal:\" -e \"VmallocTotal:\" /proc/meminfo'
 '/bin/dmesg | /usr/bin/grep -e governor -e cpupower -e cpuidle'
 '/bin/cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'
 '/bin/cat /sys/kernel/mm/transparent_hugepage/enabled'
-'/usr/bin/grep -v "^#" /etc/sysctl.conf'
-'/usr/bin/grep -v "^#" /etc/security/limits.conf'
-'/usr/bin/grep -v "^#" /etc/systemd/system.conf'
+'/usr/bin/grep -v \"^#\" /etc/sysctl.conf'
+'/usr/bin/grep -v \"^#\" /etc/security/limits.conf'
+'/usr/bin/grep -v \"^#\" /etc/systemd/system.conf'
 '/usr/bin/lsscsi --kname'
 '/bin/uname -s -r -v -m -p -i -o'
 '/bin/lsmod | awk °{print %1}° | sort'
@@ -156,13 +158,13 @@ test -z "${CONF_CALLS}" &&\
 '/bin/rpm -Va'
 '/usr/bin/zypper -n lr'
 '/usr/bin/zypper -n lu'
-'/usr/bin/zypper -n se -t pattern | grep "^i"'
+'/usr/bin/zypper -n se -t pattern | grep \"^i\"'
 '/bin/cat /proc/mounts'
 '/usr/bin/find /sys/devices/ -name "scheduler" -exec grep -e '\[deadline\]' -e '\[no..\]' {} \;'
 '/sbin/multipath -ll'
 '/sbin/dmsetup table | sort'
-'/usr/bin/grep -v "^#" /etc/lvm/lvm.conf'
-'/usr/bin/grep -v "^#" /etc/multipath.conf'
+'/usr/bin/grep -v \"^#\" /etc/lvm/lvm.conf'
+'/usr/bin/grep -v \"^#\" /etc/multipath.conf'
 '/sbin/chkconfig -A'
 '/usr/bin/systemctl list-units --no-pager'
 '/usr/bin/systemctl list-unit-files --no-pager'
@@ -171,8 +173,8 @@ test -z "${CONF_CALLS}" &&\
 '/usr/bin/systemd-delta --no-pager'
 '/bin/ip route'
 '/usr/sbin/iptables -L'
-'/bin/ip a s | /usr/bin/grep "^[123456789]\:"'
-'/usr/bin/grep -v "IPADDR=" /etc/sysconfig/network/ifcfg-* | /usr/bin/grep -v "UNIQUE="'
+'/bin/ip a s | /usr/bin/grep \"^[123456789]\:\"'
+'/usr/bin/grep -v \"IPADDR=\" /etc/sysconfig/network/ifcfg-* | /usr/bin/grep -v \"UNIQUE=\"'
 '/usr/bin/cset set -l'
 '/usr/bin/numactl -H | /usr/bin/grep -v free; /usr/bin/numactl -s'
 '/usr/bin/timedatectl --no-pager status | /usr/bin/tail -4'
@@ -247,8 +249,8 @@ test -z "${APPS_CALLS}" &&\
 
 
 function help(){
-	echo "usage:	$(basename $0)"
-	echo "	$(basename $0) [OPTION]"
+	echo "usage:	$(basename "$EXE")"
+	echo "	$(basename "$EXE") [OPTION]"
 	echo
 	echo " --help		show help."
 	echo " --version	show version."
@@ -268,12 +270,14 @@ function writecfg(){
 		case $c in
 		*_CALLS)
 			echo "${c}=\""
+			# shellcheck disable=SC2086,SC2001
 			echo ${!c} | sed s/\'\ \'/\'\\n\'/g
 			echo "\""
 			echo "#"
 		;;
 		*_FILES)
 			echo "${c}=\""
+			# shellcheck disable=SC2086
 			echo ${!c} | tr " " "\n"
 			echo "\""
 			echo "#"
@@ -285,7 +289,7 @@ function writecfg(){
 
 function sum_config(){
 	S="NA"
-	test -r $f && S=$(md5sum $f | awk '{print $1}')
+	test -r "$f" && S=$(md5sum "$f" | awk '{print $1}')
 	echo "$f = $S"
 }
 
@@ -308,7 +312,7 @@ function sum_files(){
 function sum_might(){
 	nf=1
 	CFIL="/etc/ClusterTools2/cs_list_clone_file"
-	test -s $CFG && source $CFG
+	test -s $CFIL && source $CFIL
 	test -z "${CLONE_FILES}" &&\
 	CLONE_FILES="
 /boot/grub/menu.lst
@@ -347,16 +351,20 @@ function sum_calls(){
 	nc=0
 	f=$CFG
 	sum_config
-	echo ${CONF_CALLS} |\
+	# shellcheck disable=SC2162
+	echo "${CONF_CALLS}" |\
 		 tr "'" "\n" | tr -s "\n" | tr -s "°" "'" | tr "%" "$" |\
 	while read; do
+		# Modification of REPLY is local, caused by subshell grouping ()
+		# so line may be removed next time
+		# shellcheck disable=SC2030
 		REPLY=$(echo "${REPLY}" | tr -s "'")
 		echo -n "'${REPLY}' = "
-		eval ${REPLY} | sort | md5sum - | awk '{print $1}'
+		eval "${REPLY}" | sort | md5sum - | awk '{print $1}'
 		(( nc++ ))
 		echo $nc >${TEMP}/nc
 	done | grep -v "'.*d41d8cd98f00b204e9800998ecf8427e"
-	nc=$(cat ${TEMP}/nc); nc=$[ $nc / 2 ]
+	nc=$(cat ${TEMP}/nc); nc=$((nc/2))
 	echo "INF0: $nc calls" >>/dev/stderr
 	rm -rf $TEMP
 }
@@ -370,7 +378,7 @@ function sum_apps(){
 	for f in ${APPS_FILES}; do
 		(( nf++ ))
 		S="NA"
-		test -r $f && S=$(md5sum $f | awk '{print $1}')
+		test -r "$f" && S=$(md5sum "$f" | awk '{print $1}')
         	echo "$f = $S"
 	done
 	echo "INFO: $nf files" >>/dev/stderr
@@ -379,16 +387,20 @@ function sum_apps(){
 	nc=0
 	f=$CFG
 	sum_config
+	# shellcheck disable=SC2162
 	echo "${APPS_CALLS}" |\
 		 tr "'" "\n" | tr -s "\n" | tr "°" "'" | tr "%" "$" |\
 	while read; do
+		# Modification of REPLY is local, caused by subshell grouping ()
+		# so line may be removed next time
+		# shellcheck disable=SC2031
 		REPLY=$(echo "${REPLY}" | tr -s "'")
 		echo -n "'${REPLY}' = "
 		eval "${REPLY}" | sort | md5sum - | awk '{print $1}'
 		(( nc++ ))
 		echo $nc >${TEMP}/nc
 	done | grep -v "'.*d41d8cd98f00b204e9800998ecf8427e"
-	nc=$(cat ${TEMP}/nc); nc=$[ $nc / 2 ]
+	nc=$(cat ${TEMP}/nc); nc=$((nc/2))
 	rm -rf $TEMP
 }
 
@@ -396,8 +408,8 @@ function sum_apps(){
 # main()
 case $1 in
 	-v|--version)
-		echo -n "$(basename $EXE) "
-        	head -11 $EXE | grep "^# Version: "
+		echo -n "$(basename "$EXE") "
+		head -11 "$EXE" | grep "^# Version: "
 		exit
 	;;
 	-h|--help)

@@ -1454,7 +1454,7 @@ xendomains
 
 function chk_saptune2(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME
 
 	FIL=rpm.txt
 	echo "RPM OK:"
@@ -2024,7 +2024,7 @@ HANA-Firewall
 
 function chk_hpehana(){
 
-	echo_msgsep $FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	test -z "${HPE_HANA_PTRN}" &&\
 	HPE_HANA_PTRN="

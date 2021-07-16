@@ -2901,7 +2901,6 @@ function chk_sysload(){
 	# TODO network errors?
 	# TODO NFS client and server reports?
 	# TODO grep -A6 "numastat" sysctl.txt 
-	fi
 
 	cd "$OWD" || exit
 	echo

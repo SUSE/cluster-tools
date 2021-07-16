@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2021-03-23 SLES12 0.03
+# Version: 2021-07-16 SLES12 0.03
 #
 # For Supportconfig Script Version: 2.25-237 to 3.0.2-10
 # TODO what supportconfig supports sar xz files?
@@ -809,7 +809,7 @@ function chk_nameres(){
 	echo "# /etc/hosts:"
 	f=$(grep -l "^# /etc/hosts$" ${TEMP}/${FIL}/xx*)
 	# shellcheck disable=SC2086
-        test -z "$f" ||\
+	test -z "$f" ||\
 		grep -v "^#" $f | tr -s "\n"
 	echo
 	echo "# /etc/resolv.conf:"
@@ -1454,7 +1454,7 @@ xendomains
 
 function chk_saptune2(){
 
-	echo_msgsep "$FUNCNAME
+	echo_msgsep "$FUNCNAME"
 
 	FIL=rpm.txt
 	echo "RPM OK:"

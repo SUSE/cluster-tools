@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2021-03-23 SLES12 0.03
+# Version: 2021-07-16 SLES12 0.03
 #
 # For Supportconfig Script Version: 2.25-237 to 3.0.2-10
 # TODO what supportconfig supports sar xz files?
@@ -68,7 +68,7 @@ VMW_ETC
 SAP_SAP_PKG_NOT
 HANA_SAP_PKG_YES
 HANA_SAP_PKG_NOT
-HANA_SUSE_PGK_YES
+HANA_SUSE_PKG_YES
 HANA_VERS_MIN
 HANA_SAP_BOOTARG
 HANA_SUSE_BOOTARG
@@ -788,8 +788,8 @@ net.ipv4.udp_wmem_min
 	echo
 
 	FIL="env.txt"
-        split_file ${FIL}
-        f=$(grep -l "^# /sbin/sysctl -a$" ${TEMP}/${FIL}/xx*)
+	split_file ${FIL}
+	f=$(grep -l "^# /sbin/sysctl -a$" ${TEMP}/${FIL}/xx*)
 	echo "kernel sysctl settings:"
 	# shellcheck disable=SC2086
 	test -z "$f" ||\
@@ -816,13 +816,13 @@ function chk_nameres(){
 	echo "# /etc/hosts:"
 	f=$(grep -l "^# /etc/hosts$" ${TEMP}/${FIL}/xx*)
 	# shellcheck disable=SC2086
-        test -z "$f" ||\
+	test -z "$f" ||\
 		grep -v "^#" $f | tr -s "\n"
 	echo
 	echo "# /etc/resolv.conf:"
 	f=$(grep -l "^# /etc/resolv.conf$" ${TEMP}/${FIL}/xx*)
 	# shellcheck disable=SC2086
-        test -z "$f" ||\
+	test -z "$f" ||\
 		grep -v "^#" $f | tr -s "\n"
 	echo
 #	echo "# /etc/nsswitch.conf:"
@@ -1932,9 +1932,9 @@ HANA-Firewall
 	echo "SAP recommended boot.local: echo never > /sys/kernel/mm/transparent_hugepage/enabled"
 	echo "# /etc/init.d/boot.local:"
 	F=$(grep -l "# /etc/init.d/boot.local" ${TEMP}/${FIL}/xx* | tr -d ":#" | awk '{print $1}')	
-	# shellcheck disable=SC2086
-	test -z "$F" ||\
-		grep -v "^#" $F
+	# shelltest -z "$F" ||\check disable=SC2086
+		test -z "$F" ||\
+			grep -v "^#" $F
 
 	FIL="sysfs.txt"
 	echo "SAP recommeded nr_anon_transparent_hugepages: 0 , nr_hugepages: 0"
@@ -2456,6 +2456,8 @@ function chk_kernel(){
 	FIL="basic-health-check.txt"
 	test -r ${FIL} &&\
 	grep -e "TAINT:.\(.\)" -e "^Kernel.Status.--" ${FIL}
+	
+	echo
 }
 
 

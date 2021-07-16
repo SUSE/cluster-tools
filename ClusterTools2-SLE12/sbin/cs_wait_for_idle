@@ -15,8 +15,8 @@ SEC=${2:-5}
 
 
 function help() {
-        echo "usage:    $(basename "$0") --sleep <seconds>"
-        echo "usage:    $(basename "$0") [ --help | --version ]"
+        echo "usage:    $(basename "$EXE") --sleep <seconds>"
+        echo "usage:    $(basename "$EXE") [ --help | --version ]"
         echo
         echo "OPTION:"
         echo " --help		show help"

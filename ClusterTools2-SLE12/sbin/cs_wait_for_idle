@@ -25,14 +25,6 @@ function help() {
 }
 
 
-# same as in cs_clusterstate
-function get_idle() {
- # shellcheck disable=SC2046
- s_state=$(crmadmin -q -S $(crmadmin -Dq 2>&1 1>/dev/null ) 2>&1 1>/dev/null)
- echo "Cluster state: $s_state"
-}
-
-
 # main()
 
 case $1 in
@@ -43,7 +35,7 @@ case $1 in
 	;;
 	-s|--sleep)	# TODO cmdline parsing
 		sleep "$SEC"
-		while ! ( get_idle | grep "Cluster state: S_IDLE" ); do
+		while ! ( cs_clusterstate -i | grep "Cluster state: S_IDLE" ); do
 			sleep "$SEC";
 		done
 	;;

@@ -7,7 +7,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2021-08-25 15:01 SLES15 0.01
+# Version: 2021-08-26 13:10 SLES15 0.01
 #
 
 EXE=$0
@@ -26,6 +26,7 @@ function split_file(){
 	cd ${TEMP}/$F/
 	csplit $F /^$/ {*} >>$ERR
 	# for make_cpu: keep xx01..xx131
+	# TODO check files for being the right ones, e.g. first line is "[0-2][0-9]:[0-6][0-9]:[0-6][0-9]        CPU      %usr     %nice      %sys   %iowait    %steal      %irq     %soft    %guest    %gnice     %idle"
 	rm -f $F xx00 xx13[2-9] xx1[4-9]? xx[2-9]??
 	#xz -1 xx[0-9]? xx1[0-2]? xx13[0-1]
 	cd ${OLDPWD}
@@ -49,13 +50,23 @@ function make_cpu(){
 }
 
 
+function make_await(){
+	echo nop
+}
+
+
+function make_mem(){
+	echo nop
+}
+
+
 function plot_cpu(){
 	F=$(basename $1)
 	P=${F}.cpu.plo
 	S=${F}.cpu.ps
 	D=${F}.cpu.pdf
 	#cd ${TEMP}/$F/
-# TODO seperate generic formatting from CPU-specific 
+# TODO separate generic formatting from CPU-specific 
 	( echo "set output \"${S}\""
 	echo "set terminal postscript"
 	echo "set data style lines"
@@ -81,10 +92,12 @@ function plot_cpu(){
 
 
 function show_help(){
-	echo "usage: $(basename $0) --help | --version"
-	echo "usage: $(basename $0) [ --cpu | --mem ] <file>"
+	echo "usage: $(basename $0) [ --help | --version ]"
+	echo "usage: $(basename $0) [ --await | --cpu | --mem ] <file>"
 	echo
+	echo " --await <file>     plot IO wait time from SAR file"
 	echo " --cpu <file>     plot CPU utilisation from SAR file"
+	echo " --mem <file>     plot memory utilisation from SAR file"
 	echo " --help           show help"
 	echo " --version        show version"
 }
@@ -98,15 +111,29 @@ case $1 in
                 head -11 $EXE | grep "^# Version: "
                 exit
         ;;
-        -h|--help)
-                show_help
-                exit
-        ;;
         -c|--cpu)
 		FIL=$2
 		split_file $FIL
                 make_cpu $FIL
 		rm -rf ${TEMP}/
+                exit
+        ;;
+	-a|--await)
+		FIL=$2
+		split_file $FIL
+		make_await $FIL
+		#rm -rf ${TEMP}/
+		exit
+        ;;
+        -m|--mem)
+		FIL=$2
+		split_file $FIL
+                make_mem $FIL
+		rm -rf ${TEMP}/
+                exit
+        ;;
+	*)
+                show_help
                 exit
         ;;
 esac

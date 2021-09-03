@@ -7,7 +7,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2021-08-27 09:30 SLES15 0.01
+# Version: 2021-09-03 15:30 SLES15 0.01
 #
 
 EXE=$0
@@ -26,6 +26,7 @@ function split_file(){
 	cd ${TEMP}/$F/
 	csplit $F /^$/ {*} >>$ERR
 	# for make_cpu: keep xx01..xx131
+	# TODO name files meaningful, e.g. cpu-sar...
 	# TODO check files for being the right ones, e.g. first line is "[0-2][0-9]:[0-6][0-9]:[0-6][0-9]        CPU      %usr     %nice      %sys   %iowait    %steal      %irq     %soft    %guest    %gnice     %idle"
 	rm -f $F xx00 xx13[2-9] xx1[4-9]? xx[2-9]??
 	#xz -1 xx[0-9]? xx1[0-2]? xx13[0-1]
@@ -93,17 +94,20 @@ function plot_cpu(){
 
 function show_help(){
 	echo "usage: $(basename $0) [ --help | --version ]"
-	echo "usage: $(basename $0) [ --await | --cpu | --mem ] <file>"
+	echo "usage: $(basename $0) --cpu <file>"
+#	echo "usage: $(basename $0) [ --await | --cpu | --mem ] <file>"
 	echo
-	echo " --await <file>     plot IO wait time from SAR file"
+#	echo " --await <file>     plot IO wait time from SAR file"
 	echo " --cpu <file>     plot CPU utilisation from SAR file"
-	echo " --mem <file>     plot memory utilisation from SAR file"
+#	echo " --mem <file>     plot memory utilisation from SAR file"
 	echo " --help           show help"
 	echo " --version        show version"
 }
 
 
 # main()
+
+# TODO several plots at once, like cs_show_supportconfig, e.g. -f <file> cpu await mem ...
 
 case $1 in
         -v|--version)

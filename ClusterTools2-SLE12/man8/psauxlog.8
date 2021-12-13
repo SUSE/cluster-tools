@@ -1,4 +1,4 @@
-.TH psauxlog 8 "01 Nov 2019" "" "ClusterTools2"
+.TH psauxlog 8 "24 Sep 2021" "" "ClusterTools2"
 .\"
 .SH NAME
 psauxlog \- log the process list with timestamp
@@ -13,12 +13,34 @@ choice.
 .br
 .\"
 .SH EXAMPLES
+.\" TODO systemd.timer example
+.\".TP
+.\"* Run psauxlog every 10 minutes. On recent systems the systemd timer service
+.\"could look like this:
+.\".br
+.\"[Unit]
+.\".br
+.\"Description=Collect process status data
+.\".br
+.\"Documentation=man:psauxlog(8)
+.\".br
+.\"Wants=logrotate.timer syslog.service
+.\".TP
+.\"[Timer]
+.\".br
+.\"OnCalendar=
+.\".br
+.\"RandomizedDelaySec=9
+.\".TP
+.\"[Install]
+.\".br
+.\"WantedBy=timers.target
 .TP
-To run psauxlog every 10 minutes, the crontab entry could look like this:
+* Run psauxlog every 10 minutes. The crontab entry could look like this:
 .br
 -04-59/10 * * * * root /usr/sbin/psauxlog /var/log/psaux.log
 .TP
-To rotate and compress the log from time to time, the logrotate entry could look like this:
+* Rotate and compress log from time to time. The logrotate entry could look like this:
 .br
 /var/log/psaux.log {
     compress
@@ -31,6 +53,30 @@ To rotate and compress the log from time to time, the logrotate entry could look
     copytruncate
 .br
 }
+.TP
+* Show processes waiting on IO. Use default logfile:
+.br
+# awk '$10~/D/' /var/log/psaux.log
+.TP
+* Show zombie processes. Use default logfile:
+.br
+# awk '$10~/Z/' /var/log/psaux.log
+.TP
+* Show processes existing at a certain time, e.g. 2021-09-27 07:01. Use default logfile:
+.br
+# awk '$1~/2021-09-27/&&$2~/^07:01:/' /var/log/psaux.log
+.TP
+* Show when a certain process did exist, e.g sapstartsrv. Use default logfile:
+.br
+# awk '$13~/sapstartsrv/' /var/log/psaux.log
+.TP
+* Show processes using more than a certain CPU percentage, e.g. 100%. Use default and all compressed logfiles:
+.br
+# less /var/log/psaux.log* | awk '$5>100'
+.TP
+* Show processes of a certain user using more than a certain CPU percentage. E.g. SAP <sid>adm of SID HA1 using more than 50%. Use default and all compressed logfiles:
+.br
+# less /var/log/psaux.log* | awk '$3="ha1adm"&&$5>50'
 .\"
 .SH EXIT STATUS
 .B 0
@@ -42,26 +88,26 @@ Usage, syntax or execution errors.
 .SH FILES
 .TP
 /usr/sbin/psauxlog
-	the script itself.
+	the script itself
 .TP
 /var/log/psaux.log
-	the default logfile.
+	the default logfile
 .TP
 /etc/cron.d/ClusterTools2
-	the cron entry.
+	the cron entry
 .TP
 /etc/logrotate.d/ClusterTools2
-	the logrotate entry.
+	the logrotate entry
 .\"
 .SH BUGS
-Feedback is welcome, please mail to feedback@suse.com
+Feedback is welcome, please mail to feedback@suse.com .
 .\"
 .SH SEE ALSO
-\fBps\fP(1), \fBpidstat\fP(1), \fBcrontab\fP(5), \fBlogrotate\fP(8), \fBClusterTools2\fP(7)
-.\"
+\fBps\fP(1), \fBpidstat\fP(1), \fBcrontab\fP(5), \fBsystemd.timer\fP(5),
+\fBlogrotate\fP(8), \fBClusterTools2\fP(7), \fBClusterTools2-timer\fP(7)
 .\"
 .SH COPYRIGHT
-(c) 2011-2019 L.Pinne, Germany.
+(c) 2011-2021 L.Pinne, Germany.
 .br
 psauxlog comes with ABSOLUTELY NO WARRANTY.
 .br

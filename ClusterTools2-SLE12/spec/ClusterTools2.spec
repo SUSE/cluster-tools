@@ -20,7 +20,7 @@ Name:           ClusterTools2
 Summary:        Tools for cluster management
 License:        GPL-2.0-or-later
 Group:          Productivity/Clustering/HA
-Version:        3.1.1
+Version:        3.1.2
 Release:        0
 Source:         %{name}-%{version}.tgz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build

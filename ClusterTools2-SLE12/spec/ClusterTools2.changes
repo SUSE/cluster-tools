@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Wed Dec 15 08:06:09 UTC 2021 - abriel@suse.com
+
+- change version from 3.1.1 to 3.1.2
+- As newer versions of pacemaker display the output from command
+  'crmadmin --quiet' on stdout instead on stderr, the command
+  'cs_clusterstate' was enhanced to adapt these change.
+  (bsc#1188652)
+- Adapt 'cs_show_scores' to support newer versions of pacemaker
+  and crmsh
+  (bsc#1188456)
+
+-------------------------------------------------------------------
 Fri Jul 16 11:22:34 UTC 2021 - abriel@suse.com
 
 - change version from 3.1.0 to 3.1.1

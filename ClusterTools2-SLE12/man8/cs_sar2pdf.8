@@ -1,4 +1,4 @@
-.TH cs_sar2pdf 8 "03 Sep 2021" "" "ClusterTools2"
+.TH cs_sar2pdf 8 "12 Dec 2021" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_sar2pdf \- create PDF file from SAR text file
@@ -28,6 +28,11 @@ cs_sar2pdf \- create PDF file from SAR text file
 .\"
 .SH EXAMPLES
 .TP
+* convert binary data into ASCII file
+# sar -A -t -f sa20211215 >sar20211215
+.TP
+* create PDF with CPU plot from ASCII file
+# cs_sar2pdf -c sar20211215
 .\" TODO
 .\"
 .SH EXIT STATUS
@@ -49,8 +54,8 @@ $PWD/<file>.<type>.pdf
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
-\fBsar\fP(1), \fBsupportconfig\fP(1), \fBcsplit\fP(1), \fBgnuplot\fP(1),
-\fBps2pdf\fP(1)
+\fBsar\fP(1), \fBsadf\fP(1),\fBsupportconfig\fP(1),
+\fBcsplit\fP(1), \fBgnuplot\fP(1), \fBps2pdf\fP(1)
 .\"
 .SH COPYRIGHT
 (c) 2021 L.Pinne, Germany.

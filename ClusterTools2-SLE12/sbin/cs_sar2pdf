@@ -43,8 +43,8 @@ function make_cpu(){
 	echo "#time    iowa  syst  user  idle" >$C
 	#xzcat xx[0-9]?.xz xx1[0-2]?.xz xx13[0-1].xz |\
 	cat xx[0-9]? xx1[0-2]? xx13[0-1] |\
-	sort | awk '$1~/..:..:../ && $2=="all" && NF==12 \
-		{printf "%8s %2.2f %2.2f %2.2f %2.2f\n", $1, $6, $5, $3, $12}' >>$C
+	sort -k1,9 | awk '$1~/..:..:../ && $2=="all" && NF==12 \
+		{printf "%8s %2.2f %2.2f %2.2f %2.2f\n", $1,$6,$5,$3,$12}' >>$C
 	rm -f xx*
 	plot_cpu $F
 	cd ${OLDPWD}

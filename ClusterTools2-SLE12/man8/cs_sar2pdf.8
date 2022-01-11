@@ -1,0 +1,71 @@
+.TH cs_sar2pdf 8 "12 Dec 2021" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_sar2pdf \- create PDF file from SAR text file
+.\"
+.SH SYNOPSIS
+.B cs_sar2pdf --help \fP|\fB --version
+.br
+.B cs_sar2pdf --cpu \fI<file>\fR
+.br
+.\"
+.SH DESCRIPTION
+\fBcs_sar2pdf\fP creates a PDF file from a SAR text file.
+.br
+.\" TODO
+.br
+.\"
+.SH OPTIONS
+.HP
+\fB --help\fR
+        show help
+.HP
+\fB --version\fR
+        show version
+.HP
+\fB --cpu \fI<file>\fR
+        get data from file
+.\"
+.SH EXAMPLES
+.TP
+* convert binary data into ASCII file, using original creation time but timeformat ISO
+# export S_TIME_FORMAT=ISO; sar -A -t -f sa20211215 >sar20211215
+.TP
+* create PDF with CPU plot from ASCII file
+# cs_sar2pdf -c sar20211215
+.\" TODO
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_man2pdf
+        the program itself
+.TP
+$PWD/<file>.<type>.pdf
+        the output file
+.\"
+.SH BUGS
+The script needs ASCII files and timeformat ISO. 
+.br
+Feedback is welcome, please mail to feedback@suse.com
+.\"
+.SH SEE ALSO
+\fBsar\fP(1), \fBsadf\fP(1),\fBsupportconfig\fP(1),
+\fBcsplit\fP(1), \fBgnuplot\fP(1), \fBps2pdf\fP(1),
+.br
+https://en.wikipedia.org/wiki/ISO_8601
+.\"
+.SH COPYRIGHT
+(c) 2021 L.Pinne, Germany.
+.br
+cs_sar2pdf comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

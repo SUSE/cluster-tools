@@ -1,0 +1,147 @@
+#!/bin/bash
+#
+# cs_sar2pdf
+#
+# (c) 2021 SUSE LLC
+# Author: L.Pinne.
+# GNU General Public License v2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
+#
+# Version: 2021-09-03 15:30 SLES15 0.01
+#
+# shellcheck disable=SC1090
+#
+
+EXE=$0
+ERR="/dev/null"
+
+CFG="/etc/ClusterTools2/cs_sar2pdf"
+test -s $CFG && source $CFG
+test -z "${TEMP}" &&\
+	TEMP="/dev/shm/cltl.$RANDOM"
+
+
+function split_file(){
+	F=$(basename "$1")
+	mkdir -p ${TEMP}/"$F"
+	cp "$1" ${TEMP}/"$F"/
+	cd ${TEMP}/"$F"/ || exit
+	csplit "$F" /^$/ '{*}' >>$ERR
+	# for make_cpu: keep xx01..xx131
+	# TODO name files meaningful, e.g. cpu-sar...
+	# TODO check files for being the right ones, e.g. first line is "[0-2][0-9]:[0-6][0-9]:[0-6][0-9]        CPU      %usr     %nice      %sys   %iowait    %steal      %irq     %soft    %guest    %gnice     %idle"
+	rm -f "$F" xx00 xx13[2-9] xx1[4-9]? xx[2-9]??
+	#xz -1 xx[0-9]? xx1[0-2]? xx13[0-1]
+	cd "${OLDPWD}" || exit
+}
+
+
+function make_cpu(){
+ # <blank>
+ # 00:00:01       CPU      %usr     %nice      %sys   %iowait    %steal      %irq     %soft    %guest    %gnice     %idle
+	F=$(basename "$1")
+	C=${F}.cpu
+	cd ${TEMP}/"$F"/ || exit
+	echo "#time    iowa  syst  user  idle" >"$C"
+	#xzcat xx[0-9]?.xz xx1[0-2]?.xz xx13[0-1].xz |\
+	# shellcheck disable=SC1004
+	cat xx[0-9]? xx1[0-2]? xx13[0-1] |\
+	sort -k1,9 | awk '$1~/..:..:../ && $2=="all" && NF==12 \
+		{printf "%8s %2.2f %2.2f %2.2f %2.2f\n", $1,$6,$5,$3,$12}' >>"$C"
+	rm -f xx*
+	plot_cpu "$F"
+	cd "${OLDPWD}" || exit
+}
+
+
+function make_await(){
+	echo nop
+}
+
+
+function make_mem(){
+	echo nop
+}
+
+
+function plot_cpu(){
+	F=$(basename "$1")
+	P=${F}.cpu.plo
+	S=${F}.cpu.ps
+	D=${F}.cpu.pdf
+	#cd ${TEMP}/$F/
+# TODO separate generic formatting from CPU-specific 
+	( echo "set output \"${S}\""
+	echo "set terminal postscript"
+	echo "set data style lines"
+	echo "set grid"
+	echo "set tic out"
+	echo "set xdata time"
+	echo "set timefmt \"%H:%M:%S\""
+	echo "set format x \"%H:%M\" "
+	echo "set xtics nomirror"
+	echo "set yrange [0:100]"
+	echo "set ytics nomirror (0,20,40,60,80,100)"
+	echo "set xlabel \"time\" 44,0.5"
+	echo "set ylabel \"cpu\" "
+	echo "set title \"${F}\" "
+	echo "plot \"${F}.cpu\" using 1:(\$2+\$3+\$4) title \"user\",\\"
+	echo "	   \"${F}.cpu\" using 1:(\$2+\$3) title \"syst\",\\"
+	echo "	   \"${F}.cpu\" using 1:2 title \"iowa\" " ) >"$P"
+	gnuplot "$P"
+	ps2pdf "$S" "$D"
+	mv "$D" "${OLDPWD}"/
+	cd "${OLDPWD}" || exit
+}
+
+
+function show_help(){
+	echo "usage: $(basename "$EXE") [ --help | --version ]"
+	echo "usage: $(basename "$EXE") --cpu <file>"
+#	echo "usage: $(basename $0) [ --await | --cpu | --mem ] <file>"
+	echo
+#	echo " --await <file>     plot IO wait time from SAR file"
+	echo " --cpu <file>     plot CPU utilisation from SAR file"
+#	echo " --mem <file>     plot memory utilisation from SAR file"
+	echo " --help           show help"
+	echo " --version        show version"
+}
+
+
+# main()
+
+# TODO several plots at once, like cs_show_supportconfig, e.g. -f <file> cpu await mem ...
+
+case $1 in
+        -v|--version)
+                echo -n "$(basename "$EXE") "
+                head -11 "$EXE" | grep "^# Version: "
+                exit
+        ;;
+        -c|--cpu)
+		FIL=$2
+		split_file "$FIL"
+		make_cpu "$FIL"
+		rm -rf ${TEMP:?}/
+		exit
+        ;;
+	-a|--await)
+		FIL=$2
+		split_file "$FIL"
+		make_await "$FIL"
+		#rm -rf ${TEMP}/
+		exit
+        ;;
+        -m|--mem)
+		FIL=$2
+		split_file "$FIL"
+		make_mem "$FIL"
+		rm -rf ${TEMP:?}/
+		exit
+        ;;
+	*)
+                show_help
+                exit
+        ;;
+esac
+#

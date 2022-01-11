@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2021-07-16 SLES12 0.03
+# Version: 2021-08-26 SLES12 0.03
 #
 # For Supportconfig Script Version: 2.25-237 to 3.0.2-10
 # TODO what supportconfig supports sar xz files?
@@ -20,11 +20,11 @@
 
 EXE=$0
 ERR="/dev/null"
-TEMP="/dev/shm/cltl.$RANDOM"
 
 CFG="/etc/ClusterTools2/cs_show_supportconfig"
 test -s $CFG && source $CFG
-test -z "${TEMP}" && TEMP="${TEMP}}"
+test -z "${TEMP}" &&\
+	TEMP="/dev/shm/cltl.$RANDOM"
 
 # TODO make DIR= work
 DIR=${2:-$PWD}

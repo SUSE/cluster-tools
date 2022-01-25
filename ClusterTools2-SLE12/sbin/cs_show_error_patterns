@@ -3,7 +3,7 @@
 # cs_show_error_patterns
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2020 SUSE LLC
+# (c) 2018-2022 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
@@ -96,6 +96,7 @@ test -z "${ERROR_PATTERN}" &&\
 "Uncorrectable.*rror"
 "error.detected.during.POST"
 "mce:.CPU.supports.0.MCE.banks"
+"CPU.bug.present"
 "Processor.*temperature"
 "SMP.disabled"
 "No.hypervisor.support.for.SR-IOV"

@@ -3,12 +3,12 @@
 # cs_show_cluster_patterns
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2020 SUSE LLC
+# (c) 2018-2022 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2020-12-14
+# Version: 2022-02-11
 #
 # shellcheck disable=SC1090,SC2140,SC2125
 # SC2140 and SC2125 are needed because of the ongoing pattern declaration
@@ -157,6 +157,7 @@ test -z "${RESRC_PATTERN}" &&\
 "SAPHana.*Secure.store.users"
 "SAPHana.*RA.*rc=[1-7,9]"
 "SAPHana.*ERR:"
+"SAPHana.*systemd.service.*not.active"
 "HANA_CALL.timed.out"
 "SAPHanaTopology.*failed"
 "eDirectory.*failed.*stop"

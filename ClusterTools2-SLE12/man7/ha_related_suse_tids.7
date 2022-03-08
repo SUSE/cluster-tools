@@ -1,4 +1,4 @@
-.TH ha_related_suse_tids 7 "12 Dec 2021" "" "ClusterTools2"
+.TH ha_related_suse_tids 7 "08 Mar 2022" "" "ClusterTools2"
 .\"
 .SH NAME
 ha_related_suse_tids - selection of SUSE Technical Information Documents, related to high availability
@@ -129,6 +129,10 @@ pacemaker default behavior changed (7014282)
 .br
 Pacemaker fails to start with 100 exit status (000019498)
 .br
+pacemaker-controld: notice: High CPU load detected: 180.869995 (000020521)
+.br
+How to prevent pacemaker from auto-starting on boot or after a fence (000020524)
+.br
 How to recover pacemaker cluster where all controllers fencing (000019493)
 .br
 iTCO_wdt does not accept Watchdog Timeout bigger 63 seconds (7011426) 
@@ -182,6 +186,10 @@ Clear Failed Fencing Actions Messages (7023886)
 HAE (High Availability) rilo V2 setup (7007614) 
 .br
 Fencing in Cloud Enviroment (pacemaker Azure) (000020363)
+.br
+The azure-events Resource Agent Does Not Failover Properly ... (000020578)
+.br
+stonith: Could not list hosts for external/ipmi (000020598)
 .br
 default action timeout and op default timeout (OPENAIS) (7009584) 
 .br
@@ -405,7 +413,11 @@ sap_suse_cluster_connector stuck as HAActive: FALSE (000019924)
 .br
 Use of Filesystem resource for ASCS/ERS HA setup not possible (000019944)
 .br
-Updated fuser binary causing wrong processes to be terminated in SAP Netweaver application cluster. (000019952)
+Updated fuser binary causing wrong processes to be terminated in SAP Netweaver ... (000019952)
+.br
+SAP NW cluster failover due to sapstartsrv frequent restart (000020517)
+.br
+Unexpected connection drop between SAP application and NetWeaver (000020518)
 .br
 Error when coming out of standby: hdbdaemon HDB Daemon not running (7021376)
 .br
@@ -420,6 +432,8 @@ How to re-enable replication in a two-node SAP performance based model (7023127)
 Showing SOK Status in Cluster Monitoring Tools Workaround (7023526)
 .br
 HANA SystemReplication doesn't provide SiteName to Corosync Cluster (000019754)
+.br
+Entry "CALLING CRM: ... rc=256" in HANA trace after upgrading SAPHanaSR-ScaleOut (000020599)
 .br
 PostgreSQL resource fails to start with "My data may be inconsistent" (7023166)
 .br
@@ -441,9 +455,13 @@ sapstartsrv does not respawn after a forceful kill of the master nameserver (702
 .br
 Expected output results for HAGetFailoverConfig. (000019613)
 .br
+sapcontrol -function HAFailoverToNode migration fail (000020520)
+.br
 Pull Errors with azure-events Resource Agent on all Nodes (000019623)
 .br
 SAPHanaSR HANA system replication automation without layer 2 network (000020333)
+.br
+SAPHanaSR-showAttr fails with error "Error: NIECONN_REFUSED ..." (000020548)
 .br
 The vIP cluster resource does not follow the SAP HANA master ... (000019769)
 .br
@@ -607,6 +625,8 @@ Indepth HANA Cluster Debug Data Collection (PACEMAKER, SAP) (7022702)
 .br
 How to prevent certain values in limits.conf from being changed by saptune (7023104)
 .br
+Unable to set SAP Note 1680803 recommendations for NRREQ using saptune (000020344)
+.br
 SLES for SAP Upgrade returns: "Error: Product SLES for SAP Applications will be automatically removed" (7018571)
 .br
 Memory, I/O and DefaultTasksMax related considerations for SLES for SAP servers with huge memory (7021211)
@@ -705,9 +725,13 @@ Azure Load-Balancer Detection Hardening (000019536)
 .br
 Pagecache bug can lead to hangs on SLES for SAP (000019479)
 .br
+System hang caused by vm.pagecache_limit_mb (000020418)
+.br
 How to use fsperf and blktrace to quantify IO subsystem performance (000019465)
 .br
 How to patch a SAP Application Pacemaker Cluster (000020268)
+.br
+SAP license verification fails after upgrade to SLES12 SP5 due to system UUID change (000019647)
 
 .\" .br TODO Oracle 7023167
 .\"

@@ -2,7 +2,7 @@
 # spec file for package ClusterTools2
 #
 # Copyright (c) 2011-2018 SUSE LINUX GmbH, Nuernberg, Germany.
-# Copyright (c) 2019-2020 SUSE LLC
+# Copyright (c) 2019-2021 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -20,7 +20,7 @@ Name:           ClusterTools2
 Summary:        Tools for cluster management
 License:        GPL-2.0-or-later
 Group:          Productivity/Clustering/HA
-Version:        3.1.0
+Version:        3.1.2
 Release:        0
 Source:         %{name}-%{version}.tgz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build

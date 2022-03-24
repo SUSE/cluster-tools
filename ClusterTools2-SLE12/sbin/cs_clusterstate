@@ -10,7 +10,7 @@
 #
 # Version: 2020-07-28 SLES12
 #
-# shellcheck disable=SC1090
+# shellcheck disable=SC1090,SC2126
 
 EXE="$0"
 
@@ -57,10 +57,26 @@ function help() {
 	echo " --version	show version info"
 }
 
+# run a crmadmin query and obtain its --quiet output
+function crmadmin_quiet() {
+	# Note: crmadmin in Pacemaker versions before 2.1.0 (released on
+	# 8 Jun 2021) printed the --quiet result on stderr, hence checking this
+	# output sink first.
+	local out
+	out=$(crmadmin --quiet "$@" 2>&1 1>/dev/null) || return $?
+	[ -n "$out" ] || out=$(crmadmin --quiet "$@" 2>/dev/null) || return $?
+	echo "$out"
+}
 
+# look up the designated controller node and print its state
 function get_idle() {
- s_state=$(crmadmin -q -S "$(crmadmin -Dq 2>&1 1>/dev/null )" 2>&1 1>/dev/null)
- echo "Cluster state: $s_state"
+	local s_dc s_state
+	if s_dc=$(crmadmin_quiet --dc_lookup) &&
+	   s_state=$(crmadmin_quiet "--status=$s_dc"); then
+		echo "Cluster state: $s_state"
+	else
+		echo "Cluster state: unknown"
+	fi
 }
 
 
@@ -172,12 +188,12 @@ HANA=$( crm_mon -1 |\
  grep  -e "Clone.Set:.*_SAPHana" -e "Masters:.\[" -e "Slaves:.\[" -e "Started:.\[" |\
  tr "\n" "§" )
 echo -n "SAPHanaSR started masters: "
-echo ${HANA} | tr "§" "\n" | grep "Masters:.\[" | wc -l
+echo "${HANA}" | tr "§" "\n" | grep "Masters:.\[" | wc -l
 echo -n "SAPHanaSR started slaves: "
-echo ${HANA} | tr "§" "\n" | grep "Slaves:.\[" | wc -l
+echo "${HANA}" | tr "§" "\n" | grep "Slaves:.\[" | wc -l
 echo -n "SAPHanaSR master node: "
 P_HANA=$(crm_resource list | awk '$5=="(promotable)" {print $4}' | tr -d "[]")
-crm_resource -W --master -r $P_HANA | awk '$7=="Master" {print $6}'
+crm_resource -W --master -r "$P_HANA" | awk '$7=="Master" {print $6}'
 # TODO started Topology clones
 #echo "SAPHanaSR resources:"
 #echo ${HANA} | tr "§" "\n"

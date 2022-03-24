@@ -9,45 +9,48 @@
 #
 # Version: 2021-09-03 15:30 SLES15 0.01
 #
+# shellcheck disable=SC1090
+#
 
 EXE=$0
 ERR="/dev/null"
-TEMP="/dev/shm/cltl.$RANDOM"
 
 CFG="/etc/ClusterTools2/cs_sar2pdf"
 test -s $CFG && source $CFG
-test -z "${TEMP}" && TEMP="${TEMP}"
+test -z "${TEMP}" &&\
+	TEMP="/dev/shm/cltl.$RANDOM"
 
 
 function split_file(){
-	F=$(basename $1)
-        mkdir -p ${TEMP}/$F
-        cp $1 ${TEMP}/$F/
-	cd ${TEMP}/$F/
-	csplit $F /^$/ {*} >>$ERR
+	F=$(basename "$1")
+	mkdir -p ${TEMP}/"$F"
+	cp "$1" ${TEMP}/"$F"/
+	cd ${TEMP}/"$F"/ || exit
+	csplit "$F" /^$/ '{*}' >>$ERR
 	# for make_cpu: keep xx01..xx131
 	# TODO name files meaningful, e.g. cpu-sar...
 	# TODO check files for being the right ones, e.g. first line is "[0-2][0-9]:[0-6][0-9]:[0-6][0-9]        CPU      %usr     %nice      %sys   %iowait    %steal      %irq     %soft    %guest    %gnice     %idle"
-	rm -f $F xx00 xx13[2-9] xx1[4-9]? xx[2-9]??
+	rm -f "$F" xx00 xx13[2-9] xx1[4-9]? xx[2-9]??
 	#xz -1 xx[0-9]? xx1[0-2]? xx13[0-1]
-	cd ${OLDPWD}
+	cd "${OLDPWD}" || exit
 }
 
 
 function make_cpu(){
  # <blank>
  # 00:00:01       CPU      %usr     %nice      %sys   %iowait    %steal      %irq     %soft    %guest    %gnice     %idle
-	F=$(basename $1)
+	F=$(basename "$1")
 	C=${F}.cpu
-	cd ${TEMP}/$F/
-	echo "#time    iowa  syst  user  idle" >$C
+	cd ${TEMP}/"$F"/ || exit
+	echo "#time    iowa  syst  user  idle" >"$C"
 	#xzcat xx[0-9]?.xz xx1[0-2]?.xz xx13[0-1].xz |\
+	# shellcheck disable=SC1004
 	cat xx[0-9]? xx1[0-2]? xx13[0-1] |\
 	sort -k1,9 | awk '$1~/..:..:../ && $2=="all" && NF==12 \
-		{printf "%8s %2.2f %2.2f %2.2f %2.2f\n", $1,$6,$5,$3,$12}' >>$C
+		{printf "%8s %2.2f %2.2f %2.2f %2.2f\n", $1,$6,$5,$3,$12}' >>"$C"
 	rm -f xx*
-	plot_cpu $F
-	cd ${OLDPWD}
+	plot_cpu "$F"
+	cd "${OLDPWD}" || exit
 }
 
 
@@ -62,7 +65,7 @@ function make_mem(){
 
 
 function plot_cpu(){
-	F=$(basename $1)
+	F=$(basename "$1")
 	P=${F}.cpu.plo
 	S=${F}.cpu.ps
 	D=${F}.cpu.pdf
@@ -84,17 +87,17 @@ function plot_cpu(){
 	echo "set title \"${F}\" "
 	echo "plot \"${F}.cpu\" using 1:(\$2+\$3+\$4) title \"user\",\\"
 	echo "	   \"${F}.cpu\" using 1:(\$2+\$3) title \"syst\",\\"
-	echo "	   \"${F}.cpu\" using 1:2 title \"iowa\" " ) >$P
-	gnuplot $P
-	ps2pdf $S $D
-	mv $D ${OLDPWD}/
-	cd ${OLDPWD}
+	echo "	   \"${F}.cpu\" using 1:2 title \"iowa\" " ) >"$P"
+	gnuplot "$P"
+	ps2pdf "$S" "$D"
+	mv "$D" "${OLDPWD}"/
+	cd "${OLDPWD}" || exit
 }
 
 
 function show_help(){
-	echo "usage: $(basename $0) [ --help | --version ]"
-	echo "usage: $(basename $0) --cpu <file>"
+	echo "usage: $(basename "$EXE") [ --help | --version ]"
+	echo "usage: $(basename "$EXE") --cpu <file>"
 #	echo "usage: $(basename $0) [ --await | --cpu | --mem ] <file>"
 	echo
 #	echo " --await <file>     plot IO wait time from SAR file"
@@ -111,30 +114,30 @@ function show_help(){
 
 case $1 in
         -v|--version)
-                echo -n "$(basename $EXE) "
-                head -11 $EXE | grep "^# Version: "
+                echo -n "$(basename "$EXE") "
+                head -11 "$EXE" | grep "^# Version: "
                 exit
         ;;
         -c|--cpu)
 		FIL=$2
-		split_file $FIL
-                make_cpu $FIL
-		rm -rf ${TEMP}/
-                exit
+		split_file "$FIL"
+		make_cpu "$FIL"
+		rm -rf ${TEMP:?}/
+		exit
         ;;
 	-a|--await)
 		FIL=$2
-		split_file $FIL
-		make_await $FIL
+		split_file "$FIL"
+		make_await "$FIL"
 		#rm -rf ${TEMP}/
 		exit
         ;;
         -m|--mem)
 		FIL=$2
-		split_file $FIL
-                make_mem $FIL
-		rm -rf ${TEMP}/
-                exit
+		split_file "$FIL"
+		make_mem "$FIL"
+		rm -rf ${TEMP:?}/
+		exit
         ;;
 	*)
                 show_help

@@ -160,7 +160,7 @@ test -z "${CONF_CALLS}" &&\
 '/usr/bin/zypper -n lu'
 '/usr/bin/zypper -n se -t pattern | grep \"^i\"'
 '/bin/cat /proc/mounts'
-'/usr/bin/find /sys/devices/ -name "scheduler" -exec grep -e '\[deadline\]' -e '\[no..\]' {} \;'
+'/usr/bin/find /sys/devices/ -name \"scheduler\" -exec grep -e '\[deadline\]' -e '\[no..\]' {} \;'
 '/sbin/multipath -ll'
 '/sbin/dmsetup table | sort'
 '/usr/bin/grep -v \"^#\" /etc/lvm/lvm.conf'
@@ -178,7 +178,7 @@ test -z "${CONF_CALLS}" &&\
 '/usr/bin/cset set -l'
 '/usr/bin/numactl -H | /usr/bin/grep -v free; /usr/bin/numactl -s'
 '/usr/bin/timedatectl --no-pager status | /usr/bin/tail -4'
-'/usr/bin/chronyc sources | awk -F" " °{print $1,$2,$3}°'
+'/usr/bin/chronyc sources | awk -F\" \" °{print $1,$2,$3}°'
 '/usr/sbin/saptune daemon status'
 '/usr/sbin/saptune solution list'
 '/usr/sbin/saptune solution verify | /usr/bin/grep -v °^#°'
@@ -362,7 +362,7 @@ function sum_calls(){
 		echo -n "'${REPLY}' = "
 		eval "${REPLY}" | sort | md5sum - | awk '{print $1}'
 		(( nc++ ))
-		echo $nc >${TEMP}/nc
+		echo "$nc" >${TEMP}/nc
 	done | grep -v "'.*d41d8cd98f00b204e9800998ecf8427e"
 	nc=$(cat ${TEMP}/nc); nc=$((nc/2))
 	echo "INF0: $nc calls" >>/dev/stderr
@@ -398,7 +398,7 @@ function sum_apps(){
 		echo -n "'${REPLY}' = "
 		eval "${REPLY}" | sort | md5sum - | awk '{print $1}'
 		(( nc++ ))
-		echo $nc >${TEMP}/nc
+		echo "$nc" >${TEMP}/nc
 	done | grep -v "'.*d41d8cd98f00b204e9800998ecf8427e"
 	nc=$(cat ${TEMP}/nc); nc=$((nc/2))
 	rm -rf $TEMP

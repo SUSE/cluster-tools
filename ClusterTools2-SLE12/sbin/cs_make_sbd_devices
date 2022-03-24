@@ -79,10 +79,10 @@ function make_sbd_devices() {
 	CFI=${SBD_CONF}
 	test -s "$CFI" || exit 4
 	grep "^SBD_DEVICE=" "$CFI" >/dev/null || exit 5
-	# shellcheck disable=SC2162
+	# shellcheck disable=SC2162,SC2086
 	awk -F"=" '$1=="SBD_DEVICE" {print $2}' "$CFI" |tr -d "\""|tr ";" "\n"|\
 	while read; do
-		sbd -d "$REPLY" "${SBD_INIT_OPTS}" create
+		sbd -d "$REPLY" ${SBD_INIT_OPTS} create
 	done
 	echo "INFO: end $EXE $FUNCNAME"
 }

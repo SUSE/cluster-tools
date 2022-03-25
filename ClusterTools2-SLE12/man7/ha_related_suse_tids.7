@@ -1,4 +1,4 @@
-.TH ha_related_suse_tids 7 "12 Dec 2021" "" "ClusterTools2"
+.TH ha_related_suse_tids 7 "08 Mar 2022" "" "ClusterTools2"
 .\"
 .SH NAME
 ha_related_suse_tids - selection of SUSE Technical Information Documents, related to high availability
@@ -32,7 +32,8 @@ Useful keywords for searching are
 .B ocf
 .\".B ocfs2
 .\".B ctdb
-.\".B sap
+.br
+.B sap
 .br
 .B rear
 .br
@@ -101,6 +102,8 @@ How To Redirect Unwanted Messages From /var/log/messages (7004659)
 .br
 Supportutils fails to update do "Failed dependencies: rpmlib(PayloadIsLzma)" (7014039)
 .br
+Changes in SUSE RPM package release numbering (000020568) 
+.br
 supportconfig hangs at PROC.. (7023185)
 .br
 scatool fails with traceback (000004685)
@@ -115,6 +118,8 @@ SLES for SAP - How To Engage SAP and SUSE to address Product Issues (7021182)
 .br
 Master TID: Migrating a regular SLES to SLES for SAP (7018744)
 .br
+Details for supportconfig plugin to gather SAP information related to SUSE solutions. (000020279)
+.br
 
 .\"
 .B * Cluster basics, timing, fencing, communication:
@@ -124,6 +129,10 @@ SLES 11 HAE - Send cluster update and changes through email (7007619)
 pacemaker default behavior changed (7014282)
 .br
 Pacemaker fails to start with 100 exit status (000019498)
+.br
+pacemaker-controld: notice: High CPU load detected: 180.869995 (000020521)
+.br
+How to prevent pacemaker from auto-starting on boot or after a fence (000020524)
 .br
 How to recover pacemaker cluster where all controllers fencing (000019493)
 .br
@@ -177,7 +186,11 @@ Clear Failed Fencing Actions Messages (7023886)
 .br
 HAE (High Availability) rilo V2 setup (7007614) 
 .br
-Fencing in Cloud Enviroment ( pacemaker Azure) (000020363)
+Fencing in Cloud Enviroment (pacemaker Azure) (000020363)
+.br
+The azure-events Resource Agent Does Not Failover Properly ... (000020578)
+.br
+stonith: Could not list hosts for external/ipmi (000020598)
 .br
 default action timeout and op default timeout (OPENAIS) (7009584) 
 .br
@@ -188,6 +201,12 @@ Cluster node fence "Corosync main process was not scheduled for..." (000019795)
 Number of Rings with openais/corosync (7006345) 
 .br
 Corosync reporting interface 127.0.0.1 FAULTY (000019580)
+.br
+ha-cluster-join bootstrap script error "cluster.join: not enough values to unpack (expected 3, got 1)" (000019902)
+.br
+How to setup corosync token and consensus in a cluster with more then 2 nodes using unicast (udpu) (000020513)
+.br
+Corosync Communication Failure (000020407)
 .br
 Cluster Services fail on boot because of Firewall (HEARTBEAT, OPENAIS) (7007820)
 .br
@@ -227,11 +246,17 @@ All HAE nodes fail to start clustering after reboot (7011302)
 .br
 corosync-cfgtool -r hangs in loop while resetting faulty ring (7006774) 
 .br
+corosync:[TOTEM] Digest does not match (000020368)
+.br
+Corosync Cluster Engine Failing to Startup (000019573)
+.br
 Troubleshooting HAE Cluster Membership (7015225) 
 .br
 Cannot contact other cluster node (7006864) 
 .br
 HAE no quorum policy for various numbers of nodes (7012110) 
+.br
+How to remove a node from HA pacemaker cluster (000019683)
 .br
 HAE requires IPv6 to be enabled (7012111) 
 .br
@@ -241,6 +266,8 @@ Increasing the number of lrmd children (7006863)
 .br
 Failed cluster actions in crm_mon (7012145) 
 .br
+The command crm status returns Stack: unknown (000019771)
+.br
 HA node unable to join AD domain after applying HA SP3 (7014642) 
 .br
 Replacing SBD device in a running Pacemaker cluster (7021158)
@@ -248,6 +275,8 @@ Replacing SBD device in a running Pacemaker cluster (7021158)
 SBD STONITH fails to fence other node when using the fully qualified DNS name. (000019877)
 .br
 Mount and sbd failures leading to fencing failure (aio-max-nr too low) (7022255)
+.br
+Considerations for cluster nodes operating in maintenance mode with SBD Fencing (000020366)
 .br
 Simulating a Cluster Network Failure (7017617)
 .br
@@ -268,8 +297,6 @@ sleha-join to a cluster using udpu will not join cluster until after restart of 
 Preventing a Fence Race in Split Brain (COROSYNC,PACEMAKER) (7022467)
 .br
 Cluster node will not join after one node was upgraded. (7022565)
-.br
-Rear backup fails with "No space left on device" errors (7022152)
 .br
 Enable and disable maintenance mode in a High Availability Cluster (7023135)
 .br
@@ -385,7 +412,11 @@ sap_suse_cluster_connector stuck as HAActive: FALSE (000019924)
 .br
 Use of Filesystem resource for ASCS/ERS HA setup not possible (000019944)
 .br
-Updated fuser binary causing wrong processes to be terminated in SAP Netweaver application cluster. (000019952)
+Updated fuser binary causing wrong processes to be terminated in SAP Netweaver ... (000019952)
+.br
+SAP NW cluster failover due to sapstartsrv frequent restart (000020517)
+.br
+Unexpected connection drop between SAP application and NetWeaver (000020518)
 .br
 Error when coming out of standby: hdbdaemon HDB Daemon not running (7021376)
 .br
@@ -400,6 +431,8 @@ How to re-enable replication in a two-node SAP performance based model (7023127)
 Showing SOK Status in Cluster Monitoring Tools Workaround (7023526)
 .br
 HANA SystemReplication doesn't provide SiteName to Corosync Cluster (000019754)
+.br
+Entry "CALLING CRM: ... rc=256" in HANA trace after upgrading SAPHanaSR-ScaleOut (000020599)
 .br
 PostgreSQL resource fails to start with "My data may be inconsistent" (7023166)
 .br
@@ -421,9 +454,13 @@ sapstartsrv does not respawn after a forceful kill of the master nameserver (702
 .br
 Expected output results for HAGetFailoverConfig. (000019613)
 .br
+sapcontrol -function HAFailoverToNode migration fail (000020520)
+.br
 Pull Errors with azure-events Resource Agent on all Nodes (000019623)
 .br
 SAPHanaSR HANA system replication automation without layer 2 network (000020333)
+.br
+SAPHanaSR-showAttr fails with error "Error: NIECONN_REFUSED ..." (000020548)
 .br
 The vIP cluster resource does not follow the SAP HANA master ... (000019769)
 .br
@@ -432,6 +469,8 @@ The vIP cluster resource does not follow the SAP HANA master ... (000019769)
 .B * Related operating system settings and components:
 .br
 List of SUSE Linux Enterprise Server kernel (000019587)
+.br
+kernel-azure on PAYG images is not supported for running SAP applications (000020528)
 .br
 How to load the correct watchdog kernel module (7016880) 
 .br
@@ -573,6 +612,8 @@ IPMI driver can be unloaded when being accessed by user space (000019602)
 .br
 XFS metadata corruption and invalid checksum on SAP Hana servers (7022921)
 .br
+XFS "barrier/nobarrier" mount options have been completely deprecated starting from SLES15 SP2 (000020240)
+.br
 Handling failed NFS share in SUSE HA cluster for HANA system replication (000019904)
 .br
 SAP Instances failed stop on shutdown (PACEMAKER, SYSTEMD, SAP) (7022671)
@@ -583,11 +624,15 @@ Indepth HANA Cluster Debug Data Collection (PACEMAKER, SAP) (7022702)
 .br
 How to prevent certain values in limits.conf from being changed by saptune (7023104)
 .br
+Unable to set SAP Note 1680803 recommendations for NRREQ using saptune (000020344)
+.br
 SLES for SAP Upgrade returns: "Error: Product SLES for SAP Applications will be automatically removed" (7018571)
 .br
 Memory, I/O and DefaultTasksMax related considerations for SLES for SAP servers with huge memory (7021211)
 .br
 DefaultTasksMax / TasksMax / UserTasksMax (000015901)
+.br
+Systemd KillMode=none (000020394)
 .br
 Kernel-bigmem for SAP HANA environments on ppc64 (7018408)
 .br
@@ -659,6 +704,12 @@ no /dev/disk/by-id for scsi LUNs on VMWare ESX (7002966)
 .br
 System crashes when the system is rebooted with SR-IOV enabled QLogic cards (000019630)
 .br
+System with FCoE connected devices fails to boot randomly due to wicked ordering cycle problems (000019889)
+.br
+error: fork: Resource temporarily unavailable (000020612)
+.br
+Considerations for dealing with correctable memory error messages (7022118)
+.br
 vPMEM memory backed namespaces configured as a dump target for kdump/fadump takes a long time to save dump files (000019570)
 .br
 Hot plugging/unplugging of pmem memory having a size that is not in multiples of a specific size can lead to kernel panics (000019567)
@@ -677,15 +728,17 @@ saptune: WARNING saptune.io.go:66: 'noop' is not a valid scheduler for device (0
 .br
 sapconf: tuned.utils.commands: Writing to file /sys/block/.../queue/scheduler error: [Errno 22] Invalid argument (000019575)
 .br
-Communications fail between Azure Load Balancer and SLE instance (000019510)
-.br
 Azure Load-Balancer Detection Hardening (000019536)
 .br
 Pagecache bug can lead to hangs on SLES for SAP (000019479)
 .br
+System hang caused by vm.pagecache_limit_mb (000020418)
+.br
 How to use fsperf and blktrace to quantify IO subsystem performance (000019465)
 .br
 How to patch a SAP Application Pacemaker Cluster (000020268)
+.br
+SAP license verification fails after upgrade to SLES12 SP5 due to system UUID change (000019647)
 
 .\" .br TODO Oracle 7023167
 .\"

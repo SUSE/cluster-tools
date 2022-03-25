@@ -1,4 +1,4 @@
-.TH ha_related_sap_notes 7 "12 Dec 2021" "" "ClusterTools2"
+.TH ha_related_sap_notes 7 "22 Feb 2022" "" "ClusterTools2"
 .\"
 .SH NAME
 ha_related_sap_notes - selection of SAP notes and knowledge base articles, related to high availability
@@ -63,10 +63,18 @@ and
 .br
 1597355 - Swap-space recommendation for Linux
 .br
+2308598 - Error "Ifconfig is obsolete" happens when you run startsap to start SAP system
+.br
 2369910 - SAP Software on Linux: General information
 .br
-405827 - Linux: Recommended file systems
+3091152 - sapstartsrv - improved deregistration for UNIX/Linux
+.br
+3139184 - Linux: systemd integration for sapstartsrv and SAP Hostagent
+.br
+3145200 - SAP Host Agent 7.22 PL57
 .\" TODO 3115048 
+.br
+405827 - Linux: Recommended file systems
 .\"
 .P
 .B * SAP HANA database related:
@@ -85,11 +93,19 @@ and
 .br
 1890444 - Slow HANA system due to CPU power save mode
 .br
+1944415 - Hardware Configuration Guide and Software Installation Guide for SUSE Linux Enterprise Server with SAP HANA and SAP Business One
+.br
+1953429 - SAP HANA and SAP NetWeaver AS ABAP on one Server
+.br
+1984882 - Using HANA System Replication for Hardware Exchange with minimum/zero Downtime
+.br
 1999993 - How-To: Interpreting SAP HANA Mini Check Results
 .br
 1999997 - FAQ: SAP HANA Memory
 .br
 2000000 - FAQ: SAP HANA Performance Optimization
+.br
+2021789 - SAP HANA Revison and Maintenance Strategy
 .br
 2100040 - FAQ: SAP HANA CPU
 .br
@@ -111,6 +127,8 @@ and
 .br
 2400007 - FAQ: SAP HANA Runtime Dumps
 .br
+2434562 - System Replication Hanging in Status "SYNCING" or "ERROR" With Status Detail "Missing Log" or "Invalid backup size"
+.br
 2470289 - FAQ: SAP HANA Non-Uniform Memory Access (NUMA)
 .br
 2493172 - SAP HANA Hardware and Cloud Measurement Tools
@@ -119,19 +137,28 @@ and
 .br
 2733483 - Host Auto-Failover Not Occur when Indexserver Crash on Worker Node
 .br
+2750199 - Incorrect Alert Regarding Unsupported Operating System Version
+.br
 2779331 - HANA services use large SWAP memory
 .br
 2800138 - Out of Memory with Allocation Failure Type OPERATING_SYSTEM_LIMIT
+.br
+2945239 - SAP HANA Platform 2.0 SPS 06 Release Note
 .br
 3007062 - FAQ: SAP HANA & Third Party Cluster Solutions
 .br
 3043459 - SAP HANA 2 SPS05 Revision 056.00
 .br
-3072590 - Python 3 Support for Non-Productive SAP HANA Systems
-.br
 3070359 - Python 3 Migration Guide For SAP HANA
 .br
+3072590 - Python 3 Support for Non-Productive SAP HANA Systems
+.br
+3084229 - SAP HANA Python Support Scripts Fail due to Incompatibility With Python 3
+.br
 3093542 - Transition to Python 3 of the Python Distribution Delivered With SAP HANA 2.0 Server
+.br
+3159746 - Hana 2 Revision 6x crashes on Linux kernel 4.12 or 4.18 on IBM Power platform
+.\" TODO 401162
 .\"
 .P
 .B * SAP ASE database related:
@@ -172,11 +199,19 @@ and
 .br
 2641019 - Installation of ENSA2 and update from ENSA1 to ENSA2 in SUSE HA environment
 .br
+2698948 - How to install SAP applications in Failover Cluster without shared disks?
+.br
 2711036 - Usage of the Standalone Enqueue Server 2 in an HA Environment
 .br
 2717369 - Download files for installing of SAP S4/HANA 1809, SAP S4/HANA 1909, BW S/4HANA 2.0
 .br
+2855499 - FAIL: RKS Warning(s): Unsupported SCS instance with additional gateway found
+.br
 3019275 - ENQU: ENSA 2.0 is blocked by a deadlock
+.br
+3075829 - New sapstarstrv Web service method "ABAPSetServerInactive"
+.br
+3115889 - SAP Web Dispatcher embedded deployment in an ASCS/SCS instance
 .br
 611361 - Hostnames of SAP ABAP Platform servers
 .br
@@ -201,7 +236,7 @@ https://documentation.suse.com/sbp/all/ ,
 https://documentation.suse.com/sles-sap/
 .\"
 .SH COPYRIGHT
-(c) 2021 SUSE Software Solutions Germany GmbH, Germany.
+(c) 2021-2022 SUSE Software Solutions Germany GmbH, Germany.
 .br
 ClusterTools2 comes with ABSOLUTELY NO WARRANTY.
 .br

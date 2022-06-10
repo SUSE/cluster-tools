@@ -1,4 +1,4 @@
-.TH cs_convert_time 8 "08 Aug 2019" "" "ClusterTools2"
+.TH cs_convert_time 8 "10 Jun 2020" "" "ClusterTools2"
 .\"
 .SH NAME
 cs_convert_time \- convert date/time string between Unix Epoch and wall clock
@@ -23,13 +23,17 @@ Usage, syntax or execution errors.
 .\"
 .SH EXAMPLES
 .TP
-* convert Unix Epoch time into wall clock date/time
+* convert a given Unix Epoch time into wall clock date/time
 .br
 # cs_convert_time 484422540
 .TP
-* convert wall clock date/time into Unix Epoch time
+* convert a given wall clock date/time into Unix Epoch time
 .br
 # cs_convert_time "Wed May 08 19:49:00 CEST 1985"
+.TP
+* convert current wall clock date/time into Unix Epoch time
+.br
+# cs_convert_time $(LANG=C date)
 .\"
 .SH FILES
 .TP
@@ -37,6 +41,7 @@ Usage, syntax or execution errors.
 	the program itself.
 .\"
 .SH BUGS
+Wall clock time needs to be in format LANG=C.
 Feedback is welcome, please mail to feedback@suse.com
 .br
 .\"

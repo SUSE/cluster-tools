@@ -8,7 +8,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: SLES12 0.2 2020-08-31
+# Version: SLES12 0.2 2022-07-12
 #
 # shellcheck disable=SC1090,SC2140,SC2125,SC2037,SC2211
 # SC2140,SC2125,SC2037 and SC2211 are needed because of the ongoing
@@ -119,6 +119,7 @@ test -z "${ERROR_PATTERN}" &&\
 "kernel.*NUMA.turned.off"
 "kernel.Lockdown*"
 "kernel.*Duplicate.cookie"
+"kernel.*NFS.*failed"
 "BUG:.*workqueue.lockup"
 "Section.*circular.dependency"
 "double.fault:"

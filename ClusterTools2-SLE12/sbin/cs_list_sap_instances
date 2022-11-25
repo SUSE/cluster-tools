@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+# cs_list_sap_instances
+#
+# Version: 2022-11-24
+#
+
+function show_result() {
+	echo "####"
+	echo "SID: 			$SID"
+	echo "instance_nr: 		$NR"
+	echo "sidadm:			$ADM"
+	echo "systemd_service:	$SVC"
+	echo "systemd_unit:		$SUN"
+	echo "instance_profile:	$PF"
+	echo
+}
+
+# TODO test for systemd
+SINS=$(systemctl list-unit-files | awk '$1~/^SAP..._..\.service$/ {print $1}' |\
+		while read; do echo ${REPLY:3:6}; done)
+for S in $SINS; do
+	SVC=SAP$S.service
+	SUN=/etc/systemd/system/$SVC
+	SID=${S:0:3}
+	ADM=$(A=$(echo $SID | tr [A-Z] [a-z]); echo ${A}adm)
+	NR=${S:4}
+	PF=$(systemctl show SAP$S.service |\
+		awk '$1~/^ExecStart=/ {print $5}' |\
+		awk -F= '{print $2}')
+	show_result
+done
+
+# TODO test for SystemV
+test -z "$PFS" && PFS=$(awk '$1!~/^#/ {print $3}' /usr/sap/sapservices |\
+	awk -F= '{print $2}')
+for PF in $PFS; do
+	SID=$(echo $PF | awk -F/ '{print $4}')
+	ADM=$(echo ${SID}adm | tr [A-Z] [a-z])
+
+	# HANA DB
+	INI=$(find -L /usr/sap/$SID/ -name "sapprofile.ini" | tac | head -1)
+	test -n "$INI" && NR=$(awk -F= '$1~/^SAPSYSTEM$/ {print $2}' $INI)
+	
+	show_result
+done
+#

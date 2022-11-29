@@ -7,7 +7,7 @@
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2022-11-24
+# Version: 2022-11-28
 #
 # TODO HANA systemd, HANA MCOS, ENSA SystemV
 # DONE ENSA systemd, HANA SystemV
@@ -31,6 +31,7 @@ function show_result() {
 
 
 function show_path() {
+	# TODO systemd drop-in /etc/systemd/system/SAP<SID>_<nr>.service.d/
 	D="/usr/sap/$SID/SYS/global/hdb/custom/config/"
 	test -d "$D" && GLO="$D"
 	D=""
@@ -45,7 +46,8 @@ function show_path() {
 
 function guess_values() {
 	# TODO check for systemd
-	SINS=$(systemctl list-unit-files | awk '$1~/^SAP..._..\.service$/ {print $1}' |\
+	SINS=$(systemctl list-unit-files SAP*.service |\
+		awk '$1~/^SAP..._..\.service$/ {print $1}' |\
 		while read; do echo ${REPLY:3:6}; done)
 	for S in $SINS; do
 		SVC=SAP$S.service

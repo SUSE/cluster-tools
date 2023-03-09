@@ -176,7 +176,7 @@ function prck_kernel(){
 	FIL="/proc/cmdline"
 	for f in $FIL; do
 		for a in ${CEPH_BOOTARG} ${CEPH_BOOTARG}; do
-			FOUND=$(grep "$a" $f)
+			FOUND=$(grep "$a" "$f")
 			test -z "${FOUND}" && FOUND="NA"
 			echo "${f}: ${a} :	${FOUND}"
 		done
@@ -397,8 +397,8 @@ case $1 in
 		echo "INFO: start $EXE"
 
 		test $UID -gt 0 && echo "please call as root." && exit
-		mkdir $TEMP
-		cd $TEMP || exit
+		mkdir "$TEMP"
+		cd "$TEMP" || exit
 		prck_hardware
 		prck_kernel
 		prck_sysconf
@@ -406,7 +406,7 @@ case $1 in
 		prck_network
 		prck_basesoft
 		cd "$OLDPWD" || exit
-		rm -rf $TEMP
+		rm -rf "$TEMP"
 
 		echo "INFO: normal_end $EXE"
 		exit

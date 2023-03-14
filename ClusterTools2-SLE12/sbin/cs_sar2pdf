@@ -23,9 +23,9 @@ test -z "${TEMP}" &&\
 
 function split_file(){
 	F=$(basename "$1")
-	mkdir -p ${TEMP}/"$F"
-	cp "$1" ${TEMP}/"$F"/
-	cd ${TEMP}/"$F"/ || exit
+	mkdir -p "${TEMP}"/"$F"
+	cp "$1" "${TEMP}"/"$F"/
+	cd "${TEMP}"/"$F"/ || exit
 	csplit "$F" /^$/ '{*}' >>$ERR
 	# for make_cpu: keep xx01..xx131
 	# TODO name files meaningful, e.g. cpu-sar...
@@ -41,7 +41,7 @@ function make_cpu(){
  # 00:00:01       CPU      %usr     %nice      %sys   %iowait    %steal      %irq     %soft    %guest    %gnice     %idle
 	F=$(basename "$1")
 	C=${F}.cpu
-	cd ${TEMP}/"$F"/ || exit
+	cd "${TEMP}"/"$F"/ || exit
 	echo "#time    iowa  syst  user  idle" >"$C"
 	#xzcat xx[0-9]?.xz xx1[0-2]?.xz xx13[0-1].xz |\
 	# shellcheck disable=SC1004
@@ -69,7 +69,7 @@ function plot_cpu(){
 	P=${F}.cpu.plo
 	S=${F}.cpu.ps
 	D=${F}.cpu.pdf
-	#cd ${TEMP}/$F/
+	#cd "${TEMP}"/$F/
 # TODO separate generic formatting from CPU-specific 
 	( echo "set output \"${S}\""
 	echo "set terminal postscript"
@@ -122,21 +122,21 @@ case $1 in
 		FIL=$2
 		split_file "$FIL"
 		make_cpu "$FIL"
-		rm -rf ${TEMP:?}/
+		rm -rf "${TEMP:?}"/
 		exit
         ;;
 	-a|--await)
 		FIL=$2
 		split_file "$FIL"
 		make_await "$FIL"
-		#rm -rf ${TEMP}/
+		#rm -rf "${TEMP:?}"/
 		exit
         ;;
         -m|--mem)
 		FIL=$2
 		split_file "$FIL"
 		make_mem "$FIL"
-		rm -rf ${TEMP:?}/
+		rm -rf "${TEMP:?}"/
 		exit
         ;;
 	*)

@@ -347,7 +347,7 @@ function sum_might(){
 function sum_calls(){
 	# TODO: replace errors by "$REPLY = NA" as above
 	# TODO: array instead of list, to avoid ugly "'" handling
-	mkdir $TEMP
+	mkdir "$TEMP"
 	nc=0
 	f=$CFG
 	sum_config
@@ -362,11 +362,11 @@ function sum_calls(){
 		echo -n "'${REPLY}' = "
 		eval "${REPLY}" | sort | md5sum - | awk '{print $1}'
 		(( nc++ ))
-		echo "$nc" >${TEMP}/nc
+		echo "$nc" >"${TEMP}"/nc
 	done | grep -v "'.*d41d8cd98f00b204e9800998ecf8427e"
-	nc=$(cat ${TEMP}/nc); nc=$((nc/2))
+	nc=$(cat "${TEMP}"/nc); nc=$((nc/2))
 	echo "INF0: $nc calls" >>/dev/stderr
-	rm -rf $TEMP
+	rm -rf "$TEMP"
 }
 
 
@@ -383,7 +383,7 @@ function sum_apps(){
 	done
 	echo "INFO: $nf files" >>/dev/stderr
 
-	mkdir $TEMP
+	mkdir "$TEMP"
 	nc=0
 	f=$CFG
 	sum_config
@@ -398,10 +398,10 @@ function sum_apps(){
 		echo -n "'${REPLY}' = "
 		eval "${REPLY}" | sort | md5sum - | awk '{print $1}'
 		(( nc++ ))
-		echo "$nc" >${TEMP}/nc
+		echo "$nc" >"${TEMP}"/nc
 	done | grep -v "'.*d41d8cd98f00b204e9800998ecf8427e"
-	nc=$(cat ${TEMP}/nc); nc=$((nc/2))
-	rm -rf $TEMP
+	nc=$(cat "${TEMP}"/nc); nc=$((nc/2))
+	rm -rf "$TEMP"
 }
 
 

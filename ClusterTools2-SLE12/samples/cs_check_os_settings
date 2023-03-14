@@ -323,11 +323,11 @@ function chk_tuned() {
 	echo
 	return	
 	# TODO
-	for s in $(echo ${!TUNED} | tr " $" "&\n" | grep -v "#"); do
-		name=$(echo $s | tr "&" " " | awk -F= '{print $1}' | tr -d " ")
-		want=$(echo $s | tr "&" " " | awk -F= '{print $2}')
-		echo_result $want $have
-	done
+	#for s in $(echo ${!TUNED} | tr " $" "&\n" | grep -v "#"); do
+	#	name=$(echo $s | tr "&" " " | awk -F= '{print $1}' | tr -d " ")
+	#	want=$(echo $s | tr "&" " " | awk -F= '{print $2}')
+	#	echo_result $want $have
+	#done
 }
 
 

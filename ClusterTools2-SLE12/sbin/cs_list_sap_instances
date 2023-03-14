@@ -37,7 +37,7 @@ function show_path() {
 	D=""
 	if [ -n "$WD" ]; then
 		D=$WD
-		test -d $D && LOG="$D/"
+		test -d "$D" && LOG="$D/"
 	fi
 	D="/usr/sap/$SID/HDB$NR/$VHOST/trace/"
 	test -d "$D" && TRC="$D"
@@ -53,12 +53,12 @@ function guess_values() {
 		SVC=SAP$S.service
 		SUN=/etc/systemd/system/$SVC
 		SID=${S:0:3}
-		ADM=$(A=$(echo $SID | tr [A-Z] [a-z]); echo ${A}adm)
+		ADM=$(A=$(echo "$SID" | tr "[:upper:]" "[:lower:]"); echo "${A}"adm)
 		NR=${S:4}
-		PF=$(systemctl show SAP$S.service |\
+		PF=$(systemctl show SAP"$S".service |\
 			awk '$1~/^ExecStart=/ {print $5}' |\
 			awk -F= '{print $2}')
-		WD=$(systemctl show SAP$S.service |\
+		WD=$(systemctl show SAP"$S".service |\
 			awk -F= '$1~/^WorkingDirectory/ {print $2}')
 		show_path	
 		show_result
@@ -68,14 +68,14 @@ function guess_values() {
 	test -z "$PFS" && PFS=$(awk '$1!~/^#/ {print $3}' /usr/sap/sapservices |\
 		awk -F= '{print $2}')
 	for PF in $PFS; do
-		SID=$(echo $PF | awk -F/ '{print $4}')
-		ADM=$(echo ${SID}adm | tr [A-Z] [a-z])
+		SID=$(echo "$PF" | awk -F/ '{print $4}')
+		ADM=$(echo "${SID}"adm | tr "[:upper:]" "[:lower:]")
 		# TODO WD
 		WD=""
 
 		# HANA DB
-		INI=$(find -L /usr/sap/$SID/ -name "sapprofile.ini" | tac | head -1)
-		test -n "$INI" && NR=$(awk -F= '$1~/^SAPSYSTEM$/ {print $2}' $INI)
+		INI=$(find -L /usr/sap/"$SID"/ -name "sapprofile.ini" | tac | head -1)
+		test -n "$INI" && NR=$(awk -F= '$1~/^SAPSYSTEM$/ {print $2}' "$INI")
 		# TODO VHOST
 		VHOST=$(hostname)
 		show_path
@@ -87,6 +87,7 @@ function guess_values() {
 # main()
 case $1 in
 	-h|--help)
+		# shellcheck disable=SC2005
 		echo "$(basename "$EXE")"
 		echo "$(basename "$EXE") [OPTION]"
 		echo " --help           show help"

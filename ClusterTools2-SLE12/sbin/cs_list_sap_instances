@@ -46,7 +46,8 @@ function show_path() {
 
 function guess_values() {
 	# TODO check for systemd
-	SINS=$(systemctl list-unit-files SAP*.service |\
+	# shellcheck disable=SC2162,SC2086
+	SINS=$(sy stemctl list-unit-files SAP*.service |\
 		awk '$1~/^SAP..._..\.service$/ {print $1}' |\
 		while read; do echo ${REPLY:3:6}; done)
 	for S in $SINS; do

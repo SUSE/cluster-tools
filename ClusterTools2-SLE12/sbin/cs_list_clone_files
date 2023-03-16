@@ -72,6 +72,8 @@ function writecfg(){
 
 
 # TODO call cs_sum_base_config instead of having own function
+# currently not used, so disable shellcheck complains
+# shellcheck disable=SC2317
 function sum_config(){
 	S="NA"
 	test -r "$f" && S=$(md5sum "$f" | awk '{print $1}')

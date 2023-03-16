@@ -21,8 +21,8 @@ test -z "${ETH}" &&\
 	 ETH="bond0 eth3"
 test -z "${SCF}" &&\
 	 SCF="/etc/sysconfig/sbd"
-test -z "${SBD}" && test -s $SCF &&\
-	SBD=$( awk -F"=" '$1=="SBD_DEVICE" {print $2}' $SCF |\
+test -z "${SBD}" && test -s "$SCF" &&\
+	SBD=$( awk -F"=" '$1=="SBD_DEVICE" {print $2}' "$SCF" |\
 		tr -d "\""|tr ";" "\n" )
 test -z "${CLPROC}" &&\
 # for SLE 11, 12 see $CFG

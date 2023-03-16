@@ -1,4 +1,4 @@
-.TH ha_related_suse_tids 7 "08 Mar 2022" "" "ClusterTools2"
+.TH ha_related_suse_tids 7 "08 Feb 2023" "" "ClusterTools2"
 .\"
 .SH NAME
 ha_related_suse_tids - selection of SUSE Technical Information Documents, related to high availability
@@ -410,6 +410,8 @@ Integration of sap-suse-cluster-connector does not work as expected (7023149)
 .br
 sap_suse_cluster_connector stuck as HAActive: FALSE (000019924)
 .br
+Identify unplanned start/stop of the ASCS/ERS services (000020661)
+.br
 Use of Filesystem resource for ASCS/ERS HA setup not possible (000019944)
 .br
 Updated fuser binary causing wrong processes to be terminated in SAP Netweaver ... (000019952)
@@ -421,6 +423,12 @@ Unexpected connection drop between SAP application and NetWeaver (000020518)
 Error when coming out of standby: hdbdaemon HDB Daemon not running (7021376)
 .br
 SAPHanaController running in timeout when starting SAP Hana (000019899)
+.br
+SAP HANA monitors timed out after 5 seconds (000020626)
+.br
+HA cluster takeover takes too long on HANA indexserver failure (000020845)
+.br
+Cluster node fence as SAPHanaTopology fails with error code 1 (OCF_ERR_GENERIC) during a normal cluster stop (000020964)
 .br
 Troubleshooting the SAPHanaSR python hook (000019865)
 .br
@@ -454,6 +462,8 @@ sapstartsrv does not respawn after a forceful kill of the master nameserver (702
 .br
 Expected output results for HAGetFailoverConfig. (000019613)
 .br
+HAGetFailoverConfig cluster test failed with Insufficient memory (000019732)
+.br
 sapcontrol -function HAFailoverToNode migration fail (000020520)
 .br
 Pull Errors with azure-events Resource Agent on all Nodes (000019623)
@@ -463,6 +473,14 @@ SAPHanaSR HANA system replication automation without layer 2 network (000020333)
 SAPHanaSR-showAttr fails with error "Error: NIECONN_REFUSED ..." (000020548)
 .br
 The vIP cluster resource does not follow the SAP HANA master ... (000019769)
+.br
+Pacemaker: manual resource migration (000020246)
+.br
+HANA fail-over and secondary recovery operations fail due to excessive os.system() execution times (000020835)
+.br
+Address space monitoring and HANA DB performance (000020746)
+.br
+HANA nodes end up having the same LPT values (000020690)
 .br
 
 .\"
@@ -618,6 +636,8 @@ Handling failed NFS share in SUSE HA cluster for HANA system replication (000019
 .br
 SAP Instances failed stop on shutdown (PACEMAKER, SYSTEMD, SAP) (7022671)
 .br
+How to patch a SAP Application Pacemaker Cluster (000020268)
+.br
 SAP on SLES shows Error: NIECONN_REFUSED in the logs (7023236)
 .br
 Indepth HANA Cluster Debug Data Collection (PACEMAKER, SAP) (7022702)
@@ -631,6 +651,8 @@ SLES for SAP Upgrade returns: "Error: Product SLES for SAP Applications will be 
 Memory, I/O and DefaultTasksMax related considerations for SLES for SAP servers with huge memory (7021211)
 .br
 DefaultTasksMax / TasksMax / UserTasksMax (000015901)
+.br
+Unable to set kernel.shmmni to a value greated than 32k (32768) (000020403)
 .br
 Systemd KillMode=none (000020394)
 .br
@@ -662,9 +684,9 @@ System hangs on reboot if 'google-shutdown-scripts.service' is enabled (00002037
 .br
 Communications fail between Azure Load Balancer and SLE instance (000019510)
 .br
-ALUA port group messages (7023021)
+TCP SYN packets intermittently go unanswered (7023254)
 .br
-possible Timeout of NFSv4 Export during failover or restart (7023732)
+ALUA port group messages (7023021)
 .br
 BTRFS filesystem going readonly on balance operation. (7018233)
 .br

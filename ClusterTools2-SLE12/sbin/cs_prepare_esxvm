@@ -241,9 +241,9 @@ function inittab() {
 	FIL="/etc/inittab"
 	/sbin/runlevel >/root/runlevel."$SFX"
 	cp -a $FIL ${FIL}."$SFX" || exit 1
-	sed s/^id:.:initdefault:/id:${RLVL_OK}:initdefault:/ <${FIL}."$SFX" >$FIL
+	sed s/^id:.:initdefault:/id:"${RLVL_OK}":initdefault:/ <${FIL}."$SFX" >$FIL
 
-	/sbin/telinit ${RLVL_OK}
+	/sbin/telinit "${RLVL_OK}"
  ;;
  list)
 	echo "=== $FUNCNAME ==="

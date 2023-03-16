@@ -37,13 +37,13 @@ function do_init() {
 	# TODO 2nd arg for stress profile (hana ...)
 	# check or create attributes in CIB?
 	LNK=2
-	test -L $F_CRON && LNK=0
+	test -L "$F_CRON" && LNK=0
 	test $LNK -eq 0 && echo "ERR: do_init: existing symlink: $F_CRON: RC=2" >/dev/stderr && exit 2
 	test $LNK -eq 0 ||\
-		ln -s /usr/share/ClusterTools2/cs_stresscib.cron $F_CRON &&\
+		ln -s /usr/share/ClusterTools2/cs_stresscib.cron "$F_CRON" &&\
 		echo "INF: created symlink: $F_CRON: RC=0" >/dev/stderr
-		grep -v "^#" $F_CRON
-	touch $F_LOG
+		grep -v "^#" "$F_CRON"
+	touch "$F_LOG"
 	SVC=$(/sbin/chkconfig openais | tr -d " ")
 	if [ "$SVC" != openaison ]; then
 		echo "ERR: do_init: no chkconfig openais on: RC=2" >/dev/stderr
@@ -54,7 +54,7 @@ function do_init() {
 	for attr_node in ${L_NODE}; do
 		attr_name="val_stresscib_${attr_node}"
 		do_run_writehost 2>/dev/stderr ; RC=$?
-		echo "$time_stamp : do_init : $HOSTNAME ${attr_name} ${attr_value} : RC=$RC" >>$F_LOG
+		echo "$time_stamp : do_init : $HOSTNAME ${attr_name} ${attr_value} : RC=$RC" >>"$F_LOG"
 		test $RC -eq 0 || echo "ERR: do_init: failed to initialise ${attr_name} : RC=$RC" 2>/dev/stderr
 	done
 }
@@ -62,9 +62,9 @@ function do_init() {
 
 function do_exit() {
 	LNK=2
-	test -L $F_CRON && LNK=0
-	test -e $F_CRON || LNK=0
-	test $LNK -eq 0 && rm -f $F_CRON &&\
+	test -L "$F_CRON" && LNK=0
+	test -e "$F_CRON" || LNK=0
+	test $LNK -eq 0 && rm -f "$F_CRON" &&\
 		echo "INF: do_exit: removed symlink: $F_CRON: RC=0" >/dev/stderr && exit 0
 	test $LNK -eq 0 || echo "ERR: do_exit: not a symlink: $F_CRON: RC=2" >/dev/stderr && exit 2
 	# TODO remove attributes from CIB
@@ -201,15 +201,15 @@ case $1 in
 		test -z "$1" || LOAD=$1
 		case $LOAD in
 			1)
-				do_run >>$F_LOG 2>&1
+				do_run >>"$F_LOG" 2>&1
 			;;
 			2)
-				do_run >>$F_LOG 2>&1
-				do_run_cibadmin >>$F_LOG 2>&1
+				do_run >>"$F_LOG" 2>&1
+				do_run_cibadmin >>"$F_LOG" 2>&1
 			;;
 			3)
-				do_run >>$F_LOG 2>&1
-				do_run_cibadmin >>$F_LOG 2>&1
+				do_run >>"$F_LOG" 2>&1
+				do_run_cibadmin >>"$F_LOG" 2>&1
 				# TODO what else?
 			;;
 		esac

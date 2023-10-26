@@ -3,12 +3,12 @@
 # cs_show_supportconfig
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2021 SUSE LLC
+# (c) 2018-2023 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2021-08-26 SLES12 0.03
+# Version: 2023-10-26 SLES12 0.03
 #
 # For Supportconfig Script Version: 2.25-237 to 3.0.2-10
 # TODO what supportconfig supports sar xz files?
@@ -854,7 +854,7 @@ function chk_timeres(){
 	done
 	echo
 	# TODO SLES12
-	# TODO SLES15 cronyd
+	# TODO SLES15 chronyd
 	# TODO split_file to get complete output of ntpq -p
 	split_file ${FIL} 
 	echo "service:"
@@ -884,6 +884,8 @@ function chk_timeres(){
 		grep -v "^#" $f | tr -s "\n"
 
         rm -rf "${TEMP:?}"/${FIL}
+	echo
+	grep "Time.zone:" ${FIL}
 	echo
 
 	test -z "${TIME_ERR}" &&\

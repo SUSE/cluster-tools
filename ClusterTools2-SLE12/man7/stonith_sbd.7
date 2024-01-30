@@ -1,4 +1,4 @@
-.TH stonith_sbd 7 "09 Feb 2021" "" "ClusterTools2"
+.TH stonith_sbd 7 "31 Jan 2024" "" "ClusterTools2"
 .\"
 .SH NAME
 stonith_sbd \- Stonith Block Device
@@ -117,6 +117,8 @@ is not confined to a single array.
 
 Host-based mirroring solutions could have one SBD per mirror leg (not
 mirrored itself), and an additional tie-breaker on iSCSI. 
+However, three SBD devices can not be distributed equally across two sites. So
+three sites are needed for three SBD devices, even for a two node cluster.
 
 .\"
 .P
@@ -492,6 +494,8 @@ mentioned above.
 (c) 2018-2019 SUSE Linux GmbH, Germany.
 .br
 (c) 2020-2021 SUSE Software Solutions Germany GmbH.
+.br
+(c) 2022-2024 SUSE LLC.
 .br
 sbd comes with ABSOLUTELY NO WARRANTY.
 .br

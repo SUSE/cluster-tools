@@ -76,5 +76,5 @@ echo
 echo "# ${EXE}: RC="
 # TODO useful overall return code
 echo "################################################"
-exit $RC
+exit "$RC"
 #

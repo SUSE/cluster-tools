@@ -35,7 +35,6 @@ function show_help() {
 	echo " --help		show help"
 	echo " --version	show version"
 	echo
-	exit
 }
 
 

@@ -196,6 +196,8 @@ The azure-events Resource Agent Does Not Failover Properly ... (000020578)
 .br
 stonith: Could not list hosts for external/ipmi (000020598)
 .br
+How to setup vcenter fence agent (000019720)
+.br
 default action timeout and op default timeout (OPENAIS) (7009584) 
 .br
 OpenAIS/Corosync daemon fails to start (7010879) 
@@ -274,8 +276,8 @@ The command crm status returns Stack: unknown (000019771)
 .br
 HA node unable to join AD domain after applying HA SP3 (7014642) 
 .br
-Replacing SBD device in a running Pacemaker cluster (7021158)
-.br
+.\" Replacing SBD device in a running Pacemaker cluster (7021158)
+.\" .br
 SBD STONITH fails to fence other node when using the fully qualified DNS name. (000019877)
 .br
 Mount and sbd failures leading to fencing failure (aio-max-nr too low) (7022255)
@@ -307,6 +309,12 @@ Enable and disable maintenance mode in a High Availability Cluster (7023135)
 Usage of Maintenance and Managed attributes in a Cluster (Pacemaker) (000019779)
 .br
 fence_vmware_soap is missing (000019466)
+.br
+HA - Pacemaker - Creating a cluster resource with a systemd service (000020739)
+.br
+pacemaker.log entries are timestamped with different timezones (000020743)
+.br
+Resource Stickiness parameter created during cluster bootstrap (000021075)
 .br
 
 .\"
@@ -486,9 +494,17 @@ Pacemaker: manual resource migration (000020246)
 .br
 HANA fail-over and secondary recovery operations fail due to excessive os.system() execution times (000020835)
 .br
+Protect HANA against manually caused dual-primary situation in SUSE HA cluster (000021044)
+.br
 Address space monitoring and HANA DB performance (000020746)
 .br
 HANA nodes end up having the same LPT values (000020690)
+.br
+SUSE HA for HANA cluster node fenced at shutdown, despite of systemd integration (000021046)
+.br
+HANA DB resource failed to start (000020948)
+.br
+SAPHanaController monitor timeout leads to database restart (000021249)
 .br
 
 .\"
@@ -573,6 +589,8 @@ Low write performance on SLES 11 servers with large RAM (7010287)
 Important difference in timing of I/O writes in SLE 12 (7015931)
 .br
 Partial record errors when writing over NFS to zOS (7012647)
+.br
+Setting static ports for NFS on Linux (7000524)
 .br
 possible Timeout of NFSv4 Export during failover or restart (000019414)
 .br
@@ -770,9 +788,14 @@ How to patch a SAP Application Pacemaker Cluster (000020268)
 .br
 SAP license verification fails after upgrade to SLES12 SP5 due to system UUID change (000019647)
 .br
+<<<<<<< HEAD
 HANA Database Planning Engine crashes in __strncmp_avx2_rtm+0x1b3 (000021026)
 .br
 TSC Clocksource Switching to HPET During High I/O Load (000021035)
+=======
+Logs about an incident on a Pacemaker Cluster are lost because of the log file turn-over policy (000020390)
+.br
+>>>>>>> master
 
 .\" .br TODO Oracle 7023167
 .\"

@@ -10,7 +10,7 @@
 #
 # Examples for SAP HANA. Please adapt to your needs. See also logrotate.d/
 #
-## -17 3 * * 4 root /usr/bin/find /hana/shared/<SID>/HDB<nr>/backup/log/log_backup_* -mtime 7 -exec rm {} \;
+## -17 3 * * 4 root /usr/bin/find /hana/shared/<SID>/HDB<nr>/backup/log/*/log_backup_* -mtime 7 -exec rm {} \;
 #
 ## -15 4 * * 4 root /usr/bin/find /hana/shared/<SID>/HDB<nr>/<host>/trace/*.trc -mtime 7 -exec bzip2 {} \;
 #

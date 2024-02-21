@@ -60,7 +60,7 @@ function sudo_cmd() {
 	# Modification of RC_ALL is local, caused by subshell grouping ()
 	RC=$? ; RC_ALL=$((RC_ALL + RC))
 	echo "# ${CMD}: RC: "$RC
-	echo ) >>${TEMP}
+	echo ) >>"${TEMP}"
 }
 
 function show_file() {
@@ -73,7 +73,7 @@ function show_file() {
 	# Modification of RC_ALL is local, caused by subshell grouping ()
 	RC=$? ; RC_ALL=$((RC_ALL + RC))
 	echo "# cat ${FIL}: RC: "$RC
-	echo ) >>${TEMP}
+	echo ) >>"${TEMP}"
 }
 
 function show_info() {
@@ -82,13 +82,13 @@ function show_info() {
 	echo "# ${EXE}: show_info"
 	RC_ALL=0
 
-	echo > ${TEMP} || exit 1
+	echo > "${TEMP}" || exit 1
 	( echo "# ==="
 	echo "hostname: ${MYHOST}"
 	echo "sid: $UPSID"
 	echo "inst_nr: $INR"
 	id "${SID}"adm
-	echo ) >>${TEMP} || exit 2
+	echo ) >>"${TEMP}" || exit 2
 
 	# TODO $rc
 	( echo "# ==="
@@ -97,13 +97,13 @@ function show_info() {
 	echo
 	echo "systemctl status sapinit"
 	systemctl status sapinit
-	echo ) >>${TEMP} || exit 2
+	echo ) >>"${TEMP}" || exit 2
 
 	# TODO $rc
 	( echo "# ==="
 	echo "# ps aux"
 	ps aux | grep ^"${SID}"adm
-	echo ) >>${TEMP} || exit 2
+	echo ) >>"${TEMP}" || exit 2
 
 	# TODO call sap cmds with --sapcontrol=1 to get parseable output
 	sudo_cmd "sapcontrol -nr $INR -function GetProcessList"
@@ -116,7 +116,7 @@ function show_info() {
 	( echo "# ==="
 	echo "# sudo -l"
 	sudo -U "${SID}"adm -l
-	echo ) >>${TEMP} || exit 2
+	echo ) >>"${TEMP}" || exit 2
 
 	show_file "$SAPSVC"
 	show_file "$SAPPFL"
@@ -128,7 +128,7 @@ function show_info() {
 	# TODO systemd user slice
 	# TODO systemd system slice
 
-	cat ${TEMP} && rm ${TEMP}
+	cat "${TEMP}" && rm "${TEMP}"
 	echo
 	echo "# ${EXE}: show_info: RC: "$RC_ALL
 }
@@ -137,13 +137,13 @@ function show_logs() {
 	echo "# ${EXE}: show_logs"
 	RC_ALL=0
 
-	echo > ${TEMP} || exit 1
+	echo > "${TEMP}" || exit 1
 	# TODO awk ... /hana/shared/${SID}/HDB${INR}/${MYHOST}/trace/*.trc
 	# 5th? column = "e"
 	# ? column = "DISK FULL"
-	echo "not implemented yet" >>${TEMP}
+	echo "not implemented yet" >>"${TEMP}"
 
-	cat ${TEMP} && rm ${TEMP}
+	cat "${TEMP}" && rm "${TEMP}"
 	echo
 	echo "# ${EXE}: show_info: RC: "$RC_ALL
 }
@@ -188,7 +188,6 @@ case $1 in
 	;;
 	*)
 		show_help
-		exit
 	;;
 esac
 #

@@ -275,7 +275,7 @@ function prck_kernel(){
 	FIL="/proc/cmdline"
 	for f in $FIL; do
 		for a in ${HANA_SAP_BOOTARG} ${HANA_SUSE_BOOTARG}; do
-			FOUND=$(grep "$a" $f)
+			FOUND=$(grep "$a" "$f")
 			test -z "${FOUND}" && FOUND="NA"
 			echo "${f}: ${a} :	${FOUND}"
 		done
@@ -530,8 +530,8 @@ case $1 in
 		echo "INFO: start $EXE"
 
 		test $UID -gt 0 && echo "please call as root." && exit
-		mkdir $TEMP
-		cd $TEMP || exit 1
+		mkdir "$TEMP"
+		cd "$TEMP" || exit 1
 		prck_hardware
 		prck_kernel
 		prck_sysconf
@@ -539,7 +539,7 @@ case $1 in
 		prck_network
 		prck_basesoft
 		cd "$OLDPWD" || exit 1
-		rm -rf $TEMP
+		rm -rf "$TEMP"
 
 		echo "INFO: normal_end $EXE"
 		exit

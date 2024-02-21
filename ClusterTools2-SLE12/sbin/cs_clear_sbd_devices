@@ -82,6 +82,8 @@ function clear_devices() {
 }
 
 
+# currently not used, so disable shellcheck complains
+# shellcheck disable=SC2317
 function list_devices() {
 	list_device_names | while read DEV; do
         	sbd -d "$DEV" list

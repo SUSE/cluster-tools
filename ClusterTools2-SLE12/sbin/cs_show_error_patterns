@@ -149,6 +149,7 @@ test -z "${ERROR_PATTERN}" &&\
 "xfs_log_force.*error"
 "XFS.*allocation.deadlock"
 "XFS.*head.behind.tail"
+"Deprecated.*format"
 "sdrServ:.*err"
 "server.*not.responding"
 "iSCSI.connection.*error"

@@ -1,0 +1,49 @@
+.TH cs_show_cluster_actions 8 "08 Mai 2024" "" "ClusterTools2"
+.\"
+.SH NAME
+cs_show_cluster_actions \- show current actions of pacemaker HA cluster 
+.\"
+.SH SYNOPSIS
+.B cs_current_cluster_actions \fI[OPTION]\fR
+.\"
+.SH DESCRIPTION
+\fBcs_show_cluster_actions\fP shows current actions of pacemaker HA cluster,
+together with related information like fail-count, node status, resource status.
+.br
+.\"
+.SH OPTIONS
+.TP
+\fB --help\fR
+show help
+.TP
+\fB --version\fR
+show version
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/cs_show_cluster_actions
+the program itself
+.\"
+.SH BUGS
+Feedback is welcome, please mail to feedback@suse.com
+.\"
+.SH SEE ALSO
+\fBClusterTools2\fP(7), \fBcs_clusterstate\fP(8),
+\fBcs_show_sbd_devices\fP(8), \fBcs_show_saphanasr_status\fP(8), 
+\fBcrm_mon\fP(8), \fBstonith_admin\fP(8).
+.\"
+.SH COPYRIGHT
+(c) 2024 L.Pinne, Germany.
+.br
+cs_show_cluster_actions comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

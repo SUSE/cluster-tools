@@ -1,0 +1,52 @@
+#!/bin/bash
+#
+# cs_show_cluster_actions
+#
+# (c) 2024 SUSE LLC
+# Authors: F.Herschel, L.Pinne.
+# GNU General Public License v2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
+#
+# Version: 2024-05-08
+#
+
+EXE="$0"
+
+function show_actions() {
+	crm_mon -1r --include=none,nodes,resources,failcounts
+	echo
+	echo "Actions:"
+	crm_simulate -Ls --output-as=xml |\
+	awk '/rsc_action/ {print $2,$3,$4}' | tr -d "\/>"
+	echo
+	cs_clusterstate -i | grep -v "#"
+}
+
+function show_help() {
+        echo "usage: $(basename "$EXE")"
+        echo "usage: $(basename "$EXE") OPTION"
+        echo
+        echo "OPTION:"
+        echo " --help           show help."
+        echo " --version        show version."
+        echo
+}
+
+# function main()
+
+case $1 in
+        -v|--version)
+                echo -n "$(basename "$EXE") "
+                head -11 "$EXE" | grep "^# Version: "
+                exit
+        ;;
+        -h|--help)
+                show_help
+                exit
+        ;;
+        *)
+                show_actions
+                exit $?
+        ;;
+esac
+#

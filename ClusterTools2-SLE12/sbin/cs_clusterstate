@@ -3,7 +3,7 @@
 # cs_clusterstate 
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2020 SUSE LLC
+# (c) 2018-2024 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
@@ -63,8 +63,8 @@ function crmadmin_quiet() {
 	# 8 Jun 2021) printed the --quiet result on stderr, hence checking this
 	# output sink first.
 	local out
-	out=$(crmadmin --quiet "$@" 2>&1 1>/dev/null) || return $?
-	[ -n "$out" ] || out=$(crmadmin --quiet "$@" 2>/dev/null) || return $?
+	out=$(timeout 60 crmadmin --quiet "$@" 2>&1 1>/dev/null) || return $?
+	[ -n "$out" ] || out=$(timeout 60 crmadmin --quiet "$@" 2>/dev/null) || return $?
 	echo "$out"
 }
 

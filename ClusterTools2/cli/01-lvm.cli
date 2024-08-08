@@ -1,4 +1,0 @@
-configure primitive $UUID ocf:heartbeat:LVM \
- params volgrpname="$VOLUMEGROUP" \
- op 	monitor interval=130s timeout=130s \
- op     stop timeout=130s on_fail="fence"	

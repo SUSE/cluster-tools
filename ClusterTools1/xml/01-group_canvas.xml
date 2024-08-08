@@ -1,8 +1,0 @@
-       <group id="$UUID">
-	 <meta_attributes id="${UUID}_meta_attrs">
-           <attributes>
-             <nvpair id="${UUID}_meta_attr-target_role" name="target_role" value="stopped"/>
-           </attributes>
-         </meta_attributes>
-       </group>
-

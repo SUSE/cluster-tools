@@ -1,3 +1,0 @@
- <rule id="$RULEID">
-<expression attribute="$ATTRIBUTE" id="$UUID" operation="$OPERATOR" value="$VALUE"/>
- </rule>

@@ -1,6 +1,0 @@
-source /usr/lib/wow/wowlib
-myIPMI_ADDRESSES=$IPMIADDRESSES
-for node in $ALLNODES; do
-	IPMI_ADDRESS=$(firstof_var myIPMI_ADDRESSES); shift_var myIPMI_ADDRESSES
-	woweng $WOWRSRCEMODIFY UUID=rsc_stonith_sunipmi_${node} IPMPI_HOSTNAME="$node" IPMI_IPADDR="$IPMI_ADDRESS" $IPMISETTINGS $wowxml/02-primitive_stonith_sunipmi.xml
-done

@@ -1,3 +1,0 @@
-configure \
-primitive rsc_stonith_sbd stonith:external/sbd \
-op start interval="0" timeout="15" start-delay="5"

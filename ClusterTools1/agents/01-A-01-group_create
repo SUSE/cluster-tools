@@ -1,2 +1,0 @@
-source /usr/lib/wow/wowlib
- woweng $WOWRSRCECREATE UUID=$GRPID $wowxml/01-group_canvas.xml

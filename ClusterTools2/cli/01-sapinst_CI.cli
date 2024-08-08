@@ -1,7 +1,0 @@
-configure primitive $UUID ocf:heartbeat:SAPInstance \
-params	InstanceName="$SAP_INSTANCE" \
-AUTOMATIC_RECOVER="TRUE" \
-START_PROFILE="$SAP_START_PROFILE" \
-op  monitor interval=180s timeout=60s start_delay=240s \
-op start timeout=240s \
-op stop timeout=240s on_fail="block"

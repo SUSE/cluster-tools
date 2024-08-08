@@ -1,8 +1,0 @@
-source /usr/lib/wow/wowlib
-echo "TODO: check fencing"
-for volumegroup in $LVM_VOLUMEGROUPS; do
-	woweng $WOWRSRCEMODIFY GROUPID=${GRPID} \
-		UUID=rsc_LVM_${SAPSID}_${volumegroup} \
-		VOLUMEGROUP=$volumegroup \
-		$wowxml/01-group_resource_lvm.xml
-done

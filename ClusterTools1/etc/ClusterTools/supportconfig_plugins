@@ -1,9 +1,0 @@
-# /etc/ClusterTools/supportconfig_plugins
-# For SLES10.
-# one entry per line "^plugin$"
-#cat_messages
-#cat_psauxlog
-#sum_base_config
-#grep_error_patterns
-#whbsaprecheck
-#

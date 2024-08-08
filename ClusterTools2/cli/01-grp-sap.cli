@@ -1,3 +1,0 @@
-configure group $UUID \
-$GROUP_MEMBERS \
-meta target-role=stopped	

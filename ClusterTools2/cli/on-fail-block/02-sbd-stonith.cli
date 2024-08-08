@@ -1,2 +1,0 @@
-configure primitive $UUID stonith:external/sbd \
-params pcmk_delay_max="15"

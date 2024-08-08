@@ -1,5 +1,0 @@
-<rsc_location id="location_${UUID}" rsc="$RSC">
-	<rule id="location_${UUID}_rule_01" score="$SCORE">
-		<expression id="location_${UUID}_rule_01_expr_01"  attribute="#uname" operation="eq" value="$NODE"/>
-	</rule>
-</rsc_location>

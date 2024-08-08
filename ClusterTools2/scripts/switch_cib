@@ -1,4 +1,0 @@
-#!/bin/bash
-
-cib=$1
-crm cib commit $cib

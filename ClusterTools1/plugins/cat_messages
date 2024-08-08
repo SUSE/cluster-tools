@@ -1,6 +1,0 @@
-#!/bin/bash
-# /usr/lib/supportconfig/plugins/cat_messages
-grep "^cat_messages$" /etc/ClusterTools2/supportconfig_plugins || exit
-LOG="/var/log/messages"
-test -r $LOG && cat $LOG
-#

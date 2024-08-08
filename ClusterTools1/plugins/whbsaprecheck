@@ -1,5 +1,0 @@
-#!/bin/bash
-# /usr/lib/supportconfig/plugins/whbsaprecheck
-grep "^whbsaprecheck$" /etc/ClusterTools2/supportconfig_plugins || exit
-/usr/sbin/whbsaprecheck -g 2>&1
-#

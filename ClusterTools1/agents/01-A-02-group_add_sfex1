@@ -1,4 +1,0 @@
-source /usr/lib/wow/wowlib
- woweng $WOWRSRCEMODIFY UUID=rsc_sfex_${SFEXID}_${SFEX_INDEX}_$SAPSID GROUPID=${GRPID} \
-	SFEX_INDEX=$SFEX_INDEX SFEX_DEVICE=$SFEX_DEVICE \
-	$wowxml/01-group_resource_sfex.xml

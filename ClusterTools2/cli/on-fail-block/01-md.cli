@@ -1,3 +1,0 @@
-configure primitive $UUID ocf:heartbeat:Raid1 \
-params	raidconf="$MDADM_CONF" \
-raiddev="$DEVICE"

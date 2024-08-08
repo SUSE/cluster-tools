@@ -1,4 +1,0 @@
-configure primitive $UUID ocf:heartbeat:Raid1 \
-params	raidconf="$MDADM_CONF" \
-raiddev="$DEVICE" \
-op monitor interval=60s timeout=130s on_fail="fence"

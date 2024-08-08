@@ -1,3 +1,0 @@
-configure primitive $UUID stonith::external/ipmi params hostname=$IPMI_HOSTNAME ipaddr=$IPMI_IPADDR userid=$IPMI_USERID passwd=$IPMI_PASSWD interface=lan
-configure location loc_$UUID $UUID -inf: $IPMI_HOSTNAME
-

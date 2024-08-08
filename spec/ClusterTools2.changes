@@ -1,0 +1,350 @@
+-------------------------------------------------------------------
+Thu Aug  8 10:23:44 UTC 2024 - abriel@suse.com
+
+- remove dependency to perl-TermReadLine-Gnu for SLE16
+
+-------------------------------------------------------------------
+Wed Feb 21 10:42:28 UTC 2024 - abriel@suse.com
+
+- change version from 3.1.2 to 3.1.3
+  * adapt 'cs_show_scores' to support newer versions of crmsh
+    (bsc#1219806)
+  * change SBP URL in man page ha_related_sap_notes.7 to point to
+    the new location
+    (bsc#1194285)
+  * additional man page updates
+  * new script /usr/sbin/cs_list_sap_instances
+
+-------------------------------------------------------------------
+Mon Mar 28 08:32:25 UTC 2022 - abriel@suse.com
+
+- change version from 3.1.1 to 3.1.2
+- As newer versions of pacemaker display the output from command
+  'crmadmin --quiet' on stdout instead on stderr, the command
+  'cs_clusterstate' was enhanced to adapt these change.
+  (bsc#1188652)
+- Adapt 'cs_show_scores' to support newer versions of pacemaker
+  and crmsh
+  (bsc#1188456)
+- man page updates
+
+-------------------------------------------------------------------
+Fri Jul 16 11:22:34 UTC 2021 - abriel@suse.com
+
+- change version from 3.1.0 to 3.1.1
+- As some of the supportconfig plugins of ClusterTools2 takes very
+  log time to process, we will disable these plugins by default in
+  /etc/ClusterTools2/supportconfig_plugins.
+  That means that after an initial installation of ClusterTools2
+  NO supportconfig plugin will be active. To change this behaviour
+  manually uncomment the entres of interesst in the file
+  /etc/ClusterTools2/supportconfig_plugins.
+  During a package update nothing will change. If an active plugin
+  is disturbing the creation of a supportconfig archive, please
+  comment out the related entry manually in the file
+  /etc/ClusterTools2/supportconfig_plugins.
+  Please refer to manual page supportconfig_plugins(5) for further
+  details.
+  (bsc#1186119)
+- Add file samples/00_bootstrap_sle15.crm.tmpl to support SLE15
+  (bsc#1166943)
+
+-------------------------------------------------------------------
+Mon Dec 16 10:58:37 UTC 2019 - abriel@suse.com
+
+- change version from 3.0.1 to 3.1.0
+- Update package to the latest upstream version
+
+  add missing man pages, config files and scripts:
+  add new man page man8/cs_show_hana_info.8, man8/cs_dmesg.8,
+  man8/cs_show_wwpn.8 , man8/cs_show_hana_autofailover_patterns.8,
+  man8/cs_show_cluster_transition.8
+
+  add new kernel modules (ibmvnic.ko, ibmvfc.ko, lin_tape.ko,
+  deadman.ko) to search for
+
+  add new config files etc/ClusterTools2/cs_show_memory,
+  etc/ClusterTools2/cs_show_cluster_transition
+
+  add new scripts sbin/cs_show_hana_info, sbin/cs_show_wwpn,
+  sbin/cs_show_hana_autofailover_patterns, sbin/cs_dmesg,
+  sbin/cs_show_cluster_transition, sbin/cs_show_xfs_patterns,
+
+  add new examples for helper scripts (samples/pacemakill)
+
+  enhance the scripts:
+  add check for multi-queue scheduler
+
+  change initrd check to support new SLES12/15 format
+
+  adapt the changed sar filename syntax
+
+  add 'systemctl get-default' for SLES12/15 instead of using
+  /etc/inittab
+
+  add checks for additional SAP Notes 2655238, 2205917 and 2686011
+
+  remove crontab in favour for systemd timer
+
+  use /etc/os-release instead of old /etc/SuSE-release
+
+  add check for powerVM
+
+  adapt the corosync checks to the new values in the best practice
+  documentation
+
+  add additional rpms to look for (e.g. saptune, rear, glibc2,
+  kernel-default, kernel-ppc64=4.12.14 ...)
+
+  add additional files (e.g. /boot/grub2/grub.cfg,
+  /var/log/mcelog, memory.txt (from supportconfig),
+  /etc/systemd/system.conf, /usr/sap/sapservices, /etc/sudoers ...)
+  to search for or to search in
+
+  add additional services to check (e.g. sbd.service,
+  tuned.service ...)
+
+  add additional error and info pattern to search for in log files
+  (e.g. "systemd.*start-limit" and similar search strings)
+
+  enhance the list of cluster related SUSE TIDs
+  7022678, 7023149, 7022921, 7021158, 7022255, 7022984, 7023127,
+  7021376, 7018571, 7021211, 7018408, 7023236, 7022001, 7019001,
+  7017985, 7023007, 7016640, 7018194, 7022644, 7017617, 7018594,
+  7022764, 7020256, 7022316, 7022840, 7021065, 7022467, 7022565,
+  7022152, 7018352, 7017651, 7023166, 7010249, 3044267, 7004659,
+  7018181, 7023324, 7016918, 7023526, 7022310, 7022681, 7023021,
+  7023732, 7018233, 7018329, 7018361, 7011860, 7023344, 7021064,
+  7022268, 7018744, 7023714, 7023713, 3684654, 3054866, 7022975,
+  7022293, 7017750, 7023805, 7021182
+  (bsc#1097134, jsc#SLE-9199)
+
+- cleanup the package and the man pages, remove unavailable
+  references, adjust Copyright string, adjust feedback address
+- script refinement and first steps for an adaption to SLE15 code
+  stream
+  using 'shellcheck' to find and correct syntax problems,
+  spelling errors and other problems
+
+-------------------------------------------------------------------
+Thu Feb 21 15:11:30 UTC 2019 - kstreitova@suse.com
+
+- The /etc/cron.d/ClusterTools2 does not contain any active cronjob
+  so we can move it to /usr/share/ClusterTools2/samples/ and
+  remove "Requires: cron" as it's no longer needed.
+  [bsc#1115405] [fate#323635]
+- Remove the Vendor line that is now forbidden
+
+-------------------------------------------------------------------
+Thu Mar 15 15:53:18 UTC 2018 - imanyugin@suse.com
+
+- added /etc/ClusterTools2/cs_make_sbd_devices, bsc#1084925
+- version 3.0.1
+
+-------------------------------------------------------------------
+Wed Sep  7 13:05:52 UTC 2016 - imanyugin@suse.com
+
+- Obsolete the -doc subpackage, bsc#993014
+
+-------------------------------------------------------------------
+Thu Jun 30 13:17:11 UTC 2016 - lars.pinne@suse.com
+
+- version 3.0.0, adaptation of the scripts for the SLE12 platform
+- fate#319611
+
+-------------------------------------------------------------------
+Thu Sep 06 00:00:00 UTC 2013 - lars.pinne@suse.com
+
+- added cs_show_wwpn, cs_check_lsbinit first alpha
+
+-------------------------------------------------------------------
+Mon May 06 00:00:00 UTC 2013 - fabian.herschel@suse.com
+
+- upstream fixes for sap simpelstack to be more flexible
+
+-------------------------------------------------------------------
+Fri Apr 20 00:00:00 UTC 2012 - fabian.herschel@suse.com
+
+- tools, manpages and config files now renamed for ship with SLES for SAP Applications
+
+-------------------------------------------------------------------
+Wed Apr 04 00:00:00 UTC 2012 - fabian.herschel@suse.com
+
+- first changes to get package technical preview ready
+
+-------------------------------------------------------------------
+Fri Mar 23 00:00:00 UTC 2012 - lars.pinne@suse.com
+
+- grep_supportconfig for Oracle and s390x
+
+-------------------------------------------------------------------
+Fri Feb 10 00:00:00 UTC 2012 - lars.pinne@suse.com
+
+- eDir back again
+
+-------------------------------------------------------------------
+Tue Nov 15 00:00:00 UTC 2011 - lars.pinne@suse.com
+
+- more grep patterns, minor fixes
+
+-------------------------------------------------------------------
+Fri Nov 11 00:00:00 UTC 2011 - fabian.herschel@suse.com
+
+- 2.2.11 st martin package version (11.11.2011)
+
+-------------------------------------------------------------------
+Wed Nov 02 00:00:00 UTC 2011 - fabian.herschel@suse.com
+
+- 2.2.10 package version
+
+-------------------------------------------------------------------
+Fri Oct 21 00:00:00 UTC 2011 - lars.pinne@novell.com
+
+- added lsoflog, merged separate crontab and logrotate to one ClusterTools2, fixed grep_supportconfig
+
+-------------------------------------------------------------------
+Thu Oct 05 00:00:00 UTC 2011 - lars.pinne@novell.com
+
+- added grep_cluster_transition
+
+-------------------------------------------------------------------
+Thu Sep 29 00:00:00 UTC 2011 - lars.pinne@novell.com
+
+- moved add_softdog_to_initrd to add_watchdog_to_initrd, added grep_cluster_patterns, various fixes and updates
+
+-------------------------------------------------------------------
+Thu Sep 22 00:00:00 UTC 2011 - lars.pinne@novell.com
+
+- added xmstat, various fixes and updates
+
+-------------------------------------------------------------------
+Tue Aug 30 00:00:00 UTC 2011 - lars.pinne@novell.com
+
+- added wow on-fail-block, added supportconfig plugins
+
+-------------------------------------------------------------------
+Fri Aug 26 00:00:00 UTC 2011 - fabian.herschel@suse.com
+
+- 2.2.9 package version
+
+-------------------------------------------------------------------
+Tue Jul 18 00:00:00 UTC 2011 - lars.pinne@novell.com
+
+- added man page, fixed config scripts, 2nd ring in make_corosync_conf, set config (noreplace)
+
+-------------------------------------------------------------------
+Wed Jul 06 00:00:00 UTC 2011 - fabian.herschel@suse.com
+
+- 2.2.8 fixed node status (CSN)
+
+-------------------------------------------------------------------
+Tue Jul 05 00:00:00 UTC 2011 - fabian.herschel@suse.com
+
+- 2.2.7 fixed command line option
+- fixed missing groups in resource list
+
+-------------------------------------------------------------------
+Tue Jul 05 00:00:00 UTC 2011 - fabian.herschel@suse.com
+
+- 2.2.6 new package version for opensuse.org
+- You could (only recommended for test scenarious) switchoff STONITH by setting STONITH_ENABLED=false in your WOW file
+- corrected error in samples (uninitialized SAPsid)
+
+-------------------------------------------------------------------
+Tue Jun 14 00:00:00 UTC 2011 - fabian.herschel@suse.com
+
+- 2.2.5-1 added corrections/improvements from lars.pinne@novell.com
+- changed menueng2, wow and ClusterService to display better help (program name now matches the use case)
+
+-------------------------------------------------------------------
+Sat May 14 00:00:00 UTC 2011 - fabian.herschel@suse.com
+
+- 2.2.4-1 added fhcrmedit to have a batch-able editor - fhcrmedit will be renamed in the future and is only a draft for internal tests
+
+-------------------------------------------------------------------
+Fri May 13 00:00:00 UTC 2011 - fabian.herschel@suse.com
+
+- 2.2.3-1 simple stack now has now the option to skip the SFEX device resource (just let SFEX_DEVICE be empty)
+
+-------------------------------------------------------------------
+Tue May 10 00:00:00 UTC 2011 - lars.pinne@novell.com
+
+- 2.2.2-1 added sum and error patterns, fixed minor bugs, added some man pages, updated ClusterService
+
+-------------------------------------------------------------------
+Tue Apr 29 00:00:00 UTC 2011 - fabian.herschel@novell.com
+
+- 2.2.1-1 fixed package spec to get it build (added precheck_for_sap)
+
+-------------------------------------------------------------------
+Tue Apr 29 00:00:00 UTC 2011 - lars.pinne@novell.com
+
+- 2.2.0-1 added psauxlog
+
+-------------------------------------------------------------------
+Tue Apr 12 00:00:00 UTC 2011 - fabian.herschel@novell.com
+
+- 2.2.0-1 now supports command mode (--cmd CMD options)
+
+-------------------------------------------------------------------
+Thu Apr 12 00:00:00 UTC 2011 - lars.pinne@novell.com
+
+- 2.1.10-1 update and cleanup
+- sum_base_config
+
+-------------------------------------------------------------------
+Mon Mar 07 00:00:00 UTC 2011 - lars.pinne@novell.com
+
+- 2.1.9-1 update and cleanup
+- grep_error_patterns
+
+-------------------------------------------------------------------
+Mon Mar 07 00:00:00 UTC 2011 - fabian.herschel@novell.com
+
+- 2.1.8-1 prepare_wowfile (lp)
+- RAID1 devices resources could be named more flexible (fh)
+
+-------------------------------------------------------------------
+Tue Feb 22 00:00:00 UTC 2011 - lars.pinne@novell.com
+
+- 2.1.7-1 Updated files
+- Manpages: sbd.8, sleha_cleanup.8
+- grep-error-patterns
+- sleha_cleanup
+- whbsaprecheck
+
+-------------------------------------------------------------------
+Tue Feb 01 00:00:00 UTC 2011 - fabian.herschel@novell.com
+
+- 2.1.6-1 added sleha_cleanup and grep-error-patterns from Lars Pinne
+
+-------------------------------------------------------------------
+Mon Nov 15 00:00:00 UTC 2010 - fabian.herschel@novell.com
+
+- 2.1.5-1 added new man pages from Lars
+
+-------------------------------------------------------------------
+Mon Oct 25 00:00:00 UTC 2010 - fabian.herschel@novell.com
+
+- 2.1.4-1 added new use case for fs only stack
+
+-------------------------------------------------------------------
+Thu Oct 14 00:00:00 UTC 2010 - fabian.herschel@novell.com
+
+- 2.1.3-1 menueng2 now supports multiple menues and additional control commands
+- use case specific sample CS_SAPNA0
+
+-------------------------------------------------------------------
+Tue Oct 12 00:00:00 UTC 2010 - fabian.herschel@novell.com
+
+- 2.1.2-1 name scheme for wow and submenus
+
+-------------------------------------------------------------------
+Thu Oct 07 00:00:00 UTC 2010 - fabian.herschel@novell.com
+
+- 2.1.0-1 reintegrated wow to ClusterTools2
+
+-------------------------------------------------------------------
+Wed Oct 06 00:00:00 UTC 2010 - fabian.herschel@novell.com
+
+- 2.0.0-1 initial package

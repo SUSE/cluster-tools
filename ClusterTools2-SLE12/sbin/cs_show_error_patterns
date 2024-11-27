@@ -3,12 +3,12 @@
 # cs_show_error_patterns
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2022 SUSE LLC
+# (c) 2018-2024 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: SLES12 0.2 2022-07-12
+# Version: SLES12 0.2 2024-11-24
 #
 # shellcheck disable=SC1090,SC2140,SC2125,SC2037,SC2211
 # SC2140,SC2125,SC2037 and SC2211 are needed because of the ongoing
@@ -160,6 +160,8 @@ test -z "${ERROR_PATTERN}" &&\
 "bond.*not.detect.*failures"
 "bond.*permanent.HWaddr.*use"
 "bond.*No.*response"
+"eth.*unregistering"
+"eth.*slot.*removed"
 "link.*not.ready"
 "ink..ailure"
 "ERROR.*egress"

@@ -1,4 +1,4 @@
-.TH ha_related_suse_tids 7 "21 Feb 2024" "" "ClusterTools2"
+.TH ha_related_suse_tids 7 "05 Jan 2025" "" "ClusterTools2"
 .\"
 .SH NAME
 ha_related_suse_tids - selection of SUSE Technical Information Documents, related to high availability
@@ -168,6 +168,8 @@ sbd.service disabled after running ha-cluster-join (000019624)
 .br
 Stonith unreliable (HEARTBEAT, COROSYNC) (7007731) 
 .br
+Memory leak in "sbd: watcher: Pacemaker" process (000021642)
+.br
 Disk latency may cause unwanted node fencing (7011350) 
 .br
 Stalling I/O triggers HAE Cluster (7010781) 
@@ -271,6 +273,8 @@ dlm: cannot start dlm lowcomms -107 (7012160)
 Increasing the number of lrmd children (7006863) 
 .br
 Failed cluster actions in crm_mon (7012145) 
+.br
+crm command fails with OSError: Disk quota exceeded (000021617)
 .br
 The command crm status returns Stack: unknown (000019771)
 .br
@@ -465,6 +469,8 @@ Entry "CALLING CRM: ... rc=256" in HANA trace after upgrading SAPHanaSR-ScaleOut
 SAP HANA scale-out - pacemaker.service: "Cannot find sapstartsrv and sapcontrol executable, please set DIR_EXECUTABLE parameter!" (000021062)
 .br
 PostgreSQL resource fails to start with "My data may be inconsistent" (7023166)
+.br
+Anti-colocation rule required for SAP Hana Cost Optimized Scenario as of SLE 15 SP6 (000021629)
 .br
 Unable to start Oracle 12 database using High Availability Extension resource agent for Oracle (7018429)
 .br
@@ -664,6 +670,8 @@ XFS metadata corruption and invalid checksum on SAP Hana servers (7022921)
 .br
 XFS "barrier/nobarrier" mount options have been completely deprecated starting from SLES15 SP2 (000020240)
 .br
+Process or system hang due to possible XFS corruption (000021632)
+.br
 Handling failed NFS share in SUSE HA cluster for HANA system replication (000019904)
 .br
 SAP Instances failed stop on shutdown (PACEMAKER, SYSTEMD, SAP) (7022671)
@@ -777,6 +785,8 @@ NVMe drive is not detected after multiple hot plug operations (000019625)
 NVMe drive is not accessible in UEFI mode with Intel Rapid RAID mode on (000019441)
 .br
 Making changes to VMware pvscsi driver parameters aligned with SAP recomendations (000019614)
+.br
+VMware Guest Boots to Grub Prompt (000021635)
 .br
 saptune: WARNING saptune.io.go:66: 'noop' is not a valid scheduler for device (000019572)
 .br

@@ -4,14 +4,19 @@
 # TODO check and adapt for SLE15
 CONF_FILES="
 /etc/os-release
+/etc/products.d/baseproduct
 /etc/zypp/zypp.conf
 /etc/zypp/zypper.conf
 /etc/zypp/repos.d/*.repo
 /etc/products.d/*.prod
-/boot/vmlinuz-.*default
-/boot/initrd-.*default
+/etc/yum.conf
+/etc/yum.repos.d/*.repo
+/boot/vmlinuz-*.default
+/boot/initrd-*.default
+/boot/vmlinuz-*.el?.x86_64
+/boot/initramfs*.x86_64.img
 /boot/vmlinuz-.*xen
-/boot/initrd-.*xen
+/boot/initrd-*.xen
 /proc/cmdline
 /proc/sys/kernel/tainted
 /etc/auto.{master,misc,net,smb}
@@ -22,6 +27,8 @@ CONF_FILES="
 /etc/host.conf
 /etc/resolv.conf
 /etc/ntp.conf
+/etc/chrony.conf
+/etc/chrony.d/pool.conf
 /etc/adjtime
 /etc/passwd
 /etc/group
@@ -84,6 +91,7 @@ CONF_FILES="
 /etc/sysctl.conf
 /etc/saptune/*/*
 /etc/tuned/active_profile
+/etc/tuned/*/tuned.conf
 /etc/modprobe.conf.local
 /etc/modprobe.d/*
 /etc/modules-load.d/*

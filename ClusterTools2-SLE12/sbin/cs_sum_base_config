@@ -3,12 +3,12 @@
 # cs_sum_base_config
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2021 SUSE LLC
+# (c) 2018-2025 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2021-02-21 SLE12, SLE15
+# Version: 2025-01-28 SLE12, SLE15
 #
 # shellcheck disable=SC1090
 #
@@ -33,14 +33,19 @@ test -z "${TEMP}" &&\
 test -z "${CONF_FILES}" &&\
 	 CONF_FILES="
 /etc/os-release
+/etc/products.d/baseproduct
 /etc/zypp/zypp.conf
 /etc/zypp/zypper.conf
 /etc/zypp/repos.d/*.repo
 /etc/products.d/*.prod
-/boot/vmlinuz-.*default
-/boot/initrd-.*default
-/boot/vmlinuz-.*xen
-/boot/initrd-.*xen
+/etc/yum.conf
+/etc/yum.repos.d/*.repo
+/boot/vmlinuz-*.default
+/boot/initrd-*.default
+/boot/vmlinuz-*.el?.x86_64
+/boot/initramfs*.x86_64.img
+/boot/vmlinuz-*.xen
+/boot/initrd-*.xen
 /proc/cmdline
 /proc/sys/kernel/tainted
 /etc/auto.{master,misc,net,smb}
@@ -51,6 +56,8 @@ test -z "${CONF_FILES}" &&\
 /etc/host.conf
 /etc/resolv.conf
 /etc/ntp.conf
+/etc/chrony.conf
+/etc/chrony.d/pool.conf
 /etc/adjtime
 /etc/passwd
 /etc/group
@@ -114,6 +121,7 @@ test -z "${CONF_FILES}" &&\
 /etc/sysctl.conf
 /etc/saptune/*/*
 /etc/tuned/active_profile
+/etc/tuned/*/tuned.conf
 /etc/modprobe.conf.local
 /etc/modprobe.d/*
 /etc/modules-load.d/*

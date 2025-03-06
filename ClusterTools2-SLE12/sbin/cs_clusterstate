@@ -3,12 +3,12 @@
 # cs_clusterstate 
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-202i5 SUSE LLC
+# (c) 2018-2025 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2025-01-26 SLES12
+# Version: 2025-02-24 SLES12
 #
 # shellcheck disable=SC1090,SC2126
 
@@ -52,6 +52,7 @@ function help() {
 	echo " --basics	show basic info"
 	echo " --idle		show idle info"
 	echo " --network	show network info"
+	echo " --plain-idle	show plain idle info"
 	echo " --storage	show storage info"
 	echo " --replication	show SAPHanaSR info"
 	echo " --version	show version info"
@@ -241,7 +242,11 @@ case $1 in
 		echo "### $HST - $DAT ###"
 		get_idle
 		exit
-	;;
+    ;;
+    -p|--plainidle|--plain-idle)
+        get_idle
+        exit
+    ;;
 	-r|--replication)
 		echo "### $HST - $DAT ###"
 		get_saphanasr

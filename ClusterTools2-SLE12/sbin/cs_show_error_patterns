@@ -3,12 +3,12 @@
 # cs_show_error_patterns
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2024 SUSE LLC
+# (c) 2018-2025 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: SLES12 0.2 2024-11-24
+# Version: SLES12 0.2 2025-08-20
 #
 # shellcheck disable=SC1090,SC2140,SC2125,SC2037,SC2211
 # SC2140,SC2125,SC2037 and SC2211 are needed because of the ongoing
@@ -87,6 +87,8 @@ test -z "${ERROR_PATTERN}" &&\
 "Power.key.pressed"
 "NMI.received"
 "NMI.*error"
+"NMI.*to.long"
+"clocksource.*delay"
 "irq.*nobody.cared"
 "kthread.starved.for.*jiffies"
 "urandom.warning"
@@ -115,6 +117,7 @@ test -z "${ERROR_PATTERN}" &&\
 "kernel.*pci.*failed"
 "kernel.*lost.*interrupt"
 "kernel.*not.have.kernel.memory.protection"
+"kernel.*clocksource:.*witched"
 "kernel.*clocksource:.*witched"
 "kernel.*NUMA.turned.off"
 "kernel.Lockdown*"

@@ -99,6 +99,7 @@ test -z "${ERROR_PATTERN}" &&\
 "error.detected.during.POST"
 "mce:.CPU.supports.0.MCE.banks"
 "CPU.bug.present"
+"CPU.*stuck.for"
 "Processor.*temperature"
 "SMP.disabled"
 "No.hypervisor.support.for.SR-IOV"

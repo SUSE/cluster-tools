@@ -2,11 +2,11 @@
 #
 # cs_show_ensa_status
 #
-# (c) 2020 SUSE LLC
+# (c) 2020-2025 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 #
-# Version: 2020-11-18 
+# Version: 2025-09-16 
 #
 # shellcheck disable=SC2120,SC2009,SC2062,SC2119
 
@@ -18,7 +18,7 @@ EXE=$(basename "$0")
 function show_info() {
 	D=$(date +%F_%T)
 	echo "### $D" "${*}" "###"
-	crm_mon -1r
+	crm_mon -1r --exclude=summary
 	echo "==="                      
 	cs_clusterstate -i | grep -v "###"
 	echo "==="

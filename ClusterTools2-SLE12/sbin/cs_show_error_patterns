@@ -119,7 +119,6 @@ test -z "${ERROR_PATTERN}" &&\
 "kernel.*lost.*interrupt"
 "kernel.*not.have.kernel.memory.protection"
 "kernel.*clocksource:.*witched"
-"kernel.*clocksource:.*witched"
 "kernel.*NUMA.turned.off"
 "kernel.Lockdown*"
 "kernel.*Duplicate.cookie"

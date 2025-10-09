@@ -127,6 +127,7 @@ test -z "${CLUSTR_PATTERN}" &&\
 "lrmd.*RA.output.*failed"
 "lrmd.*RA.output.*error"
 "Respawning.pacemaker-controld.subdaemon"
+"pacemaker.*unresponsive"
 "sbd.*Initializing"
 "sbd.*Monitoring"
 "sbd.*Using.watchdog"

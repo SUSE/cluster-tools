@@ -193,6 +193,7 @@ test -z "${ERROR_PATTERN}" &&\
 "invoked.oom-killer"
 "Call.Trace"
 "soft.lockup"
+"hard.LOCKUP"
 "annot.open.*file"
 "nable.to.open.*file"
 "nable.to.load"

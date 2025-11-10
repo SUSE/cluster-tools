@@ -46,9 +46,11 @@ copy:	tar
 	@echo -e "\e[32mDone\e[0m"
 
 rpm:	tar
-	mv ${PKG}-${VERSION}.tbz /usr/src/packages/SOURCES
+	mv ${PKG}-${VERSION}.tgz /usr/src/packages/SOURCES
 	cp spec/${PKG}.spec /usr/src/packages/SPECS
 	( cd /usr/src/packages; sudo rpmbuild -ba --target noarch SPECS/${PKG}.spec )
+	echo "RPM built: /usr/src/packages/RPMS/noarch/${PKG}-${VERSION}-${RELEASE}.noarch.rpm"
 
 all:	tar rpm
 	echo building ${PKG}-${VERSION}-${RELEASE}
+

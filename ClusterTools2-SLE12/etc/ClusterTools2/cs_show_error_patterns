@@ -184,6 +184,7 @@ SVCERR_PATTERN="
 "cgroup:.fork.rejected"
 "sfcbd.*Fatal"
 "libvirt.error.code"
+"KDC.timd.out"
 "
 #
 CLUERR_PATTERN="

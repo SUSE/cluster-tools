@@ -3,7 +3,7 @@
 # cs_show_error_patterns
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2025 SUSE LLC
+# (c) 2018-2026 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
@@ -239,6 +239,7 @@ test -z "${SVCERR_PATTERN}" &&\
 "cgroup:.fork.rejected"
 "sfcbd.*Fatal"
 "libvirt.error.code"
+"KDC.timd.out"
 "
 
 # TODO raid.set.*active.with.2.out.of.2.mirrors ?

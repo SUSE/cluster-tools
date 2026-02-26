@@ -74,6 +74,7 @@ boot.sysctl
 after.local
 multipathd
 ntp
+chronyd
 sapinit
 "
 #
@@ -568,6 +569,7 @@ java-1_7_0-ibm
 libicu
 mozilla-xulrunner192
 ntp
+chrony
 sudo
 rsyslog
 tcsh
@@ -612,6 +614,7 @@ SAPHanaSR
 SAPHanaSR-doc
 SAPHanaSR-ScaleOut
 SAPHanaSR-ScaleOut-doc
+SAPHanaSR-angi
 HANA-Firewall
 "
 #
@@ -670,6 +673,7 @@ HANA_SAP_SVC_YES="
 boot.sysstat
 boot.sapconf
 boot.clock
+chronyd
 ntp
 sapinit
 "

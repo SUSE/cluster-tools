@@ -125,6 +125,8 @@ SLES for SAP - How To Engage SAP and SUSE to address Product Issues (7021182)
 Master TID: Migrating a regular SLES to SLES for SAP (7018744)
 .br
 Details for supportconfig plugin to gather SAP information related to SUSE solutions. (000020279)
+.br
+Troubleshooting failures caused by network issues outside of the OS (000019863)
 .PP
 .B * Cluster basics, timing, fencing, communication:
 .br
@@ -133,6 +135,10 @@ SLES 11 HAE - Send cluster update and changes through email (7007619)
 pacemaker default behavior changed (7014282)
 .br
 Pacemaker fails to start with 100 exit status (000019498)
+.br
+Pacemaker fails to start after running crm cluster init (000021397
+.br
+Pacemaker warning: Unexpected result (unimplemented feature) (000021554)
 .br
 pacemaker-controld: notice: High CPU load detected: 180.869995 (000020521)
 .br
@@ -143,6 +149,8 @@ How to recover pacemaker cluster where all controllers fencing (000019493)
 iTCO_wdt does not accept Watchdog Timeout bigger 63 seconds (7011426) 
 .br
 Generating a Kernel Core Dump running cluster HAE (High Availability Extension) (7015029) 
+.br
+Fencing failing with No fence device (000021466)
 .br
 stonith:external/sbd resource agent fails with OCF_TIMEOUT (000020383)
 .br
@@ -157,8 +165,6 @@ Settings for long timeout in SBD_DELAY_START (000019356)
 How to enable SBD to crashdump before rebooting. (000019873)
 .br
 Pacemaker staying in Waiting for startup-trigger from SBD (000020942)
-.br
-Memory leak in "sbd: watcher: Pacemaker" process (000021642)
 .br
 SBD Operation Guidelines for HAE Clusters (7011346) 
 .br
@@ -206,6 +212,10 @@ The azure-events Resource Agent Does Not Failover Properly ... (000020578)
 .br
 Pacemaker - Azure Fence Agent "fence_azure_arm" failed to start after Python 3.11 ... (000021504)
 .br
+Pacemaker fencing not working after update: "error: Unknown fence agent: fence_azure_arm" (000022058)
+.br
+Updating GCE fence agent to v4.6 breaks fencing (000019875)
+.br
 stonith: Could not list hosts for external/ipmi (000020598)
 .br
 How to setup vcenter fence agent (000019720)
@@ -215,6 +225,8 @@ Supportability and Challenges for Live Migration of VMs in a SUSE HA Cluster Env
 Live Partition Mobility (LPM) fails with hardware watchdog on POWER10 (000022183)
 .br
 default action timeout and op default timeout (OPENAIS) (7009584) 
+.br
+Corosync: How to test a 2 ring configuration. (000020974)
 .br
 OpenAIS/Corosync daemon fails to start (7010879) 
 .br
@@ -241,6 +253,10 @@ All Pacemaker nodes stuck UNCLEAN (offline) after corosync update (000019604)
 Cannot contact other cluster node (7006864)
 .br
 Corosync crashed if node has more then one device in the same subnet. (7008804) 
+.br
+How to change the hostname of a Pacemaker Cluster node (000020597)
+.br
+How to change the qnetd server's IP on a running Pacemaker cluster. (000021271)
 .br
 clones don't show identification numbers after update (PACEMAKER COROSYNC) (7015095) 
 .br
@@ -478,6 +494,8 @@ SUSE HA for HANA cluster node fenced at shutdown, despite of systemd integration
 .br
 Troubleshooting the SAPHanaSR python hook (000019865)
 .br
+Pacemaker Fails to Start Legacy SAP HANA (Python 2-Based) After Upgrading to SAPHanaSR-0.162.2-* (000021361)
+.br
 Basic health check for two-node SAP HANA performance based model (7022984)
 .br
 How to re-enable replication in a two-node SAP performance based model (7023127)
@@ -526,7 +544,11 @@ sapcontrol -function HAFailoverToNode migration fail (000020520)
 .br
 Pull Errors with azure-events Resource Agent on all Nodes (000019623)
 .br
+rsc_azure-events resource primitve fails with error: Unable to get instance info (000021356)
+.br
 SAPHanaSR HANA system replication automation without layer 2 network (000020333)
+.br
+IP Cluster Resource failed to failover with a blocked status (000020600)
 .br
 SAPHanaSR-showAttr fails with error "Error: NIECONN_REFUSED ..." (000020548)
 .br
@@ -538,6 +560,8 @@ HANA fail-over and secondary recovery operations fail due to excessive os.system
 .br
 Protect HANA against manually caused dual-primary situation in SUSE HA cluster (000021044)
 .br
+Safely Disabling/Enabling System Replication on a Scale-Up SAP HANA cluster (000021374)
+.br
 Address space monitoring and HANA DB performance (000020746)
 .br
 HANA nodes end up having the same LPT values (000020690)
@@ -545,6 +569,8 @@ HANA nodes end up having the same LPT values (000020690)
 HANA DB resource failed to start (000020948)
 .br
 SAPHanaController monitor timeout leads to database restart (000021249)
+.br
+High system CPU during HANA table load in SLES 15 SP5 and earlier (000022171)
 .PP
 .B * Related operating system settings and components:
 .br
@@ -580,7 +606,9 @@ Can't open /dev/mapper/mpath* exclusively. Mounted filesystem? (7012050)
 .br
 mkinitrd doesn't include the correct bindings_file (7003710)
 .br
-Multipath Blacklisting Local Disks (3970086)
+Multipath Blacklisting Local Disks (000016563)
+.br
+multipath/lvm system drops into Emergency mode (000019294)
 .br
 Device-mapper does not use all available paths to a SAN (7005564)
 .br
@@ -611,6 +639,8 @@ Basic LVM Health Check (7002759)
 Found duplicate Physical Volumes (PV) (7002287)
 .br
 Duplicate LVM Volume Group Warning (7003547)
+.br
+I/O performance impact due to weekly mdcheck-start.service (000022038)
 .br
 Configure kernel core dump capture (3374462)
 .br
@@ -648,9 +678,13 @@ SAP Generating 'Database host operating system is not supported' alerts (0000194
 .br
 SLES for SAP 12 Package Conflict Errors After Fresh Install (000019409)
 .br
+Starting SAP HANA DB fails (000021984)
+.br
 tuned-adm fails to set kernel scheduler for block devices (7024212)
 .br
 NTP fails to access time server on system boot. (3435100) 
+.br
+NTP Sync Issue (000021102)
 .br
 NTP issue with VMWare (7008544) 
 .br
@@ -702,11 +736,11 @@ XFS "barrier/nobarrier" mount options have been completely deprecated starting f
 .br
 Process or system hang due to possible XFS corruption (000021632)
 .br
+Failed XFS mounting with message "XFS_WANT_CORRUPTED_GOTO" reported (000021215)
+.br
 Handling failed NFS share in SUSE HA cluster for HANA system replication (000019904)
 .br
 SAP Instances failed stop on shutdown (PACEMAKER, SYSTEMD, SAP) (7022671)
-.br
-How to patch a SAP Application Pacemaker Cluster (000020268)
 .br
 SAP on SLES shows Error: NIECONN_REFUSED in the logs (7023236)
 .br
@@ -727,6 +761,12 @@ Protecting SAP HANA workloads from memory reclamation on large memory systems (0
 Unable to set kernel.shmmni to a value greater than 32k (32768) (000020403)
 .br
 SAP HANA swap and system hangs with THP on multi-NUMA node systems (000022286)
+.br
+Change in memory reclaim behaviour in SLES 15 SP4 (000021196)
+.br
+SAP HANA does not use vPMEM DAX in memory database (000020271)
+.br
+HANA cluster failures due to full /tmp filesystem (000021331)
 .br
 Systemd KillMode=none (000020394)
 .br
@@ -758,6 +798,8 @@ System hangs on reboot if 'google-shutdown-scripts.service' is enabled (00002037
 .br
 Communications fail between Azure Load Balancer and SLE instance (000019510)
 .br
+Azure Accelerated Networking fails (000020694)
+.br
 TCP SYN packets intermittently go unanswered (7023254)
 .br
 ALUA port group messages (7023021)
@@ -783,6 +825,10 @@ Read-only or corrupted filesystem after fstrim operation on Eternus ... (7022268
 Error 'CDB: Unmap/Read sub-channel TIMEOUT_ERROR' on Nutanix Virtual Machines (7022293)
 .br
 lpar boot fails: "blk_cloned_rq_check_limits: over max size limit" (7017750)
+.br
+Support for ibmvnic in SLES (000019408)
+.br
+Change the iSCSI timeout (000021037)
 .br
 Customizing persistent device names for an iSCSI disk (3684654)
 .br
@@ -822,6 +868,8 @@ Making changes to VMware pvscsi driver parameters aligned with SAP recomendation
 .br
 VMware Guest Boots to Grub Prompt (000021635)
 .br
+CPU Steal Time Accounting for VMware guest (000021197)
+.br
 saptune: WARNING saptune.io.go:66: 'noop' is not a valid scheduler for device (000019572)
 .br
 saptune recommends THP "never" for SAP HANA 2.0 on SLES for SAP applications 15 SP4 (000022172)
@@ -849,6 +897,8 @@ SAP license verification fails after upgrade to SLES12 SP5 due to system UUID ch
 HANA Database Planning Engine crashes in __strncmp_avx2_rtm+0x1b3 (000021026)
 .br
 TSC Clocksource Switching to HPET During High I/O Load (000021035)
+.br
+Server receiving many NMI soft lockups (000019788)
 .br
 Logs about an incident on a Pacemaker Cluster are lost because of the log file turn-over policy (000020390)
 .\" .br TODO Oracle 7023167

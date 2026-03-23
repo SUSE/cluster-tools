@@ -3,12 +3,12 @@
 # cs_show_error_patterns
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2022 SUSE LLC
+# (c) 2018-2026 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: SLES12 0.2 2022-07-12
+# Version: SLES12 0.2 2025-08-20
 #
 # shellcheck disable=SC1090,SC2140,SC2125,SC2037,SC2211
 # SC2140,SC2125,SC2037 and SC2211 are needed because of the ongoing
@@ -87,6 +87,8 @@ test -z "${ERROR_PATTERN}" &&\
 "Power.key.pressed"
 "NMI.received"
 "NMI.*error"
+"NMI.*to.long"
+"clocksource.*delay"
 "irq.*nobody.cared"
 "kthread.starved.for.*jiffies"
 "urandom.warning"
@@ -97,6 +99,7 @@ test -z "${ERROR_PATTERN}" &&\
 "error.detected.during.POST"
 "mce:.CPU.supports.0.MCE.banks"
 "CPU.bug.present"
+"CPU.*stuck.for"
 "Processor.*temperature"
 "SMP.disabled"
 "No.hypervisor.support.for.SR-IOV"
@@ -120,6 +123,8 @@ test -z "${ERROR_PATTERN}" &&\
 "kernel.Lockdown*"
 "kernel.*Duplicate.cookie"
 "kernel.*NFS.*failed"
+"kernel.*segfault.at"
+"kernel.*deprecated"
 "BUG:.*workqueue.lockup"
 "Section.*circular.dependency"
 "double.fault:"
@@ -149,6 +154,7 @@ test -z "${ERROR_PATTERN}" &&\
 "xfs_log_force.*error"
 "XFS.*allocation.deadlock"
 "XFS.*head.behind.tail"
+"Deprecated.*format"
 "sdrServ:.*err"
 "server.*not.responding"
 "iSCSI.connection.*error"
@@ -159,6 +165,8 @@ test -z "${ERROR_PATTERN}" &&\
 "bond.*not.detect.*failures"
 "bond.*permanent.HWaddr.*use"
 "bond.*No.*response"
+"eth.*unregistering"
+"eth.*slot.*removed"
 "link.*not.ready"
 "ink..ailure"
 "ERROR.*egress"
@@ -181,12 +189,11 @@ test -z "${ERROR_PATTERN}" &&\
 "shutdown.*shutting.down"
 "systemd.*Reached.target.Shutdown"
 "dbus-daemon.*ailed"
-"kernel.*segfault.at"
 "Out.of.memory"
 "invoked.oom-killer"
 "Call.Trace"
 "soft.lockup"
-"kernel.*deprecated"
+"hard.LOCKUP"
 "annot.open.*file"
 "nable.to.open.*file"
 "nable.to.load"
@@ -232,6 +239,7 @@ test -z "${SVCERR_PATTERN}" &&\
 "cgroup:.fork.rejected"
 "sfcbd.*Fatal"
 "libvirt.error.code"
+"KDC.timd.out"
 "
 
 # TODO raid.set.*active.with.2.out.of.2.mirrors ?
@@ -257,7 +265,9 @@ test -z "${CLUERR_PATTERN}" &&\
 "pcmk.*message.*local.cib.failed"
 "pengine.*fenced.*resource.failure"
 "pengine.*Forcing.*away.*failures"
+"Lost.connection.*CIB"
 "High.CIB.load"
+"pacemaker.*unresponsive"
 "crm_resource.*Error"
 "crmd.*ERROR:"
 "crmd.*Updating.failcount.*stop"
@@ -273,6 +283,8 @@ test -z "${CLUERR_PATTERN}" &&\
 "ocfs2.*not.unmounted.cleanly"
 "OCFS2.*kernel.interface.loaded"
 "o2dlm_eviction_cb"
+"error.*Timed.Out"
+"fail-count.*INFINITY"
 "
 
 test -z "${APPERR_PATTERN}" &&\

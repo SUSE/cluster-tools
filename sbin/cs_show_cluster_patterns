@@ -3,12 +3,12 @@
 # cs_show_cluster_patterns
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2022 SUSE LLC
+# (c) 2018-2025 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2022-02-11
+# Version: 2025-02-18
 #
 # shellcheck disable=SC1090,SC2140,SC2125
 # SC2140 and SC2125 are needed because of the ongoing pattern declaration
@@ -47,6 +47,7 @@ test -z "${OSERR_PATTERN}" &&\
 	 OSERR_PATTERN="
 "NMI.received"
 "NMI.*error"
+"NMI.*to.long"
 "dlm.*link.*down"
 "ocfs2.*has.evicted"
 "ocfs2.*ERR"
@@ -100,6 +101,7 @@ test -z "${CLUSTR_PATTERN}" &&\
 "pengine.*LogActions:.Leave.*\(Started.unmanaged\)"
 "pengine.*LogActions:.Leave.*\(Stopped.unmanaged\)"
 "cib.*failed"
+"Lost.connection.*CIB"
 "cib.*wanted.to.shut.down"
 "High.CIB.load"
 "crm_resource.*Error"
@@ -124,6 +126,8 @@ test -z "${CLUSTR_PATTERN}" &&\
 "lrmd.*probe"
 "lrmd.*RA.output.*failed"
 "lrmd.*RA.output.*error"
+"Respawning.pacemaker-controld.subdaemon"
+"pacemaker.*unresponsive"
 "sbd.*Initializing"
 "sbd.*Monitoring"
 "sbd.*Using.watchdog"

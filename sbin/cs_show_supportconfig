@@ -3,7 +3,7 @@
 # cs_show_supportconfig
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2023 SUSE LLC
+# (c) 2018-2026 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
@@ -1712,6 +1712,8 @@ kernel.shmall
 kernel.shmmax
 kernel.shmmni
 kernel.numa_balancing
+kernel.mm.tranparent_hugepage.enabled
+kernel.mm.tranparent_hugepage.defrag
 net.core.somaxconn
 net.ipv4.tcp_slow_start_after_idle
 net.ipv4.ip_local_port_range
@@ -1747,6 +1749,7 @@ java-1_7_0-ibm
 libicu
 mozilla-xulrunner192
 ntp
+chrony
 sudo
 syslog-ng
 tcsh
@@ -1772,13 +1775,13 @@ sensors
 	HANA_SAP_PKG_NOT="
 ulimit
 "
-	# TODO chrony
 	test -z "${HANA_SAP_SVC_YES}" &&\
 	HANA_SAP_SVC_YES="
 boot.sysstat
 boot.sapconf
 boot.clock
 ntp
+chronyd
 sapinit
 "
 	test -z "${HANA_SAP_SVC_OFF}" &&\
@@ -1814,6 +1817,7 @@ SAPHanaSR
 SAPHanaSR-doc
 SAPHanaSR-ScaleOut
 SAPHanaSR-ScaleOut-doc
+SAPHanaSR-angi
 HANA-Firewall
 "
 

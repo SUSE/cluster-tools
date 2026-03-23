@@ -3,12 +3,12 @@
 # cs_clusterstate 
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2020 SUSE LLC
+# (c) 2018-2025 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2020-07-28 SLES12
+# Version: 2025-02-24 SLES12
 #
 # shellcheck disable=SC1090,SC2126
 
@@ -52,6 +52,7 @@ function help() {
 	echo " --basics	show basic info"
 	echo " --idle		show idle info"
 	echo " --network	show network info"
+	echo " --plain-idle	show plain idle info"
 	echo " --storage	show storage info"
 	echo " --replication	show SAPHanaSR info"
 	echo " --version	show version info"
@@ -63,8 +64,8 @@ function crmadmin_quiet() {
 	# 8 Jun 2021) printed the --quiet result on stderr, hence checking this
 	# output sink first.
 	local out
-	out=$(crmadmin --quiet "$@" 2>&1 1>/dev/null) || return $?
-	[ -n "$out" ] || out=$(crmadmin --quiet "$@" 2>/dev/null) || return $?
+	out=$(timeout 60 crmadmin --quiet "$@" 2>&1 1>/dev/null) || return $?
+	[ -n "$out" ] || out=$(timeout 60 crmadmin --quiet "$@" 2>/dev/null) || return $?
 	echo "$out"
 }
 
@@ -94,7 +95,11 @@ echo -n "Started primitive resources: "
 crm_mon -r1 | awk '$3=="Started"{print $0}' | wc -l
 
 echo -n "Left-over constraints: "
-crm configure show | grep "cli-" | wc -l
+# if test -x "/usr/sbin/crm"; then
+#    crm configure show | grep "cli-" | wc -l
+# else
+    cibadmin -Q | grep "cli-" | wc -l
+# fi
 echo
 
 PSAUX=$(ps aux | awk '{print $11}')
@@ -237,7 +242,11 @@ case $1 in
 		echo "### $HST - $DAT ###"
 		get_idle
 		exit
-	;;
+    ;;
+    -p|--plainidle|--plain-idle)
+        get_idle
+        exit
+    ;;
 	-r|--replication)
 		echo "### $HST - $DAT ###"
 		get_saphanasr

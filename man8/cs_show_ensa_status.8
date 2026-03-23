@@ -1,0 +1,53 @@
+.TH cs_ensa_status 8 "18 Sep 2025" "" "ClusterTools2"
+.\"
+.SH NAME
+.\"
+cs_show_ensa_status \- show status of pacemaker HA cluster for ENSA central services 
+.\"
+.SH SYNOPSIS
+.\"
+.B cs_show_ensa_status \fI[OPTION]\fR
+.\"
+.SH OPTIONS
+.TP
+\fB--help\fR
+show help
+.TP
+\fB--version\fR
+show version
+.\"
+.SH EXIT STATUS
+.\"
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.\"
+.TP
+/usr/sbin/cs_show_ensa_status
+the program itself
+.\"
+.SH BUGS
+.\"
+Currently very limited functionality.
+Depends on instance names containing patterns ASCS and ERS.
+.br
+Feedback is welcome, please mail to feedback@suse.com
+.\"
+.SH SEE ALSO
+.\"
+\fBClusterTools2\fP(7),  \fBcs_clusterstate\fP(8), \fBcs_show_saphanasr_status\fP(8)
+\fBsbd\fP(8), \fBmdadm\fP(8), \fBSAPHanaSR-showAttr\fP(8)
+.\"
+.SH COPYRIGHT
+.\"
+(c) 2020-2025 L.Pinne, Germany.
+.br
+cs_show_ensa_status comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

@@ -1,5 +1,8 @@
 https://www.cloudera.com/documentation/enterprise/5-8-x/topics/admin_cm_ha_failover.html
 
+Note: Does not work for self-fencing, https://documentation.suse.com/de-de/sle-ha/15-SP6/html/SLE-HA-all/cha-ha-storage-protect.html#sec-ha-storage-protect-diskless-sbd
+
+
 - allow corosync totem:
 
 # grep mcastport: /etc/corosync/corosync.conf | awk '{print $2}'

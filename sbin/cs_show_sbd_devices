@@ -3,15 +3,16 @@
 # cs_show_sbd_devices
 #
 # (c) 2011-2017 SUSE Linux GmbH, Germany.
-# (c) 2018-2019 SUSE LLC
+# (c) 2018-2025 SUSE LLC
 # Author: L.Pinne.
 # GNU General Public License v2. No warranty.
 # http://www.gnu.org/licenses/gpl.html
 #
-# Version: 2019-11-28
+# Version: 2025-01-26
 #
 
 EXE="$0"
+CFG="/etc/sysconfig/sbd"
 
 function help() {
 	echo "usage: $(basename "$EXE")"
@@ -20,6 +21,7 @@ function help() {
 	echo "OPTION:"
 	echo " --help           show help."
 	echo " --version        show version."
+	echo " --config         show config."
 	echo
 }
 
@@ -30,6 +32,25 @@ case $1 in
 	-v|--version)
 		echo -n "$(basename "$EXE") "
 		head -11 "$EXE" | grep "^# Version: "
+		exit
+	;;
+	-c|--config)
+        	if !(test -r "$CFG"); then
+            		echo "ERR: $CFG not found"
+            	exit 1
+        	fi
+		echo
+		echo "$CFG"
+		grep -v "^#" "$CFG" | tr -s "\n"
+       		echo
+		grep -e dog -e wdt /etc/modules-load.d/*.conf
+        	echo
+        	# shellcheck disable=SC2162
+        	awk -F"=" '$1=="SBD_DEVICE" {print $2}' "$CFG" |tr -d "\""|tr ";" "\n"|\
+        	while read; do
+            		sbd -d "$REPLY" dump 2>/dev/null; RC=$?
+        	done
+		echo
 		exit
 	;;
 	-h|--help)

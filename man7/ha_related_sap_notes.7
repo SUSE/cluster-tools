@@ -1,15 +1,19 @@
-.TH ha_related_sap_notes 7 "21 Feb 2024" "" "ClusterTools2"
+.TH ha_related_sap_notes 7 "05 Mar 2025" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 ha_related_sap_notes - selection of SAP notes and knowledge base articles, related to high availability
+.PP
 .\"
 .SH DESCRIPTION
+.\"
 This manual page lists SAP notes and knowledge base articles related to high availability topics.
-
+.PP
 The mentioned documents, and others, are stored with the SAP knowledgebase at
 \fBhttps://launchpad.support.sap.com\fP
 and
 \fBhttps://userapps.support.sap.com/sap/support/knowledge/en/\fP .
+.PP
 .\"
 .SH EXAMPLES
 .\"
@@ -57,12 +61,24 @@ and
 .br
 2737837 - SAP HANA and the Intel Transactional Synchronisation Extension Capability
 .br
+2988616 - /hana/shared volume full or growing
+.br
+2999334 - SWAP Utilisation
+.br
 3120786 - SAP HANA on SUSE KVM Virtualization with SLES 15 SP2
+.br
+3131463 - Why use of OS swap space does not affect HANA db performance
 .br
 3301633 - Unavailability of primary site due to srConnectionChanged hook
 .br
+3680406 - Optimizing Memory Allocation for SAP HANA Services by Adjusting min_segment_size
+.br
+3453846 - Pacemaker cluster failsover due to file-system problem with host server
+.br
+3642937 - Cluster Resource Agent Requirement to Adopt systemd-based SAP Startup
+Framework Conversion
+.PP
 .\"
-.P
 .B * SAP on Linux in general:
 .br
 1031096 - Installing Package SAPHOSTAGENT
@@ -75,6 +91,12 @@ and
 .br
 2369910 - SAP Software on Linux: General information
 .br
+2718300 - Physical and Virtual hostname length limitations
+.br
+2787939 - NIEHOST_UNKNOWN error when trying to start SAP
+.br
+2975682 - Azure – SAP license invalid after reboot of VM due to changed hardware key with Linux guest OS.
+.br
 3091152 - sapstartsrv - improved deregistration for UNIX/Linux
 .br
 3115048 - sapstartsrv with native Linux systemd support 
@@ -85,9 +107,13 @@ and
 .br
 3312868 - Script hdbenv.sh takes a long time to complete
 .br
+3410068 - Exclusion of SAP related file folders from virus scanning
+.br
 405827 - Linux: Recommended file systems
+.br
+401162 - Linux: Avoiding TCP/IP port conflicts and start problems,
+.PP
 .\"
-.P
 .B * SAP HANA database related:
 .br
 1501701 - Single Computing Unit Performance and Sizing
@@ -96,6 +122,8 @@ and
 .br
 1523337 - SAP In-Memory Database 1.0: Central Note
 .br
+1793345 - Sizing for SAP Suite on HANA
+.br
 1846872 - "No space left on device" error reported from HANA
 .br
 1876398 - Network configuration for System Replication in HANA SP6
@@ -103,6 +131,8 @@ and
 1888072 - SAP HANA DB: Indexserver crash in strcmp sse42
 .br
 1890444 - Slow HANA system due to CPU power save mode
+.br
+1900823 - SAP HANA Storage Connector API
 .br
 1944415 - Hardware Configuration Guide and Software Installation Guide for SUSE Linux Enterprise Server with SAP HANA and SAP Business One
 .br
@@ -118,9 +148,11 @@ and
 .br
 2021789 - SAP HANA Revison and Maintenance Strategy
 .br
+.\" TODO 2096851
 2100040 - FAQ: SAP HANA CPU
 .br
 2131662 - Transparent Huge Pages (THP) on SAP HANA Servers
+.\" TODO 2169283
 .br
 2185955 - SAP HANA startup hangs due to orphan nameserver process
 .br
@@ -150,6 +182,11 @@ and
 .br
 2493172 - SAP HANA Hardware and Cloud Measurement Tools
 .br
+2505218 - Large Log Backups due to large backup catalog
+.br
+2517805 - How-to check if SAP HANA System Replication is in Sync or not
+.br
+.\" TODO 2600030
 2647673 - HANA Installation Failure
 .br
 2709350 - How To set a HANA System Lincese via HDBSQL
@@ -160,11 +197,19 @@ and
 .br
 2750199 - Incorrect Alert Regarding Unsupported Operating System Version
 .br
+2772572 - HANA fails to start due to missing topology
+.br
 2779331 - HANA services use large SWAP memory
 .br
 2800138 - Out of Memory with Allocation Failure Type OPERATING_SYSTEM_LIMIT
 .br
+2914594 - Check process status failed for xxxxxx expected "hdbdaemon", errno: 2 (No such file or directory)
+.br
+2929822 - TraceTopic related error and warning in trace files
+.br
 2945239 - SAP HANA Platform 2.0 SPS 06 Release Note
+.br
+2964793 - OOM when Fast Restart option is enabled
 .br
 3007062 - FAQ: SAP HANA & Third Party Cluster Solutions
 .br
@@ -184,27 +229,79 @@ and
 .br
 3093542 - Transition to Python 3 of the Python Distribution Delivered With SAP HANA 2.0 Server
 .br
+3099639 - System Replication setup error, unable to contact primary site host Trying old-style port
+.br
+3121104 - Python 3 Support for SAP HANA Systems
+.br
 3123127 - Connect to database failed, rc=1, ... (connect timeout expired)
 .br
 3159746 - Hana 2 Revision 6x crashes on Linux kernel 4.12 or 4.18 on IBM Power platform
 .br
-.\" TODO 3189534 
-.\" 3288971 - HANA System Replication Cluster Switches Frequently due to Timeout of landscapeHostConfiguration.py
-3288971 - FAQ: Pacemaker Cluster Resource Manager in SAP HANA System Replication Environments
-.\" TODO 401162
+3189534 - Linux: systemd integration for sapstartsrv and SAP HANA
+.\" TODO - HANA System Replication Cluster Switches Frequently due to Timeout of landscapeHostConfiguration.py
+.br
+3192359 - SAP HANA Python 3 Roadmap
+.br
+3203165 - Startup fails at error 'nameserver: Couldn't find own nameserver in topology'
+.br
+3276070 - Improve termination of defunct sapuxuserchk
+.br
+3288971 - FAQ: SUSEHAE/RedHat HAA Pacemaker Cluster Resource Manager in SAP HANA System Replication Environments
+.br
+3294879 - HANA and Python Stay Current Information
+.br
+3307589 - Support Considerations for Updating Python for SAP HANA On-Premise Installations
+.br
+3330415 - Managing disk space overload due to Backint-handled SAP HANA log backups in /hana/shared path
+.br
+3319110 - FAQ: Python in context of SAP HANA
+.br
+3366673 - landscapeHostConfiguration.py fails with Python runtime error "can't start new thread"
+.br
+3387186 - Nameserver suddenly crashes with a SIGNAL 6 (SIGABRT)
+.br
+3401188 - SAP HANA 2 SPS07 Revision 075.00
+.br
+3446532 - Pacemaker cluster resource unavailable due to inadequate memory garbage collection parameter settings
+.br
+3723107 - landscapeHostConfiguration.py Reports "Unknown" Status During SAP HANA Startup Causing Unintended Cluster Fencing
+.PP
 .\"
-.P
 .B * SAP ASE database related:
 .br
+1584897 - SYB: Controlled Release (CR1) on Sybase ASE. 
+.br
+1706801 - SYB: Sybase ASE released for virtual systems.
+.br
+2489781 - SAP ASE 16.0 SP03 Supported Operating Systems and Versions .
+.br
 2992028 - SYB: Fault Manager: install Fault Manager in separated instance 
+.PP
 .\"
-.P
+.B * IBM DB2 LUW database related:
+.br
+101809 - DB6: Supported Db2 Versions and Fix Pack Levels 
+.br
+1612105 - DB6: FAQ on DB2 with HADR
+.br
+1168456 - SAP Db2 support info 
+.br
+1600156 - SAP Db2 support on AWS 
+.br
+2233094 - DB6: SAP applications on Azure that use IBM Db2 for Linux, UNIX, and Windows - additional information
+.br
+3472573 - DB6: Pacemaker can not initiate a takeover in HADR
+.PP
+.\"
 .B * SAP NetWeaver and S/4HANA related:
 .br
 1153713 - Problems with SAP Management Console (Java)
-.\" TODO 1301712
 .br
 1178686 - Linux: Alternative method to generate a SAP hardware key
+.br
+129997 - Hostname and IP address lookup
+.br
+1301712 - Unix sapstartsrv environment determination
 .br
 146289 - Parameter Recommendations for 64-bit SAP Kernel
 .br
@@ -259,30 +356,51 @@ and
 941735 - SAP memory management system for 64-bit Linux systems
 .br
 953653 - Rolling Kernel Switch
+.br
+962955 - Use of virtual or logical TCP/IP host names
+.PP
 .\"
-.P
 .B * SAP Convergent Mediation and Convergent Charging related:
 .br
 3079845 - Standard Practices for SAP CM High Availability
-
+.PP
+.\"
+.B * Public Cloud related:
+.br
+1656099 - SAP Applications on AWS: Supported DB/OS and Amazon EC2 products
+.br
+1656250 - SAP on AWS: Supported instance types 
+.br
+1928533 - SAP applications on Azure: Supported products on Azure VM types
+.br
+2015553 - SAP on Azure: Support prerequisites
+.br
+2178632 - Key monitoring metrics for SAP on Azure
+.br
+2191498 - SAP on Linux with Azure: Enhanced monitoring
+.br
+2243692 - Linux on Azure (IaaS) VM: SAP license issues
+.br
+1999351 - Troubleshooting enhanced Azure monitoring for SAP
+.PP
 .\"
 .SH BUGS
-Feedback is welcome, please mail to feedback@suse.com
+.\"
+Feedback is welcome, please mail to feedback@suse.com.
+.PP
 .\"
 .SH SEE ALSO
-\fBha_related_suse_tids\fR(7), \fBsap_suse_cluster_connector\fR(8), \fBsaptune\fR(8),
+.\"
+\fBha_related_suse_tids\fR(7), \fBsap_suse_cluster_connector\fR(8), \fBsaptune\fR(8), \fBSAPHanaSR\fR(7),
 .br
 https://launchpad.support.sap.com ,
 .br
 https://documentation.suse.com/sbp/sap/ ,
 .br
 https://documentation.suse.com/sles-sap/
+.PP
 .\"
 .SH COPYRIGHT
-(c) 2021-2024 SUSE LLC 
-.br
-ClusterTools2 comes with ABSOLUTELY NO WARRANTY.
-.br
-For details see the GNU General Public License at
-http://www.gnu.org/licenses/gpl.html
+.\"
+(c) 2021-2025 SUSE LLC
 .\"

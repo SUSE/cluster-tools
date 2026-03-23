@@ -1,14 +1,17 @@
-.TH ha_related_suse_tids 7 "21 Feb 2024" "" "ClusterTools2"
+.TH ha_related_suse_tids 7 "16 Jan 2026" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 ha_related_suse_tids - selection of SUSE Technical Information Documents, related to high availability
+.PP
 .\"
 .SH DESCRIPTION
+.\"
 This manual page lists SUSE Technical Information Documents (TIDs) related to
 high availability topics.
-
+.PP
 The mentioned documents, and others, are stored with the SUSE Knowledgebase at
-\fBhttps://www.suse.com/support/kb/\fP .
+\fBhttps://support.scc.suse.com/s/kb\fP .
 .TP
 Useful keywords for searching are
 .B <number_of_TID>
@@ -53,6 +56,7 @@ Product to select is usually one of
 .B SUSE Linux Enterprise Server
 .br
 .B SUSE Linux Enterprise Server for SAP Applications
+.PP
 .\"
 .SH EXAMPLES
 .\"
@@ -73,6 +77,8 @@ Config Report For Linux (7001936)
 How-to effectively work with SUSE Technical Support (000019452)
 .br
 SUSE technical support and High-secure environments (000019438)
+.br
+How to Maintain Data Privacy in SUSE Support Log Files: A Guide to Using supportutils-scrub (000021986)
 .br
 Supportconfig Self Service via SCC/FTP (7023007)
 .br
@@ -120,8 +126,8 @@ Master TID: Migrating a regular SLES to SLES for SAP (7018744)
 .br
 Details for supportconfig plugin to gather SAP information related to SUSE solutions. (000020279)
 .br
-
-.\"
+Troubleshooting failures caused by network issues outside of the OS (000019863)
+.PP
 .B * Cluster basics, timing, fencing, communication:
 .br
 SLES 11 HAE - Send cluster update and changes through email (7007619)
@@ -129,6 +135,10 @@ SLES 11 HAE - Send cluster update and changes through email (7007619)
 pacemaker default behavior changed (7014282)
 .br
 Pacemaker fails to start with 100 exit status (000019498)
+.br
+Pacemaker fails to start after running crm cluster init (000021397
+.br
+Pacemaker warning: Unexpected result (unimplemented feature) (000021554)
 .br
 pacemaker-controld: notice: High CPU load detected: 180.869995 (000020521)
 .br
@@ -140,15 +150,21 @@ iTCO_wdt does not accept Watchdog Timeout bigger 63 seconds (7011426)
 .br
 Generating a Kernel Core Dump running cluster HAE (High Availability Extension) (7015029) 
 .br
+Fencing failing with No fence device (000021466)
+.br
 stonith:external/sbd resource agent fails with OCF_TIMEOUT (000020383)
 .br
 SBD STONITH resource fail to start even when majority of the sbd disks (2 out of 3) are still accessible (000020808)
+.br
+SBD-based Pacemaker fails to fence and stops with fatal error (000021694)
 .br
 SBD Stonith fails despite seemingly correct setup (OPENAIS STONITH) (7008921) 
 .br
 Settings for long timeout in SBD_DELAY_START (000019356)
 .br
 How to enable SBD to crashdump before rebooting. (000019873)
+.br
+Pacemaker staying in Waiting for startup-trigger from SBD (000020942)
 .br
 SBD Operation Guidelines for HAE Clusters (7011346) 
 .br
@@ -167,6 +183,8 @@ Use only one sbd_device instance attribute for SBD partitions (7010925)
 sbd.service disabled after running ha-cluster-join (000019624)
 .br
 Stonith unreliable (HEARTBEAT, COROSYNC) (7007731) 
+.br
+Memory leak in "sbd: watcher: Pacemaker" process (000021642)
 .br
 Disk latency may cause unwanted node fencing (7011350) 
 .br
@@ -192,11 +210,23 @@ Fencing in Cloud Enviroment (pacemaker Azure) (000020363)
 .br
 The azure-events Resource Agent Does Not Failover Properly ... (000020578)
 .br
+Pacemaker - Azure Fence Agent "fence_azure_arm" failed to start after Python 3.11 ... (000021504)
+.br
+Pacemaker fencing not working after update: "error: Unknown fence agent: fence_azure_arm" (000022058)
+.br
+Updating GCE fence agent to v4.6 breaks fencing (000019875)
+.br
 stonith: Could not list hosts for external/ipmi (000020598)
 .br
 How to setup vcenter fence agent (000019720)
 .br
+Supportability and Challenges for Live Migration of VMs in a SUSE HA Cluster Environment (000020918)
+.br
+Live Partition Mobility (LPM) fails with hardware watchdog on POWER10 (000022183)
+.br
 default action timeout and op default timeout (OPENAIS) (7009584) 
+.br
+Corosync: How to test a 2 ring configuration. (000020974)
 .br
 OpenAIS/Corosync daemon fails to start (7010879) 
 .br
@@ -220,11 +250,13 @@ Odd cluster membership changes in HAE cluster (7015215)
 .br
 All Pacemaker nodes stuck UNCLEAN (offline) after corosync update (000019604)
 .br
-crm_ipc_prepare: Message exceeds the configured ipc limit (PACEMAKER COROSYNC) (7013215) 
-.br
 Cannot contact other cluster node (7006864)
 .br
 Corosync crashed if node has more then one device in the same subnet. (7008804) 
+.br
+How to change the hostname of a Pacemaker Cluster node (000020597)
+.br
+How to change the qnetd server's IP on a running Pacemaker cluster. (000021271)
 .br
 clones don't show identification numbers after update (PACEMAKER COROSYNC) (7015095) 
 .br
@@ -270,7 +302,11 @@ Increasing the number of lrmd children (7006863)
 .br
 Failed cluster actions in crm_mon (7012145) 
 .br
+crm command fails with OSError: Disk quota exceeded (000021617)
+.br
 The command crm status returns Stack: unknown (000019771)
+.br
+crm command returns "Warning: support for <master> ... is deprecated and will be removed in a future release" (000021958)
 .br
 HA node unable to join AD domain after applying HA SP3 (7014642) 
 .br
@@ -314,8 +350,10 @@ pacemaker.log entries are timestamped with different timezones (000020743)
 .br
 Resource Stickiness parameter created during cluster bootstrap (000021075)
 .br
-
-.\"
+Pacemaker prints the error: couldn't create file for mmap (000020566)
+.br
+Supportability and Challenges for Live Migration of VMs in a SUSE HA Cluster Environment (000020918)
+.PP
 .B * Cluster resources:
 .br
 Corosync/CTDB and LVS performance issues (7006849) 
@@ -416,6 +454,10 @@ Cluster resources are not migrating when paths are lost to the SAN when using mu
 .br
 How to enable cluster resource tracing (7022678)
 .br
+How to edit a Pacemaker cluster resource or cluster configuration. (000020286)
+.br
+How to rename a cluster resource without stopping it (000018878)
+.br
 Integration of sap-suse-cluster-connector does not work as expected (7023149)
 .br
 sap_suse_cluster_connector stuck as HAActive: FALSE (000019924)
@@ -430,11 +472,19 @@ SAP NW cluster failover due to sapstartsrv frequent restart (000020517)
 .br
 Unexpected connection drop between SAP application and NetWeaver (000020518)
 .br
+Recent changes to crmsh package can result in unsupported configuration of SAPStartSrv resource Agent in a SAP NetWeaver HA cluster (000021423)
+.br
+How to Remove Pacemaker Cluster from SAP NetWeaver ASCS/ERS While Keeping SAP Instances Running (000022327)
+.br
 Error when coming out of standby: hdbdaemon HDB Daemon not running (7021376)
 .br
 SAPHanaController running in timeout when starting SAP Hana (000019899)
 .br
 SAP HANA monitors timed out after 5 seconds (000020626)
+.br
+Unexpected SAP HANA DB failover if Pacemaker sub-daemon is unresponsive to IPC (000022175)
+.br
+HA for SAP HANA: pacemaker sub-daemon is unresponsive to IPC (000022179)
 .br
 HA cluster takeover takes too long on HANA indexserver failure (000020845)
 .br
@@ -443,6 +493,8 @@ Cluster node fence as SAPHanaTopology fails with error code 1 (OCF_ERR_GENERIC) 
 SUSE HA for HANA cluster node fenced at shutdown, despite of systemd integration (000021046)
 .br
 Troubleshooting the SAPHanaSR python hook (000019865)
+.br
+Pacemaker Fails to Start Legacy SAP HANA (Python 2-Based) After Upgrading to SAPHanaSR-0.162.2-* (000021361)
 .br
 Basic health check for two-node SAP HANA performance based model (7022984)
 .br
@@ -456,7 +508,13 @@ Entry "CALLING CRM: ... rc=256" in HANA trace after upgrading SAPHanaSR-ScaleOut
 .br
 SAP HANA scale-out - pacemaker.service: "Cannot find sapstartsrv and sapcontrol executable, please set DIR_EXECUTABLE parameter!" (000021062)
 .br
+HA for SAP HANA: Resource agents are running into HANA_CALL timeout lssRc=124 (000022345)
+.br
+crm command returns "Warning: support for <master> ... is deprecated and will be removed in a future release" (000021958)
+.br
 PostgreSQL resource fails to start with "My data may be inconsistent" (7023166)
+.br
+Anti-colocation rule required for SAP Hana Cost Optimized Scenario as of SLE 15 SP6 (000021629)
 .br
 Unable to start Oracle 12 database using High Availability Extension resource agent for Oracle (7018429)
 .br
@@ -467,6 +525,10 @@ SAP HANA SR Performance Optimized Scenario - Setup Guide - Errata (7023882)
 SAP S/4 HANA - Enqueue Replication 2 High Availability Cluster - Setup Guide - Errata (7023714)
 .br
 SUSE Cluster Support for SAP HANA System Replication Active / Active Read Enabled Feature (7023884)
+.br
+Combining SAP HANA database and SAP S/4HANA application platform in one cluster. (000022133) 
+.br
+Combining SAP HANA database and SAP NetWeaver application platform in one cluster. (000022132)
 .br
 SAP Generating 'Database host operating system is not supported' alerts (7023744)
 .br
@@ -482,7 +544,11 @@ sapcontrol -function HAFailoverToNode migration fail (000020520)
 .br
 Pull Errors with azure-events Resource Agent on all Nodes (000019623)
 .br
+rsc_azure-events resource primitve fails with error: Unable to get instance info (000021356)
+.br
 SAPHanaSR HANA system replication automation without layer 2 network (000020333)
+.br
+IP Cluster Resource failed to failover with a blocked status (000020600)
 .br
 SAPHanaSR-showAttr fails with error "Error: NIECONN_REFUSED ..." (000020548)
 .br
@@ -494,18 +560,18 @@ HANA fail-over and secondary recovery operations fail due to excessive os.system
 .br
 Protect HANA against manually caused dual-primary situation in SUSE HA cluster (000021044)
 .br
+Safely Disabling/Enabling System Replication on a Scale-Up SAP HANA cluster (000021374)
+.br
 Address space monitoring and HANA DB performance (000020746)
 .br
 HANA nodes end up having the same LPT values (000020690)
-.br
-SUSE HA for HANA cluster node fenced at shutdown, despite of systemd integration (000021046)
 .br
 HANA DB resource failed to start (000020948)
 .br
 SAPHanaController monitor timeout leads to database restart (000021249)
 .br
-
-.\"
+High system CPU during HANA table load in SLES 15 SP5 and earlier (000022171)
+.PP
 .B * Related operating system settings and components:
 .br
 List of SUSE Linux Enterprise Server kernel (000019587)
@@ -540,7 +606,9 @@ Can't open /dev/mapper/mpath* exclusively. Mounted filesystem? (7012050)
 .br
 mkinitrd doesn't include the correct bindings_file (7003710)
 .br
-Multipath Blacklisting Local Disks (3970086)
+Multipath Blacklisting Local Disks (000016563)
+.br
+multipath/lvm system drops into Emergency mode (000019294)
 .br
 Device-mapper does not use all available paths to a SAN (7005564)
 .br
@@ -572,6 +640,8 @@ Found duplicate Physical Volumes (PV) (7002287)
 .br
 Duplicate LVM Volume Group Warning (7003547)
 .br
+I/O performance impact due to weekly mdcheck-start.service (000022038)
+.br
 Configure kernel core dump capture (3374462)
 .br
 Troubleshooting Application Crash or Core Dump (7004526)
@@ -598,6 +668,8 @@ Performance loss when writing large files over NFS, on kernel 4.12.14 (SLES 12 S
 .br
 NFS file system is hung. New mount attempts hang also. (000019722)
 .br
+An NFS client hangs on various operations, including "df". Hard vs Soft NFS mounts. (000020830) 
+.br
 Overcommit Memory in SLES (7002775)
 .br
 Recommended SUSE SLES 4 SAP Settings (7024082)
@@ -606,9 +678,13 @@ SAP Generating 'Database host operating system is not supported' alerts (0000194
 .br
 SLES for SAP 12 Package Conflict Errors After Fresh Install (000019409)
 .br
+Starting SAP HANA DB fails (000021984)
+.br
 tuned-adm fails to set kernel scheduler for block devices (7024212)
 .br
 NTP fails to access time server on system boot. (3435100) 
+.br
+NTP Sync Issue (000021102)
 .br
 NTP issue with VMWare (7008544) 
 .br
@@ -652,15 +728,19 @@ Frequent ACPI errors starting with SMBus or IPMI write requires Buffer of length
 .br
 IPMI driver can be unloaded when being accessed by user space (000019602)
 .br
+IPMI fence agents not working properly. (000019187)
+.br
 XFS metadata corruption and invalid checksum on SAP Hana servers (7022921)
 .br
 XFS "barrier/nobarrier" mount options have been completely deprecated starting from SLES15 SP2 (000020240)
 .br
+Process or system hang due to possible XFS corruption (000021632)
+.br
+Failed XFS mounting with message "XFS_WANT_CORRUPTED_GOTO" reported (000021215)
+.br
 Handling failed NFS share in SUSE HA cluster for HANA system replication (000019904)
 .br
 SAP Instances failed stop on shutdown (PACEMAKER, SYSTEMD, SAP) (7022671)
-.br
-How to patch a SAP Application Pacemaker Cluster (000020268)
 .br
 SAP on SLES shows Error: NIECONN_REFUSED in the logs (7023236)
 .br
@@ -676,7 +756,17 @@ Memory, I/O and DefaultTasksMax related considerations for SLES for SAP servers 
 .br
 DefaultTasksMax / TasksMax / UserTasksMax (000015901)
 .br
-Unable to set kernel.shmmni to a value greated than 32k (32768) (000020403)
+Protecting SAP HANA workloads from memory reclamation on large memory systems (000021841)
+.br
+Unable to set kernel.shmmni to a value greater than 32k (32768) (000020403)
+.br
+SAP HANA swap and system hangs with THP on multi-NUMA node systems (000022286)
+.br
+Change in memory reclaim behaviour in SLES 15 SP4 (000021196)
+.br
+SAP HANA does not use vPMEM DAX in memory database (000020271)
+.br
+HANA cluster failures due to full /tmp filesystem (000021331)
 .br
 Systemd KillMode=none (000020394)
 .br
@@ -708,6 +798,8 @@ System hangs on reboot if 'google-shutdown-scripts.service' is enabled (00002037
 .br
 Communications fail between Azure Load Balancer and SLE instance (000019510)
 .br
+Azure Accelerated Networking fails (000020694)
+.br
 TCP SYN packets intermittently go unanswered (7023254)
 .br
 ALUA port group messages (7023021)
@@ -733,6 +825,10 @@ Read-only or corrupted filesystem after fstrim operation on Eternus ... (7022268
 Error 'CDB: Unmap/Read sub-channel TIMEOUT_ERROR' on Nutanix Virtual Machines (7022293)
 .br
 lpar boot fails: "blk_cloned_rq_check_limits: over max size limit" (7017750)
+.br
+Support for ibmvnic in SLES (000019408)
+.br
+Change the iSCSI timeout (000021037)
 .br
 Customizing persistent device names for an iSCSI disk (3684654)
 .br
@@ -770,7 +866,19 @@ NVMe drive is not accessible in UEFI mode with Intel Rapid RAID mode on (0000194
 .br
 Making changes to VMware pvscsi driver parameters aligned with SAP recomendations (000019614)
 .br
+VMware Guest Boots to Grub Prompt (000021635)
+.br
+CPU Steal Time Accounting for VMware guest (000021197)
+.br
 saptune: WARNING saptune.io.go:66: 'noop' is not a valid scheduler for device (000019572)
+.br
+saptune recommends THP "never" for SAP HANA 2.0 on SLES for SAP applications 15 SP4 (000022172)
+.br
+saptune recommends THP "never" for SAP HANA 2.0 on SLES for SAP applications 15 SP5 (000022174)
+.br
+Unable to set SAP Note 1680803 recommendations for NRREQ using saptune (000020344)
+.br
+SAP HANA DB raises a High alert about transparent huge pages kernel parameter not being set to “never” (000021722)
 .br
 sapconf: tuned.utils.commands: Writing to file /sys/block/.../queue/scheduler error: [Errno 22] Invalid argument (000019575)
 .br
@@ -790,32 +898,39 @@ HANA Database Planning Engine crashes in __strncmp_avx2_rtm+0x1b3 (000021026)
 .br
 TSC Clocksource Switching to HPET During High I/O Load (000021035)
 .br
-Logs about an incident on a Pacemaker Cluster are lost because of the log file turn-over policy (000020390)
+Server receiving many NMI soft lockups (000019788)
 .br
+Logs about an incident on a Pacemaker Cluster are lost because of the log file turn-over policy (000020390)
 .\" .br TODO Oracle 7023167
+.PP
 .\"
 .SH BUGS
+.\"
 Feedback is welcome, please mail to feedback@suse.com
+.PP
 .\"
 .SH SEE ALSO
+.\"
 \fBClusterTools2\fR(7) , \fBcs_show_cluster_patterns\fR(8), \fBcs_show_error_patterns\fR(8),
 .br
 https://www.suse.com/products/highavailability/ , 
 .br
-https://www.suse.com/releasenotes/x86_64/SLE-HA/15-SP3/ ,
+https://www.suse.com/releasenotes/x86_64/SLE-HA/15-SP7/ ,
 .br
-https://www.suse.com/documentation/sle-ha-15-SP3/ ,
+https://documentation.suse.com/sle-ha/15-SP7/ ,
 .br
-https://documentation.suse.com/sles/15-SP3/single-html/SLES-storage/#book-storage
+https://documentation.suse.com/sles/15-SP7/single-html/SLES-storage/#book-storage ,
 .br
-https://documentation.suse.com/sles-sap/15-SP3/
+https://documentation.suse.com/sles-sap/15-SP7/
+.PP
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2015-2018 SUSE Linux GmbH, Germany.
 .br
 (c) 2018-2020 SUSE Software Solutions Germany GmbH, Germany.
 .br
-(c) 2021-2024 SUSE LLC
+(c) 2021-2026 SUSE LLC
 .br
 ClusterTools2 comes with ABSOLUTELY NO WARRANTY.
 .br

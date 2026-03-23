@@ -1,0 +1,5 @@
+configure \
+ group grp_ora_ora1 rsc_md_ora1_md0 rsc_lvm_ora1_oravg rsc_fs_ora1_osoft rsc_fs_ora1_odata rsc_ip_ora1_ora1 rsc_oralsnr_ora1 rsc_oracle_ora1 \
+ meta target-role=stopped
+configure \
+ location loc_grp_ora1_on_node0101 grp_ora_ora1 1000: node0101

@@ -1,0 +1,5 @@
+configure \
+ primitive rsc_ip_ora1_ora1 ocf:heartbeat:IPaddr2 \
+ params ip="192.168.152.13" \
+ op monitor interval=10s timeout=20s on_fail="restart" \
+ meta target-role=stopped

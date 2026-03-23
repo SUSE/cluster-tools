@@ -1,0 +1,5 @@
+configure \
+ primitive rsc_md_ora1_md0 ocf:heartbeat:Raid1 \
+ params raidconf="/clusterconf/ora1/mdadm.conf" raiddev="/dev/md0" \
+ op monitor interval=60s timeout=130s on_fail="fence" \
+ meta target-role=stopped

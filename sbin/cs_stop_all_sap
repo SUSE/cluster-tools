@@ -35,6 +35,7 @@ function help() {
 
 
 function get_sap_sid_ino() {
+    # /usr/sap/hostctrl/exe/lssap
 	/usr/sap/hostctrl/exe/saphostctrl -function ListInstances |\
 	awk '{print $4,$6}'
 }

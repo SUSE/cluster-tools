@@ -42,6 +42,7 @@ function get_sap_sid_ino() {
 
 
 function stop_all() {
+    SAP=$(get_sap_sid_ino)
     while read; do
 	    rc=1
 	    SID=$(echo $REPLY | awk '{print $1}')
@@ -76,7 +77,6 @@ case $1 in
         head -11 "$EXE" | grep "^# Version: "
     ;;
     -s | --stop)
-        SAP=$(get_sap_sid_ino)
         stop_all
     ;;
     *)

@@ -35,16 +35,13 @@ function help() {
 
 
 function get_sap_sid_ino() {
-    # /usr/sap/hostctrl/exe/lssap
+    test -x /usr/sap/hostctrl/exe/saphostctrl || exit 9
 	/usr/sap/hostctrl/exe/saphostctrl -function ListInstances |\
 	awk '{print $4,$6}'
 }
 
 
 function stop_all() {
-    test -x /usr/sap/hostctrl/exe/saphostctrl || exit 9
-    SAPSIDINO="$(get_sap_sid_ino)"
-
     while read; do
 	    rc=1
 	    SID=$(echo $REPLY | awk '{print $1}')
@@ -63,7 +60,7 @@ function stop_all() {
 	    (( RETCODE = RETCODE + rc ))
 	    echo
 	    echo "### $SID - $INO rc: $rc ###"
-    done <<< "$SAPSIDINO"
+    done <<< "$SAP"
 
     (( RETCODE = RETCODE * 10 ))
     echo RC: $RETCODE
@@ -79,6 +76,7 @@ case $1 in
         head -11 "$EXE" | grep "^# Version: "
     ;;
     -s | --stop)
+        SAP=$(get_sap_sid_ino)
         stop_all
     ;;
     *)

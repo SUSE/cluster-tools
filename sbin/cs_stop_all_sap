@@ -31,6 +31,8 @@ function help() {
     echo " --help               show help"
     echo " --version            show version info"
     echo " --stop [<seconds>]   stop all SAP instances [ WaitforStopped <seconds> ]"    
+    # TODO --instance   stop instances
+    # TODO --system     stop systems
 }
 
 

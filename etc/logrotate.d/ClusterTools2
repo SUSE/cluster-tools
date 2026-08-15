@@ -22,6 +22,17 @@
     copytruncate
 }
 #
+/var/log/vmstat.log {
+    compress
+    dateext
+    maxage 365
+    rotate 99
+    size +2M
+    notifempty
+    missingok
+    copytruncate
+}
+#
 /var/log/psaux.log {
     compress
     dateext

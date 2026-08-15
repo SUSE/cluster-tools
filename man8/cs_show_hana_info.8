@@ -28,7 +28,6 @@ cs_show_hana_info \- show info about HANA instance
 
 .\"
 .SH EXAMPLES
-.br
 .TP
 * Show info about HANA instance with SID HDB and instance number 11 :
 .br
@@ -45,22 +44,23 @@ Successful program execution.
 .br
 .B >0 
 Usage, syntax or execution errors.
+.\"
 .SH FILES
 .TP
 /usr/sbin/cs_show_hana_info
-	the program itself
+the program itself
 .TP
 /etc/ClusterTools2/cs_show_hana_info
-        the program's main configuration
+the program's main configuration
 .TP
 /usr/sap/<SID>/SYS/global/hdb/custom/config/global.ini
-	HANA's global configuration file
+HANA's global configuration file
 .TP
 /usr/sap/sapservices
-	...
+list of SAP instances
 .TP
 /hana/shared/<SID>/HDB<inst_nr>/<host>/trace/*.trc
-	HANA services' trace files
+HANA services' trace files
 .\"
 .SH BUGS
 Feedback is welcome, please mail to feedback@suse.com

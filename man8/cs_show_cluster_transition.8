@@ -9,11 +9,11 @@ cs_show_cluster_transition \- search log files for cluster transition patterns
 .SH DESCRIPTION
 \fBcs_show_cluster_transition\fP searches log files for crmd cluster transition
 patterns. Please note that crmd writes to log on the DC node only.
-
+.PP
 All cluster state transitions are triggered by an event. Any change of the
 cluster state is an event. The cluster also generates events on a regular base,
 f.e. every 900 seconds. Normal state of the cluster is IDLE.
-
+.PP
 Currrently known states are:
 .br
  S_IDLE
@@ -64,19 +64,19 @@ Usage, syntax or execution errors.
 .SH FILES
 .TP
 /usr/sbin/cs_show_cluster_transition
-	the program itself.
+the program itself.
 .TP
 /etc/ClusterTools2/cs_show_cluster_transition
-	the configuration.
+the configuration.
 .TP
 /etc/corosync/corosync.conf
-	the corosync configuration, maybe defining log file. 
+the corosync configuration, maybe defining log file. 
 .TP
 /etc/products.d/
-	the directory with product identification files.
+the directory with product identification files.
 .TP
 /var/log/messages
-	the default log file.
+the default log file.
 .\"
 .SH BUGS
 Currently SLES11 SP1 and SP2 are handled correctly.
@@ -93,7 +93,6 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 \fBgrep\fP(1), \fBsyslog\fP(8), \fBlogrotate\fP(8), \fBClusterTools2\fP(7),
 .br
 http://www.clusterlabs.org/man/
-.\"
 .\"
 .SH COPYRIGHT
 (c) 2011-2014 L.Pinne, Germany.

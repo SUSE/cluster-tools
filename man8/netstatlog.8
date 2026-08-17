@@ -1,0 +1,96 @@
+.TH netstatlog 8 "17 Aug 2026" "" "ClusterTools2"
+.\"
+.SH NAME
+netstatlog \- log the netstat list with timestamp
+.\"
+.SH SYNOPSIS
+.B netstatlog \fI[ logfile ]\fR
+.\"
+.SH DESCRIPTION
+\fBnetstatlog\fP logs the process list with timestamp.
+Basically the script puts the output of "date +%F %T" in front of each line for
+the output of "ss -ena". 
+.br
+.\"
+.SH EXAMPLES
+.\" TODO systemd.timer example
+.\".TP
+.\"* Run psauxlog every 10 minutes. On recent systems the systemd timer service
+.\"could look like this:
+.\".br
+.\"[Unit]
+.\".br
+.\"Description=Collect process status data
+.\".br
+.\"Documentation=man:psauxlog(8)
+.\".br
+.\"Wants=logrotate.timer syslog.service
+.\".TP
+.\"[Timer]
+.\".br
+.\"OnCalendar=
+.\".br
+.\"RandomizedDelaySec=9
+.\".TP
+.\"[Install]
+.\".br
+.\"WantedBy=timers.target
+.TP
+* Run netstatlog every 10 minutes. The crontab entry could look like this:
+.br
+-04-59/10 * * * * root /usr/sbin/psauxlog /var/log/psaux.log
+.TP
+* Rotate and compress log from time to time. The logrotate entry could look like this:
+.br
+/var/log/netstat.log {
+    compress
+    dateext
+    maxage 365
+    rotate 99
+    size +4M
+    notifempty
+    missingok
+    copytruncate
+.br
+}
+.TP
+* Show connections existing at a certain time, e.g. 2021-09-27 07:01. Use default logfile:
+# awk '$1~/2021-09-27/&&$2~/^07:01:/' /var/log/psaux.log
+.\" TODO ss related examples
+.\"
+.SH EXIT STATUS
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.TP
+/usr/sbin/netstatlog
+the script itself
+.TP
+/var/log/netstat.log
+the default logfile
+.TP
+/etc/cron.d/ClusterTools2
+the cron entry
+.TP
+/etc/logrotate.d/ClusterTools2
+the logrotate entry
+.\"
+.SH BUGS
+Feedback is welcome, please mail to feedback@suse.com .
+.\"
+.SH SEE ALSO
+\fBss\fP(8), \fBcrontab\fP(5), \fBsystemd.timer\fP(5),
+\fBlogrotate\fP(8), \fBClusterTools2\fP(7), \fBClusterTools2-timer\fP(7)
+.\"
+.SH COPYRIGHT
+(c) 2026 L.Pinne, Germany.
+.br
+netstatlog comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

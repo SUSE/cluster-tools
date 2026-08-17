@@ -8,7 +8,7 @@
 #
 ## -04-58/10 * * * * root /usr/sbin/psauxlog /var/log/psaux.log
 #
-## -05-59/10 * * * * root /usr/sbin/xmstat /var/log/xmstat.log
+## -05-59/10 * * * * root /usr/sbin/netstatlog /var/log/netstat.log
 #
 # Examples for SAP HANA. Please adapt to your needs. See also logrotate.d/
 #

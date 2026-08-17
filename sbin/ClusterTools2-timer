@@ -2,10 +2,11 @@
 #
 # ClusterTools2-timer
 #
-# Version: 2026-08-15
+# Version: 2026-08-17
 #
 /usr/sbin/meminfolog /var/log/meminfo.log
 /usr/sbin/vmstatlog /var/log/vmstat.log
-/usr/sbin/lsoflog /var/log/lsof.log "+D/opt +D/srv +D/home"
 /usr/sbin/psauxlog /var/log/psaux.log
+/usr/sbin/netstatlog /var/log/netstat.log
+/usr/sbin/lsoflog /var/log/lsof.log "+D/opt +D/srv +D/home"
 #

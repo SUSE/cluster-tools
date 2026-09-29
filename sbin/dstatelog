@@ -11,8 +11,8 @@
 #
 
 D=$(date +"%F %T")
-L=${1:-"/var/log/vmstat.log"}
+L=${1:-"/var/log/dstate.log"}
 
-echo w > /proc/sysrq-trigger
-# dmesg -T | sed TODO | grep $D >>"$L"
+echo w >/proc/sysrq-trigger
+dmesg --time-format iso --since "$D" >>"$L"
 #

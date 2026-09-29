@@ -1,29 +1,31 @@
 .TH cs_show_hana_autofailover_patterns 8 "01 Nov 2019" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 cs_show_hana_autofailover_patterns \- search log files for known patterns
 .\"
 .SH SYNOPSIS
-.B cs_show_hana_autofailover_patterns \fI[OPTION]\fR
-.br
-.B cs_show_hana_autofailover_patterns \fI[OPTION]\fR
+.\"
+\fBcs_show_hana_autofailover_patterns\fR [\fIOPTION\fR]
 .\"
 .SH DESCRIPTION
+.\"
 \fBcs_show_hana_autofailover_patterns\fP searches log files for known error patterns. Timestamp and shortcut for patterns are printed. Matches are collapsed per second.
 The script can search in live logfiles as well as in supportconfig logs.
-.br
 .\"
 .SH OPTIONS
-.HP
-\fB --help\fR
-	show help
-.HP
-\fB --version\fR
-	show version
-.br
+.\"
+.TP
+\fB--help\fR
+show help
+.TP
+\fB--version\fR
+show version
+.TP
 TODO
 .\"
 .SH EXIT STATUS
+.\"
 .B 0
 Successful program execution.
 .br
@@ -31,6 +33,7 @@ Successful program execution.
 Usage, syntax or execution errors.
 .\"
 .SH EXAMPLES
+.\"
 .TP
 * Search for SCSI3 reservation related patterns on 2019-01-19. Use default HBA type and messages log files in current directory.
  # cd nts_hana01_190201_1921
@@ -40,6 +43,7 @@ Usage, syntax or execution errors.
  # cs_show_hana_autofailover_patterns --all 2019-01-19 messages-\\*
 .\"
 .SH FILES
+.\"
 .TP
 /usr/sbin/cs_show_hana_autofailover_patterns
 the program itself
@@ -48,15 +52,18 @@ $PWD/messages
 the default logfile
 .\"
 .SH BUGS
+.\"
 Filename wildcards need protection from shell.
 .br
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBcs_show_error_patterns\fP(1), \fBcs_show_supportconfig\fP(1),
 \fBsupportconfig\fP(8), \fBgrep\fP(1), \fBmultipathd\fP(8), \fBsg_persist\fP(8), \fBmount\fP(8), \fBsbd\fP(8), \fBsyslog\fP(8)
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2019 L.Pinne, Germany.
 .br
 cs_show_hana_autofailover_patterns comes with ABSOLUTELY NO WARRANTY.

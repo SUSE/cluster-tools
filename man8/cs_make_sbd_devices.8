@@ -1,15 +1,17 @@
 .TH cs_make_sbd_devices 8 "01 Nov 2019" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 cs_make_sbd_devices \- initialise SBD devices 
 .\"
 .SH SYNOPSIS
-.P
-.B cs_make_sbd_devices \fIOPTION\fR
-.P
-.B cs_make_sbd_devices --init \fR[\fI<SBD_OPTS>\fR [\fI<SBD_CONF>\fR]]
+.\"
+\fBcs_make_sbd_devices\fR \fIOPTION\fR
+.PP
+\fBcs_make_sbd_devices\fR --init [ <\fISBD_OPTS\fR> [ <\fISBD_CONF\fR> ]]
 .\"
 .SH DESCRIPTION
+.\"
 \fBcs_make_sbd_devices\fP initialises SBD devices defined in the SBD config file.
 The first sectors of the devices will be overwritten. This script is simply a
 wrapper for the sbd command.
@@ -17,42 +19,40 @@ wrapper for the sbd command.
 For information on timings please see stonith_sbd(7), sbd(8), and multipath.conf(5).
 .\"
 .SH OPTIONS
+.\"
 .HP
 \fB --dump\fR
-	show content of SBD devices.
+show content of SBD devices.
 .HP
 \fB --help\fR
-	show help.
+show help.
 .HP
 \fB --version\fR
-	show version.
+show version.
 .HP
 \fB --init\fR
-	initialise SBD devices.
+initialise SBD devices.
 .HP
 \fB --clear\fR
-	clear local node's slot on SBD devices.
+clear local node's slot on SBD devices.
 .\"
 .SH EXAMPLES
-.br
+.\"
 .TP
 * Initialise devices as defined in the default SBD config file, using built-in default options.
-.br
 # cs_make_sbd_devices --init
 .TP
 * Initialise devices with specific options, take other settings from SBD config file. 
-.br
 # cs_make_sbd_devices --init "-1 30 -3 2 -4 130" /etc/sysconfig/sbd
 .TP
 * Show content of SBD devices.
-.br
 # cs_make_sbd_devices --dump
 .TP
 * Write a clear messages to the local node's slot on SBD devices.
-.br
 # cs_make_sbd_devices -c
 .\"
 .SH EXIT STATUS
+.\"
 .B 0
 Successful program execution.
 .br
@@ -60,6 +60,7 @@ Successful program execution.
 Usage, syntax or execution errors.
 .\"
 .SH FILES
+.\"
 .TP
 /usr/sbin/cs_make_sbd_devices
 the program itself.
@@ -71,17 +72,21 @@ the program's configuration.
 the SBD configuration.
 .\"
 .SH BUGS
+.\"
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
-\fBstonith_sbd\fP(7), \fBsbd\fP(8), \fBstonith\fP(8), \fBcs_show_sbd_devices\fP(8), \fBcs_clear_sbd_devices\fP(8),
+.\"
+\fBstonith_sbd\fP(7), \fBsbd\fP(8), \fBstonith\fP(8), \fBcs_show_sbd_devices\fP(8),
+\fBcs_clear_sbd_devices\fP(8),
 \fBClusterTools2\fP(7),  \fBdasdfmt\fP(7), \fBmultipath.conf\fP(5),
 .br
-https://www.suse.com/documentation/sle_ha/book_sleha/data/sec_ha_storage_protect
-_fencing.html ,
+https://www.suse.com/documentation/sle_ha/book_sleha/data/sec_ha_storage_protect_fencing.html ,
+.br
 https://www.suse.com/support/kb/doc.php?id=7016305
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2011-2019 L.Pinne, Germany.
 .br
 cs_make_sbd_devices comes with ABSOLUTELY NO WARRANTY.

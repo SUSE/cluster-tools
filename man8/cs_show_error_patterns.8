@@ -1,31 +1,36 @@
 .TH cs_show_error_patterns 8 "01 Nov 2019" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 cs_show_error_patterns \- search log files for known error patterns
 .\"
 .SH SYNOPSIS
-.B cs_show_error_patterns \fI[OPTION]\fR
+.\"
+\fBcs_show_error_patterns\fR [\fIOPTION\fR]
 .\"
 .SH DESCRIPTION
+.\"
 \fBcs_show_error_patterns\fP searches log files for known error patterns.  
 The total number of matches for each pattern is printed.
 .br
 .\"
 .SH OPTIONS
-.HP
-\fB --help\fR
-        show help.
-.HP
-\fB --version\fR
-        show version.
-.HP
-\fB --writecfg\fR
-	show some internal variables.
-.HP
-\fB --zip\fR
-        search compressed logs, too. This could take some time.
+.\"
+.TP
+\fB--help\fR
+show help.
+.TP
+\fB--version\fR
+show version.
+.TP
+\fB--writecfg\fR
+show some internal variables.
+.TP
+\fB--zip\fR
+search compressed logs, too. This could take some time.
 .\"
 .SH EXIT STATUS
+.\"
 .B 0
 Successful program execution.
 .br
@@ -33,6 +38,7 @@ Successful program execution.
 Usage, syntax or execution errors.
 .\"
 .SH EXAMPLES
+.\"
 .TP
 # cs_show_error_patterns | grep -v "= 0$"
 search in the current log files, show only patterns that match at least one time.
@@ -49,16 +55,19 @@ the configuration.
 the directory with log files.
 .\"
 .SH BUGS
+.\"
 This script depends on LC_MESSAGES respective RC_LANG set to en_US or C.
 On SLES12, only a fraction of entries might be found.
 .br
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBgrep\fP(1), \fBdmesg\fP(1), \fBsyslog\fP(8), \fBlogrotate\fP(8),
 \fBmcelog\fP(8), \fBjournalctl\fP(8), \fBClusterTools2\fP(7)
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2011-2019 L.Pinne, Germany.
 .br
 cs_show_error_patterns comes with ABSOLUTELY NO WARRANTY.

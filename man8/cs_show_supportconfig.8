@@ -1,16 +1,19 @@
 .TH cs_show_supportconfig 8 "01 Nov 2019" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 cs_show_supportconfig \- collect information from supportconfig files
 .\"
 .SH SYNOPSIS
-.B cs_show_supportconfig \fIOPTION\fR
+.\"
+\fbcs_show_supportconfig\fR \fIOPTION\fR
 .br
-.B cs_show_supportconfig --generic \fIDIR\fR
+\fBcs_show_supportconfig\fR --generic \fIDIR\fR
 .br
-.B cs_show_supportconfig --function \fIDIR\fR \fIFUNC\fR ...
+\fBcs_show_supportconfig\fR --function \fIDIR\fR \fIFUNC\fR ...
 .\"
 .SH DESCRIPTION
+.\"
 \fBcs_show_supportconfig\fP collects information from supportconfig files.
 This version should work for supportconfig files from SLES12 and more or less SLES15.
 The supportconfig archive has to be extracted. 
@@ -18,26 +21,27 @@ The supportconfig archive has to be extracted.
 Note: This script does not try to replace the experienced user by artificial
 intelligence. It just is aimed to help users focussing on the more interesting 
 pieces of supportconfig archives.
-.br
 .\"
 .SH OPTIONS
-.HP
-\fB --help\fR
-        show help.
-.HP
-\fB --version\fR
-        show version.
-.HP
-\fB --listfunc\fR
-        show available functions.
-.HP
-\fB --generic\fR
-        show info from all generic functions.
-.HP
-\fB --function\fR
-        show info from selected function.
+.\"
+.TP
+\fB--help\fR
+show help.
+.TP
+\fB--version\fR
+show version.
+.TP
+\fB--listfunc\fR
+show available functions.
+.TP
+\fB--generic\fR \fIDIR\fR
+show info from all generic functions.
+.TP
+\fB--function\fR \fIDIR\fR \fIFUNC\fR [ \fIFUNC\fR ... ]
+show info from selected function.
 .\"
 .SH EXIT STATUS
+.\"
 .B 0
 Successful program execution.
 .br
@@ -45,6 +49,7 @@ Successful program execution.
 Usage, syntax or execution errors.
 .\"
 .SH EXAMPLES
+.\"
 .TP
 # tar --no-same-owner -xjf nts_node0_111010_1101.tbz
 extract a supportconfig archive as youself.
@@ -62,6 +67,7 @@ search for SAP HANA related information.
 search for infos relevant inside an LPAR on PowerVM.
 .\"
 .SH FILES
+.\"
 .TP
 /usr/sbin/cs_show_supportconfig
 the program itself.
@@ -76,6 +82,7 @@ the default error patterns.
 the VMware related default patterns.
 .\"
 .SH BUGS
+.\"
 The error summary depends on supportconfig's messages.txt file which contains
 only a short trunc of the real messages file. To fix this, supportconfig could
 be called with the -I <line_count> option.
@@ -85,6 +92,7 @@ Some information from SLES12 is still not evaluated.
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBsupportconfig\fP(8), \fBtar\fP(1),
 \fBcs_show_error_patterns\fP(8), \fBcs_show_cluster_patterns\fP(8), \fBcs_show_cluster_transition\fP(8),
 \fBcs_prepare_esxvm\fP(8), \fBcs_precheck_for_hana\fP(8), \fBcs_show_memory\fP(8),
@@ -93,6 +101,7 @@ Feedback is welcome, please mail to feedback@suse.com
 http://support.novell.com/advisor/ , https://build.opensuse.org/project/show/Novell:NTS:SCA
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2011-2019 I.Manyugin, L.Pinne; Germany.
 .br
 cs_show_supportconfig comes with ABSOLUTELY NO WARRANTY.

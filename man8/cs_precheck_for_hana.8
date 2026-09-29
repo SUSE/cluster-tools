@@ -1,15 +1,25 @@
 .TH cs_precheck_for_hana 8 "01 Nov 2019" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 cs_precheck_for_hana \- check pre-requisites for SAP HANA System Replication and automation with SLE-HA cluster
 .\"
 .SH SYNOPSIS
-.B cs_precheck_for_hana
-[\fIOPTION\fR]
+.\"
+\fBcs_precheck_for_hana\fR [\fIOPTION\fR]
 .\"
 .SH DESCRIPTION
+.\"
+\fBcs_precheck_for_hana\fP is outdated and deprecated. 
+.PP
+\fBsaptune\fR should be used instead for OS settings, see man page saptune(8).
+.br
+\fBsaphana-checks\fR could be used for additional checks, see SAP notes 1969700
+and 1999993.
+.PP
 \fBcs_precheck_for_hana\fP checks if a Linux system is prepared for running
-SAP HANA in general. It also checks pre-requisites for SAP HANA System Replication automation with a SLE-HA cluster.
+SAP HANA in general. It also checks pre-requisites for SAP HANA System Replication
+automation with a SLE-HA cluster.
 The check is done according to the concept described in the setup guide
 \fISAP HANA System Replication on SLES for SAP Applications\fR . 
 .\"
@@ -22,24 +32,26 @@ compared to ensure all nodes of a cluster are set up identically. This is
 helpful particularly in scale-out scenarios.
 .\"
 .SH OPTIONS
+.\"
 Global options are:
-.HP
-\fB --help\fR
-	show help information.
-.HP
-\fB --version\fR
-	show version.
-.HP
-\fB --writecfg\fR
-	show some internal variables.
-.HP
-\fB --base\fR
-	show basic OS configuration, related to SAP HANA and its System Replication.
-.HP
-\fB --apps\fR
-	show basic HANA application configuration, and more specific related OS settings.
+.TP
+\fB--help\fR
+show help information.
+.TP
+\fB--version\fR
+show version.
+.TP
+\fB--writecfg\fR
+show some internal variables.
+.TP
+\fB--base\fR
+show basic OS configuration, related to SAP HANA and its System Replication.
+.TP
+\fB--apps\fR
+show basic HANA application configuration, and more specific related OS settings.
 .\"
 .SH EXIT STATUS
+.\"
 .B 0
 Successful program execution.
 .br
@@ -68,6 +80,7 @@ Usage, syntax or execution errors.
 # supportconfig
 .\"
 .SH FILES
+.\"
 .TP
 /usr/sbin/cs_precheck_for_hana
 the program itself.
@@ -76,6 +89,9 @@ the program itself.
 the configuration files.
 .\"
 .SH BUGS
+.\"
+cs_precheck_for_hana is outdated and deprecatd.
+.PP
 Formatting and content of this script's output will change, since this
 script is under development.
 Checks specific to the HANA application are currently not implemented.
@@ -83,6 +99,7 @@ Checks specific to the HANA application are currently not implemented.
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBcrm_report\fP(8) , \fBsupportconfig\fP(8),
 \fBsapconf\fP(8), \fBtuned\fP(8), \fBsysctl\fP(8),
 \fBcs_sum_base_config\fP(8),
@@ -210,6 +227,7 @@ Some relevant SAP Notes are (list not complete):
 1950470,
 1953429,
 1954788,
+1969700,
 1984787,
 1995460,
 1999880,
@@ -244,6 +262,7 @@ Some relevant SAP Notes are (list not complete):
 2382421
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2015-2019 L.Pinne, Germany.
 .br
 cs_precheck_for_hana comes with ABSOLUTELY NO WARRANTY.

@@ -1,12 +1,15 @@
 .TH cs_show_cluster_transition 8 "03 Aug 2014" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 cs_show_cluster_transition \- search log files for cluster transition patterns
 .\"
 .SH SYNOPSIS
-.B cs_show_cluster_transition \fI[OPTION]\fR
+.\"
+\fBcs_show_cluster_transition\fR [\fIOPTION\fR]
 .\"
 .SH DESCRIPTION
+.\"
 \fBcs_show_cluster_transition\fP searches log files for crmd cluster transition
 patterns. Please note that crmd writes to log on the DC node only.
 .PP
@@ -35,20 +38,22 @@ Currrently known states are:
  S_NOT_DC
 .\"
 .SH OPTIONS
-.HP
-\fB --help\fR
-	show help.
-.HP
-\fB --version\fR
-	show version.
-.\" .HP
-.\" \fB --zip\fR
+.\"
+.TP
+\fB--help\fR
+show help.
+.TP
+\fB--version\fR
+show version.
+.\" .TP
+.\" \fB--zip\fR
 .\"	show transitions compressed logs, too. This could take some time.
-.HP
-\fB --error\fR
-	show crmd errors.
+.TP
+\fB--error\fR
+show crmd errors.
 .\"
 .SH EXIT STATUS
+.\"
 .B 0
 Successful program execution.
 .br
@@ -56,12 +61,14 @@ Successful program execution.
 Usage, syntax or execution errors.
 .\"
 .SH EXAMPLES
+.\"
 .HP
 # cs_show_cluster_transition
 .HP
 # cs_show_cluster_transition | grep -e "DC" -e "o.*line"
 .\"
 .SH FILES
+.\"
 .TP
 /usr/sbin/cs_show_cluster_transition
 the program itself.
@@ -79,6 +86,7 @@ the directory with product identification files.
 the default log file.
 .\"
 .SH BUGS
+.\"
 Currently SLES11 SP1 and SP2 are handled correctly.
 For SLES11 SP3 and SP4 only a sub-set of patterns is shown, because fields differ.
 Only /var/log/messages is parsed correctly.
@@ -88,6 +96,7 @@ Feedback is welcome, please use the project page at
 https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmherschel
 .\"
 .SH SEE ALSO
+.\"
 \fBcs_show_error_patterns\fP(8), \fBcs_show_cluster_patterns\fP(8),
 \fBptest\fP(8), \fBcrm_attribute\fP(8), \fBcrm_simulate\fP(8),
 \fBgrep\fP(1), \fBsyslog\fP(8), \fBlogrotate\fP(8), \fBClusterTools2\fP(7),
@@ -95,6 +104,7 @@ https://build.opensuse.org/package/show?package=ClusterTools2&project=home%3Afmh
 http://www.clusterlabs.org/man/
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2011-2014 L.Pinne, Germany.
 .br
 cs_show_cluster_transition comes with ABSOLUTELY NO WARRANTY.

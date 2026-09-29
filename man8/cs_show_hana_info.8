@@ -1,33 +1,35 @@
 .TH cs_show_hana_info 8 "15 Apr 2021" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 cs_show_hana_info \- show info about HANA instance
 .\"
 .SH SYNOPSIS
-.P
-.B cs_show_hana_info \fI[OPTION]\fR
-.P
-.B cs_show_hana_info \fI[OPTION]\fR \fI<SID>\fR \fI<inst_nr>\fR
+.\"
+\fBcs_show_hana_info\fR [\fIOPTION\fR]
+.PP
+\fBcs_show_hana_info\fR <\fIOPTION\fR> <\fISID\fR> <\fIinst_nr\fR>
 .\"
 .SH DESCRIPTION
+.\"
 \fBcs_show_hana_info\fP shows info about HANA instance.
 .\"
 .SH OPTIONS
-.HP
-\fB --help\fR
-	show help
-.HP
-\fB --version\fR
-	show version
-.HP
-\fB --info\fR
-	show info for given instance
-.HP
-\fB --logs\fR
-	show summary on errors in logs for given instance
-
+.TP
+\fB--help\fR
+show help
+.TP
+\fB--version\fR
+show version
+.TP
+\fB--info\fR
+show info for given instance
+.TP
+\fB--logs\fR
+show summary on errors in logs for given instance
 .\"
 .SH EXAMPLES
+.\"
 .TP
 * Show info about HANA instance with SID HDB and instance number 11 :
 .br
@@ -39,6 +41,7 @@ cs_show_hana_info \- show info about HANA instance
 # cs_show_hana_info -l HDB 11
 .\"
 .SH EXIT STATUS
+.\"
 .B 0
 Successful program execution.
 .br
@@ -46,6 +49,7 @@ Successful program execution.
 Usage, syntax or execution errors.
 .\"
 .SH FILES
+.\"
 .TP
 /usr/sbin/cs_show_hana_info
 the program itself
@@ -63,9 +67,11 @@ list of SAP instances
 HANA services' trace files
 .\"
 .SH BUGS
+.\"
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBsu\fP(1),
 https://www.suse.com/support/kb/doc.php?id=7010056 ,
 https://www.suse.com/support/kb/doc.php?id=7010249 ,
@@ -75,6 +81,7 @@ https://blogs.sap.com/2012/06/20/collecting-hana-support-information-easily/ ,
 SAP notes 1732157, 2036111 , 2446324, 3007062 
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2018-2021 L.Pinne, Germany.
 .br
 cs_show_hana_info comes with ABSOLUTELY NO WARRANTY.

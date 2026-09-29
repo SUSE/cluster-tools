@@ -16,3 +16,4 @@ L=${1:-"/var/log/vmstat.log"}
 while read -r ; do
 	echo "$D": "$REPLY"
 done < /proc/vmstat >>"$L"
+#

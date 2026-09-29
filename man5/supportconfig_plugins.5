@@ -1,36 +1,46 @@
 .TH supportconfig_plugins 5 "01 Nov 2019" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 supportconfig_plugins \- configuration for supportconfig plugins from ClusterTools2  
 .\"
 .SH DESCRIPTION
-\fBsupportconfig_plugins\fP contains configuration for supportconfig plugins from ClusterTools2. 
+.\"
+\fBsupportconfig_plugins\fP contains configuration for supportconfig plugins from
+ClusterTools2. 
 .\"
 .SH SYNTAX
+.\"
 The file contains one line per plugin. Each active line is formed as:
 .br
 .B ^plugin-name$ 
-
-Each plugin checks for a line containing only its name. If this line is not found, the pluging exits without further action.
-
-Implicitely a hash "#" as the first character of a line marks it as comment and makes it to be ignored. 
+.PP
+Each plugin checks for a line containing only its name. If this line is not found,
+the pluging exits without further action.
+.PP
+Implicitely a hash "#" as the first character of a line marks it as comment and
+makes it to be ignored. 
 .\"
 .SH FILES
+.\"
 .TP
 /usr/lib/supportconfig/plugins/
-	the plugin directory.
+the plugin directory.
 .TP
 /etc/ClusterTools2/supportconfig_plugins
-	the plugin configuration files.
+the plugin configuration files.
 .\"
 .SH BUGS
+.\"
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBsupportconfig\fP(8), \fBClusterTools2\fP(7),
 https://www.suse.com/communities/blog/tag/supportconfig-analysis-sca-tools/
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2011-2019 L.Pinne, Germany.
 .br
 supportconfig_plugins comes with ABSOLUTELY NO WARRANTY.

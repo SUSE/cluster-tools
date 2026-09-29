@@ -9,7 +9,8 @@ dstatelog \- log dmesg entries for proccesses in D-state with timestamp
 .SH DESCRIPTION
 .\"
 Basically the script does "echo w >/proc/sysrq-trigger" and writes the resulting 
-dmesg output into a separate log file.
+dmesg lines into a separate log file. This script is intended to be called on
+specific events, not on regular base.
 .br
 .\"
 .SH EXAMPLES

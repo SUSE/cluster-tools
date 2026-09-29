@@ -1,0 +1,70 @@
+.TH dstatelog 8 "24 Sep 2021" "" "ClusterTools2"
+.\"
+.SH NAME
+dstatelog \- log dmesg entries for proccesses in D-state with timestamp
+.\"
+.SH SYNOPSIS
+\fBdstatelog\fR [ \fIlogfile\fR ]
+.\"
+.SH DESCRIPTION
+.\"
+Basically the script does "echo w >/proc/sysrq-trigger" and writes the resulting 
+dmesg output into a separate log file.
+.br
+.\"
+.SH EXAMPLES
+.\"
+* Rotate and compress log from time to time. The logrotate entry could look like this:
+.br
+/var/log/dstate.log {
+    compress
+    dateext
+    maxage 365
+    rotate 99
+    size +4M
+    notifempty
+    missingok
+    copytruncate
+.br
+}
+.TP
+* Show processes in D-state. Use default logfile:
+.br
+# awk '$5~/state:D/' /var/log/dstate.log
+.br
+.\"
+.SH EXIT STATUS
+.\"
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.\"
+.TP
+/usr/sbin/dstatelog
+the script itself
+.TP
+/var/log/dstate.log
+the default logfile
+.\"
+.SH BUGS
+.\"
+Feedback is welcome, please mail to feedback@suse.com .
+.\"
+.SH SEE ALSO
+.\"
+\fBdmesg\fP(8), \fBlogrotate\fP(8), \fBpsauxlog\fP(8), \fBpidstat\fP(1),
+\fBClusterTools2\fP(7), \fBSAPStartSrv-alert-timeout\fP(8)
+.\"
+.SH COPYRIGHT
+.\"
+(c) 2026 L.Pinne, Germany.
+.br
+dstatelog comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

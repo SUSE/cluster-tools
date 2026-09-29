@@ -1,27 +1,29 @@
 .TH ipmi_watchdog 7 "01 Nov 2019" "" "ClusterTools2"
 .\"
 .SH NAME
+.ß"
 ipmi_watchdog \- IPMI watchdog
 .\"
 .SH DESCRIPTION
-.br
+.\"
 The kernel module \fBipmi_watchdog\fP is used on systems that provide hardware
 watchdog functionality through an IPMI board.
 F.e. the Lenovo Integrated Management Module is such a board.
 In difference to other watchdog modules, the ipmi_watchdog needs a running daemon.
-
+.\"
 .SH EXAMPLES
-
+.\"
 * prepare IPMI watchdog, 1st try
-
+.PP
+.RS 2
 # chkconfig ipmi on
-
+.PP
 # vi /etc/sysconfig/bootloader
 .br
-...
+ ...
 .br
 INITRD_MODULES="... ipmi_watchdog"
-
+.PP
 # vi /etc/modprobe.d/ipmi_watchdog
 .br
 options ipmi_watchdog nowayout=0 timeout=30 action=reset_power
@@ -29,61 +31,65 @@ options ipmi_watchdog nowayout=0 timeout=30 action=reset_power
 blacklist iTCO_wdt
 .br
 blacklist iTCO_vendor_support
-
+.PP
 # shutdown -r now
-
-
+.RE
+.PP
 * prepare IPMI watchdog, 2nd try
-
+.PP
+.RS 2
 # chkconfig ipmi on
-
+.PP
 # vi /etc/sysconfig/ipmi
 .br
-\...
+ ...
 .br
 IPMI_WATCHDOG=yes
 .br
 IPMI_WATCHDOG_OPTIONS="nowayout=0 action=reset_power timeout=30"
 .br
-\...
-
-
+ ...
+.RE
+.PP
 * show
-
+.PP
+.RS 2
 # rcipmi status
-
+.br
 # ipmitool mc watchdog get 
-
+.br
 # modinfo ipmi_watchdog
-
+.br
 # ls -l /dev/watchdog
-
+.RE
 .\"
 .SH FILES
+.\"
 .TP
 /dev/watchdog
-	the watchdog device node.
+the watchdog device node.
 .TP
 /lib/modules/<kernel-version>/kernel/drivers/char/ipmi/ipmi_watchdog.ko
-	the IPMI watchdog module.
+the IPMI watchdog module.
 .TP
 /etc/init.d/ipmi
-	the IPMI service start script.
+the IPMI service start script.
 .TP
 /etc/sysconfig/ipmi
-	the IPMI related configuration.
+the IPMI related configuration.
 .TP
 /etc/modprobe.d/ipmi_watchdog
-	the kernel module configuration.
+the kernel module configuration.
 .TP
 /etc/sysconfig/kernel
-	the related initrd configuration.
-
+the related initrd configuration.
 .\"
 .SH BUGS
+.\"
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBsbd\fP(8), \fBstonith_sbd\fP(7), \fBlsinitrd\fP(8),
 \fBipmitool\fP(1), \fBmodinfo\fP(8),
 .br
@@ -101,9 +107,11 @@ ftp://ftp.software.ibm.com/systems/support/system_x_pdf/88y7599.pdf
 .\" https://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=2113568
 .\"
 .SH AUTHORS
+.\"
 S.Erdenberger, L.Pinne
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2016-2017 SUSE Linux GmbH, Germany.
 .br
 (c) 2018-2019 SUSE LLC

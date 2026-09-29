@@ -1,40 +1,43 @@
 .TH ClusterTools2 7 "01 Nov 2019" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 ClusterTools2 \- Tools for setting up and managing pacemaker HA clusters
 .\"
 .SH DESCRIPTION
+.\"
 The \fBClusterTools2\fP package provides tools for setting up and managing
 pacemaker HA clusters. The tools are aimed to make tasks easy around the
 pacemaker HA cluster manager and the Linux storage stack.
-
+.PP
 Main command for managing a running cluster is \fBClusterService\fP. This
 ASCII-terminal based menu system allows to perform common administrative tasks.
 It can be used instead of crm_gui or Hawk if no webservice and no X desktop is
 available.
-
+.PP
 Tools like \fBcs_list_failcounts\fP and \fBcs_show_cluster_transistion\fP help
 to analyse the cluster behaviour. A set of tools based on \fBwow\fP allows to
 make configuration of clusters reproduceable and efficiant.
-
+.PP
 Currently the tools are mainly used to setup and manage high-availability
 cluster for following workloads:
-
+.PP
 - SAP application servers, SAP central instances, SAP database servers
-
+.PP
 - SAP HANA System Replication automation
-
+.PP
 - XEN virtual machine hosts
-
+.PP
 - Novell eDirectory servers
-
+.PP
 - NFS file servers
-
+.PP
 - Apache web servers, LAMP servers
-
+.PP
 - MySQL, PostgreSQL, DB2, Oracle database servers
 .\"
 .SH EXAMPLES
+.\"
 .TP
 # wow cc --config edir01.wow 01-A-07-group_add_ndsd
 add configuration for a resource of type Novell eDirectory to the cluster. 
@@ -55,29 +58,31 @@ write checksums for common base config files of a node to a file. This is useful
 look for files that should not be identical, after a VM image was cloned.
 .\"
 .SH FILES
+.\"
 .TP
 /etc/ClusterTools2/
-	configuration files.
+configuration files.
 .TP
 /usr/lib/ClusterTools2/
-	ClusterTools2 components in general.
-.TP
-/usr/lib/ClusterTools2/agents/
-	wow configuration agents for pacemaker.
-.TP
-/usr/lib/ClusterTools2/scripts/
-	wow configuration scripts for pacemaker.
-.TP
-/usr/share/ClusterTools2/*.rsc
-	menue engine resource files.
-.TP
-/usr/share/ClusterTools2/cli/
-	wow configuration templates for pacemaker.
+ClusterTools2 components in general.
+.\".TP
+.\"/usr/lib/ClusterTools2/agents/
+.\"wow configuration agents for pacemaker.
+.\".TP
+.\"/usr/lib/ClusterTools2/scripts/
+.\"wow configuration scripts for pacemaker.
+.\".TP
+.\"/usr/share/ClusterTools2/*.rsc
+.\"menue engine resource files.
+.\".TP
+.\"/usr/share/ClusterTools2/cli/
+.\"wow configuration templates for pacemaker.
 .TP
 /usr/share/ClusterTools2/samples/
-	samples of config files and scripts.
+samples of config files and scripts.
 .\"
 .SH BUGS
+.\"
 Tools in ClusterTools2 version 3 are tested with SLE-HA 12, SLES 12,
 and SLES-for-SAP 12 only.
 Some people pronounce the package's name "ClumsyTools".
@@ -85,6 +90,7 @@ Some people pronounce the package's name "ClumsyTools".
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBClusterTools2\fP(7), \fBcs_sum_base_config\fP(8),
 \fBcs_show_cluster_transition\fP(8), \fBcs_clusterstate\fP(8),
 \fBcs_show_scores\fP(8), \fBcs_delcib\fP(8), \fBcs_show_error_patterns\fP(8),
@@ -105,9 +111,11 @@ https://www.suse.com/support/kb/doc.php?id=7007613 ,
 http://clusterlabs.org/wiki/Main_Page
 .\"
 .SH AUTHORS
+.\"
 A.Briel, I.Manyugin, M.Guertler, F.Herschel, L.Pinne
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2011-2018 SUSE Linux GmbH, Germany.
 .br
 (c) 2018-2020 SUSE Software Solutions Germany GmbH.

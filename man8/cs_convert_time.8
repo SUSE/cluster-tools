@@ -1,20 +1,22 @@
 .TH cs_convert_time 8 "10 Jun 2020" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 cs_convert_time \- convert date/time string between Unix Epoch and wall clock
 .\"
 .SH SYNOPSIS
-.B cs_convert_time \fI<date/time string>\fR
-.br
+.\"
+\fBcs_convert_time\fR <\fIdate/time string\fR>
 .\"
 .SH DESCRIPTION
+.\"
 \fBcs_convert_time\fP converts date/time strings between Unix Epoch and wall clock.
 .br
 The scripts tries to figure out the desired direction from the format of the
 given argument.
-.br
 .\"
 .SH EXIT STATUS
+.\"
 .B 0
 Successful program execution.
 .br
@@ -22,34 +24,36 @@ Successful program execution.
 Usage, syntax or execution errors.
 .\"
 .SH EXAMPLES
+.\"
 .TP
 * convert a given Unix Epoch time into wall clock date/time
-.br
 # cs_convert_time 484422540
 .TP
 * convert a given wall clock date/time into Unix Epoch time
-.br
 # cs_convert_time "Wed May 08 19:49:00 CEST 1985"
 .TP
 * convert current wall clock date/time into Unix Epoch time
-.br
 # cs_convert_time $(LANG=C date)
 .\"
 .SH FILES
+.\"
 .TP
 /usr/sbin/cs_convert_time
 the program itself.
 .\"
 .SH BUGS
+.\"
 Wall clock time needs to be in format LANG=C.
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBdate\fP(1), \fBtime\fP(7), \fBClusterTools2\fP(7), \fBcs_dmesg\fP(8)
 .br
 http://stackoverflow.com/questions/95492/how-do-i-convert-a-date-time-to-epoch-time-aka-unix-time-seconds-since-1970
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2015-2019 I.Manyugin, L.Pinne; Germany.
 .br
 cs_convert_time comes with ABSOLUTELY NO WARRANTY.

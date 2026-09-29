@@ -1,42 +1,43 @@
 .TH cs_show_memory 8 "01 Nov 2019" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 cs_show_memory \- show memory configuration and utilisation
 .\"
 .SH SYNOPSIS
-.br
-.B cs_show_memory
-[\fIOPTION\fR]
-.br
+.\"
+\fBcs_show_memory\fR [\fIOPTION\fR]
 .\"
 .SH DESCRIPTION
+.\"
 \fBcs_show_memory\fP shows information on memory configuration and utilisation.
 .\"
 .SH OPTIONS
-Global options are:
-.HP
-\fB --help\fR
-	show help.
-.HP
-\fB --version\fR
-	show version.
-.HP
-\fB --writecfg\fR
-	show some internal variables.
-.HP
-\fB --all\fR
-	show memory configuration and utilisation.
-.HP
-\fB --logs\fR
-	show memory related log messages.
-.HP
-\fB --configured\fR
-	show memory configuration.
-.HP
-\fB --utilised\fR
-	show memory utilisation.
+.\"
+.TP
+\fB--help\fR
+show help.
+.TP
+\fB--version\fR
+show version.
+.TP
+\fB--writecfg\fR
+show some internal variables.
+.TP
+\fB--all\fR
+show memory configuration and utilisation.
+.TP
+\fB--logs\fR
+show memory related log messages.
+.TP
+\fB--configured\fR
+show memory configuration.
+.TP
+\fB--utilised\fR
+show memory utilisation.
 .\"
 .SH EXIT STATUS
+.\"
 .B 0
 Successful program execution.
 .br
@@ -44,6 +45,7 @@ Successful program execution.
 Usage, syntax or execution errors.
 .\"
 .SH EXAMPLES
+.\"
 .TP
 * Show help.
 # cs_show_memory -h
@@ -71,12 +73,14 @@ basic infos on NUMA nodes.
 basic system log.
 .\"
 .SH BUGS
+.\"
 Formatting and content of this script's output will change, since this
 script is under development.
 .br
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBfree\fP(1), \fBnumastat\fP(8), \fBsysctl\fP(8), \fBcs_show_supportconfig\fP(8),
 \fBcs_precheck_for_hana\fP(8), \fBcs_prepare_esxvm\fP(8), \fBmeminfolog\fP(8),
 /usr/src/linux/Documentation/sysctl/vm.txt ,
@@ -85,6 +89,7 @@ Feedback is welcome, please mail to feedback@suse.com
 .\" TODO TIDs
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2016-2019 L.Pinne, Germany.
 .br
 cs_show_memory comes with ABSOLUTELY NO WARRANTY.

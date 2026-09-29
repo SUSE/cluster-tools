@@ -1,40 +1,43 @@
 .TH cs_show_initrd 8 "01 Nov 2019" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 cs_show_initrd \- show and compare content of initrd 
 .\"
 .SH SYNOPSIS
-.P
-.B cs_show_initrd \fIOPTION\fR
+.\"
+\fBcs_show_initrd\fR [\fIOPTION\fR]
 .\"
 .SH DESCRIPTION
+.\"
 \fBcs_show_initrd\fP could be used to show the content of the current initrd.
 It also could be used to check the initrd for modules against the sysconfig kernel
 section, or to compare config files against the etc directory.
 .br
 .\"
 .SH OPTIONS
-.HP
-\fB --help\fR
-	show help.
-.HP
-\fB --version\fR
-	show version.
-.HP
-\fB --all\fR
-	list all files on initrd.
-.HP
-\fB --etc\fR
-	list initrd etc files.
-.HP
-\fB --modules\fR
-	list initrd modules.
-.HP
-\fB --compare\fR
-	compare initrd modules with /etc/sysconfig/kernel.
+.\"
+.TP
+\fB--help\fR
+show help.
+.TP
+\fB--version\fR
+show version.
+.TP
+\fB--all\fR
+list all files on initrd.
+.TP
+\fB--etc\fR
+list initrd etc files.
+.TP
+\fB--modules\fR
+list initrd modules.
+.TP
+\fB--compare\fR
+compare initrd modules with /etc/sysconfig/kernel.
 .\"
 .SH EXAMPLES
-.br
+.\"
 .TP
 * Compare initrd modules with /etc/sysconfig/kernel.
 .br
@@ -45,6 +48,7 @@ section, or to compare config files against the etc directory.
 # cs_show_initrd --all
 .\"
 .SH EXIT STATUS
+.\"
 .B 0
 Successful program execution.
 .br
@@ -52,6 +56,7 @@ Successful program execution.
 Usage, syntax or execution errors.
 .\"
 .SH FILES
+.\"
 .TP
 /usr/sbin/cs_show_initrd
 the program itself.
@@ -69,12 +74,15 @@ the kernel modules.
 links to current initrds.
 .\"
 .SH BUGS
+.\"
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBmkinitrd\fP(8), \fBlsinitrd\fP(8), \fBcpio\fP(8), \fBClusterTools2\fP(7)
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2014-2019 L.Pinne, Germany.
 .br
 cs_show_initrd comes with ABSOLUTELY NO WARRANTY.

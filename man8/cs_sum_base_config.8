@@ -1,13 +1,16 @@
 .TH cs_sum_base_config 8 "01 Nov 2019" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 cs_sum_base_config \- calculate checksums for common configuration and system
 parameters 
 .\"
 .SH SYNOPSIS
-.B cs_sum_base_config \fI[OPTION]\fR
+.\"
+\fBcs_sum_base_config\fR [\fIOPTION\fR]
 .\"
 .SH DESCRIPTION
+.\"
 \fBcs_sum_base_config\fP calculates MD5 checksums for common configuration
 and system parameters.
 By default mostly files and parameters are checked, that are expected to be 
@@ -18,30 +21,31 @@ Please call this script as root.
 .br
 .\"
 .SH OPTIONS
-.HP
-\fB --help\fR
-	show help.
-.HP
-\fB --version\fR
-	show version.
-.HP
-\fB --writecfg\fR
-	show some internal variables.
-.HP
-\fB --files\fR
-	checksum base config files only.
-.HP
-\fB --calls\fR
-	checksum base calls only.
-.HP
-\fB --apps\fR
-	checksum applications config files and calls only.
-.HP
-\fB --might\fR
-	checksum files than might not be cloned.
+.\"
+.TP
+\fB--help\fR
+show help.
+.TP
+\fB--version\fR
+show version.
+.TP
+\fB--writecfg\fR
+show some internal variables.
+.TP
+\fB--files\fR
+checksum base config files only.
+.TP
+\fB--calls\fR
+checksum base calls only.
+.TP
+\fB--apps\fR
+checksum applications config files and calls only.
+.TP
+\fB--might\fR
+checksum files than might not be cloned.
 .\"
 .SH EXAMPLES
-.br
+.\"
 .TP
 * Write checksums for common base config files of a node to a file. 
 .br
@@ -80,6 +84,7 @@ Add script to CONF_CALLS, e.g.
 # cs_sum_base_config | grep "/etc/sysctl.conf"
 .\"
 .SH EXIT STATUS
+.\"
 .B 0
 Successful program execution.
 .br
@@ -87,14 +92,16 @@ Successful program execution.
 Usage, syntax or execution errors.
 .\"
 .SH FILES
+.\"
 .TP
 /usr/sbin/cs_sum_base_config
-	the program itself.
+the program itself.
 .TP
 /etc/ClusterTools2/cs_sum_base_config
-	the configuration.
+the configuration.
 .\"
 .SH BUGS
+.\"
 The number of files is limited to the maximum number of arguments for a shell
 loop. Single quotes "'" are not allowed in calls.
 Time is read from hwclock, but not compared to system time.
@@ -104,10 +111,12 @@ This leads to few fals-positives when comparing two nodes.
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBmd5sum\fP(1), \fBClusterTools2\fP(7), \fBcs_list_clone_files\fP(8),
 \fBaideinit\fP(8), \fBtripwire\fP(8)
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2011-2019 L.Pinne, Germany.
 .br
 cs_sum_base_config comes with ABSOLUTELY NO WARRANTY.

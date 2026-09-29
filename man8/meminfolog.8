@@ -1,17 +1,22 @@
 .TH meminfolog 8 "01 Nov 2019" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 meminfolog \- log the meminfo with timestamp
 .\"
 .SH SYNOPSIS
-.B meminfolog \fI[ logfile ]\fR
+.\"
+\fBmeminfolog\fR [ \fIlogfile\fR ]
 .\"
 .SH DESCRIPTION
+.\"
 \fBmeminfolog\fP logs the meminfo with timestamp.
-Basically the script puts the output of "date +%F %T" in front of each line for the output of "cat /proc/meminfo".
+Basically the script puts the output of "date +%F %T" in front of each line for
+the output of "cat /proc/meminfo".
 .br
 .\"
 .SH EXAMPLES
+.\"
 .TP
 To run meminfolog every 10 minutes, the crontab entry could look like this:
 .br
@@ -32,6 +37,7 @@ To rotate and compress the log from time to time, the logrotate entry could look
 }
 .\"
 .SH EXIT STATUS
+.\"
 .B 0
 Successful program execution.
 .br
@@ -39,6 +45,7 @@ Successful program execution.
 Usage, syntax or execution errors.
 .\"
 .SH FILES
+.\"
 .TP
 /usr/sbin/meminfolog
 the script itself.
@@ -53,12 +60,15 @@ the cron entry.
 the logrotate entry.
 .\"
 .SH BUGS
+.\"
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBproc\fP(5), \fBvmstat\fP(8), \fBcrontab\fP(5), \fBlogrotate\fP(8), \fBClusterTools2\fP(7)
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2011-2019 L.Pinne, Germany.
 .br
 meminfolog comes with ABSOLUTELY NO WARRANTY.

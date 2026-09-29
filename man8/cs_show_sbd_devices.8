@@ -1,28 +1,32 @@
 .TH cs_show_sbd_devices 8 "26 Jan 2025" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 cs_show_sbd_devices \- show content of SBD devices 
 .\"
 .SH SYNOPSIS
-.P
-.B cs_show_sbd_devices \fI[OPTION]\fR
+.\"
+.\fBcs_show_sbd_devices\fR [\fIOPTION\fR]
 .\"
 .SH DESCRIPTION
+.\"
 \fBcs_show_sbd_devices\fP shows the content of SBD devices.
 This script is mostly a wrapper around cs_make_sbd_devices.
 .\"
 .SH OPTIONS
-.HP
-\fB --help\fR
-	show help.
-.HP
-\fB --version\fR
-	show version.
-.HP
-\fB --config\fR
-	show config.
+.\"
+.TP
+\fB--help\fR
+show help.
+.TP
+\fB--version\fR
+show version.
+.TP
+\fB--config\fR
+show config.
 .\"
 .SH EXAMPLES
+.\"
 .TP
 * Show content of SBD devices.
 .br
@@ -33,6 +37,7 @@ This script is mostly a wrapper around cs_make_sbd_devices.
 # cs_show_sbd_devices -c
 .\"
 .SH EXIT STATUS
+.\"
 .B 0
 Successful program execution.
 .br
@@ -40,6 +45,7 @@ Successful program execution.
 Usage, syntax or execution errors.
 .\"
 .SH FILES
+.\"
 .TP
 /usr/sbin/cs_show_sbd_devices
 the program itself.
@@ -54,14 +60,17 @@ the SBD configuration.
 the watchdog kernel module configuration.
 .\"
 .SH BUGS
+.\"
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBcs_make_sbd_devices\fP(8), \fBstonith_sbd\fP(7), \fBsbd\fP(8),
 \fBClusterTools2\fP(7),
 https://www.suse.com/support/kb/doc.php?id=7016305
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2016-2025 L.Pinne, Germany.
 .br
 cs_show_sbd_devices comes with ABSOLUTELY NO WARRANTY.

@@ -1,12 +1,15 @@
 .TH lsoflog 8 "01 Nov 2019" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 lsoflog \- log the open file list with timestamp
 .\"
 .SH SYNOPSIS
-.B lsoflog \fI[ logfile [ pathlist [ timeout ]]]\fR
+.\"
+\fBlsoflog\fR [ \fIlogfile\fR [ \fIpathlist\fR [ \fItimeout\fR ]]]
 .\"
 .SH DESCRIPTION
+.\"
 \fBlsoflog\fP logs the open file list with timestamp.
 Basically the script puts the output of "date +%F %T" in front of each line for the output of "lsof -n -P -X -w -S42 +fg +x +D...". 
 
@@ -49,6 +52,7 @@ awk '$11~/\\/ora\\/data/ && $8 ~/AIO/ {print $1,$2,$3,$8,$11}' /var/log/lsof.log
 .\"  sort -u
 .\"
 .SH EXIT STATUS
+.\"
 .B 0
 Successful program execution.
 .br
@@ -56,6 +60,7 @@ Successful program execution.
 Usage, syntax or execution errors.
 .\"
 .SH FILES
+.\"
 .TP
 /usr/sbin/lsoflog
 the script itself.
@@ -70,16 +75,18 @@ the cron entry.
 the logrotate entry.
 .\"
 .SH BUGS
+.\"
 Non-existing directories cause lsoflog to fail.
 .br
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBlsof\fP(1), \fBcrontab\fP(5), \fBlogrotate\fP(8), \fBopen\fP(2),
 \fBfcntl\fP(2), \fBClusterTools2\fP(7)
 .\"
-.\"
 .SH COPYRIGHT
+.\"
 (c) 2011-2019 L.Pinne, Germany.
 .br
 lsoflog comes with ABSOLUTELY NO WARRANTY.

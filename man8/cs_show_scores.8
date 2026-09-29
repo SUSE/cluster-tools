@@ -1,27 +1,32 @@
 .TH cs_show_scores 8 "01 Nov 2019" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 cs_show_scores \- show scores for resources in a pacemaker HA cluster 
 .\"
 .SH SYNOPSIS
-.B cs_show_scores \fIOPTION\fR
+.\".
+\fBcs_show_scores\fR [\fIOPTION\fR]
 .\"
 .SH DESCRIPTION
+.\"
 \fBcs_show_scores\fP TODO
 .br
 .\"
 .SH OPTIONS
-.HP
-\fB --help\fR
-	show help.
-.HP
-\fB --version\fR
-	show version.
-.HP
-\fB --raw\fR
-	show raw scores from crm.
+.\"
+.TP
+\fB--help\fR
+show help.
+.TP
+\fB--version\fR
+show version.
+.TP
+\fB--raw\fR
+show raw scores from crm.
 .\"
 .SH EXIT STATUS
+.\"
 .B 0
 Successful program execution.
 .br
@@ -29,21 +34,25 @@ Successful program execution.
 Usage, syntax or execution errors.
 .\"
 .SH FILES
+.\"
 .TP
 /usr/sbin/cs_show_scores
 the program itself.
 .\"
 .SH BUGS
+.\"
 Documented options are currently not implemented.
 Gets very slow with growing number of nodes or resources.
 .br
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBClusterTools2\fP(7), \fBcs_list_failcounts\fP(8), \fBcrm\fP(8),
 \fBattrd_updater\fP(8)
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2011-2019 L.Pinne, Germany.
 .br
 cs_show_scores comes with ABSOLUTELY NO WARRANTY.

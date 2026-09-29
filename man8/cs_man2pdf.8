@@ -1,19 +1,22 @@
 .TH cs_man2pdf 8 "01 Nov 2019" "" "ClusterTools2"
 .\"
 .SH NAME
+.\"
 cs_man2pdf \- create PDF file from manual page
 .\"
 .SH SYNOPSIS
-.B cs_man2pdf --help \fP|\fB --version
+.\"
+\fBcs_man2pdf\fR [ --help | --version ]
 .br
-.B cs_man2pdf --dir \fI<directory>\fR
+\fBcs_man2pdf\fR --dir <\fIdirectory\fR>
 .br
-.B cs_man2pdf --rpm \fI<installed_RPM>\fR
+\fBcs_man2pdf\fR --rpm <\fIinstalled_RPM\fR>
 .br
-.B cs_man2pdf \fI<man_page> <section>\fR
-.br
+\fBcs_man2pdf\fR <\fIman_page\fR> <\fIsection\fR>
+
 .\"
 .SH DESCRIPTION
+.\"
 \fBcs_man2pdf\fP creates a PDF file from a manual page.
 .br
 Basically the command "man -Tps ... | ps2pdf - >..." is used.
@@ -22,23 +25,24 @@ smartphones, or gaming consoles.
 .br
 .\"
 .SH OPTIONS
+.\"
+.TP
+\fB--help\fR
+show help
+.TP
+\fB--version\fR
+show version
+.TP
+\fB--dir\fR <\fIdirectory\fR>
+convert man pages from directory
 .HP
-\fB --help\fR
-        show help
-.HP
-\fB --version\fR
-        show version
-.HP
-\fB --dir \fI<directory>\fR
-        convert man pages from directory
-.HP
-\fB --rpm \fI<rpm>\fR
-        convert man pages from installed RPM
+\fB--rpm\fR <\fIrpm\fR>
+convert man pages from installed RPM
 .\"
 .SH EXAMPLES
+.\"
 .TP
 * create PDF for manual page stonith_sbd(7) and write the output into a file in the current working directory.
-.br
 # cs_man2pdf stonith_sbd 7
 .TP
 * create PDF files for manual pages of OCF resource agents.
@@ -48,14 +52,13 @@ smartphones, or gaming consoles.
   while read; do cs_man2pdf $REPLY; done
 .TP
 * create PDF files for manual pages from directory ./mankind/.
-.br
 # cs_man2pdf -d ./mankind/
 .TP
 * create PDF files for manual pages from installed RPM ClusterTools2.
-.br
 # cs_man2pdf -r ClusterTools2 
 .\"
 .SH EXIT STATUS
+.\"
 .B 0
 Successful program execution.
 .br
@@ -63,6 +66,7 @@ Successful program execution.
 Usage, syntax or execution errors.
 .\"
 .SH FILES
+.\"
 .TP
 /usr/sbin/cs_man2pdf
 the program itself
@@ -71,6 +75,7 @@ $PWD/<man_page>.<n>.pdf
 the output file
 .\"
 .SH BUGS
+.\"
 This script can only handle manual pages with up to two dots in the filename.
 Manual pages with double colons currently are not handled. I am sorry for Perl.
 When using --directory, a .gz suffix will make it to the PDF's filename.
@@ -78,10 +83,12 @@ When using --directory, a .gz suffix will make it to the PDF's filename.
 Feedback is welcome, please mail to feedback@suse.com
 .\"
 .SH SEE ALSO
+.\"
 \fBman\fP(1), \fBapropos\fP(1), \fBwhatis\fP(1), \fBmandb\fP(8),
 \fBps2pdf\fP(1), roff2html(1)
 .\"
 .SH COPYRIGHT
+.\"
 (c) 2016-2019 B.Jin, L.Pinne, Germany.
 .br
 cs_man2pdf comes with ABSOLUTELY NO WARRANTY.

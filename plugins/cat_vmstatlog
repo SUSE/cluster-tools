@@ -1,0 +1,19 @@
+#!/bin/bash
+# /usr/lib/supportconfig/plugins/cat_vmstatlog
+# Version: 2026-09-26
+
+PLUG="cat_vmstatlog"
+CONF="/etc/ClusterTools2/supportconfig_plugins"
+LOGF="/var/log/vmstat.log"
+ZLOG="/var/log/vmstat.log*bz2"
+
+grep "^${PLUG}$" $CONF >/dev/null || exit 0 
+
+echo "### $LOGF ###"
+test -r $LOGF && cat $LOGF
+for f in $ZLOG; do
+	echo "### $f ###"
+	test -r "$f" && bzcat "$f"
+done
+echo "Completed"
+#

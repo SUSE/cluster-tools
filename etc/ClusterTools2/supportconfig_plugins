@@ -7,6 +7,9 @@
 #cat_psauxlog
 #cat_meminfolog
 #cat_lsoflog
+#cat_vmstatlog
+#cat_netstatlog
+#cat_dstatelog
 #cat_xmstat
 #cat_vcslogs
 #sum_base_config

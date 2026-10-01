@@ -1,0 +1,66 @@
+.TH cpustatelog 8 "26 Oct 2026" "" "ClusterTools2"
+.\"
+.SH NAME
+cpustatelog \- log dmesg entries for CPU stack with timestamp
+.\"
+.SH SYNOPSIS
+\fBcpustatelog\fR [ \fIlogfile\fR ]
+.\"
+.SH DESCRIPTION
+.\"
+Basically the script does "echo l >/proc/sysrq-trigger" and writes the resulting 
+dmesg lines into a separate log file. This script is intended to be called on
+specific events, not on regular base.
+.br
+.\"
+.SH EXAMPLES
+.\"
+* Rotate and compress log from time to time. The logrotate entry could look like this:
+.br
+/var/log/cpustate.log {
+    compress
+    dateext
+    maxage 365
+    rotate 99
+    size +4M
+    notifempty
+    missingok
+    copytruncate
+.br
+}
+.\"
+.SH EXIT STATUS
+.\"
+.B 0
+Successful program execution.
+.br
+.B >0 
+Usage, syntax or execution errors.
+.\"
+.SH FILES
+.\"
+.TP
+/usr/sbin/cpustatelog
+the script itself
+.TP
+/var/log/cpustate.log
+the default logfile
+.\"
+.SH BUGS
+.\"
+Feedback is welcome, please mail to feedback@suse.com .
+.\"
+.SH SEE ALSO
+.\"
+\fBdmesg\fP(8), \fBlogrotate\fP(8), \fBpsauxlog\fP(8), \fBdstatelog\fP(8),
+\fBClusterTools2\fP(7), \fBSAPStartSrv-alert-timeout\fP(8)
+.\"
+.SH COPYRIGHT
+.\"
+(c) 2026 L.Pinne, Germany.
+.br
+cpustatelog comes with ABSOLUTELY NO WARRANTY.
+.br
+For details see the GNU General Public License at
+http://www.gnu.org/licenses/gpl.html
+.\"

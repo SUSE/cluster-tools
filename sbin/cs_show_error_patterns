@@ -79,6 +79,7 @@ test -z "${ERROR_PATTERN}" &&\
 "qla.*failed"
 "qla.Unable"
 "qlge.*error"
+"megaraid.*timeout"
 "hpilo.*could.not"
 "smad.*ERR"
 "Ramping.down.queue"

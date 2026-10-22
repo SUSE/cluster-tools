@@ -42,7 +42,7 @@ the output of "ss -ena".
 .TP
 * Run netstatlog every 10 minutes. The crontab entry could look like this:
 .br
--04-59/10 * * * * root /usr/sbin/psauxlog /var/log/psaux.log
+-04-59/10 * * * * root /usr/sbin/netstatlog /var/log/netstat.log
 .TP
 * Rotate and compress log from time to time. The logrotate entry could look like this:
 .br
@@ -59,7 +59,7 @@ the output of "ss -ena".
 }
 .TP
 * Show connections existing at a certain time, e.g. 2021-09-27 07:01. Use default logfile:
-# awk '$1~/2021-09-27/&&$2~/^07:01:/' /var/log/psaux.log
+# awk '$1~/2021-09-27/&&$2~/^07:01:/' /var/log/netstat.log
 .\" TODO ss related examples
 .\"
 .SH EXIT STATUS

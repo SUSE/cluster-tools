@@ -5,6 +5,7 @@
 #show_error_patterns
 #show_elevator
 #cat_psauxlog
+#cat_pseolog
 #cat_meminfolog
 #cat_lsoflog
 #cat_vmstatlog

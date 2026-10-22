@@ -1,0 +1,19 @@
+#!/bin/bash
+#
+# pseolog
+#
+# (c) 2026 SUSE LLC
+# Author: L.Pinne.
+# GNU General Public License v2. No warranty.
+# http://www.gnu.org/licenses/gpl.html
+#
+# Version: 0.1 2026-10-21
+#
+
+D=$(date +"%F %T")
+L=${1:-"/var/log/pseo.log"}
+
+ps eo | while read -r; do
+	echo "$D": "$REPLY"
+done >>"$L"
+#

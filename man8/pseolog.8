@@ -12,7 +12,7 @@ pseolog \- log the process list with timestamp
 .\"
 \fBpseolog\fP logs the process list with timestamp.
 Basically the script puts the output of "date +%F %T" in front of each line for
-the output of "ps eo".
+the output of "ps -eo user,pid,ppid,psr,sgi_p,wchan:14,cmd".
 .br
 .\"
 .SH EXAMPLES

@@ -13,7 +13,7 @@
 D=$(date +"%F %T")
 L=${1:-"/var/log/pseo.log"}
 
-ps eo | while read -r; do
+ps -eo user,pid,ppid,psr,sgi_p,wchan:14,cmd | while read -r; do
 	echo "$D": "$REPLY"
 done >>"$L"
 #

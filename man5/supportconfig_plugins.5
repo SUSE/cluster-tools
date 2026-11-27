@@ -2,24 +2,24 @@
 .\"
 .SH NAME
 .\"
-supportconfig_plugins \- configuration for supportconfig plugins from ClusterTools2  
+supportconfig_plugins \- configuration for supportconfig plugins from ClusterTools2 
 .\"
 .SH DESCRIPTION
 .\"
 \fBsupportconfig_plugins\fP contains configuration for supportconfig plugins from
-ClusterTools2. 
+ClusterTools2.
 .\"
 .SH SYNTAX
 .\"
 The file contains one line per plugin. Each active line is formed as:
 .br
-.B ^plugin-name$ 
+.B ^plugin-name$
 .PP
 Each plugin checks for a line containing only its name. If this line is not found,
 the pluging exits without further action.
 .PP
 Implicitely a hash "#" as the first character of a line marks it as comment and
-makes it to be ignored. 
+makes it to be ignored.
 .\"
 .SH FILES
 .\"

@@ -25,8 +25,7 @@ RETCODE=0
 
 
 function help() {
-    echo "usage:    $(basename "$EXE") --stop [ <seconds> ]
-    echo "usage:    $(basename "$EXE") [ --help | --version ]"
+    echo "usage:    $(basename "$EXE") [ --help | --version | --stop [ <seconds> ] ]"
     echo "OPTION:"
     echo " --help               show help"
     echo " --version            show version info"
@@ -45,18 +44,19 @@ function get_sap_sid_ino() {
 
 function stop_all() {
     SAP=$(get_sap_sid_ino)
+    # shellcheck disable=SC2162
     while read; do
 	    rc=1
-	    SID=$(echo $REPLY | awk '{print $1}')
+	    SID=$(echo "$REPLY" | awk '{print $1}')
 	    sid=${SID,,}
-	    INO=$(echo $REPLY | awk '{print $2}')
+	    INO=$(echo "$REPLY" | awk '{print $2}')
 
 	    echo "### $SID - $INO ###"	
-	    su - ${sid}adm -c "sapcontrol -nr $INO -function GetProcessList" 
-	    su - ${sid}adm -c "sapcontrol -nr $INO -function Stop"
+	    su - "${sid}"adm -c "sapcontrol -nr $INO -function GetProcessList" 
+	    su - "${sid}"adm -c "sapcontrol -nr $INO -function Stop"
         # TODO correct rc
-	    su - ${sid}adm -c "sapcontrol -nr $INO -function WaitforStopped $TIMEOUT 10"; rc=$?
-	    su - ${sid}adm -c "sapcontrol -nr $INO -function GetProcessList"
+	    su - "${sid}"adm -c "sapcontrol -nr $INO -function WaitforStopped $TIMEOUT 10"; rc=$?
+	    su - "${sid}"adm -c "sapcontrol -nr $INO -function GetProcessList"
 	    if [[ $rc -eq 4 ]] || [[ $rc -eq 0 ]]; then
            rc=0
 	    fi

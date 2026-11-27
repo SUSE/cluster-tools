@@ -107,7 +107,7 @@ function awk_transition_12-34() {
 
 # TODO LARS, FABIAN: Implement other patterns
 # currently not used, so disable shellcheck complains
-# shellcheck disable=SC2317
+# shellcheck disable=SC2317,SC2329
 function filter_transition() {
 	# for SLE-HA11 sp3,sp4
         echo "logs: $LOG" >/dev/stderr

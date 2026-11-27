@@ -3,7 +3,7 @@
 .SH NAME
 .\"
 cs_sum_base_config \- calculate checksums for common configuration and system
-parameters 
+parameters
 .\"
 .SH SYNOPSIS
 .\"
@@ -13,7 +13,7 @@ parameters
 .\"
 \fBcs_sum_base_config\fP calculates MD5 checksums for common configuration
 and system parameters.
-By default mostly files and parameters are checked, that are expected to be 
+By default mostly files and parameters are checked, that are expected to be
 identical on all nodes of one cluster. The output can be used to find
 differences between two or more cluster nodes.
 Or it can be stored and re-used later to check for changes.
@@ -47,11 +47,11 @@ checksum files than might not be cloned.
 .SH EXAMPLES
 .\"
 .TP
-* Write checksums for common base config files of a node to a file. 
+* Write checksums for common base config files of a node to a file.
 .br
 # cs_sum_base_config -f >$HOSTNAME.txt
 .TP
-* Find differences between nodep and nodeq. Check base config files as well as common base system parameters and applications configuration. 
+* Find differences between nodep and nodeq. Check base config files as well as common base system parameters and applications configuration.
 # cs_sum_base_config >nodep.txt
 .br
 # cs_sum_base_config -a >>nodep.txt
@@ -88,7 +88,7 @@ Add script to CONF_CALLS, e.g.
 .B 0
 Successful program execution.
 .br
-.B >0 
+.B >0
 Usage, syntax or execution errors.
 .\"
 .SH FILES

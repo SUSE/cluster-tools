@@ -1,4 +1,52 @@
 -------------------------------------------------------------------
+Fri Nov 27 14:42:41 UTC 2026 - abriel@suse.com
+
+- update version to 3.1.4
+  * fix cs_clusterstate to no longer hang on a starting cluster
+   (bsc#1228746)
+  * new scripts:
+    sbin/cpustatelog
+    sbin/cs_show_cluster_actions
+    sbin/cs_stop_all_sap
+    sbin/dstatelog
+    sbin/netstatlog
+    sbin/pseolog
+    sbin/vmstatlog
+  * new samples:
+    ora1_crm/10_ora1_ipaddr.crm
+    ora1_crm/11_ora1_raid.crm
+    ora1_crm/12_ora1_lvm.crm
+    ora1_crm/13_ora1_fs.crm
+    ora1_crm/14_ora1_oralsnr.crm
+    ora1_crm/15_ora1_oracle.crm
+    ora1_crm/18_ora1_group.crm
+    ora1_crm/18a_ora1_group.crm
+    showscores
+  * new plugins:
+    cat_cpustatelog
+    cat_dstatelog
+    cat_netstatlog
+    cat_pseolog
+    cat_sapstacklog
+    cat_vmstatlog
+  * new man pages:
+    cpustatelog.8
+    cs_show_cluster_actions.8
+    cs_show_ensa_status.8
+    dstatelog.8
+    netstatlog.8
+    pseolog.8
+    vmstatlog.8
+  * man page updates:
+    ha_related_acronyms.7
+    ha_related_sap_notes.7
+    ha_related_suse_tids.7
+    cs_clusterstate.8
+    cs_show_sbd_devices.8
+
+- add 'perl' as requirement
+
+-------------------------------------------------------------------
 Thu Aug  8 10:23:44 UTC 2024 - abriel@suse.com
 
 - remove dependency to perl-TermReadLine-Gnu for SLE16

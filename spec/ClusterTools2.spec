@@ -2,7 +2,7 @@
 # spec file for package ClusterTools2
 #
 # Copyright (c) 2011-2018 SUSE LINUX GmbH, Nuernberg, Germany.
-# Copyright (c) 2019-2024 SUSE LLC
+# Copyright (c) 2019-2026 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -20,14 +20,16 @@ Name:           ClusterTools2
 Summary:        Tools for cluster management
 License:        GPL-2.0-or-later
 Group:          Productivity/Clustering/HA
-Version:        3.1.3
+Version:        3.1.4
 Release:        0
 Source:         %{name}-%{version}.tgz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildArch:      noarch
+%{?systemd_requires}
 Requires:       systemd
 Requires:       logrotate
 Requires:       pacemaker > 1.1.1
+Requires:       perl
 %if 0%{?suse_version} < 1600
 Requires:       perl-TermReadLine-Gnu >= 1.16
 %endif
@@ -50,9 +52,6 @@ Starting with version 3.0.0 is support for SUSE Linux Enterprise Server 12.
 ( cd man7; for mp in *7; do gzip $mp; done )
 ( cd man8; for mp in *8; do gzip $mp; done )
 mkdir -p etc/ClusterTools2
-
-%clean
-test "$RPM_BUILD_ROOT" != "/" && rm -rf $RPM_BUILD_ROOT
 
 %install
 mkdir -p %{buildroot}/etc/ClusterTools2
@@ -93,10 +92,21 @@ cp -a man5/*.gz %{buildroot}/usr/share/man/man5/
 cp -a man7/*.gz %{buildroot}/usr/share/man/man7/
 cp -a man8/*.gz %{buildroot}/usr/share/man/man8/
 
+%pre
+%service_add_pre ClusterTools2-timer.service
+
 %post
 mkdir -p /usr/lib/systemd/system
 mkdir -p /usr/lib/supportconfig/plugins
 cp /usr/lib/ClusterTools2/supportconfig/plugins/* /usr/lib/supportconfig/plugins
+%service_add_post ClusterTools2-timer.service
+
+%preun
+%service_del_preun ClusterTools2-timer.service
+
+%postun
+%service_del_postun ClusterTools2-timer.service
+
 
 %files
 %defattr(-,root,root)

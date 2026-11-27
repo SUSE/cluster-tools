@@ -1,0 +1,14 @@
+configure \
+ primitive rsc_fs_ora1_osoft ocf:heartbeat:Filesystem \
+ params device="/dev/oravg/osoft" directory="/opt/oracle/product" \
+ fstype="ext3" options="noatime" \
+ op stop timeout=300s \
+ op monitor interval=30s timeout=130s \
+ meta target-role=stopped
+configure \
+ primitive rsc_fs_ora1_odata ocf:heartbeat:Filesystem \
+ params device="/dev/oravg/odata" directory="/opt/oracle/oradata" \
+ fstype="ext3" options="noatime" \
+ op stop timeout=300s \
+ op monitor interval=30s timeout=130s \
+ meta target-role=stopped

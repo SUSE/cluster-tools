@@ -1,0 +1,62 @@
+#!/bin/bash
+###################################################################################
+# Display cluster scores of pacemaker resources
+# vim:set fileencoding=utf8 fileformat=unix filetype=shell tabstop=2 expandtab:
+# @(#)$Id: showscores,v 1.7 2023/04/28 14:28:27 ralph Exp $
+# (c) 2012-2023 by Ralph Roth, rose_swe@gmx.net
+###################################################################################
+## WARNING: This is for SLES12/SLES15, will not work on SLES9/10/11 whatever
+###################################################################################
+
+if [ "$1" = "--help" ] || [ "$1" = "-h" ]
+then
+    echo "Pacemaker showscores (v2) - parsing crm resource scores"
+    echo "Usage:"
+    echo "$0 (to display score information for all resources on all nodes sorted by resource name)"
+
+    exit 0
+fi
+# bug detected with non-standard locales
+export LC_ALL=C
+
+## TODO: Needs a fix, see issue#6 and see https://github.com/SUSE/suse-best-practices/issues/370
+## TODO: See https://bugzilla.suse.com/show_bug.cgi?id=1210614 - Bug 1210614 - Duplicated entries for resource-stickiness and https://github.com/ClusterLabs/crmsh/pull/1174
+default_stickiness=$(crm_attribute -G -n resource-stickiness -t rsc_defaults -Q 2>/dev/null)
+default_migrationthreshold=$(crm_attribute -G -n migration-threshold -t rsc_defaults -Q 2>/dev/null)
+
+## TODO: Stop here if an error is raised -> cluster framework not running (e.g. crm cluster stop)
+
+echo "rsc_defaults: resource-stickiness=${default_stickiness}   migration-threshold=${default_migrationthreshold}"
+echo ""
+
+## TODO: Maybe replace in the tr command ":" with "_" for better readability?
+## TODO: Sort host before outputing them
+crm resource scores | awk ' / allocation score on / { print $2, $6, $NF; }' | tr -d ":" | sort -u | \
+awk '           ## requires a modern GNU AWK implementation!
+{
+    r=$1        ## resource
+    h=$2        ## host/node
+    s=$3        ## score on that node
+
+    a[r][h]=s
+    hosts[h] ++
+}
+
+END {
+
+    printf("##[ Resource ]#####[ Nodes ]##  ");
+    for (i in hosts)  printf ("%18s ", i);
+    printf ("\n");
+
+    for (i in a)
+    {
+        printf("%-32s ", i)
+        for (j in a[i])
+            printf("%18s ",  a[i][j]);
+        printf ("\n");
+    }
+}
+' | sort -u
+
+echo ""
+echo "Showscore taken on node: $(hostname) at $(date)"

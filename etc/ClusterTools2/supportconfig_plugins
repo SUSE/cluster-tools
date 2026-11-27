@@ -1,16 +1,22 @@
 # /etc/ClusterTools2/supportconfig_plugins
-# For SLES11, SLES12, SLES15
+# For SLES12, SLES15
 # one entry per line "^plugin$"
 #cat_messages
 #show_error_patterns
 #show_elevator
 #cat_psauxlog
+#cat_pseolog
 #cat_meminfolog
 #cat_lsoflog
+#cat_vmstatlog
+#cat_netstatlog
+#cat_cpustatelog
+#cat_dstatelog
+#cat_sapstacklog
 #cat_xmstat
 #cat_vcslogs
 #sum_base_config
-#hb_report
+#crm_report
 #precheck_for_sap
 #precheck_for_hana
 #

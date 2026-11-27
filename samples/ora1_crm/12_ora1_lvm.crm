@@ -1,0 +1,6 @@
+configure \
+ primitive rsc_lvm_ora1_oravg ocf:heartbeat:LVM \
+ params volgrpname="oravg" \
+ op monitor interval=130s timeout=130s \
+ op stop timeout=130s on_fail="fence" \
+ meta target-role=stopped

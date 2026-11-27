@@ -35,21 +35,21 @@ case $1 in
 		exit
 	;;
 	-c|--config)
-        	if !(test -r "$CFG"); then
-            		echo "ERR: $CFG not found"
-            	exit 1
-        	fi
+		if ! test -r "$CFG"; then
+			echo "ERR: $CFG not found"
+			exit 1
+		fi
 		echo
 		echo "$CFG"
 		grep -v "^#" "$CFG" | tr -s "\n"
-       		echo
+		echo
 		grep -e dog -e wdt /etc/modules-load.d/*.conf
-        	echo
+		echo
         	# shellcheck disable=SC2162
-        	awk -F"=" '$1=="SBD_DEVICE" {print $2}' "$CFG" |tr -d "\""|tr ";" "\n"|\
-        	while read; do
-            		sbd -d "$REPLY" dump 2>/dev/null; RC=$?
-        	done
+		awk -F"=" '$1=="SBD_DEVICE" {print $2}' "$CFG" |tr -d "\""|tr ";" "\n"|\
+		while read; do
+			sbd -d "$REPLY" dump 2>/dev/null; #RC=$?
+		done
 		echo
 		exit
 	;;

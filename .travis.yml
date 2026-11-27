@@ -1,6 +1,0 @@
-language: bash
-sudo: false
-script:
-  - find . -type f -exec awk ' /^#!.*bash/{print FILENAME} {nextfile}' {} + | grep -v ".*/samples/" | xargs shellcheck -s bash
-notifications:
-email: true

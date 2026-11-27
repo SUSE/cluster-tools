@@ -79,7 +79,7 @@ configured to tolerate an inacessible SBD deviced as long as the corosync
 link between the cluster nodes is functional.
 .PP
 If the SBD device is not accessible, the daemon will fail to start and
-inhibit pacemaker startup. 
+inhibit pacemaker startup.
 .PP
 .B ** Two devices
 .PP
@@ -115,14 +115,14 @@ This configuration is appropriate for more complex scenarios where storage
 is not confined to a single array.
 .PP
 Host-based mirroring solutions could have one SBD per mirror leg (not
-mirrored itself), and an additional tie-breaker on iSCSI. 
+mirrored itself), and an additional tie-breaker on iSCSI.
 However, three SBD devices can not be distributed equally across two sites. So
 three sites are needed for three SBD devices, even for a two node cluster.
 .P.PP
 \fB* Pre-Requisites\fR
 .PP
 The environment must have shared storage reachable by all nodes.
-You must dedicate a small partition of each as the SBD device. 
+You must dedicate a small partition of each as the SBD device.
 This shared storage segment must not make use of host-based RAID, cLVM2,
 nor DRBD.
 .PP
@@ -251,7 +251,7 @@ mechanisms. Please disable any others you might have configured before.
 An escalating STONITH topology usually makes no sense with stonith/sbd.
 .PP
 An sbd device might be entered into the CIB like this, for 2-node clusters:
-.RS 2 
+.RS 2
 ===
 .br
 primitive rsc_stonith_sbd stonith:external/sbd \\
@@ -261,7 +261,7 @@ primitive rsc_stonith_sbd stonith:external/sbd \\
 ===
 .RE
 .PP
-An sbd device might be entered into the CIB like this, for multi-node clusters: 
+An sbd device might be entered into the CIB like this, for multi-node clusters:
 .RS 2
 ===
 .br
@@ -296,7 +296,7 @@ concurrent-fencing="true" \\
 ===
 .RE
 In SLE-HA 11 for two-node clusters the no-quorum-policy="ignore" has to be
-set as well. 
+set as well.
 .PP
 \fB* Hardware Watchdog\fR
 .PP
@@ -349,7 +349,7 @@ estimate. This can be specified when the SBD device is initialized.
 If you want to avoid MD mirror splitting in case of IO errors, the watchdog
 timeout has to be shorter than the total MPIO failure timeout. Thus, a node
 is fenced before the MD mirror is splitted. On the other hand, the time
-the cluster waits for SAN and storage to recover is shortened. 
+the cluster waits for SAN and storage to recover is shortened.
 .PP
 In any case, the watchdog timeout must be shorter than sbd message wait timeout.
 The sbd message wait timeout must be shorter than the cluster stonith-timeout.
@@ -391,7 +391,7 @@ Putting it all together:
 # lsof /dev/watchdog
 .TP
 * show which settings are defined on SBD disk, e.g. timeouts
-# cs_show_sbd_devices  
+# cs_show_sbd_devices 
 .TP
 * show currently used parameters for watchdog, e.g. timeout
 # systool -vc watchdog
